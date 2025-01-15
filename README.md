@@ -1,7 +1,7 @@
 # Reefscape2025
-![Last Commit](https://img.shields.io/github/last-commit/errorcodexero/Reefscape2025?logo=git&color=red&logoColor=white)
+![Issues](https://img.shields.io/github/issues/errorcodexero/Reefscape2025?logo=github&color=red)
 ![Pull Requests](https://img.shields.io/github/issues-pr/errorcodexero/Reefscape2025?logo=github&color=orange)
-![Issues](https://img.shields.io/github/issues/errorcodexero/Reefscape2025?logo=github&color=yellow)
+![Last Commit](https://img.shields.io/github/last-commit/errorcodexero/Reefscape2025?logo=git&color=yellow&logoColor=white)
 
 This project is the source code for 1425's robot designed for the First Robotics Competition 2025 game, REEFSCAPE.
 
