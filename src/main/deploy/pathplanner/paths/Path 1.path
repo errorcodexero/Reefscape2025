@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.300512295081968,
+        "y": 6.128842213114754
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.41844262295082,
+        "y": 6.11685450819672
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.7761270491803276,
+        "y": 5.25373975409836
+      },
+      "prevControl": {
+        "x": 4.375516037008967,
+        "y": 5.88908458461346
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef Front Left"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -60.42216131873863
+  },
+  "reversed": false,
+  "folder": "Coral Placement Auto",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
