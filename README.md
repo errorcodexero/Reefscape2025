@@ -1,5 +1,5 @@
 # Reefscape2025
-![Last Commit](https://img.shields.io/github/last-commit/errorcodexero/Reefscape2025?color=red)
+![Last Commit](https://img.shields.io/github/last-commit/errorcodexero/Reefscape2025?logo=git&color=red&logoColor=white)
 ![Pull Requests](https://img.shields.io/github/issues-pr/errorcodexero/Reefscape2025?logo=github&color=orange)
 ![Issues](https://img.shields.io/github/issues/errorcodexero/Reefscape2025?logo=github&color=yellow)
 
