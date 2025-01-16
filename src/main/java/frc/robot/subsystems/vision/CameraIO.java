@@ -10,12 +10,18 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public interface CameraIO {
 
+    public static enum PoseEstimationType {
+        MEGATAG1,
+        MEGATAG2,
+        PHOTON_MULTITAG
+    }
+
     public static record PoseEstimation(
         Pose2d pose,
         double timestamp,
-        double ambiguity,
         double averageDist,
-        int tagCount
+        int tagCount,
+        PoseEstimationType type
     ) {};
 
     public static record Fiducial(
@@ -40,7 +46,7 @@ public interface CameraIO {
         public Translation2d[] rawCorners = new Translation2d[] {};
 
         public Fiducial[] fiducials = new Fiducial[] {};
-        public PoseEstimation[] poseEstimate = new PoseEstimation[] {};
+        public PoseEstimation[] poseEstimates = new PoseEstimation[] {};
 
     }
 

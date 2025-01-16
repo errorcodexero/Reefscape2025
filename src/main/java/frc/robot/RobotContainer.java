@@ -21,6 +21,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -97,8 +98,8 @@ public class RobotContainer {
         }
 
         // Temporary vision instantiation
-        CameraIO cam1 = new CameraIOPhotonSim("simcam1", drive_::getPose);
-        CameraIO cam2 = new CameraIOPhotonSim("simcam1", drive_::getPose);
+        CameraIO cam1 = new CameraIOPhotonSim("simcam1", new Transform3d(), drive_::getPose);
+        CameraIO cam2 = new CameraIOPhotonSim("simcam1", new Transform3d(), drive_::getPose);
 
         vision_ = new AprilTagVision(drive_::addVisionMeasurement, cam1, cam2);
         

@@ -7,6 +7,7 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.Constants.FieldConstants;
 
 public class CameraIOPhotonSim extends CameraIOPhoton {
@@ -16,8 +17,8 @@ public class CameraIOPhotonSim extends CameraIOPhoton {
 
     private final Supplier<Pose2d> robotPoseSupplier_;
 
-    public CameraIOPhotonSim(String name, Supplier<Pose2d> robotPoseSupplier) {
-        super(name);
+    public CameraIOPhotonSim(String name, Transform3d robotToCamera, Supplier<Pose2d> robotPoseSupplier) {
+        super(name, robotToCamera);
         
         // Create vision sim
         sim_ = new VisionSystemSim(name);

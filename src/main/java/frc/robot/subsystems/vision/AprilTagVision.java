@@ -81,7 +81,7 @@ public class AprilTagVision extends SubsystemBase {
             }
 
             // Loop through pose estimations.
-            for (PoseEstimation est : inputs_[cam].poseEstimate) {
+            for (PoseEstimation est : inputs_[cam].poseEstimates) {
                 
                 estimatedPoses.add(est.pose());
 

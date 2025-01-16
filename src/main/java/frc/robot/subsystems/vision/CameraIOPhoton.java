@@ -12,27 +12,22 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.FieldConstants;
 
 public class CameraIOPhoton implements CameraIO {
 
     // Transform from robot to camera.
-    protected static final Transform3d robotToCamera_ = new Transform3d(
-    new Translation3d(-0.3549, 0, 0.16),
-    new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180))
-    );
-    
+    protected final Transform3d robotToCamera_;
     protected final PhotonCamera camera_;
+    
     private final PhotonPoseEstimator poseEstimator_;
     
-    public CameraIOPhoton(String name) {
+    public CameraIOPhoton(String name, Transform3d robotToCamera) {
         // Setup camera
         camera_ = new PhotonCamera(name);
+        robotToCamera_ = robotToCamera;
         
         // Setup pose stimator
         poseEstimator_ = new PhotonPoseEstimator(
@@ -86,19 +81,32 @@ public class CameraIOPhoton implements CameraIO {
         
         inputs.rawCorners = cornerCoords.toArray(new Translation2d[0]);
         inputs.fiducials = fiducials.toArray(new Fiducial[0]);
+
+        // Calculate Average Tag Distance and Ambiguity
+        double averageTagDist = 0.0;
+
+        @SuppressWarnings("unused")
+        double averageAmbiguity = 0.0;
+        
+        for (PhotonTrackedTarget target : result.targets) {
+            averageTagDist += target.getBestCameraToTarget().getTranslation().getNorm();
+            averageAmbiguity += target.getPoseAmbiguity();
+        }
+        averageTagDist /= result.targets.size();
+        averageAmbiguity /= result.targets.size();
         
         Optional<EstimatedRobotPose> optionalPhotonEstimate = poseEstimator_.update(result);
         
         if (optionalPhotonEstimate.isPresent()) {
-            inputs.poseEstimate[0] = new PoseEstimation(
+            inputs.poseEstimates[0] = new PoseEstimation(
                 optionalPhotonEstimate.get().estimatedPose.toPose2d(),
                 optionalPhotonEstimate.get().timestampSeconds,
-                42.0,
-                42.0,
-                optionalPhotonEstimate.get().targetsUsed.size()
+                averageTagDist,
+                optionalPhotonEstimate.get().targetsUsed.size(),
+                PoseEstimationType.PHOTON_MULTITAG
             );
         } else {
-            inputs.poseEstimate = new PoseEstimation[] {};
+            inputs.poseEstimates = new PoseEstimation[] {};
         }
     }
     
