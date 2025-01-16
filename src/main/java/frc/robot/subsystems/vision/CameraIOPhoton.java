@@ -40,12 +40,16 @@ public class CameraIOPhoton implements CameraIO {
     @Override
     public void updateInputs(CameraIOInputsAutoLogged inputs) {
         
+        // Connected Status
         inputs.connected = camera_.isConnected();
+        
+        // Camera Name
+        inputs.name = camera_.getName();
 
+        // Results
         PhotonPipelineResult result = camera_.getLatestResult();
         PhotonTrackedTarget bestTarget = result.getBestTarget();
         
-        // Simple setup
         if (bestTarget != null) {
             inputs.simpleID = bestTarget.getFiducialId();
             inputs.simpleX = bestTarget.getPitch();

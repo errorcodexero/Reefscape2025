@@ -41,8 +41,8 @@ public class AprilTagVision extends SubsystemBase {
 
             // Setup alerts for every camera
             alerts_[i] = new Alert(
-                "Apriltag Vision Camera " + i + " is not connected!",
-                AlertType.kError
+                getCameraName(i) + "\" is not connected!",
+                AlertType.kWarning
             );
         }
     }
@@ -173,7 +173,16 @@ public class AprilTagVision extends SubsystemBase {
      * @return The key to be used for logging.
      */
     private String getCameraKey(int index, String subtable) {
-        return "Vision/Camera" + index + "/" + subtable;
+        return "Vision/"+ getCameraName(index) + "/" + subtable;
+    }
+
+    /**
+     * Gets the name of the camera for logging
+     * @param index
+     * @return
+     */
+    private String getCameraName(int index) {
+        return "Camera" + Integer.toString(index);
     }
 
 }

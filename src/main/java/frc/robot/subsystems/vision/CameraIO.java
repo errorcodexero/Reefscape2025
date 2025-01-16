@@ -35,6 +35,7 @@ public interface CameraIO {
     public static class CameraIOInputs {
         
         public boolean connected = false;
+        public String name = "";
 
         public int simpleID = 0;
         public double simpleX = 0.0;

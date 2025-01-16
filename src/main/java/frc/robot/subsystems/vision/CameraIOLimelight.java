@@ -26,6 +26,9 @@ public class CameraIOLimelight implements CameraIO {
         // Connected if not updated in one second
         inputs.connected = (Timer.getFPGATimestamp() - results.timestamp_RIOFPGA_capture) < 1;
 
+        // Camera name
+        inputs.name = name_;
+
         // Simple Data
         inputs.simpleID = (int) LimelightHelpers.getFiducialID(name_);
         inputs.simpleArea = LimelightHelpers.getTA(name_);

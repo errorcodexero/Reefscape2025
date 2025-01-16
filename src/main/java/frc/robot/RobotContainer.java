@@ -36,6 +36,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
+import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 
 /**
@@ -49,6 +50,7 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive_;
     
+    @SuppressWarnings("unused")
     private final AprilTagVision vision_;
     
     // Controller
@@ -69,6 +71,11 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight));
+
+                vision_ = new AprilTagVision(
+                    drive_::addVisionMeasurement,
+                    new CameraIOLimelight("limelightfront"),
+                    new CameraIOLimelight("limelightback"));
                     
                 break;
             
@@ -81,6 +88,12 @@ public class RobotContainer {
                         new ModuleIOSim(TunerConstants.FrontRight),
                         new ModuleIOSim(TunerConstants.BackLeft),
                         new ModuleIOSim(TunerConstants.BackRight));
+
+                // TODO: Replace these transforms with accurate ones once we know the design
+                vision_ = new AprilTagVision(
+                    drive_::addVisionMeasurement,
+                    new CameraIOPhotonSim("Front", new Transform3d(), drive_::getPose),
+                    new CameraIOPhotonSim("Back", new Transform3d(), drive_::getPose));
                     
                 break;
             
@@ -93,15 +106,14 @@ public class RobotContainer {
                         new ModuleIO() {},
                         new ModuleIO() {},
                         new ModuleIO() {});
+
+                vision_ = new AprilTagVision(
+                    drive_::addVisionMeasurement,
+                    new CameraIO() {},
+                    new CameraIO() {});
                 
                 break;
         }
-
-        // Temporary vision instantiation
-        CameraIO cam1 = new CameraIOPhotonSim("simcam1", new Transform3d(), drive_::getPose);
-        CameraIO cam2 = new CameraIOPhotonSim("simcam1", new Transform3d(), drive_::getPose);
-
-        vision_ = new AprilTagVision(drive_::addVisionMeasurement, cam1, cam2);
         
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
