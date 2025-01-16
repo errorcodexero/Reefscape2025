@@ -30,7 +30,7 @@ public final class Constants {
      * CONFIGURATION
      */
     
-    // Change this to select the current robot type.
+    // Sets the currently running robot.
     private static final RobotType robotType = RobotType.SIMBOT;
 
     public static class DriveConstants {
