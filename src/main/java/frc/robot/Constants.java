@@ -15,7 +15,9 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 
 /**
 * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -23,9 +25,29 @@ import edu.wpi.first.wpilibj.RobotBase;
 * (log replay from a file).
 */
 public final class Constants {
+
+    /**
+     * CONFIGURATION
+     */
     
-    public static final Mode simMode = Mode.SIM;
-    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+    // Change this to select the current robot type.
+    private static final RobotType robotType = RobotType.SIMBOT;
+
+    public static class DriveConstants {
+        
+        public static final double slowModeJoystickMultiplier = 0.4;
+        
+    }
+    
+    public static class FieldConstants {
+        
+        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        
+    }
+
+    /**
+     * ROBOT STATE
+     */
     
     public static enum Mode {
         /** Running on a real robot. */
@@ -37,17 +59,40 @@ public final class Constants {
         /** Replaying from a log file. */
         REPLAY
     }
-    
-    public static class DriveConstants {
-        
-        public static final double slowModeJoystickMultiplier = 0.4;
-        
+
+    public static enum RobotType {
+        /** The Alpha Bot (aka the old practice bot) */
+        ALPHA,
+
+        /** The Practice Bot (aka the old allegro) */
+        PRACTICE,
+
+        /** The Sim Bot */
+        SIMBOT
     }
-    
-    public static class FieldConstants {
-        
-        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-        
+
+    // This is only a fallback! This will not change the robot type.
+    private static final RobotType defaultRobotType = RobotType.ALPHA;
+
+    private static final Alert invalidRobotType = new Alert(
+        "Invalid RobotType selected. Defaulting to " + defaultRobotType.toString(),
+        AlertType.kWarning
+    );
+
+    public static RobotType getRobot() {
+        if (RobotBase.isReal() && robotType == RobotType.SIMBOT) {
+            invalidRobotType.set(true);
+            return defaultRobotType;
+        }
+
+        return robotType;
+    }
+
+    public static final Mode getMode() {
+        return switch(getRobot()) {
+            case SIMBOT -> Mode.SIM;
+            default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+        };
     }
     
 }

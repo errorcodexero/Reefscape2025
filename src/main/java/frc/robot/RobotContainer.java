@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.HashMap;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -49,7 +50,7 @@ public class RobotContainer {
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
 
     // Subsystems
-    private final Drive drive_;
+    private Drive drive_ = null;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -59,9 +60,13 @@ public class RobotContainer {
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        switch (Constants.currentMode) {
-            case REAL:
-                // Real robot, instantiate hardware IO implementations
+
+        /**
+         * Subsystem setup
+         */
+        switch (Constants.getRobot()) {
+            case ALPHA:
+
                 drive_ =
                     new Drive(
                         new GyroIOPigeon2(),
@@ -72,7 +77,19 @@ public class RobotContainer {
                     
                 break;
             
-            case SIM:
+            case PRACTICE:
+
+                drive_ =
+                    new Drive(
+                        new GyroIOPigeon2(),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft),
+                        new ModuleIOTalonFX(TunerConstants.BackRight));
+                        
+                break;
+            
+            case SIMBOT:
                 // Sim robot, instantiate physics sim IO implementations
                 drive_ =
                     new Drive(
@@ -81,21 +98,24 @@ public class RobotContainer {
                         new ModuleIOSim(TunerConstants.FrontRight),
                         new ModuleIOSim(TunerConstants.BackLeft),
                         new ModuleIOSim(TunerConstants.BackRight));
-                    
-                break;
-            
-            default:
-                // Replayed robot, disable IO implementations
-                drive_ =
-                    new Drive(
-                        new GyroIO() {},
-                        new ModuleIO() {},
-                        new ModuleIO() {},
-                        new ModuleIO() {},
-                        new ModuleIO() {});
                 
                 break;
         }
+
+        /**
+         * Empty subsystem setup (required in replay)
+         */
+        if (drive_ == null) {
+            drive_ =
+                new Drive(
+                    new GyroIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+        }
+
+        // Simulation setup
         this.addSubsystem(drive_) ;
 
         // Set up auto chooser
