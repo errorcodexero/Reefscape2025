@@ -148,6 +148,12 @@ public class AprilTagVision extends SubsystemBase {
         return xIsValid && yIsValid;
     }
 
+    /**
+     * Get the key of a camera-specific value.
+     * @param index The camera to get the path of.
+     * @param subtable The subtable within the camera to get.
+     * @return The key to be used for logging.
+     */
     private String getCameraPath(int index, String subtable) {
         return "Vision/Camera" + index + "/" + subtable;
     }
