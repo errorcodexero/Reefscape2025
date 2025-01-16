@@ -35,6 +35,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
+import frc.robot.subsystems.vision.CameraIOPhotonSim;
 
 /**
 * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -96,7 +97,10 @@ public class RobotContainer {
         }
 
         // Temporary vision instantiation
-        vision_ = new AprilTagVision(drive_::addVisionMeasurement, new CameraIO() {}, new CameraIO() {});
+        CameraIO cam1 = new CameraIOPhotonSim("simcam1", drive_::getPose);
+        CameraIO cam2 = new CameraIOPhotonSim("simcam1", drive_::getPose);
+
+        vision_ = new AprilTagVision(drive_::addVisionMeasurement, cam1, cam2);
         
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
