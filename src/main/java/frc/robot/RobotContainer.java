@@ -17,11 +17,13 @@ import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import java.util.HashMap;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
@@ -33,6 +35,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
 * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,6 +44,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 * subsystems, commands, and button mappings) should be declared here.
 */
 public class RobotContainer {
+
+    // Mapping of subsystems name to subsystems, used by the simulator
+    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
 
     // Subsystems
     private final Drive drive_;
@@ -90,7 +96,8 @@ public class RobotContainer {
                 
                 break;
         }
-        
+        this.addSubsystem(drive_) ;
+
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         
@@ -105,6 +112,16 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+    }
+
+    public ISimulatedSubsystem get(String name) {
+        return this.subsystems_.get(name) ;
+    }
+
+    private void addSubsystem(SubsystemBase sub) {
+        if (sub instanceof ISimulatedSubsystem) {
+            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
+        }
     }
     
     /**
@@ -166,5 +183,4 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser_.get();
     }
-
 }
