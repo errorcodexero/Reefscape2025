@@ -2,12 +2,15 @@ package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,12 +20,16 @@ import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 
 public class AprilTagVision extends SubsystemBase {
 
+    private final PoseEstimateConsumer poseEstimateConsumer_;
+
     private final CameraIO[] io_;
     private final CameraIOInputsAutoLogged[] inputs_;
 
     private final Alert[] alerts_;
 
-    public AprilTagVision(Consumer<Pose2d> poseConsumer, CameraIO... io) {
+    public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
+        poseEstimateConsumer_ = poseEstimateConsumer;
+
         io_ = io;
 
         inputs_ = new CameraIOInputsAutoLogged[io.length];
@@ -94,10 +101,10 @@ public class AprilTagVision extends SubsystemBase {
             summaryDeclinedPoses.addAll(declinedPoses);
 
             // Log camera-specific outputs.
-            Logger.recordOutput(getCameraPath(cam, "TagPoses"), tagPoses.toArray(new Pose3d[0]));
-            Logger.recordOutput(getCameraPath(cam, "BotPoses/All"), estimatedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraPath(cam, "BotPoses/Accepted"), acceptedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraPath(cam, "BotPoses/Declined"), declinedPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput(getCameraKey(cam, "TagPoses"), tagPoses.toArray(new Pose3d[0]));
+            Logger.recordOutput(getCameraKey(cam, "BotPoses/All"), estimatedPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput(getCameraKey(cam, "BotPoses/Accepted"), acceptedPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput(getCameraKey(cam, "BotPoses/Declined"), declinedPoses.toArray(new Pose2d[0]));
 
         }
 
@@ -108,6 +115,15 @@ public class AprilTagVision extends SubsystemBase {
 
     }
 
+    @FunctionalInterface
+    public static interface PoseEstimateConsumer {
+        public void integrate(
+            Pose2d robotPose,
+            double timestampSecnds,
+            Matrix<N3, N1> standardDeviations
+        );
+    }
+
     /**
      * Integrates a pose estimation with the PoseEstimator.
      * @param est
@@ -115,7 +131,9 @@ public class AprilTagVision extends SubsystemBase {
      */
     @Deprecated
     private void integratePoseEstimate(PoseEstimation est) {
-        
+        // TODO: Calculate Stddevs instead of hard coding.
+
+        poseEstimateConsumer_.integrate(est.pose(), est.timestamp(), VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY));
     }
 
     /**
@@ -154,7 +172,7 @@ public class AprilTagVision extends SubsystemBase {
      * @param subtable The subtable within the camera to get.
      * @return The key to be used for logging.
      */
-    private String getCameraPath(int index, String subtable) {
+    private String getCameraKey(int index, String subtable) {
         return "Vision/Camera" + index + "/" + subtable;
     }
 

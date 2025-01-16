@@ -33,6 +33,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.CameraIO;
 
 /**
 * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,6 +46,8 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive drive_;
+    
+    private final AprilTagVision vision_;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -90,6 +94,9 @@ public class RobotContainer {
                 
                 break;
         }
+
+        // Temporary vision instantiation
+        vision_ = new AprilTagVision(drive_::addVisionMeasurement, new CameraIO() {}, new CameraIO() {});
         
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
