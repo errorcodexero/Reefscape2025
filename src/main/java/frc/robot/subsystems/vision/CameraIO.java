@@ -50,10 +50,6 @@ public interface CameraIO {
      */
     public default void updateInputs(CameraIOInputsAutoLogged inputs) {};
 
-    public default String getName() {
-        return null;
-    };
-
     /**
      * Forces the indicator light on the limelight to be off.
      */
