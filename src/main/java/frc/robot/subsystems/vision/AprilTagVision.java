@@ -53,7 +53,7 @@ public class AprilTagVision extends SubsystemBase {
         // Update inputs for each camera
         for (int index = 0; index < io_.length; index++) {
             io_[index].updateInputs(inputs_[index]);
-            Logger.processInputs("Camera" + index, inputs_[index]);
+            Logger.processInputs("Vision/Camera" + index, inputs_[index]);
         }
 
         ArrayList<Pose3d> summaryTagPoses = new ArrayList<>();
