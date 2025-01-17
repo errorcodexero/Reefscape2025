@@ -13,15 +13,25 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -91,9 +101,15 @@ public class RobotContainer {
 
                 // TODO: Replace these transforms with accurate ones once we know the design
                 vision_ = new AprilTagVision(
-                    drive_::addVisionMeasurement,
-                    new CameraIOPhotonSim("Front", new Transform3d(), drive_::getPose),
-                    new CameraIOPhotonSim("Back", new Transform3d(), drive_::getPose));
+                    (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
+                    new CameraIOPhotonSim("Front", new Transform3d(
+                        new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
+                        new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
+                    ), drive_::getPose),
+                    new CameraIOPhotonSim("Back", new Transform3d(
+                        new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
+                        new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
+                    ), drive_::getPose));
                     
                 break;
             

@@ -28,7 +28,7 @@ public class CameraIOPhoton implements CameraIO {
         // Setup camera
         camera_ = new PhotonCamera(name);
         robotToCamera_ = robotToCamera;
-        
+
         // Setup pose stimator
         poseEstimator_ = new PhotonPoseEstimator(
             FieldConstants.layout,
@@ -100,15 +100,19 @@ public class CameraIOPhoton implements CameraIO {
         averageAmbiguity /= result.targets.size();
         
         Optional<EstimatedRobotPose> optionalPhotonEstimate = poseEstimator_.update(result);
+
+        ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
         
         if (optionalPhotonEstimate.isPresent()) {
-            inputs.poseEstimates[0] = new PoseEstimation(
+            poseEstimates.add(new PoseEstimation(
                 optionalPhotonEstimate.get().estimatedPose.toPose2d(),
                 optionalPhotonEstimate.get().timestampSeconds,
                 averageTagDist,
                 optionalPhotonEstimate.get().targetsUsed.size(),
                 PoseEstimationType.PHOTON_MULTITAG
-            );
+            ));
+
+            inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
         } else {
             inputs.poseEstimates = new PoseEstimation[] {};
         }
