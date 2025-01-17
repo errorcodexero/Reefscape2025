@@ -7,8 +7,7 @@ package main.java.frc.robot.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ClimberSubsystem extends SubsystemBase {
-  
+public class Climber extends SubsystemBase {
 
   public ClimberSubsystem() {
 
