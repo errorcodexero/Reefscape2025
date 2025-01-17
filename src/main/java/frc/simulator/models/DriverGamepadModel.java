@@ -140,6 +140,11 @@ public class DriverGamepadModel extends SimulationModel {
         }
 
         setCreated();
+        
+        DriverStationDataJNI.setJoystickButtons((byte) index_, buttons_, button_count_);        
+        DriverStationDataJNI.setJoystickAxes((byte) index_, axes_) ;
+        DriverStationDataJNI.setJoystickPOVs((byte) index_, povs_) ;
+
         return true ;
     }
 
