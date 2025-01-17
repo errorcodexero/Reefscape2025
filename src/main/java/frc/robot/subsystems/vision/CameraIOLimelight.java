@@ -63,6 +63,7 @@ public class CameraIOLimelight implements CameraIO {
             estimateMegatag1.pose,
             estimateMegatag1.timestampSeconds,
             estimateMegatag1.avgTagDist,
+            0.0,
             estimateMegatag1.tagCount,
             PoseEstimationType.MEGATAG1
         ));
@@ -71,6 +72,7 @@ public class CameraIOLimelight implements CameraIO {
             estimateMegatag2.pose,
             estimateMegatag2.timestampSeconds,
             estimateMegatag2.avgTagDist,
+            0.0,
             estimateMegatag2.tagCount,
             PoseEstimationType.MEGATAG2
         ));

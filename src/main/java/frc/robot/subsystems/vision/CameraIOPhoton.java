@@ -3,38 +3,27 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
+import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants.FieldConstants;
 
 public class CameraIOPhoton implements CameraIO {
 
     // Transform from robot to camera.
     protected final Transform3d robotToCamera_;
     protected final PhotonCamera camera_;
-    
-    private final PhotonPoseEstimator poseEstimator_;
-    
+
     public CameraIOPhoton(String name, Transform3d robotToCamera) {
         // Setup camera
         camera_ = new PhotonCamera(name);
         robotToCamera_ = robotToCamera;
-
-        // Setup pose stimator
-        poseEstimator_ = new PhotonPoseEstimator(
-            FieldConstants.layout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            robotToCamera_
-        );
     }
     
     @Override
@@ -99,16 +88,21 @@ public class CameraIOPhoton implements CameraIO {
         averageTagDist /= result.targets.size();
         averageAmbiguity /= result.targets.size();
         
-        Optional<EstimatedRobotPose> optionalPhotonEstimate = poseEstimator_.update(result);
+        Optional<MultiTargetPNPResult> multitagResult = result.multitagResult;
 
         ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
         
-        if (optionalPhotonEstimate.isPresent()) {
+        if (multitagResult.isPresent()) {
+            Transform3d fieldToCamera = multitagResult.get().estimatedPose.best;
+            Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera_.inverse());
+            Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+
             poseEstimates.add(new PoseEstimation(
-                optionalPhotonEstimate.get().estimatedPose.toPose2d(),
-                optionalPhotonEstimate.get().timestampSeconds,
+                robotPose.toPose2d(),
+                result.getTimestampSeconds(),
                 averageTagDist,
-                optionalPhotonEstimate.get().targetsUsed.size(),
+                multitagResult.get().estimatedPose.ambiguity,
+                multitagResult.get().fiducialIDsUsed.size(),
                 PoseEstimationType.PHOTON_MULTITAG
             ));
 

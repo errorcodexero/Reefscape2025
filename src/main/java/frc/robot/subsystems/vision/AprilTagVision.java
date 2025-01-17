@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
+import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
 public class AprilTagVision extends SubsystemBase {
 
@@ -131,9 +132,25 @@ public class AprilTagVision extends SubsystemBase {
      */
     @Deprecated
     private void integratePoseEstimate(PoseEstimation est) {
-        // TODO: Calculate Stddevs instead of hard coding.
+        // TODO: Look into this calculation / into other calculations.
+        double stdDevFactor =
+            est.averageDist() * est.averageDist() / est.tagCount();
+        double linearStdDev = 0.02 * stdDevFactor;
+        double angularStdDev = 0.06 * stdDevFactor;
 
-        poseEstimateConsumer_.integrate(est.pose(), est.timestamp(), VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY));
+        Logger.recordOutput("Vision/PoseStdDev/Linear", linearStdDev);
+        Logger.recordOutput("Vision/PoseStdDev/Angular", angularStdDev);
+
+        if (est.type() == PoseEstimationType.MEGATAG2) {
+          linearStdDev *= 0.5;
+          angularStdDev *= Double.POSITIVE_INFINITY;
+        }
+
+        poseEstimateConsumer_.integrate(
+            est.pose(),
+            est.timestamp(),
+            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
+        );
     }
 
     /**
@@ -149,6 +166,8 @@ public class AprilTagVision extends SubsystemBase {
         if (estimation.pose().getTranslation().getNorm() == 0) return false; // If the estimate is at the origin exactly (unrealistic).
 
         if (!isPoseOnField(estimation.pose())) return false; // The pose is not on the field.
+
+        if (estimation.ambiguity() > 0.3) return false; // It is ambiguous (photonvision especially)
 
         // Otherwise, accept!
         return true;

@@ -20,6 +20,7 @@ public interface CameraIO {
         Pose2d pose,
         double timestamp,
         double averageDist,
+        double ambiguity,
         int tagCount,
         PoseEstimationType type
     ) {};
