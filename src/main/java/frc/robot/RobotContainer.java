@@ -170,6 +170,23 @@ public class RobotContainer {
         gamepad_.povRight().whileTrue(
             drive_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
         );
+
+        // Robot relative diagonal
+        gamepad_.povUp().and(gamepad_.povLeft()).whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povUp().and(gamepad_.povRight()).whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+        );
+        
+        gamepad_.povDown().and(gamepad_.povLeft()).whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povDown().and(gamepad_.povRight()).whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+        );
         
         // Reset gyro to 0° when Y & B button is pressed
         gamepad_.y().and(gamepad_.b()).onTrue(drive_.resetGyroCmd());
