@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
@@ -142,7 +143,7 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/PoseStdDev/Angular", angularStdDev);
 
         if (est.type() == PoseEstimationType.MEGATAG2) {
-          linearStdDev *= 0.5;
+          linearStdDev *= VisionConstants.megatag2Factor;
           angularStdDev *= Double.POSITIVE_INFINITY;
         }
 
@@ -163,11 +164,13 @@ public class AprilTagVision extends SubsystemBase {
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
+        if (estimation.tagCount() < VisionConstants.minimumTagCount) return false; // If there are less than the configured minimum.
+
         if (estimation.pose().getTranslation().getNorm() == 0) return false; // If the estimate is at the origin exactly (unrealistic).
 
         if (!isPoseOnField(estimation.pose())) return false; // The pose is not on the field.
 
-        if (estimation.ambiguity() > 0.3) return false; // It is ambiguous (photonvision especially)
+        if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) return false; // It is ambiguous (photonvision especially)
 
         // Otherwise, accept!
         return true;
