@@ -64,8 +64,8 @@ public class RobotContainer {
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
 
     // Subsystems
-    private Drive drive_ = null;
-    private AprilTagVision vision_ = null;
+    private Drive drive_;
+    private AprilTagVision vision_;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -149,6 +149,7 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {});
+
         }
         
         if (vision_ == null) {
@@ -156,6 +157,8 @@ public class RobotContainer {
                 drive_::addVisionMeasurement,
                 new CameraIO() {},
                 new CameraIO() {});
+
+            System.out.println("HI");
         }
 
         // Simulation setup
