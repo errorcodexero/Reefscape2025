@@ -79,8 +79,11 @@ public final class Constants {
     }
 
     public static enum RobotType {
-        /** The Alpha Bot (aka the old practice bot) */
+        /** The Alpha Bot (aka the 2024 practice bot drivebase) */
         ALPHA,
+
+        /** The Competition Bot */
+        COMPETITION,
 
         /** The Practice Bot (aka the old allegro) */
         PRACTICE,

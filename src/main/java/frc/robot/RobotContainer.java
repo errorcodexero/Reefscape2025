@@ -96,6 +96,12 @@ public class RobotContainer {
                     new CameraIOLimelight(VisionConstants.backLimelightName));
                     
                 break;
+
+            case COMPETITION:
+
+                /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
+
+                break;
             
             case PRACTICE:
 
@@ -157,8 +163,6 @@ public class RobotContainer {
                 drive_::addVisionMeasurement,
                 new CameraIO() {},
                 new CameraIO() {});
-
-            System.out.println("HI");
         }
 
         // Simulation setup
