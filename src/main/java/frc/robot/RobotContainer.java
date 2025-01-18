@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -91,8 +92,8 @@ public class RobotContainer {
 
                 vision_ = new AprilTagVision(
                     drive_::addVisionMeasurement,
-                    new CameraIOLimelight("limelightfront"),
-                    new CameraIOLimelight("limelightback"));
+                    new CameraIOLimelight(VisionConstants.frontLimelightName),
+                    new CameraIOLimelight(VisionConstants.backLimelightName));
                     
                 break;
             
@@ -108,8 +109,8 @@ public class RobotContainer {
 
                 vision_ = new AprilTagVision(
                     drive_::addVisionMeasurement,
-                    new CameraIOLimelight("limelightfront"),
-                    new CameraIOLimelight("limelightback"));
+                    new CameraIOLimelight(VisionConstants.frontLimelightName),
+                    new CameraIOLimelight(VisionConstants.backLimelightName));
                         
                 break;
             
