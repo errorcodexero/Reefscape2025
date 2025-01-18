@@ -12,7 +12,7 @@ public class AlgaeManipulator extends SubsystemBase{
 
      @Override
      public void periodic(){
-        io_.update(inputs_);
+        io_.updateInputs(inputs_);
      }
 }
 

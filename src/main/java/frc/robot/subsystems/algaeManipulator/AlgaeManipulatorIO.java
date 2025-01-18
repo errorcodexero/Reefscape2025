@@ -2,11 +2,13 @@ package frc.robot.subsystems.algaeManipulator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public abstract interface AlgaeManipulatorIO{
+public interface AlgaeManipulatorIO{
     @AutoLog
     public class AlgaeManipulatorIOInputs{
         
     }
 
-    abstract void update(AlgaeManipulatorIOInputsAutoLogged inputs_);
+    public default void updateInputs(AlgaeManipulatorIOInputsAutoLogged inputs_){
+        
+    }
 }
