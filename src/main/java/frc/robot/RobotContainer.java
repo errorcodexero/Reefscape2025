@@ -13,7 +13,16 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.HashMap;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,18 +34,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -79,75 +82,77 @@ public class RobotContainer {
         /**
          * Subsystem setup
          */
-        switch (Constants.getRobot()) {
-            case ALPHA:
+        if (Constants.getMode() != Mode.REPLAY) {
+            switch (Constants.getRobot()) {
+                case ALPHA:
 
-                drivebase_ =
-                    new Drive(
-                        new GyroIOPigeon2(),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft),
-                        new ModuleIOTalonFX(TunerConstants.BackRight));
+                    drivebase_ =
+                        new Drive(
+                            new GyroIOPigeon2(),
+                            new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                            new ModuleIOTalonFX(TunerConstants.FrontRight),
+                            new ModuleIOTalonFX(TunerConstants.BackLeft),
+                            new ModuleIOTalonFX(TunerConstants.BackRight));
 
-                vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
-                    new CameraIOLimelight(VisionConstants.frontLimelightName),
-                    new CameraIOLimelight(VisionConstants.backLimelightName));
-                    
-                break;
-
-            case COMPETITION:
-
-                /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
-
-                break;
-            
-            case PRACTICE:
-
-                drivebase_ =
-                    new Drive(
-                        new GyroIOPigeon2(),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft),
-                        new ModuleIOTalonFX(TunerConstants.BackRight));
-
-                vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
-                    new CameraIOLimelight(VisionConstants.frontLimelightName),
-                    new CameraIOLimelight(VisionConstants.backLimelightName));
+                    vision_ = new AprilTagVision(
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight(VisionConstants.frontLimelightName),
+                        new CameraIOLimelight(VisionConstants.backLimelightName));
                         
-                break;
-            
-            case SIMBOT:
-                // Sim robot, instantiate physics sim IO implementations
-                drivebase_ =
-                    new Drive(
-                        new GyroIO() {},
-                        new ModuleIOSim(TunerConstants.FrontLeft),
-                        new ModuleIOSim(TunerConstants.FrontRight),
-                        new ModuleIOSim(TunerConstants.BackLeft),
-                        new ModuleIOSim(TunerConstants.BackRight));
+                    break;
 
-                vision_ = new AprilTagVision(
-                    (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
-                    new CameraIOPhotonSim("Front", new Transform3d(
-                        new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
-                        new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
-                    ), drivebase_::getPose),
-                    new CameraIOPhotonSim("Back", new Transform3d(
-                        new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
-                        new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
-                    ), drivebase_::getPose));
-                    
-                break;
+                case COMPETITION:
+
+                    /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
+
+                    break;
+                
+                case PRACTICE:
+
+                    drivebase_ =
+                        new Drive(
+                            new GyroIOPigeon2(),
+                            new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                            new ModuleIOTalonFX(TunerConstants.FrontRight),
+                            new ModuleIOTalonFX(TunerConstants.BackLeft),
+                            new ModuleIOTalonFX(TunerConstants.BackRight));
+
+                    vision_ = new AprilTagVision(
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight(VisionConstants.frontLimelightName),
+                        new CameraIOLimelight(VisionConstants.backLimelightName));
+                            
+                    break;
+                
+                case SIMBOT:
+                    // Sim robot, instantiate physics sim IO implementations
+                    drivebase_ =
+                        new Drive(
+                            new GyroIO() {},
+                            new ModuleIOSim(TunerConstants.FrontLeft),
+                            new ModuleIOSim(TunerConstants.FrontRight),
+                            new ModuleIOSim(TunerConstants.BackLeft),
+                            new ModuleIOSim(TunerConstants.BackRight));
+
+                    vision_ = new AprilTagVision(
+                        (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
+                        new CameraIOPhotonSim("Front", new Transform3d(
+                            new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
+                        ), drivebase_::getPose),
+                        new CameraIOPhotonSim("Back", new Transform3d(
+                            new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
+                        ), drivebase_::getPose));
+                        
+                    break;
+            }
         }
 
         /**
          * Empty subsystem setup (required in replay)
          */
-        if (drivebase_ == null) {
+        if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
             drivebase_ =
                 new Drive(
                     new GyroIO() {},
