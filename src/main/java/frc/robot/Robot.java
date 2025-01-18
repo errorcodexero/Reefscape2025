@@ -16,10 +16,14 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import frc.simulator.engine.ISimulatedSubsystem;
+import frc.simulator.engine.SimulationEngine;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -35,6 +39,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 */
 public class Robot extends LoggedRobot {
     
+    private static boolean useXeroSimulator = true;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
@@ -100,10 +105,38 @@ public class Robot extends LoggedRobot {
                 throw new RuntimeException("You are using an unsupported swerve configuration, which this template does not support without manual customization. The 2025 release of Phoenix supports some swerve configurations which were not available during 2025 beta testing, preventing any development and support from the AdvantageKit developers.");
             }
         }
+
+        if (Robot.useXeroSimulator()) {
+            String str = "init" ;
+            SimulationEngine.initializeSimulator(this);
+            addRobotSimulationModels();
+            SimulationEngine.getInstance().initAll(str);
+        }        
         
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
+    }
+
+    public static boolean useXeroSimulator() {
+        return useXeroSimulator && LoggedRobot.isSimulation() ;
+    }
+
+    public void robotInit() {
+        super.robotInit() ;
+
+        if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
+            //
+            // If we are simulating, create the simulation modules required
+            //
+            SimulationEngine.getInstance().createModels();
+        }
+    }
+
+    public void addRobotSimulationModels() {
+        //
+        // TODO: add any simulation models for this year's robot
+        //
     }
     
     /** This function is called periodically during all modes. */
@@ -121,6 +154,13 @@ public class Robot extends LoggedRobot {
         
         // Return to normal thread priority
         Threads.setCurrentThreadPriority(false, 10);
+
+        if (Robot.useXeroSimulator()) {
+            SimulationEngine engine = SimulationEngine.getInstance();
+            if (engine != null) {
+                engine.run(getPeriod());
+            }
+        }        
     }
     
     /** This function is called once when the robot is disabled. */
@@ -180,5 +220,9 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {}
+
+    public ISimulatedSubsystem getSubSystem(String name) {
+        return robotContainer.get(name) ;
+    }
     
 }
