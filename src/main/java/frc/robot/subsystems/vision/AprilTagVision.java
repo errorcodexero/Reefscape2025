@@ -144,7 +144,7 @@ public class AprilTagVision extends SubsystemBase {
 
         if (est.type() == PoseEstimationType.MEGATAG2) {
           linearStdDev *= VisionConstants.megatag2Factor;
-          angularStdDev *= Double.POSITIVE_INFINITY;
+          angularStdDev = Double.POSITIVE_INFINITY;
         }
 
         poseEstimateConsumer_.integrate(
@@ -171,6 +171,8 @@ public class AprilTagVision extends SubsystemBase {
         if (!isPoseOnField(estimation.pose())) return false; // The pose is not on the field.
 
         if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) return false; // It is ambiguous (photonvision especially)
+
+        // TODO: Velocity Thresholding
 
         // Otherwise, accept!
         return true;
