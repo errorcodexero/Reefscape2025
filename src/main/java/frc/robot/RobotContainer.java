@@ -89,10 +89,10 @@ public class RobotContainer {
                     drivebase_ =
                         new Drive(
                             new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft),
-                            new ModuleIOTalonFX(TunerConstants.BackRight));
+                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
@@ -112,10 +112,10 @@ public class RobotContainer {
                     drivebase_ =
                         new Drive(
                             new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft),
-                            new ModuleIOTalonFX(TunerConstants.BackRight));
+                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
@@ -220,11 +220,11 @@ public class RobotContainer {
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
-        DriveCommands.joystickDrive(
-            drivebase_,
-            () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-            () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-            () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());

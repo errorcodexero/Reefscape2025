@@ -59,23 +59,27 @@ public class CameraIOLimelight implements CameraIO {
         PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);
 
-        poseEstimates.add(new PoseEstimation(
-            estimateMegatag1.pose,
-            estimateMegatag1.timestampSeconds,
-            estimateMegatag1.avgTagDist,
-            0.0,
-            estimateMegatag1.tagCount,
-            PoseEstimationType.MEGATAG1
-        ));
+        if (estimateMegatag1 != null) {
+            poseEstimates.add(new PoseEstimation(
+                estimateMegatag1.pose,
+                estimateMegatag1.timestampSeconds,
+                estimateMegatag1.avgTagDist,
+                0.0,
+                estimateMegatag1.tagCount,
+                PoseEstimationType.MEGATAG1
+            ));
+        }
         
-        poseEstimates.add(new PoseEstimation(
-            estimateMegatag2.pose,
-            estimateMegatag2.timestampSeconds,
-            estimateMegatag2.avgTagDist,
-            0.0,
-            estimateMegatag2.tagCount,
-            PoseEstimationType.MEGATAG2
-        ));
+        if (estimateMegatag2 != null) {
+            poseEstimates.add(new PoseEstimation(
+                estimateMegatag2.pose,
+                estimateMegatag2.timestampSeconds,
+                estimateMegatag2.avgTagDist,
+                0.0,
+                estimateMegatag2.tagCount,
+                PoseEstimationType.MEGATAG2
+            ));
+        }
 
         inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
 
