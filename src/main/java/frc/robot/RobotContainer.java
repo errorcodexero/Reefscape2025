@@ -13,14 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -34,6 +26,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -178,11 +177,11 @@ public class RobotContainer {
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
         drive_.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive_,
-            () -> -gamepad_.getLeftY(),
-            () -> -gamepad_.getLeftX(),
-            () -> -gamepad_.getRightX()));
+            DriveCommands.joystickDrive(
+                drive_,
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
@@ -210,6 +209,23 @@ public class RobotContainer {
         
         gamepad_.povRight().whileTrue(
             drive_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
+        );
+
+        // Robot relative diagonal
+        gamepad_.povUpLeft().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povUpRight().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+        );
+        
+        gamepad_.povDownLeft().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povDownRight().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
         
         // Reset gyro to 0° when Y & B button is pressed

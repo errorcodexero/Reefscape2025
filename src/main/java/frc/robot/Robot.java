@@ -13,6 +13,13 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
@@ -24,13 +31,6 @@ import frc.robot.generated.TunerConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
 import frc.simulator.engine.SimulationEngine;
 
-import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
 /**
 * The VM is configured to automatically run this class, and to call the functions corresponding to
 * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -39,7 +39,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 */
 public class Robot extends LoggedRobot {
     
-    private static boolean useXeroSimulator = true;
+    private static boolean useXeroSimulator = false;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
