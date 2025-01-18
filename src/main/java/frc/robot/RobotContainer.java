@@ -123,7 +123,6 @@ public class RobotContainer {
                         new ModuleIOSim(TunerConstants.BackLeft),
                         new ModuleIOSim(TunerConstants.BackRight));
 
-                // TODO: Replace these transforms with accurate ones once we know the design
                 vision_ = new AprilTagVision(
                     (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
                     new CameraIOPhotonSim("Front", new Transform3d(
