@@ -13,15 +13,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import java.util.HashMap;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -137,11 +137,11 @@ public class RobotContainer {
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
         drive_.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive_,
-            () -> -gamepad_.getLeftY(),
-            () -> -gamepad_.getLeftX(),
-            () -> -gamepad_.getRightX()));
+            DriveCommands.joystickDrive(
+                drive_,
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
