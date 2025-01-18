@@ -13,16 +13,25 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import java.util.HashMap;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -36,6 +45,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.CameraIO;
+import frc.robot.subsystems.vision.CameraIOLimelight;
+import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -51,6 +64,7 @@ public class RobotContainer {
 
     // Subsystems
     private Drive drive_ = null;
+    private AprilTagVision vision_ = null;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -74,6 +88,11 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight));
+
+                vision_ = new AprilTagVision(
+                    drive_::addVisionMeasurement,
+                    new CameraIOLimelight("limelightfront"),
+                    new CameraIOLimelight("limelightback"));
                     
                 break;
             
@@ -86,6 +105,11 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight));
+
+                vision_ = new AprilTagVision(
+                    drive_::addVisionMeasurement,
+                    new CameraIOLimelight("limelightfront"),
+                    new CameraIOLimelight("limelightback"));
                         
                 break;
             
@@ -98,7 +122,19 @@ public class RobotContainer {
                         new ModuleIOSim(TunerConstants.FrontRight),
                         new ModuleIOSim(TunerConstants.BackLeft),
                         new ModuleIOSim(TunerConstants.BackRight));
-                
+
+                // TODO: Replace these transforms with accurate ones once we know the design
+                vision_ = new AprilTagVision(
+                    (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
+                    new CameraIOPhotonSim("Front", new Transform3d(
+                        new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
+                        new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
+                    ), drive_::getPose),
+                    new CameraIOPhotonSim("Back", new Transform3d(
+                        new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
+                        new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
+                    ), drive_::getPose));
+                    
                 break;
         }
 
@@ -113,6 +149,13 @@ public class RobotContainer {
                     new ModuleIO() {},
                     new ModuleIO() {},
                     new ModuleIO() {});
+        }
+        
+        if (vision_ == null) {
+            vision_ = new AprilTagVision(
+                drive_::addVisionMeasurement,
+                new CameraIO() {},
+                new CameraIO() {});
         }
 
         // Simulation setup
@@ -157,11 +200,11 @@ public class RobotContainer {
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
         drive_.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive_,
-            () -> -gamepad_.getLeftY(),
-            () -> -gamepad_.getLeftX(),
-            () -> -gamepad_.getRightX()));
+            DriveCommands.joystickDrive(
+                drive_,
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
@@ -189,6 +232,23 @@ public class RobotContainer {
         
         gamepad_.povRight().whileTrue(
             drive_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
+        );
+
+        // Robot relative diagonal
+        gamepad_.povUpLeft().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povUpRight().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+        );
+        
+        gamepad_.povDownLeft().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povDownRight().whileTrue(
+            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
         
         // Reset gyro to 0° when Y & B button is pressed

@@ -13,24 +13,23 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.generated.TunerConstants;
-import frc.simulator.engine.ISimulatedSubsystem;
-import frc.simulator.engine.SimulationEngine;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+
+import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.generated.TunerConstants;
+import frc.simulator.engine.ISimulatedSubsystem;
+import frc.simulator.engine.SimulationEngine;
 
 /**
 * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -40,6 +39,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 */
 public class Robot extends LoggedRobot {
     
+    private static boolean useXeroSimulator = false;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
@@ -106,7 +106,7 @@ public class Robot extends LoggedRobot {
             }
         }
 
-        if (LoggedRobot.isSimulation()) {
+        if (Robot.useXeroSimulator()) {
             String str = "init" ;
             SimulationEngine.initializeSimulator(this);
             addRobotSimulationModels();
@@ -118,10 +118,14 @@ public class Robot extends LoggedRobot {
         robotContainer = new RobotContainer();
     }
 
+    public static boolean useXeroSimulator() {
+        return useXeroSimulator && LoggedRobot.isSimulation() ;
+    }
+
     public void robotInit() {
         super.robotInit() ;
 
-        if (RobotBase.isSimulation() && SimulationEngine.getInstance() != null) {
+        if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
             //
             // If we are simulating, create the simulation modules required
             //
@@ -151,7 +155,7 @@ public class Robot extends LoggedRobot {
         // Return to normal thread priority
         Threads.setCurrentThreadPriority(false, 10);
 
-        if (isSimulation()) {
+        if (Robot.useXeroSimulator()) {
             SimulationEngine engine = SimulationEngine.getInstance();
             if (engine != null) {
                 engine.run(getPeriod());
