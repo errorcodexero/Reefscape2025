@@ -64,7 +64,7 @@ public class RobotContainer {
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
 
     // Subsystems
-    private Drive drive_;
+    private Drive drivebase_;
     private AprilTagVision vision_;
     
     // Controller
@@ -82,7 +82,7 @@ public class RobotContainer {
         switch (Constants.getRobot()) {
             case ALPHA:
 
-                drive_ =
+                drivebase_ =
                     new Drive(
                         new GyroIOPigeon2(),
                         new ModuleIOTalonFX(TunerConstants.FrontLeft),
@@ -91,7 +91,7 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.BackRight));
 
                 vision_ = new AprilTagVision(
-                    drive_::addVisionMeasurement,
+                    drivebase_::addVisionMeasurement,
                     new CameraIOLimelight(VisionConstants.frontLimelightName),
                     new CameraIOLimelight(VisionConstants.backLimelightName));
                     
@@ -105,7 +105,7 @@ public class RobotContainer {
             
             case PRACTICE:
 
-                drive_ =
+                drivebase_ =
                     new Drive(
                         new GyroIOPigeon2(),
                         new ModuleIOTalonFX(TunerConstants.FrontLeft),
@@ -114,7 +114,7 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.BackRight));
 
                 vision_ = new AprilTagVision(
-                    drive_::addVisionMeasurement,
+                    drivebase_::addVisionMeasurement,
                     new CameraIOLimelight(VisionConstants.frontLimelightName),
                     new CameraIOLimelight(VisionConstants.backLimelightName));
                         
@@ -122,7 +122,7 @@ public class RobotContainer {
             
             case SIMBOT:
                 // Sim robot, instantiate physics sim IO implementations
-                drive_ =
+                drivebase_ =
                     new Drive(
                         new GyroIO() {},
                         new ModuleIOSim(TunerConstants.FrontLeft),
@@ -135,11 +135,11 @@ public class RobotContainer {
                     new CameraIOPhotonSim("Front", new Transform3d(
                         new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
                         new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
-                    ), drive_::getPose),
+                    ), drivebase_::getPose),
                     new CameraIOPhotonSim("Back", new Transform3d(
                         new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
                         new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
-                    ), drive_::getPose));
+                    ), drivebase_::getPose));
                     
                 break;
         }
@@ -147,8 +147,8 @@ public class RobotContainer {
         /**
          * Empty subsystem setup (required in replay)
          */
-        if (drive_ == null) {
-            drive_ =
+        if (drivebase_ == null) {
+            drivebase_ =
                 new Drive(
                     new GyroIO() {},
                     new ModuleIO() {},
@@ -160,24 +160,24 @@ public class RobotContainer {
         
         if (vision_ == null) {
             vision_ = new AprilTagVision(
-                drive_::addVisionMeasurement,
+                drivebase_::addVisionMeasurement,
                 new CameraIO() {},
                 new CameraIO() {});
         }
 
         // Simulation setup
-        this.addSubsystem(drive_) ;
+        this.addSubsystem(drivebase_) ;
 
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         
         // Add SysId routines to the chooser
-        autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive_));
-        autoChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive_));
-        autoChooser_.addOption("Drive SysId (Quasistatic Forward)", drive_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drive_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser_.addOption("Drive SysId (Dynamic Forward)", drive_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drive_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
+        autoChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drivebase_));
+        autoChooser_.addOption("Drive SysId (Quasistatic Forward)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         
         // Configure the button bindings
         configureDriveBindings();
@@ -206,9 +206,9 @@ public class RobotContainer {
      */
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
-        drive_.setDefaultCommand(
+        drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
-                drive_,
+                drivebase_,
                 () -> -gamepad_.getLeftY(),
                 () -> -gamepad_.getLeftX(),
                 () -> -gamepad_.getRightX()));
@@ -216,50 +216,50 @@ public class RobotContainer {
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
         DriveCommands.joystickDrive(
-            drive_,
+            drivebase_,
             () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
             () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
             () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
-        gamepad_.x().whileTrue(drive_.stopWithXCmd());
+        gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
         
         // Robot Relative
         gamepad_.povUp().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero())
         );
         
         gamepad_.povDown().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0), RadiansPerSecond.zero())
         );
         
         gamepad_.povLeft().whileTrue(
-            drive_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero())
         );
         
         gamepad_.povRight().whileTrue(
-            drive_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
         );
 
         // Robot relative diagonal
         gamepad_.povUpLeft().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
         );
 
         gamepad_.povUpRight().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
         
         gamepad_.povDownLeft().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
         );
 
         gamepad_.povDownRight().whileTrue(
-            drive_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
         
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(drive_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
     }
     
     /**
