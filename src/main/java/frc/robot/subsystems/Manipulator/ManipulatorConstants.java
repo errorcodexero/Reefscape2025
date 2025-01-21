@@ -1,6 +1,6 @@
-package frc.robot.subsystems.CoralPlacer;
+package frc.robot.subsystems.Manipulator;
 
-public class CoralPlacerConstants {
+public class ManipulatorConstants {
     // this information would go inside classes for each motor in the subsystem
 
     public class Arm{
