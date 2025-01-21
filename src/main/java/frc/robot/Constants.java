@@ -45,6 +45,16 @@ public final class Constants {
         
     }
 
+    public static class CanConstants {
+
+        public static final int grabber = 1;
+        public static final int armFront = 2;
+        public static final int armBack = 3;
+        public static final int elevatorFront = 4;
+        public static final int elevatorBack = 5;
+
+    }
+
     public static class VisionConstants {
 
         // Limelight Names
