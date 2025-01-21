@@ -3,13 +3,13 @@ what the climber is going to do on the robot. The climber is what the
 robot is going to use to go up the deep cage. This code is incomplete
  */
 
-package main.java.frc.robot.subsystems.Climber;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
 
-  public ClimberSubsystem() {
+  public Climber() {
 
   }
 
