@@ -49,6 +49,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.leds.BlinkyLights;
+import frc.robot.subsystems.leds.BlinkyLights.LightPattern;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -69,6 +71,10 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+
+    // Led Testing
+    private final BlinkyLights leds_ = new BlinkyLights(0, 1, 2);
+    private final CommandXboxController ledController_ = new CommandXboxController(1);
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -204,6 +210,12 @@ public class RobotContainer {
     */
     private void configureButtonBindings() {
         // Add subsystem button bindings here
+
+        // Temporary Light Pattern Bindings
+        ledController_.a().onTrue(leds_.setPatternCmd(LightPattern.ERROR));
+        ledController_.b().onTrue(leds_.setPatternCmd(LightPattern.CLIMB));
+        ledController_.y().onTrue(leds_.setPatternCmd(LightPattern.IDLE));
+        
     }
     
     /**
