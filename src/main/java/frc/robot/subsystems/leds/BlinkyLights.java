@@ -63,7 +63,8 @@ public class BlinkyLights extends SubsystemBase {
 
         if (DriverStation.isEStopped()) {
             sendPattern(LightPattern.ERROR);
-        } else if (currentPattern_ != attemptedPattern_.get()) {
+        } else {
+            if (currentPattern_ != attemptedPattern_.orElse(null))
             sendPattern(attemptedPattern_.orElse(idlePattern_));
         }
     }
