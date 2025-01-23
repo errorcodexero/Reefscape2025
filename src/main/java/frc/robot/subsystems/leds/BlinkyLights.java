@@ -2,6 +2,8 @@ package frc.robot.subsystems.leds;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,9 +17,11 @@ public class BlinkyLights extends SubsystemBase {
     private final int numBits_;
     
     // The currently attempted pattern from the rest of the code (null is default fallback)
+    @AutoLogOutput
     private Optional<LightPattern> attemptedPattern_ = Optional.empty();
     
     // The most recently sent pattern to the arduino.
+    @AutoLogOutput
     private LightPattern currentPattern_ = null;
 
     private int numRobotLoops_;
@@ -53,7 +57,7 @@ public class BlinkyLights extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (numRobotLoops_ < 10) { // Wait for ten robot loops to exit the loading sequence.
+        if (++numRobotLoops_ < 10) { // Wait for ten robot loops to exit the loading sequence.
             return;
         }
 
