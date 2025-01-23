@@ -212,9 +212,9 @@ public class RobotContainer {
         // Add subsystem button bindings here
 
         // Temporary Light Pattern Bindings
-        ledController_.a().onTrue(leds_.setPatternCmd(LightPattern.ERROR));
-        ledController_.b().onTrue(leds_.setPatternCmd(LightPattern.CLIMB));
-        ledController_.y().onTrue(leds_.setPatternCmd(LightPattern.IDLE));
+        ledController_.a().onTrue(leds_.attemptPatternCmd(LightPattern.ERROR));
+        ledController_.b().onTrue(leds_.attemptPatternCmd(LightPattern.LOADING));
+        ledController_.y().onTrue(leds_.attemptPatternCmd(LightPattern.FLAME));
         
     }
     
