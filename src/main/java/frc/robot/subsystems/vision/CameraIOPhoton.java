@@ -1,6 +1,7 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
@@ -36,79 +37,77 @@ public class CameraIOPhoton implements CameraIO {
         inputs.name = camera_.getName();
 
         // Results
-        PhotonPipelineResult result = camera_.getLatestResult();
-        PhotonTrackedTarget bestTarget = result.getBestTarget();
-        
-        if (bestTarget != null) {
-            inputs.simpleID = bestTarget.getFiducialId();
-            inputs.simpleX = bestTarget.getPitch();
-            inputs.simpleY = bestTarget.getYaw();
-            inputs.simpleArea = bestTarget.getArea();
-            inputs.simpleValid = true;
-        } else {
-            inputs.simpleID = 0;
-            inputs.simpleX = 0.0;
-            inputs.simpleY = 0.0;
-            inputs.simpleArea = 0.0;
-            inputs.simpleValid = false;
-        }
-        
-        // Target information to fill
-        ArrayList<Translation2d> cornerCoords = new ArrayList<>();
-        ArrayList<Fiducial> fiducials = new ArrayList<>();
-        
-        // Get target information
-        for (PhotonTrackedTarget target : result.getTargets()) {
+        List<PhotonPipelineResult> results = camera_.getAllUnreadResults();
+
+        for (PhotonPipelineResult result : results) {
+            PhotonTrackedTarget bestTarget = result.getBestTarget();
             
-            for (TargetCorner corner : target.getDetectedCorners()) {
-                cornerCoords.add(new Translation2d(corner.x, corner.y));
+            if (bestTarget != null) {
+                inputs.simpleID = bestTarget.getFiducialId();
+                inputs.simpleX = bestTarget.getPitch();
+                inputs.simpleY = bestTarget.getYaw();
+                inputs.simpleArea = bestTarget.getArea();
+                inputs.simpleValid = true;
+            } else {
+                inputs.simpleID = 0;
+                inputs.simpleX = 0.0;
+                inputs.simpleY = 0.0;
+                inputs.simpleArea = 0.0;
+                inputs.simpleValid = false;
             }
             
-            fiducials.add(new Fiducial(
-                target.getFiducialId(),
-                target.getArea(),
-                target.getPitch(),
-                target.getYaw()
-            ));
-        }
-        
-        inputs.rawCorners = cornerCoords.toArray(new Translation2d[0]);
-        inputs.fiducials = fiducials.toArray(new Fiducial[0]);
+            // Target information to fill
+            ArrayList<Translation2d> cornerCoords = new ArrayList<>();
+            ArrayList<Fiducial> fiducials = new ArrayList<>();
+            
+            // Get target information
+            for (PhotonTrackedTarget target : result.getTargets()) {
+                
+                for (TargetCorner corner : target.getDetectedCorners()) {
+                    cornerCoords.add(new Translation2d(corner.x, corner.y));
+                }
+                
+                fiducials.add(new Fiducial(
+                    target.getFiducialId(),
+                    target.getArea(),
+                    target.getPitch(),
+                    target.getYaw()
+                ));
+            }
+            
+            inputs.rawCorners = cornerCoords.toArray(new Translation2d[0]);
+            inputs.fiducials = fiducials.toArray(new Fiducial[0]);
 
-        // Calculate Average Tag Distance and Ambiguity
-        double averageTagDist = 0.0;
+            // Calculate Average Tag Distance and Ambiguity
+            double averageTagDist = 0.0;
 
-        @SuppressWarnings("unused")
-        double averageAmbiguity = 0.0;
-        
-        for (PhotonTrackedTarget target : result.targets) {
-            averageTagDist += target.getBestCameraToTarget().getTranslation().getNorm();
-            averageAmbiguity += target.getPoseAmbiguity();
-        }
-        averageTagDist /= result.targets.size();
-        averageAmbiguity /= result.targets.size();
-        
-        Optional<MultiTargetPNPResult> multitagResult = result.multitagResult;
+            for (PhotonTrackedTarget target : result.targets) {
+                averageTagDist += target.getBestCameraToTarget().getTranslation().getNorm();
+            }
+            averageTagDist /= result.targets.size();
+            
+            Optional<MultiTargetPNPResult> multitagResult = result.multitagResult;
 
-        ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
-        
-        if (multitagResult.isPresent()) {
-            Transform3d fieldToCamera = multitagResult.get().estimatedPose.best;
-            Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera_.inverse());
-            Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+            ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
+            
+            if (multitagResult.isPresent()) {
+                Transform3d fieldToCamera = multitagResult.get().estimatedPose.best;
+                Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera_.inverse());
+                Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-            poseEstimates.add(new PoseEstimation(
-                robotPose.toPose2d(),
-                result.getTimestampSeconds(),
-                averageTagDist,
-                multitagResult.get().estimatedPose.ambiguity,
-                multitagResult.get().fiducialIDsUsed.size(),
-                PoseEstimationType.PHOTON_MULTITAG
-            ));
+                poseEstimates.add(new PoseEstimation(
+                    robotPose.toPose2d(),
+                    result.getTimestampSeconds(),
+                    averageTagDist,
+                    multitagResult.get().estimatedPose.ambiguity,
+                    multitagResult.get().fiducialIDsUsed.size(),
+                    PoseEstimationType.PHOTON_MULTITAG
+                ));
 
-            inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
-        } else {
-            inputs.poseEstimates = new PoseEstimation[] {};
+                inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
+            } else {
+                inputs.poseEstimates = new PoseEstimation[] {};
+            }
         }
     }
     
