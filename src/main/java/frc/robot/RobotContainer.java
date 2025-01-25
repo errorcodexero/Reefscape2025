@@ -35,6 +35,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -51,6 +53,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.leds.BlinkyLights;
 import frc.robot.subsystems.leds.BlinkyLights.LightPattern;
+import frc.robot.subsystems.leds.BlinkySensors;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -64,7 +67,6 @@ import frc.simulator.engine.ISimulatedSubsystem;
 * subsystems, commands, and button mappings) should be declared here.
 */
 public class RobotContainer {
-
     // Mapping of subsystems name to subsystems, used by the simulator
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
 
@@ -74,8 +76,11 @@ public class RobotContainer {
 
     // Led Testing
     private final BlinkyLights leds_ = new BlinkyLights(0, 1, 2);
-    private final CommandXboxController ledController_ = new CommandXboxController(1);
-    
+    private final BlinkySensors sensors_ = new BlinkySensors(4, 5, 6);
+    private final Command blinkyRun_ = Commands.run(() -> {
+            leds_.setPattern(sensors_.getPattern());
+        }).ignoringDisable(true);
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
@@ -193,6 +198,9 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+
+        // Start the blinky lights
+        CommandScheduler.getInstance().schedule(blinkyRun_);
     }
 
     public ISimulatedSubsystem get(String name) {
@@ -209,15 +217,9 @@ public class RobotContainer {
     * Use this method to define your button -> command mappings for drivers.
     */
     private void configureButtonBindings() {
-        // Add subsystem button bindings here
-
-        // Temporary Light Pattern Bindings
-        ledController_.a().onTrue(leds_.setPatternCmd(LightPattern.ERROR));
-        ledController_.b().onTrue(leds_.setPatternCmd(LightPattern.CLIMB));
-        ledController_.y().onTrue(leds_.setPatternCmd(LightPattern.IDLE));
-        
+	;
     }
-    
+
     /**
      * Sets up drivebase control mappings for drivers.
      */
