@@ -31,8 +31,7 @@ public class CameraIOPhotonSim extends CameraIOPhoton {
         
         // Setup camera sim
         camSim_ = new PhotonCameraSim(camera_, camProps_);
-        camSim_.enableDrawWireframe(true);
-        
+
         sim_.addCamera(camSim_, robotToCamera_);
 
         robotPoseSupplier_ = robotPoseSupplier;
