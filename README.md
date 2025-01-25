@@ -7,6 +7,9 @@ This project is the source code for 1425's robot designed for the First Robotics
 
 ![Reefscape](/reefscape.png)
 
+## Contributing
+While contributing to this project, please create a branch for what you are working on, and follow our repository naming conventions written [here](./STYLE-GUIDE.md).
+
 #### Our Other Robots:
 
 - [Allegro](https://github.com/errorcodexero/allegro2024), our robot codebase for the 2024 CRESCENDO season.
