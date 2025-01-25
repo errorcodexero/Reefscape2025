@@ -7,43 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 1 Opposing Side"
+            "pathName": "Center Coral 1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.3
+            "waitTime": 0.4
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Path 2 Opposing Side"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Path 3 Opposing Side"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.3
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Path 4 Opposing Side"
+            "pathName": "Center Coral 2"
           }
         },
         {
@@ -55,19 +31,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 3 Opposing Side"
+            "pathName": "Center Coral 4"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.3
+            "waitTime": 0.4
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Path 4 Opposing Side"
+            "pathName": "Center Coral 5"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Coral 3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
           }
         }
       ]

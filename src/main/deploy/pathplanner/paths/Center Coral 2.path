@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.834121621621622,
-        "y": 2.9083614864864864
+        "x": 5.810472972972973,
+        "y": 4.034881756756757
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.045671094743774,
-        "y": 3.1143988650281567
+        "x": 5.972982954545454,
+        "y": 2.6339630681818176
       },
       "isLocked": false,
-      "linkedName": "3 alliance side"
+      "linkedName": "Center Side"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.7442567567567562
       },
       "prevControl": {
-        "x": 1.7133512935445685,
-        "y": 0.9675105197516494
+        "x": 5.733664772727273,
+        "y": 2.86330965909091
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 53.719746506237335
   },
   "reversed": false,
-  "folder": "Opposing Side",
+  "folder": "Center Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 63.434948822922074
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
