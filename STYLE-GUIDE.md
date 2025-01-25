@@ -1,10 +1,10 @@
 # Repository Naming Conventions
 
 ## Folders and Branches
-When creating folders/packages in the source directory, all of your folder names should be in **lowercase**, and with **dashes** for spaces. This convention should also be followed for names of branches on this repository.
+When creating folders/packages in the source directory, all of your folder names should be in **lowercase**, and with **no spaces**. This convention should also be followed for names of branches on this repository.
 
 ### Example
-Instead of naming a folder or branch "IntakeShooter", name it "intake-shooter".
+Instead of naming a folder or branch "IntakeShooter", name it "intakeshooter".
 
 ## Classes
 **All classes** should be written in **Pascal Case**. Which means that the first letter of each word is uppercase, with no dashes or underscores.
