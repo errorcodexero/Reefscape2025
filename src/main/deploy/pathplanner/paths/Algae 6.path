@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.126689189189189,
-        "y": 4.430152027027026
+        "x": 6.4715625,
+        "y": 4.6980823863636365
       },
       "isLocked": false,
       "linkedName": "Algae 5"
@@ -20,8 +20,8 @@
         "y": 0.5466216216216219
       },
       "prevControl": {
-        "x": 6.353969594594595,
-        "y": 5.606081081081081
+        "x": 6.312017045454545,
+        "y": 4.2393892045454535
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -89.104826289789
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Algae",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.40718906073371

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.529400938391169,
-        "y": 1.8587253131363546
+        "x": 5.502203519068499,
+        "y": 1.7140358857749955
       },
       "isLocked": false,
       "linkedName": "1 alliance side"
@@ -20,8 +20,8 @@
         "y": 0.5466216216216219
       },
       "prevControl": {
-        "x": 4.537550085215892,
-        "y": 1.7869835263104599
+        "x": 4.58371016536157,
+        "y": 1.8386731737428095
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -89.104826289789
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Algae",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.95360816780152

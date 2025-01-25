@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 1 Alliance Side"
+            "pathName": "Path 1 Opposing Side"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 2 Alliance Side"
+            "pathName": "Path 2 Opposing Side"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 3 Alliance Side"
+            "pathName": "Path 3 Opposing Side"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 4 Alliance Side"
+            "pathName": "Path 4 Opposing Side"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 3 Alliance Side"
+            "pathName": "Path 3 Opposing Side"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 4 Alliance Side"
+            "pathName": "Path 4 Opposing Side"
           }
         }
       ]

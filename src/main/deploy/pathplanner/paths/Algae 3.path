@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.47527917193843,
-        "y": 0.3377207846376534
+        "x": 6.379164349367597,
+        "y": 0.2944786512647319
       },
       "isLocked": false,
       "linkedName": "Collection station"
@@ -20,8 +20,8 @@
         "y": 2.888597972972972
       },
       "prevControl": {
-        "x": 5.009928420213367,
-        "y": 2.680446750455978
+        "x": 5.033589831676957,
+        "y": 2.6665175567508363
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 119.95360816780152
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Algae",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -89.104826289789
