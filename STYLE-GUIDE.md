@@ -14,7 +14,7 @@ Instead of naming a folder or branch "IntakeShooter", name it "intakeshooter".
 
 ## Subsystems
 
-**IO interfaces** should be named using the name of the subsystem, appended with "IO".
+**IO interfaces** are usually named using the name of the subsystem, appended with "IO". Other names can be used when it makes sense, but for most cases, stick to the subsystem name.
 
 **IO implementations** (the classes that implement your IO interface) should be named the same as the its interface, but with its own name at the end.
 
