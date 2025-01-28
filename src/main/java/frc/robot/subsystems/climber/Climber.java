@@ -11,6 +11,7 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
  public class Climber extends SubsystemBase{
      private ClimberIO io_; 
      private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
+
  
       public Climber(ClimberIO io){
          io_ = io;
