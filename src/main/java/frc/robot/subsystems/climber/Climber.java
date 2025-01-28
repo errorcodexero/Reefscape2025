@@ -9,18 +9,38 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
  import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
  public class Climber extends SubsystemBase{
-     private ClimberIO io_; 
-     private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
+   private ClimberIO io_; 
+   private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
+   enum ClimberState{
+      IDLE,
+      DeployClimber,
+      WaitToHook,
+      ExecuteClimb
+   }
+   ClimberState climberState_;
  
-      public Climber(ClimberIO io){
-         io_ = io;
-      }
+   public Climber(ClimberIO io){
+      io_ = io;
+   }
  
-      @Override
-      public void periodic(){
-         io_.updateInputs(inputs_);
+   @Override
+   public void periodic(){
+      io_.updateInputs(inputs_);
+   }
+   public void climber() {
+      switch(climberState_){
+         case IDLE:
+            break;
+         case DeployClimber:
+            break;
+         case WaitToHook:
+            break;
+         case ExecuteClimb:
+            break;
       }
+   }
+      
  }
  
  
