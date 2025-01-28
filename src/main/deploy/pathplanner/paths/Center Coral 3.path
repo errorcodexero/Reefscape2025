@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.431676136363636,
-        "y": 2.863309659090908
+        "x": 1.9297272549890483,
+        "y": 0.8849078091488662
       },
       "isLocked": false,
       "linkedName": "Station Close"
     },
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 5.14839527027027,
+        "y": 2.888597972972972
       },
       "prevControl": {
-        "x": 5.8333806818181815,
-        "y": 2.953053977272727
+        "x": 4.368711258839376,
+        "y": 2.407667552133648
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Side"
+      "linkedName": "1 alliance side"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 119.95360816780152
   },
   "reversed": false,
   "folder": "Center Coral",
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 53.719746506237335
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7442567567567562
+        "x": 3.834121621621622,
+        "y": 2.9083614864864864
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.431676136363636,
-        "y": 2.863309659090908
+        "x": 2.5494597668009726,
+        "y": 3.0201615305938763
       },
       "isLocked": false,
-      "linkedName": "Station Close"
+      "linkedName": "3 alliance side"
     },
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 1.8676520270270272,
+        "y": 2.1771114864864867
       },
       "prevControl": {
-        "x": 5.8333806818181815,
-        "y": 2.953053977272727
+        "x": 1.7167224035696544,
+        "y": 1.9778120916981037
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Side"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -178.83086067209265
   },
   "reversed": false,
-  "folder": "Center Coral",
+  "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.719746506237335
+    "rotation": 63.434948822922074
   },
   "useDefaultConstraints": false
 }

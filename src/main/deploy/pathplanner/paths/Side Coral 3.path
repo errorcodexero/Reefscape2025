@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.353801959069261,
-        "y": 1.4640698194731403
+        "x": 2.449577044443569,
+        "y": 1.5634770400550946
       },
       "isLocked": false,
       "linkedName": "Station Close"
@@ -20,8 +20,8 @@
         "y": 2.9083614864864864
       },
       "prevControl": {
-        "x": 2.659332569242075,
-        "y": 1.7782083481754603
+        "x": 2.6366764552604836,
+        "y": 1.7832991208071025
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 53.719746506237335
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

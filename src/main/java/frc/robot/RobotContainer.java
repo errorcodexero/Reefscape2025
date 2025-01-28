@@ -177,7 +177,11 @@ public class RobotContainer {
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Add mirrored autos
-        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("test", true));
+        autoChooser_.addOption("Alliance Side Coral", new PathPlannerAuto("Side Coral", true));
+        autoChooser_.addOption("Opposing Side Coral", new PathPlannerAuto("Side Coral"));
+        autoChooser_.addOption("Center Coral (alliance side station)", new PathPlannerAuto("Center Coral", true));
+        autoChooser_.addOption("Center Coral (opposing side station)", new PathPlannerAuto("Center Coral"));
+        autoChooser_.addOption("Algae (center)", new PathPlannerAuto("Algae"));
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));

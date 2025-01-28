@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.863519408856871,
-        "y": 3.2932027996159228
+        "x": 5.846174207469165,
+        "y": 3.290527914676127
       },
       "isLocked": false,
       "linkedName": "1 alliance side"
@@ -20,8 +20,8 @@
         "y": 0.7442567567567562
       },
       "prevControl": {
-        "x": 1.3154563025150368,
-        "y": 0.5852786116161387
+        "x": 1.3743544596857948,
+        "y": 0.6384162220406387
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 119.95360816780152
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.4
+            "waitTime": 0.25
           }
         },
         {
@@ -25,31 +25,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center Coral 4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.4
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center Coral 5"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "waitTime": 0.1
           }
         },
         {
@@ -61,7 +37,49 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.4
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Coral 4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Coral 3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Coral 4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Coral 3"
           }
         }
       ]
