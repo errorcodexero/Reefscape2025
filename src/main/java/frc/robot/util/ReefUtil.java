@@ -1,9 +1,10 @@
 package frc.robot.util;
 
-import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -12,12 +13,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants.FieldConstants;
 
 public class ReefUtil {
 
     public static class ReefConstants {
+        /**
+         * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Angle maximumAngleToFace = Degrees.of(20);
+
+        /**
+         * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Distance maximumDistanceToFace = Meters.of(1.5);
+
         /**
          * The distance from the center of the robot to the tag while placing coral.
          */
@@ -39,7 +51,7 @@ public class ReefUtil {
         public static final Distance robotToArm = Inches.zero();
     }
     
-    public static enum ReefSide {
+    public static enum ReefFace {
         RED_FRONTLEFT(6),
         RED_FRONT(7),
         RED_FRONTRIGHT(8),
@@ -60,7 +72,7 @@ public class ReefUtil {
         private final Pose2d leftScoringPose_;
         private final Pose2d rightScoringPose_;
 
-        private ReefSide(int aprilTagID) {
+        private ReefFace(int aprilTagID) {
             tagID_ = aprilTagID;
             wallPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d();
 
@@ -111,9 +123,11 @@ public class ReefUtil {
     }
 
     public static void logPoses() {
-        ReefSide[] faces = ReefSide.values();
+        ReefFace[] faces = ReefFace.values();
 
-        for (ReefSide face : faces) {
+        ArrayList<Pose2d> poses = new ArrayList<>();
+
+        for (ReefFace face : faces) {
             String path = "ReefFaces/" + face.toString() + "/";
 
             Logger.recordOutput(path + "TagId", face.getTagID());
@@ -121,13 +135,49 @@ public class ReefUtil {
             Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
             Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
             Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
+
+            poses.add(face.getAlgaeScoringPose());
+            poses.add(face.getLeftScoringPose());
+            poses.add(face.getRightScoringPose());
         }
+
+        Logger.recordOutput("ReefFaces/AllBotPoses", poses.toArray(new Pose2d[0]));
     }
 
-    public static Optional<ReefSide> getNearestReefFace(Pose2d robotPose) {
-        ReefSide[] faces = ReefSide.values();
+    public static Optional<ReefFace> getTargetedReefFace(Pose2d robotPose) {
+        ReefFace nearestFace = getNearestReefFace(robotPose);
+        Pose2d nearestWall = nearestFace.getWallPose();
 
-        return Optional.empty();
+        Rotation2d angleToFace = nearestWall.getTranslation().minus(robotPose.getTranslation()).getAngle();
+
+        if (
+            angleToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
+            getDistanceFromFace(robotPose, nearestFace) <= ReefConstants.maximumDistanceToFace.in(Meters) // Distance is within limit
+        ) {
+            return Optional.of(nearestFace); 
+        } else {
+            return Optional.empty();
+        }
+    } 
+
+    public static ReefFace getNearestReefFace(Pose2d robotPose) {
+        ReefFace[] faces = ReefFace.values();
+
+        ReefFace nearest = faces[0];
+
+        for (ReefFace face : faces) {
+            double distanceMeters = getDistanceFromFace(robotPose, face);
+
+            if (distanceMeters < getDistanceFromFace(robotPose, nearest)) {
+                nearest = face;
+            }
+        }
+
+        return nearest;
+    }
+
+    private static double getDistanceFromFace(Pose2d robot, ReefFace face) {
+        return robot.getTranslation().getDistance(face.getWallPose().getTranslation());
     }
 
 }

@@ -55,7 +55,7 @@ import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefSide;
+import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
