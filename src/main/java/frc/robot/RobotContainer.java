@@ -54,6 +54,8 @@ import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.util.ReefUtil;
+import frc.robot.util.ReefUtil.ReefSide;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -191,6 +193,8 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+
+        ReefUtil.logPoses();
     }
 
     public ISimulatedSubsystem get(String name) {
