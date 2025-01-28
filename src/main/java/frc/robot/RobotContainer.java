@@ -177,7 +177,7 @@ public class RobotContainer {
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Add mirrored autos
-        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("Example Auto", true));
+        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("test", true));
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
