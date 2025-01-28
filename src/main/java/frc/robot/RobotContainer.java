@@ -26,6 +26,7 @@ import java.util.HashMap;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -175,6 +176,9 @@ public class RobotContainer {
 
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+        // Add mirrored autos
+        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("Example Auto", true));
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
