@@ -12,8 +12,6 @@ public class TalonFXFactory {
     private final static int kApplyTries = 5 ;
     private static TalonFXFactory factory_ = new TalonFXFactory() ;
 
-    private int motor_created_ = 0 ;
-
     public static TalonFXFactory getFactory() {
         return factory_ ;
     }
@@ -21,11 +19,11 @@ public class TalonFXFactory {
     //
     // Creates a new TalonFX motor controller in brake mode
     //
-    public TalonFX createTalonFX(int id, String bus, boolean invert, double limit) throws Exception {
+    public TalonFX createTalonFX(int id, String bus, boolean invert, double limit) {
         return createTalonFX(id, bus, invert, limit, 1.0) ;
     }
 
-    public TalonFX createTalonFX(int id, String bus, boolean invert, double limit, double time) throws Exception {
+    public TalonFX createTalonFX(int id, String bus, boolean invert, double limit, double time)  {
         TalonFX fx = new TalonFX(id, bus) ;
 
         TalonFXConfiguration config = new TalonFXConfiguration() ;       
@@ -40,34 +38,33 @@ public class TalonFXFactory {
 
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive ;
 
-        checkError(id, "TalonFXMotorController - apply configuration", () -> fx.getConfigurator().apply(config), -1);        
-
-        motor_created_++ ;
+        checkError(id, "apply", () -> fx.getConfigurator().apply(config));
         return fx ;
     }       
 
-    public TalonFX createTalonFX(int id, String bus, boolean invert) throws Exception {
+    public TalonFX createTalonFX(int id, String bus, boolean invert) {
         return createTalonFX(id, invert, Double.NaN) ;
     }     
 
-    public TalonFX createTalonFX(int id, boolean invert) throws Exception {
+    public TalonFX createTalonFX(int id, boolean invert) {
         return createTalonFX(id, "", invert, Double.NaN) ;
     }   
 
-    public TalonFX createTalonFX(int id, boolean invert, double limit) throws Exception {
+    public TalonFX createTalonFX(int id, boolean invert, double limit) {
         return createTalonFX(id, "", invert, limit) ;
     }     
 
-    private void checkError(int id, String msg, Supplier<StatusCode> toApply, int reps) throws Exception {
+    public static void checkError(int id, String msg, Supplier<StatusCode> toApply) throws RuntimeException {
         StatusCode code = StatusCode.StatusCodeNotInitialized ;
-        int tries = (reps == -1 ? kApplyTries : reps) ;
+        int tries = kApplyTries ;
+        
         do {
             code = toApply.get() ;
         } while (!code.isOK() && --tries > 0)  ;
 
         if (!code.isOK()) {
-            msg = msg + " - code " + code.toString()  + " - count " + motor_created_ + " - id " + id ;
-            throw new Exception(msg) ;
+            msg = "canid " + id + ": " + msg + " - code " + code.toString() ;
+            throw new RuntimeException(msg) ;
         }
     }    
 }

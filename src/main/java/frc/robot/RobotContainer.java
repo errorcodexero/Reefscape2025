@@ -64,8 +64,20 @@ import frc.simulator.engine.ISimulatedSubsystem;
 */
 public class RobotContainer {
 
+    private static RobotContainer container_ ;
+
+    public static RobotContainer getRobotContainer() {
+        if (container_ == null) {
+            container_ = new RobotContainer() ;
+        }
+
+        return container_ ;
+    }
+
     // Mapping of subsystems name to subsystems, used by the simulator
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
+
+    private boolean driver_controller_enabled_ = true ;
 
     // Subsystems
     private Drive drivebase_;
@@ -79,6 +91,11 @@ public class RobotContainer {
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        if (RobotContainer.container_ != null) {
+            throw new RuntimeException("Robot code tried to create multiple robot containers") ;
+        }
+
+        RobotContainer.container_ = this ;
 
         /**
          * Subsystem setup
@@ -197,6 +214,10 @@ public class RobotContainer {
         return this.subsystems_.get(name) ;
     }
 
+    public void enableGamepad(boolean enabled) {
+        this.driver_controller_enabled_ = enabled ;
+    }
+
     private void addSubsystem(SubsystemBase sub) {
         if (sub instanceof ISimulatedSubsystem) {
             this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
@@ -207,8 +228,41 @@ public class RobotContainer {
     * Use this method to define your button -> command mappings for drivers.
     */
     private void configureButtonBindings() {
-        // Add subsystem button bindings here
+        //
+        // Add the OI bindings here
+        //
     }
+
+    private double getLeftX() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double y = -gamepad_.getLeftX() ;
+        y = Math.signum(y) * y * y ;
+        
+        return y ;
+    }
+
+    private double getLeftY() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double x = -gamepad_.getLeftY() ;
+        x = Math.signum(x) * x * x;
+
+        return x ;
+    }
+
+    private double getRightX() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double x = -gamepad_.getRightX() ;
+        x = Math.signum(x) * x * x  ;
+
+        return x ;
+    }
+
     
     /**
      * Sets up drivebase control mappings for drivers.
@@ -218,17 +272,17 @@ public class RobotContainer {
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> -gamepad_.getLeftY(),
-                () -> -gamepad_.getLeftX(),
-                () -> -gamepad_.getRightX()));
+                () -> getLeftY(),
+                () -> getLeftX(),
+                () -> getRightX())) ;
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                () -> getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());

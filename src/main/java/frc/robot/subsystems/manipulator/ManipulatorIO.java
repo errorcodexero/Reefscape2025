@@ -5,6 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
  
@@ -20,18 +22,22 @@ public interface ManipulatorIO {
         public AngularVelocity armVelocity; 
 
         // elevator inputs
-        public Angle elevatorPosition; 
+        public Distance elevatorPosition; 
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 
-        public AngularVelocity elevatorVelocity; 
+        public LinearVelocity elevatorVelocity;
     }
 
-    // updating inputs
+    // update all inputs
     public default void updateInputs(ManipulatorIOInputs inputs) {}
 
-    // Needed for SYS Id support
-    public default void setArmMotorVoltage(double vol) {}
-
+    // arm related methods
+    public default void setArmAngle(Angle target) {}
+    public default void setArmMotorVoltage(double volts) {}
     public default void logArmMotor(SysIdRoutineLog log) {}
 
+    // elevator related methods
+    public default void setElevatorHeight(Distance target) {}
+    public default void setElevatorMotorVoltage(double volts) {}
+    public default void logElevatorMotor(SysIdRoutineLog log) {} ;
 }

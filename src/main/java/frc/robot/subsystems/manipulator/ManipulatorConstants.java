@@ -1,9 +1,24 @@
 package frc.robot.subsystems.manipulator;
 
-public class ManipulatorConstants {
-    // this information would go inside classes for each motor in the subsystem
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 
-    public class Arm{
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+
+public class ManipulatorConstants {
+
+    public class Goto {
+        public static final Angle kArmKeepOutMinAngle = Degrees.of(0.0) ;
+        public static final Angle kArmKeepOutMaxAngle = Degrees.of(90.0) ;
+        public static final Distance kElevatorKeepOutHeight = Meters.of(1.0) ;
+
+        public static final Angle kArmTolerance = Degrees.of(1.0) ;
+        public static final Distance kElevatorTolerance = Centimeters.of(5.0) ;
+    }
+
+    public class Arm {
        
         // motor CAN ID
         public static final int kMotorCANID = 0; 
@@ -35,11 +50,11 @@ public class ManipulatorConstants {
         // motor CAN ID
         public static final int kMotorCANID = 0; 
 
-        // gear ratio- degrees per rev
-        public static final double kGearRatio = 0; 
-
         // if motor is inverted 
         public static final boolean kInverted = false; 
+
+        // Mapping from motor turns to linear height
+        public static final double kMotorRevsToHeightMeters = 0.1 ;
 
         public class PID {
             public static final double kP = 0.0; 
@@ -56,5 +71,5 @@ public class ManipulatorConstants {
             public static final double kMaxAcceleration = 0.0 ;
             public static final double kJerk = 0.0 ;
         }
-    }
+    } 
 }
