@@ -48,7 +48,7 @@
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 63.434948822922074
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": false
 }

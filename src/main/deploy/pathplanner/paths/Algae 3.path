@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.30456081081081,
-        "y": 0.5466216216216219
+        "x": 6.331960227272727,
+        "y": 0.519985795454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.379164349367597,
-        "y": 0.2944786512647319
+        "x": 6.379712966176209,
+        "y": 0.27458881925635326
       },
       "isLocked": false,
       "linkedName": "Collection station"
@@ -20,8 +20,8 @@
         "y": 2.888597972972972
       },
       "prevControl": {
-        "x": 5.033589831676957,
-        "y": 2.6665175567508363
+        "x": 5.115696846587547,
+        "y": 2.572859989872164
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -89.104826289789
+    "rotation": -90.0
   },
   "useDefaultConstraints": false
 }

@@ -22,6 +22,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -31,6 +32,7 @@ import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -182,6 +184,19 @@ public class RobotContainer {
         autoChooser_.addOption("Center Coral (alliance side station)", new PathPlannerAuto("Center Coral", true));
         autoChooser_.addOption("Center Coral (opposing side station)", new PathPlannerAuto("Center Coral"));
         autoChooser_.addOption("Algae (center)", new PathPlannerAuto("Algae"));
+
+        autoChooser_.addOption(
+            "testing driveto", 
+            DriveCommands.swerveDriveToCommand(
+                new Pose2d(
+                    Meters.of(3.2), 
+                    Meters.of(4.0),
+                    new Rotation2d(
+                        Rotations.of(0.0)
+                    )
+                )
+            )
+        );
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));

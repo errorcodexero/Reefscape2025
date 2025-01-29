@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.449577044443569,
-        "y": 1.5634770400550946
+        "x": 2.6478665266231785,
+        "y": 1.7086343282149805
       },
       "isLocked": false,
       "linkedName": "Station Close"
@@ -20,8 +20,8 @@
         "y": 2.9083614864864864
       },
       "prevControl": {
-        "x": 2.6366764552604836,
-        "y": 1.7832991208071025
+        "x": 2.6077530559648716,
+        "y": 1.7675344905861496
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 63.434948822922074
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.719746506237335
+    "rotation": 53.72
   },
   "useDefaultConstraints": false
 }
