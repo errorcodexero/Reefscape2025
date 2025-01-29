@@ -24,7 +24,6 @@ public interface ManipulatorIO {
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 
         public AngularVelocity elevatorVelocity; 
- 
     }
 
     // updating inputs

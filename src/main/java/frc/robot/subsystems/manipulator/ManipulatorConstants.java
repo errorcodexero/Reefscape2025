@@ -7,10 +7,10 @@ public class ManipulatorConstants {
         // motor CAN ID
         public static final int kMotorCANID = 0; 
 
-        public static final double kGearRatio = 0; 
-
         // if motor is inverted 
         public static final boolean kInverted = false; 
+
+        public static final double kGearRatio = 0; 
 
         public class PID {
             public static final double kP = 0.0; 
@@ -30,23 +30,15 @@ public class ManipulatorConstants {
     }
 
     public class Elevator {
-        public static final double kGearRatio = 0; 
 
-        public class Front{
-            // motor CAN ID
-            public static final int kMotorCANID = 0;
+        // motor CAN ID
+        public static final int kMotorCANID = 0;
 
-            // if motor is inverted 
-            public static final boolean kInverted = false;
-        }
+        // if motor is inverted 
+        public static final boolean kInverted = false;
 
-        public class Back{
-            // motor CAN ID
-            public static final int kMotorCANID = 0;
-
-            // if motor is inverted 
-            public static final boolean kInverted = false;
-        }
+        // meters that elevator moves per revolution of motor
+        public static final double kMetersPerRev = 0; 
 
         public class PID {
             public static final double kP = 0.0; 
