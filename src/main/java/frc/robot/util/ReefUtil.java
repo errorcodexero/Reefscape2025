@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
@@ -14,43 +12,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
+import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.Mode;
+import frc.robot.Constants.ReefConstants;
 
 public class ReefUtil {
-
-    public static class ReefConstants {
-        /**
-         * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
-         */
-        public static final Angle maximumAngleToFace = Degrees.of(40);
-
-        /**
-         * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
-         */
-        public static final Distance maximumDistanceToFace = Meters.of(3);
-
-        /**
-         * The distance from the center of the robot to the tag while placing coral.
-         */
-        public static final Distance distanceFromTagCoral = Inches.of(20);
-
-        /**
-         * The distance from the center of the robot to the tag while collecting algae.
-         */
-        public static final Distance distanceFromTagAlgae = Inches.of(20);
-
-        /**
-         * The offset from the center of the tag to where we want the arm to be positioned.
-         */
-        public static final Distance leftRightOffset = Inches.of(5);
-
-        /**
-         * The distance from the center of the robot to the arm.
-         */
-        public static final Distance robotToArm = Inches.zero();
-    }
     
     public static enum ReefFace {
         RED_FRONTLEFT(6),
@@ -123,28 +90,36 @@ public class ReefUtil {
         }
     }
 
-    public static void logPoses() {
-        ReefFace[] faces = ReefFace.values();
+    // Log Debug Data If In Replay or Simulator
+    static {
+        if (Constants.getMode() != Mode.REAL) {
+            ReefFace[] faces = ReefFace.values();
 
-        ArrayList<Pose2d> poses = new ArrayList<>();
+            ArrayList<Pose2d> poses = new ArrayList<>();
 
-        for (ReefFace face : faces) {
-            String path = "ReefFaces/" + face.toString() + "/";
+            for (ReefFace face : faces) {
+                String path = "ReefFaces/" + face.toString() + "/";
 
-            Logger.recordOutput(path + "TagId", face.getTagID());
-            Logger.recordOutput(path + "WallPose", face.getWallPose());
-            Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
-            Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
-            Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
+                Logger.recordOutput(path + "TagId", face.getTagID());
+                Logger.recordOutput(path + "WallPose", face.getWallPose());
+                Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
+                Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
+                Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
 
-            poses.add(face.getAlgaeScoringPose());
-            poses.add(face.getLeftScoringPose());
-            poses.add(face.getRightScoringPose());
+                poses.add(face.getAlgaeScoringPose());
+                poses.add(face.getLeftScoringPose());
+                poses.add(face.getRightScoringPose());
+            }
+
+            Logger.recordOutput("ReefFaces/AllBotPoses", poses.toArray(new Pose2d[0]));
         }
-
-        Logger.recordOutput("ReefFaces/AllBotPoses", poses.toArray(new Pose2d[0]));
     }
 
+    /**
+     * Gets the reef face the robot should target with a given robot pose.
+     * @param robotPose The pose of the robot.
+     * @return An optional of a ReefFace object. Empty if there is no face of the reef that is deemed suitable.
+     */
     public static Optional<ReefFace> getTargetedReefFace(Pose2d robotPose) {
         ReefFace nearestFace = getNearestReefFace(robotPose);
         Pose2d nearestWall = nearestFace.getWallPose();
@@ -163,6 +138,13 @@ public class ReefUtil {
         }
     } 
 
+    /**
+     * Gets the nearest reef face to the robot or any pose provided.
+     * Note: This is not meant for deciding which face of the reef to go to. This is simply getting the nearest face.
+     * To get the face that should be targeted use {@link #getTargetedReefFace(Pose2d) getTargetedReefFace()}.
+     * @param robotPose
+     * @return The reef face closest to the provided pose.
+     */
     public static ReefFace getNearestReefFace(Pose2d robotPose) {
         ReefFace[] faces = ReefFace.values();
 
@@ -179,7 +161,13 @@ public class ReefUtil {
         return nearest;
     }
 
-    private static double getDistanceFromFace(Pose2d robot, ReefFace face) {
+    /**
+     * Gets the distance from a reef face from a given pose.
+     * @param robot The pose to get the distance from.
+     * @param face The face to get the distance to.
+     * @return
+     */
+    public static double getDistanceFromFace(Pose2d robot, ReefFace face) {
         return robot.getTranslation().getDistance(face.getWallPose().getTranslation());
     }
 

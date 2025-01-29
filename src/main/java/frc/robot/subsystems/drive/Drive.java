@@ -53,6 +53,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -226,12 +227,15 @@ public class Drive extends SubsystemBase {
         // Update gyro alert
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
 
-        Optional<ReefFace> face = ReefUtil.getTargetedReefFace(getPose());
+        // If in a simulation or replay, log reef face selection information.
+        if (Constants.getMode() != Mode.REAL) {
+            Optional<ReefFace> face = ReefUtil.getTargetedReefFace(getPose());
 
-        if (face.isPresent()) {
-            Logger.recordOutput("NearestReefFace", new Pose2d[] {face.get().getAlgaeScoringPose()});
-        } else {
-            Logger.recordOutput("NearestReefFace", new Pose2d[] {});
+            if (face.isPresent()) {
+                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeScoringPose()});
+            } else {
+                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {});
+            }
         }
     }
     

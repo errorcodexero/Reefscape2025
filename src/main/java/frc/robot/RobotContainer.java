@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -56,7 +55,6 @@ import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -198,8 +196,6 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
-
-        ReefUtil.logPoses();
     }
 
     public ISimulatedSubsystem get(String name) {
