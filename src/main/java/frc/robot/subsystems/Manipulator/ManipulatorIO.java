@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
  
 public interface ManipulatorIO {
     @AutoLog
-    public static class ManipulatorIOInputs{
+    public static class ManipulatorIOInputs {
         // inputs for now: position, current, voltage, angular velocity (and add acceleration?)
 
         // arm inputs
@@ -24,14 +24,30 @@ public interface ManipulatorIO {
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 
         public AngularVelocity elevatorVelocity; 
+
+        // grabber inputs
+        public Current grabberCurrent; 
+        public Voltage grabberVoltage; 
     }
 
     // updating inputs
     public default void updateInputs(ManipulatorIOInputs inputs) {}
 
     // Needed for SYS Id support
-    public default void setArmMotorVoltage(double vol) {}
+    public default void setArmMotorVoltage(double vol){}
 
-    public default void logArmMotor(SysIdRoutineLog log) {}
+    public default void logArmMotor(SysIdRoutineLog log){}
+
+    // ELEVATOR METHODS
+    public void setElevatorPosition(double m); 
+
+    public double getElevatorFrontPosition();
+
+    public double getElevatorBackPosition();
+
+    // ARM METHODS
+    public void setArmPosition(double deg); 
+
+    public double getArmPosition();
 
 }
