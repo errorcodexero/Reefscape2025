@@ -3,6 +3,7 @@ package frc.robot.util;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -23,12 +24,12 @@ public class ReefUtil {
         /**
          * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
          */
-        public static final Angle maximumAngleToFace = Degrees.of(20);
+        public static final Angle maximumAngleToFace = Degrees.of(40);
 
         /**
          * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
          */
-        public static final Distance maximumDistanceToFace = Meters.of(1.5);
+        public static final Distance maximumDistanceToFace = Meters.of(3);
 
         /**
          * The distance from the center of the robot to the tag while placing coral.
@@ -148,10 +149,12 @@ public class ReefUtil {
         ReefFace nearestFace = getNearestReefFace(robotPose);
         Pose2d nearestWall = nearestFace.getWallPose();
 
-        Rotation2d angleToFace = nearestWall.getTranslation().minus(robotPose.getTranslation()).getAngle();
+        Rotation2d rotationToFace = new Rotation2d(
+            nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
+        );
 
         if (
-            angleToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
+            rotationToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
             getDistanceFromFace(robotPose, nearestFace) <= ReefConstants.maximumDistanceToFace.in(Meters) // Distance is within limit
         ) {
             return Optional.of(nearestFace); 
