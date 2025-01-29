@@ -20,18 +20,33 @@ import frc.robot.Constants.ReefConstants;
 public class ReefUtil {
     
     public static enum ReefFace {
-        RED_FRONTLEFT(6),
-        RED_FRONT(7),
-        RED_FRONTRIGHT(8),
-        RED_BACKRIGHT(9),
-        RED_BACK(10),
-        RED_BACKLEFT(11),
-        BLUE_FRONTLEFT(19),
-        BLUE_FRONT(18),
-        BLUE_FRONTRIGHT(17),
-        BLUE_BACKRIGHT(22),
-        BLUE_BACK(21),
-        BLUE_BACKLEFT(20);
+        RED_AB(7),
+        RED_CD(8),
+        RED_EF(9),
+        RED_GH(10),
+        RED_IJ(11),
+        RED_KL(6),
+        BLUE_AB(18),
+        BLUE_CD(17),
+        BLUE_EF(22),
+        BLUE_GH(21),
+        BLUE_IJ(20),
+        BLUE_KL(19);
+
+        // Alias Names
+        public static final ReefFace RED_FRONT = RED_AB;
+        public static final ReefFace RED_FRONTRIGHT = RED_CD;
+        public static final ReefFace RED_BACKRIGHT = RED_EF;
+        public static final ReefFace RED_BACK = RED_GH;
+        public static final ReefFace RED_BACKLEFT = RED_IJ;
+        public static final ReefFace RED_FRONTLEFT = RED_KL;
+
+        public static final ReefFace BLUE_FRONT = BLUE_AB;
+        public static final ReefFace BLUE_FRONTRIGHT = BLUE_CD;
+        public static final ReefFace BLUE_BACKRIGHT = BLUE_EF;
+        public static final ReefFace BLUE_BACK = BLUE_GH;
+        public static final ReefFace BLUE_BACKLEFT = BLUE_IJ;
+        public static final ReefFace BLUE_FRONTLEFT = BLUE_KL;
 
         private final int tagID_;
 
