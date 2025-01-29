@@ -1,5 +1,8 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Revolution;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -64,13 +67,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_pids.kG = ManipulatorConstants.Elevator.PID.kG;
         elevator_pids.kS = ManipulatorConstants.Elevator.PID.kS;
         elevator_motor_.getConfigurator().apply(elevator_pids);
-        elevator_motor_.getConfigurator().apply(elevator_pids);
 
         MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
         elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity;
         elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration;
         elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk;
-        elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs);
         elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs);
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
@@ -92,10 +93,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.armVoltage = arm_vol_sig_.refresh().getValue();
         inputs.armCurrent = arm_current_sig_.refresh().getValue();
         
-        // having trouble carrying out the conversion from double to Meters:
-        //
-        // double r = elevator_pos_sig_.refresh().getValue().in(Revolutions); 
-        // inputs.elevatorPosition = (r * ManipulatorConstants.Elevator.kMetersPerRev).in(Meters); 
+        double rev = elevator_pos_sig_.refresh().getValue().in(Revolution); 
+        inputs.elevatorPosition = Meters.of(rev * ManipulatorConstants.Elevator.kMetersPerRev);
 
         inputs.elevatorVelocity = elevator_vel_sig_.refresh().getValue().times(ManipulatorConstants.Elevator.kMetersPerRev);
         inputs.elevatorVoltage = elevator_vol_sig_.refresh().getValue();
