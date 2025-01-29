@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Manipulator;
+package frc.robot.subsystems.manipulator;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
