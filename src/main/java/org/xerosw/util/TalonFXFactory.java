@@ -19,38 +19,31 @@ public class TalonFXFactory {
      * Creates a new TalonFX motor controller in brake mode.
      * @param id The CAN id of the motor.
      * @param bus The CAN bus the motor is on.
-     * @return The created TalonFX motor controller with the applied configurations.
-     * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
-     */
-    public static TalonFX createTalonFX(int id, String bus) throws Exception {
-        TalonFX fx = new TalonFX(id, bus) ;
-
-        TalonFXConfiguration config = new TalonFXConfiguration() ;       
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake ;
-
-        checkError(id, "TalonFXMotorController - apply configuration", () -> fx.getConfigurator().apply(config), -1);        
-
-        return fx ;
-    }
-
-        /**
-     * Creates a new TalonFX motor controller in brake mode.
-     * @param id The CAN id of the motor.
-     * @param bus The CAN bus the motor is on.
      * @param invert If true, invert the motor
      * @return The created TalonFX motor controller with the applied configurations.
      * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
      */
     public static TalonFX createTalonFX(int id, String bus, boolean invert) throws Exception {
         TalonFX fx = new TalonFX(id, bus) ;
-
+        
         TalonFXConfiguration config = new TalonFXConfiguration() ;       
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake ;
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive ;
-
+        
         checkError(id, "TalonFXMotorController - apply configuration", () -> fx.getConfigurator().apply(config), -1);        
-
+        
         return fx ;
+    }
+    
+    /**
+     * Creates a new TalonFX motor controller in brake mode.
+     * @param id The CAN id of the motor.
+     * @param bus The CAN bus the motor is on.
+     * @return The created TalonFX motor controller with the applied configurations.
+     * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
+     */
+    public static TalonFX createTalonFX(int id, String bus) throws Exception {
+        return createTalonFX(id, bus, false);
     }
 
     /**
