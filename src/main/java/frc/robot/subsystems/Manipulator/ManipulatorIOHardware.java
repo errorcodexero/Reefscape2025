@@ -11,7 +11,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_front_; 
     private TalonFX elevator_motor_back_; 
-    private TalonFX grabber_motor_; 
 
 
     public ManipulatorIOHardware() {
@@ -19,9 +18,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_motor_ = new TalonFX(ManipulatorConstants.Arm.kMotorCANID);
         elevator_motor_front_ = new TalonFX(ManipulatorConstants.Elevator.Front.kMotorCANID);
         elevator_motor_back_ = new TalonFX(ManipulatorConstants.Elevator.Back.kMotorCANID);
-        grabber_motor_ = new TalonFX(ManipulatorConstants.Grabber.kMotorCANID);
 
-        // ARM CONFIGS:     
+        // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
         arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
         arm_pids.kI = ManipulatorConstants.Arm.PID.kI; 
@@ -58,27 +56,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_motor_front_.getConfigurator().apply(elevatorMotionMagicConfigs);
         elevator_motor_back_.getConfigurator().apply(elevatorMotionMagicConfigs);
 
-        // GRABBER CONFIGS:
-        Slot0Configs grabber_pids = new Slot0Configs();
-        grabber_pids.kP = ManipulatorConstants.Grabber.PID.kP;
-        grabber_pids.kI = ManipulatorConstants.Grabber.PID.kI;
-        grabber_pids.kD = ManipulatorConstants.Grabber.PID.kD;
-        grabber_pids.kV = ManipulatorConstants.Grabber.PID.kV;
-        grabber_pids.kA = ManipulatorConstants.Grabber.PID.kA;
-        grabber_pids.kG = ManipulatorConstants.Grabber.PID.kG;
-        grabber_pids.kS = ManipulatorConstants.Grabber.PID.kS;
-        grabber_motor_.getConfigurator().apply(grabber_pids);
-
-
-        MotionMagicConfigs grabberMotionMagicConfigs = new MotionMagicConfigs();
-        grabberMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Grabber.MotionMagic.kMaxVelocity;
-        grabberMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Grabber.MotionMagic.kMaxAcceleration;
-        grabberMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Grabber.MotionMagic.kJerk;
-        grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs);
-
     }
 
-    // updates all of the inputs from CoralPlacerIO 
+    // updates all of the inputs from ManipulatorIO 
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
         // update all of the necessary inputs here
