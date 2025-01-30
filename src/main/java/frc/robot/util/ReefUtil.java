@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
@@ -49,7 +50,7 @@ public class ReefUtil {
                     ReefConstants.distanceFromTagAlgae,
                     Meters.zero()
                 ),
-                new Rotation2d()
+                new Rotation2d(Degrees.of(180))
             ));
 
             leftScoringPose_ = wallPose_.transformBy(new Transform2d(
@@ -57,7 +58,7 @@ public class ReefUtil {
                     ReefConstants.distanceFromTagCoral,
                     ReefConstants.leftRightOffset.unaryMinus()
                 ),
-                new Rotation2d()
+                new Rotation2d(Degrees.of(180))
             ));
 
             rightScoringPose_ = wallPose_.transformBy(new Transform2d(
@@ -65,7 +66,7 @@ public class ReefUtil {
                     ReefConstants.distanceFromTagCoral,
                     ReefConstants.leftRightOffset
                 ),
-                new Rotation2d()
+                new Rotation2d(Degrees.of(180))
             ));
         }
 
