@@ -13,11 +13,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
 * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -43,6 +47,38 @@ public final class Constants {
         
         public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         
+    }
+
+    public static class ReefConstants {
+        /**
+         * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Angle maximumAngleToFace = Degrees.of(40);
+
+        /**
+         * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Distance maximumDistanceToFace = Meters.of(3);
+
+        /**
+         * The distance from the center of the robot to the tag while placing coral.
+         */
+        public static final Distance distanceFromTagCoral = Inches.of(20);
+
+        /**
+         * The distance from the center of the robot to the tag while collecting algae.
+         */
+        public static final Distance distanceFromTagAlgae = Inches.of(20);
+
+        /**
+         * The offset from the center of the tag to where we want the arm to be positioned.
+         */
+        public static final Distance leftRightOffset = Inches.of(5);
+
+        /**
+         * The distance from the center of the robot to the arm.
+         */
+        public static final Distance robotToArm = Inches.zero();
     }
 
     public static class CanConstants {
