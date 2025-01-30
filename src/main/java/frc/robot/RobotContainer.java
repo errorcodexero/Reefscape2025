@@ -13,6 +13,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -71,7 +79,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
@@ -88,41 +96,60 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case ALPHA:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
-                        
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
+
                     break;
 
                 case COMPETITION:
 
-                    /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
+                    // TODO: Replace TunerConstants with new set of constants for comp bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
+
+                    vision_ = new AprilTagVision(
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight(VisionConstants.frontLimelightName),
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
 
                     break;
                 
                 case PRACTICE:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    // TODO: Replace TunerConstants with new set of constants for practice bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
                             
                     break;
                 
@@ -139,13 +166,21 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
                         new CameraIOPhotonSim("Front", new Transform3d(
-                            new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
+                            new Translation3d(Meters.of(0.3048), Meters.of(0.12), Meters.of(0.12)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
-                        ), drivebase_::getPose),
+                        ), drivebase_::getPose, true),
                         new CameraIOPhotonSim("Back", new Transform3d(
-                            new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
-                            new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
-                        ), drivebase_::getPose));
+                            new Translation3d(Meters.of(-0.3048), Inches.zero(), Meters.of(0.12)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Rotations.of(0.5))
+                        ), drivebase_::getPose, false),
+                        new CameraIOPhotonSim("LeftCamera", new Transform3d(
+                            new Translation3d(Meters.of(-0.12), Meters.of(0.3048), Meters.of(0.12)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(90))
+                        ), drivebase_::getPose, false),
+                        new CameraIOPhotonSim("RightCamera", new Transform3d(
+                            new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
+                        ), drivebase_::getPose, false));
                         
                     break;
             }
@@ -155,21 +190,21 @@ public class RobotContainer {
          * Empty subsystem setup (required in replay)
          */
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
-            drivebase_ =
-                new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-
+            drivebase_ = new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {}
+            );
         }
         
         if (vision_ == null) {
             vision_ = new AprilTagVision(
                 drivebase_::addVisionMeasurement,
                 new CameraIO() {},
-                new CameraIO() {});
+                new CameraIO() {}
+            );
         }
 
         // Simulation setup
