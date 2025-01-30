@@ -21,7 +21,19 @@ public class GrabberSubsystem extends SubsystemBase {
         io_.setGrabberVelocity(vel);
     }
 
-    public boolean isCoralSeen() {
-        return inputs_.risingEdge ;
+    public boolean isCoralSeenHighRisingEdge() {
+        return inputs_.coralSensorHighRisingEdge ;
+    }
+
+    public boolean isCoralSeenLowRisingEdge() {
+        return inputs_.coralSensorLowRisingEdge ;
+    }
+
+    public boolean isCoralSeenLowFallingEdge() {
+        return inputs_.coralSensorLowFallingEdge ;
+    }
+
+    public boolean isCoralSeenFunnelRisingEdge() {
+        return inputs_.coralSensorFunnelRisingEdge ;
     }
 }

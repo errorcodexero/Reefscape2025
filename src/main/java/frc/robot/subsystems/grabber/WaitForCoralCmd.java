@@ -37,7 +37,7 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForSensor:
-                if (grabber_.isCoralSeen()) {
+                if (grabber_.isCoralSeenLowRisingEdge()) {
                     wait_timer_.start() ;
                     state_ = State.WaitingForDelay ;
                 }

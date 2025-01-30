@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
+import frc.simulator.engine.ModelFactory;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -134,9 +135,8 @@ public class Robot extends LoggedRobot {
     }
 
     public void addRobotSimulationModels() {
-        //
-        // TODO: add any simulation models for this year's robot
-        //
+        ModelFactory factory = SimulationEngine.getInstance().getModelFactory();
+        factory.registerModel("oi2025", "frc.simulator.models.OI2025");
     }
     
     /** This function is called periodically during all modes. */

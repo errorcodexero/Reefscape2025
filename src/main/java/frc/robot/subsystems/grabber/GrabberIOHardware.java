@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -38,11 +39,10 @@ public class GrabberIOHardware {
     private StatusSignal<Current> grabber_current_ ;
     private StatusSignal<Voltage> grabber_voltage_ ;
 
-    private DigitalInput sensor_input_ ;
-    private AsynchronousInterrupt sensor_interrupt_ ;
-    private AtomicBoolean rising_seen_ ;
-    private AtomicBoolean falling_seen_ ;
-    private AtomicInteger grabber_pos_at_interrupt_ ;
+    private DigitalInterrupt coral_sensor_low_ ;
+    private DigitalInterrupt coral_sensor_high_ ;
+    private DigitalInterrupt coral_sensor_funnel_ ;
+    private DigitalInterrupt algae_sensor_ ;
 
     public GrabberIOHardware() {
         createGrabber() ;
@@ -55,7 +55,7 @@ public class GrabberIOHardware {
 
         grabber_motor_.optimizeBusUtilization() ;                        
                                 
-        initCoralSensor();
+        initSensors();
     }
     
     public void updateInputs(GrabberIOInputs inputs) {
@@ -64,10 +64,23 @@ public class GrabberIOHardware {
         inputs.grabberCurrent = grabber_current_.refresh().getValue() ;
         inputs.grabberVoltage = grabber_voltage_.refresh().getValue() ;
 
-        inputs.grabberSensor = sensor_input_.get() ;
-        inputs.risingEdge = rising_seen_.get() ;
-        inputs.fallingEdge = falling_seen_.get() ;
-        inputs.posOnEdge = Revolutions.of(grabber_pos_at_interrupt_.get() / kPositionScale ) ;
+        inputs.algaeSensor = algae_sensor_.getInput().get() ;
+        inputs.algaeSensorRisingEdge = algae_sensor_.risingEdge();
+        inputs.algaeSensorFallingEdge = algae_sensor_.fallingEdge();
+
+        inputs.coralSensorLow = coral_sensor_low_.getInput().get() ;
+        inputs.coralSensorLowRisingEdge = coral_sensor_low_.risingEdge();
+        inputs.coralSensorLowFallingEdge = coral_sensor_low_.fallingEdge();
+        inputs.coralSensorPositionLow = coral_sensor_low_.getCount() ;
+
+        inputs.coralSensorHigh = coral_sensor_high_.getInput().get() ;
+        inputs.coralSensorHighRisingEdge = coral_sensor_high_.risingEdge();
+        inputs.coralSensorHighFallingEdge = coral_sensor_high_.fallingEdge();
+        inputs.coralSensorPositionHigh = coral_sensor_high_.getCount() ;
+
+        inputs.coralSensorFunnel = coral_sensor_funnel_.getInput().get() ;
+        inputs.coralSensorFunnelRisingEdge = coral_sensor_funnel_.risingEdge();
+        inputs.coralSensorFunnelFallingEdge = coral_sensor_funnel_.fallingEdge();
     }
 
     public void setGrabberVelocity(AngularVelocity target) {
@@ -91,26 +104,20 @@ public class GrabberIOHardware {
             .angularVelocity(vel) ;        
     }
 
-    private void sensorInterruptHandler(boolean rising, boolean falling) {
-        if (rising) {
-            rising_seen_.set(true) ;
-            grabber_pos_at_interrupt_.set((int)(grabber_position_.refresh().getValueAsDouble() * kPositionScale)) ;
-        }
+    private void initSensors() {
+        coral_sensor_low_ = new DigitalInterrupt(GrabberConstants.Sensor.kLow, true, true) ;
+        coral_sensor_low_.setCountSupplier(()->(int)(grabber_position_.refresh().getValue().in(Revolutions) * kPositionScale)) ;
+        coral_sensor_low_.enable() ;
 
-        if (falling) {
-            falling_seen_.set(true) ;
-        }
-    }    
+        coral_sensor_high_ = new DigitalInterrupt(GrabberConstants.Sensor.kHigh, true, true) ;
+        coral_sensor_high_.setCountSupplier(()->(int)(grabber_position_.refresh().getValue().in(Revolutions) * kPositionScale)) ;
+        coral_sensor_high_.enable() ;
 
-    private void initCoralSensor() {
-        sensor_input_ = new DigitalInput(GrabberConstants.Sensor.kInput) ;
-        sensor_interrupt_ = new AsynchronousInterrupt(sensor_input_, (rising, falling) -> { sensorInterruptHandler(rising, falling); }) ;
-        sensor_interrupt_.setInterruptEdges(true, true);
-        sensor_interrupt_.enable();
+        coral_sensor_funnel_ = new DigitalInterrupt(GrabberConstants.Sensor.kFunnel, true, true) ;
+        coral_sensor_funnel_.enable() ;
 
-        rising_seen_ = new AtomicBoolean() ;
-        falling_seen_ = new AtomicBoolean() ;
-        grabber_pos_at_interrupt_ = new AtomicInteger() ;
+        algae_sensor_ = new DigitalInterrupt(GrabberConstants.Sensor.kAlgae, true, true) ;
+        algae_sensor_.enable() ;
     }
 
     private void createGrabber() {

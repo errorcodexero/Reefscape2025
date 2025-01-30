@@ -11,15 +11,29 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "start" : 10,
+                        "start" : 1,
                         "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 0.0,
+                        "teleop" : 15.0,
                         "fms" : false,
                         "ds" : true
                     }
                 }
             ]
-        }      
+        },
+        {
+            "time" : 4.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : true
+                    }
+                }
+            ]
+        }   
     ]
 }
