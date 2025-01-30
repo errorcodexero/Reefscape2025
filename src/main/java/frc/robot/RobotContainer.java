@@ -44,12 +44,18 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.grabber.GrabberIO;
+import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -70,6 +76,9 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private ManipulatorSubsystem manipulator_;
+    private GrabberSubsystem grabber_;
+    private Climber climber_;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -87,41 +96,93 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case ALPHA:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
-                        
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
+                    }
+
+                    // TODO: Initialize climber correctly once it is structured.
+                    climber_ = new Climber();
+                    
                     break;
 
                 case COMPETITION:
 
-                    /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
+                    // TODO: Replace TunerConstants with new set of constants for comp bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
+
+                    vision_ = new AprilTagVision(
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight(VisionConstants.frontLimelightName),
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
+                    }
+
+                    // TODO: Initialize climber correctly once it is structured.
+                    climber_ = new Climber();
 
                     break;
                 
                 case PRACTICE:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    // TODO: Replace TunerConstants with new set of constants for practice bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
+                    }
+
+                    // TODO: Initialize climber correctly once it is structured.
+                    climber_ = new Climber();
                             
                     break;
                 
@@ -145,6 +206,8 @@ public class RobotContainer {
                             new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
                         ), drivebase_::getPose));
+
+                    // Other subsystems are no-op until they add simulation support or a simulation implementation.
                         
                     break;
             }
@@ -154,21 +217,37 @@ public class RobotContainer {
          * Empty subsystem setup (required in replay)
          */
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
-            drivebase_ =
-                new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-
+            drivebase_ = new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {}
+            );
         }
         
         if (vision_ == null) {
             vision_ = new AprilTagVision(
                 drivebase_::addVisionMeasurement,
                 new CameraIO() {},
-                new CameraIO() {});
+                new CameraIO() {}
+            );
+        }
+
+        if (manipulator_ == null) {
+            // TODO: Manipulator default implementation instantiation when the climber is structured how it should be, (default methods)
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+        }
+
+        if (grabber_ == null) {
+            grabber_ = new GrabberSubsystem(
+                new GrabberIO() {}
+            );
+        }
+
+        if (climber_ == null) {
+            // TODO: Climber default implementation instantiation when the climber is structured how it should be
+            climber_ = new Climber();
         }
 
         // Simulation setup

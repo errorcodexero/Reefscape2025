@@ -60,6 +60,7 @@ public final class Constants {
         // Limelight Names
         public static final String frontLimelightName = "frontlimelight";
         public static final String backLimelightName = "backlimelight";
+        public static final String leftLimelightName = "leftlimelight";
 
         // Odometry Filtering Configuration
         
