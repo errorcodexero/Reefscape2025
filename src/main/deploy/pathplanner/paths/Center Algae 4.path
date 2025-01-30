@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.331960227272727,
-        "y": 0.519985795454545
+        "x": 5.14839527027027,
+        "y": 2.888597972972972
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.748968373265926,
-        "y": 4.16015942243364
+        "x": 5.466058273873866,
+        "y": 1.4854771448274184
       },
       "isLocked": false,
-      "linkedName": "Collection station"
+      "linkedName": "1 alliance side"
     },
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 6.331960227272727,
+        "y": 0.519985795454545
       },
       "prevControl": {
-        "x": 5.929972655528249,
-        "y": 2.8422040461839133
+        "x": 4.870179667548882,
+        "y": 1.8617470640607325
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Algae 1"
+      "linkedName": "Collection station"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Side Algae",
+  "folder": "Center Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 119.95360816780152
   },
   "useDefaultConstraints": false
 }

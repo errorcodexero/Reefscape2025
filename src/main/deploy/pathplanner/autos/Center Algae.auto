@@ -5,13 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 1"
+                  "pathName": "Center Algae 1"
                 }
               },
               {
@@ -30,28 +30,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Center Coral 2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Prep Station Intake"
-                }
-              }
-            ]
+            "name": "Prep Algae Collect L2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Wait for Coral"
+            "name": "Algae Collect L2"
           }
         },
         {
@@ -61,13 +48,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 3"
+                  "pathName": "Center Algae 2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Prep L4"
+                  "name": "Prep Score Algae"
                 }
               }
             ]
@@ -76,7 +63,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place L4"
+            "name": "Score Algae"
           }
         },
         {
@@ -86,13 +73,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 4"
+                  "pathName": "Center Algae 3"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Wait for Coral"
+                  "name": "Prep Algae Collect L3"
                 }
               }
             ]
@@ -101,7 +88,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Prep Station Intake"
+            "name": "Algae Collect L3"
           }
         },
         {
@@ -111,13 +98,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 3"
+                  "pathName": "Center Algae 4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Prep L4"
+                  "name": "Prep Score Algae"
                 }
               }
             ]
@@ -126,7 +113,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place L4"
+            "name": "Score Algae"
           }
         },
         {
@@ -136,13 +123,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 4"
+                  "pathName": "Center Algae 5"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Prep Station Intake"
+                  "name": "Prep Algae Collect L3"
                 }
               }
             ]
@@ -151,7 +138,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Wait for Coral"
+            "name": "Algae Collect L3"
           }
         },
         {
@@ -161,13 +148,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Coral 5"
+                  "pathName": "Center Algae 6"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Prep L4"
+                  "name": "Prep Score Algae"
                 }
               }
             ]
@@ -176,7 +163,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place L4"
+            "name": "Score Algae"
           }
         }
       ]

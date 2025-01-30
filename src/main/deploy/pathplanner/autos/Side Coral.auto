@@ -5,87 +5,178 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep L4"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "Place L4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep Station Intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.1
+            "name": "Wait for Coral"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 3"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep L4"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "Place L4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep Station Intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.1
+            "name": "Wait for Coral"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 3"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep L4"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "Place L4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep Station Intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.1
+            "name": "Wait for Coral"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Side Coral 5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Side Coral 5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep L4"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "Place L4"
           }
         }
       ]
