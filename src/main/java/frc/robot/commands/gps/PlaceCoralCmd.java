@@ -9,10 +9,11 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -20,6 +21,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
@@ -29,6 +32,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefscapeMath;
+import frc.robot.util.ReefscapeMath.PlaceSide;
 import frc.robot.util.ReefscapeMath.ReefPlaceInfo;
 
 public class PlaceCoralCmd extends SequentialCommandGroup {
@@ -48,21 +52,24 @@ public class PlaceCoralCmd extends SequentialCommandGroup {
     private static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public PlaceCoralCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public PlaceCoralCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, PlaceSide side) {
         setName("PlaceCoralCmd") ;
 
-        ReefPlaceInfo info = ReefscapeMath.findReefInfo() ;
+        Optional<Alliance> a = DriverStation.getAlliance() ;
+        if (a.isPresent()) {
+            ReefPlaceInfo info = ReefscapeMath.findReefInfo(a.get(), db.getPose(), side) ;
 
-        PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;
-        PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;
+            PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;
+            PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;
 
-        addCommands(
-            new ManipulatorGotoCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
-            AutoBuilder.pathfindToPose(info.place_pose, place_constraints),
-            new GamepadEnabled(false),
-            new DepositCoralCmd(g),
-            AutoBuilder.pathfindToPose(info.backup_pose, backup_constraints),
-            new GamepadEnabled(true),
-            new RumbleGamepadCmd(Milliseconds.of(500))) ;
+            addCommands(
+                new ManipulatorGotoCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
+                AutoBuilder.pathfindToPose(info.place_pose, place_constraints),
+                new GamepadEnabled(false),
+                new DepositCoralCmd(g),
+                AutoBuilder.pathfindToPose(info.backup_pose, backup_constraints),
+                new GamepadEnabled(true),
+                new RumbleGamepadCmd(Milliseconds.of(500))) ;
+        }
     }
 }
