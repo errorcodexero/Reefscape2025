@@ -138,17 +138,21 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
                         new CameraIOPhotonSim("Front", new Transform3d(
-                            new Translation3d(Meters.of(0.35), Meters.zero(), Meters.of(0.2)),
+                            new Translation3d(Meters.of(0.3048), Meters.of(0.12), Meters.of(0.12)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
-                        ), drivebase_::getPose),
+                        ), drivebase_::getPose, true),
                         new CameraIOPhotonSim("Back", new Transform3d(
-                            new Translation3d(Meters.of(-0.35), Inches.zero(), Meters.of(0.2)),
+                            new Translation3d(Meters.of(-0.3048), Inches.zero(), Meters.of(0.12)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Rotations.of(0.5))
-                        ), drivebase_::getPose),
+                        ), drivebase_::getPose, false),
                         new CameraIOPhotonSim("LeftCamera", new Transform3d(
-                            new Translation3d(Meters.of(0), Meters.of(0.35), Meters.of(0.20)),
-                            new Rotation3d(Degrees.zero(), Degrees.of(-22), Degrees.of(90))
-                        ), drivebase_::getPose));
+                            new Translation3d(Meters.of(-0.12), Meters.of(0.3048), Meters.of(0.12)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(90))
+                        ), drivebase_::getPose, false),
+                        new CameraIOPhotonSim("RightCamera", new Transform3d(
+                            new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
+                        ), drivebase_::getPose, false));
                         
                     break;
             }
