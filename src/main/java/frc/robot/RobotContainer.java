@@ -76,10 +76,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    private ManipulatorSubsystem manipulator_;
-    private GrabberSubsystem grabber_;
-    private Climber climber_;
-    
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
@@ -111,17 +108,6 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
-                    }
-
-                    // TODO: Initialize climber correctly once it is structured.
-                    climber_ = new Climber();
-                    
                     break;
 
                 case COMPETITION:
@@ -142,17 +128,6 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
-                    }
-
-                    // TODO: Initialize climber correctly once it is structured.
-                    climber_ = new Climber();
-
                     break;
                 
                 case PRACTICE:
@@ -172,17 +147,6 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.backLimelightName),
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
-
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Look into how initialization errors should be handled. I have an idea other than just passing an exception to the RobotContainer.
-                    }
-
-                    // TODO: Initialize climber correctly once it is structured.
-                    climber_ = new Climber();
                             
                     break;
                 
@@ -206,8 +170,6 @@ public class RobotContainer {
                             new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
                         ), drivebase_::getPose));
-
-                    // Other subsystems are no-op until they add simulation support or a simulation implementation.
                         
                     break;
             }
@@ -232,22 +194,6 @@ public class RobotContainer {
                 new CameraIO() {},
                 new CameraIO() {}
             );
-        }
-
-        if (manipulator_ == null) {
-            // TODO: Manipulator default implementation instantiation when the climber is structured how it should be, (default methods)
-            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-        }
-
-        if (grabber_ == null) {
-            grabber_ = new GrabberSubsystem(
-                new GrabberIO() {}
-            );
-        }
-
-        if (climber_ == null) {
-            // TODO: Climber default implementation instantiation when the climber is structured how it should be
-            climber_ = new Climber();
         }
 
         // Simulation setup
