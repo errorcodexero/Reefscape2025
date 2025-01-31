@@ -36,14 +36,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -53,12 +45,20 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.grabber.GrabberIO;
+import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -79,6 +79,9 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private ManipulatorSubsystem manipulator_;
+    private GrabberSubsystem grabber_;
+    private Climber climber_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -111,6 +114,17 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Handle this differently.
+                        e.printStackTrace();
+                    }
+
+                    climber_ = new Climber(new ClimberIOHardware());
+
                     break;
 
                 case COMPETITION:
@@ -131,6 +145,17 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Handle this differently.
+                        e.printStackTrace();
+                    }
+
+                    climber_ = new Climber(new ClimberIOHardware());
+
                     break;
                 
                 case PRACTICE:
@@ -150,7 +175,18 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.backLimelightName),
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
-                            
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+                        // TODO: Handle this differently.
+                        e.printStackTrace();
+                    }
+
+                    climber_ = new Climber(new ClimberIOHardware());
+                    
                     break;
                 
                 case SIMBOT:
@@ -181,6 +217,8 @@ public class RobotContainer {
                             new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
                         ), drivebase_::getPose, false));
+
+                    // Other subsystems should be added here once we have simulation support for them.
                         
                     break;
             }
@@ -205,6 +243,19 @@ public class RobotContainer {
                 new CameraIO() {},
                 new CameraIO() {}
             );
+        }
+
+        if (manipulator_ == null) {
+            // TODO: Once all methods are default methods, replace this with an anon inner type.
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+        }
+
+        if (grabber_ == null) {
+            grabber_ = new GrabberSubsystem(new GrabberIO() {});
+        }
+
+        if (climber_ == null) {
+            climber_ = new Climber(new ClimberIO() {});
         }
 
         // Simulation setup
