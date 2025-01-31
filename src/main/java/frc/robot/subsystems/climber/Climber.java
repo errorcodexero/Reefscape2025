@@ -13,7 +13,7 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
    private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
    enum ClimberState{
-      IDLE,
+      Idle,
       DeployClimber,
       WaitToHook,
       ExecuteClimb
@@ -22,6 +22,7 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
  
    public Climber(ClimberIO io){
       io_ = io;
+      climberState_ = ClimberState.Idle;
    }
  
    @Override
@@ -30,7 +31,9 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
    }
    public void climber() {
       switch(climberState_){
-         case IDLE:
+         case Idle:
+            // 1. 
+            // 2. 
             break;
          case DeployClimber:
             break;
