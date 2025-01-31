@@ -116,12 +116,7 @@ public class RobotContainer {
 
                     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
 
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Handle this differently.
-                        e.printStackTrace();
-                    }
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
 
                     climber_ = new Climber(new ClimberIOHardware());
 
@@ -147,12 +142,7 @@ public class RobotContainer {
 
                     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
 
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Handle this differently.
-                        e.printStackTrace();
-                    }
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
 
                     climber_ = new Climber(new ClimberIOHardware());
 
@@ -178,12 +168,7 @@ public class RobotContainer {
 
                     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
 
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-                        // TODO: Handle this differently.
-                        e.printStackTrace();
-                    }
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
 
                     climber_ = new Climber(new ClimberIOHardware());
                     
