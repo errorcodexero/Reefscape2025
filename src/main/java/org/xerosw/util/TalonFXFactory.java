@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 /**
@@ -18,18 +19,31 @@ public class TalonFXFactory {
      * Creates a new TalonFX motor controller in brake mode.
      * @param id The CAN id of the motor.
      * @param bus The CAN bus the motor is on.
+     * @param invert If true, invert the motor
+     * @return The created TalonFX motor controller with the applied configurations.
+     * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
+     */
+    public static TalonFX createTalonFX(int id, String bus, boolean invert) throws Exception {
+        TalonFX fx = new TalonFX(id, bus) ;
+        
+        TalonFXConfiguration config = new TalonFXConfiguration() ;       
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake ;
+        config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive ;
+        
+        checkError(id, "TalonFXMotorController - apply configuration", () -> fx.getConfigurator().apply(config), -1);        
+        
+        return fx ;
+    }
+    
+    /**
+     * Creates a new TalonFX motor controller in brake mode.
+     * @param id The CAN id of the motor.
+     * @param bus The CAN bus the motor is on.
      * @return The created TalonFX motor controller with the applied configurations.
      * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
      */
     public static TalonFX createTalonFX(int id, String bus) throws Exception {
-        TalonFX fx = new TalonFX(id, bus) ;
-
-        TalonFXConfiguration config = new TalonFXConfiguration() ;       
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake ;
-
-        checkError(id, "TalonFXMotorController - apply configuration", () -> fx.getConfigurator().apply(config), -1);        
-
-        return fx ;
+        return createTalonFX(id, bus, false);
     }
 
     /**
@@ -40,6 +54,17 @@ public class TalonFXFactory {
      */
     public static TalonFX createTalonFX(int id) throws Exception {
         return createTalonFX(id, "");
+    }
+
+    /**
+     * Creates a new TalonFX motor controller in brake mode on the default RIO bus.
+     * @param id The CAN id of the motor.
+     * @param invert If true, invert the motor
+     * @return The created TalonFX motor controller with the applied configurations.
+     * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
+     */
+    public static TalonFX createTalonFX(int id, boolean invert) throws Exception {
+        return createTalonFX(id, "", invert);
     }
 
     /**
