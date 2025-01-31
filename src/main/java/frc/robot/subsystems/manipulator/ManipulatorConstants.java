@@ -12,6 +12,8 @@ public class ManipulatorConstants {
 
         public static final double kGearRatio = 0; 
 
+        public static final String kCANBusName = null; 
+
         public class PID {
             public static final double kP = 0.0; 
             public static final double kI = 0.0 ;
@@ -39,6 +41,8 @@ public class ManipulatorConstants {
 
         // meters that elevator moves per revolution of motor
         public static final double kMetersPerRev = 0; 
+
+        public static final String kCANBusName = null; 
 
         public class PID {
             public static final double kP = 0.0; 
