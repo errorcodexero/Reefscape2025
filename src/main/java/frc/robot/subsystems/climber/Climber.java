@@ -2,13 +2,13 @@
 so hover off ground. 
 Commands - DeployClimber, ExecuteClimb
 States(enum) - IDLE, DeployClimber, WaitToHook, Climb
- */
+*/
 
- package frc.robot.subsystems.climber;
+package frc.robot.subsystems.climber;
 
- import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
- public class Climber extends SubsystemBase{
+public class Climber extends SubsystemBase{
    private ClimberIO io_; 
    private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
@@ -24,11 +24,11 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
       io_ = io;
       climberState_ = ClimberState.Idle;
    }
- 
-   @Override
-   public void periodic(){
-      io_.updateInputs(inputs_);
+
+   public void deployclimberstate() {
+      
    }
+ 
    public void climber() {
       switch(climberState_){
          case Idle:
@@ -43,7 +43,10 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
             break;
       }
    }
-      
- }
+   @Override
+   public void periodic(){
+      io_.updateInputs(inputs_);
+   }
+}
  
  

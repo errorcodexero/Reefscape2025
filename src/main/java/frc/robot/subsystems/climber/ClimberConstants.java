@@ -3,16 +3,17 @@ package frc.robot.subsystems.climber;
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
 
-    public class ClimberArm{
+    public class Climber{
        
         // motor CAN ID
         public static final int kMotorCANID = 0; 
 
-        // gear ratio- degrees per rev
+        // gear ratio
         public static final double kGearRatio = 0; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
+        
 
         public class PID {
             public static final double kP = 0.0; 
