@@ -124,6 +124,7 @@ public class Robot extends LoggedRobot {
 
     public void robotInit() {
         super.robotInit() ;
+        //Pathfinding.setPathfinder(new LocalADStarAK());
 
         if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
             //
