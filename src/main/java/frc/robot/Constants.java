@@ -13,11 +13,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
 * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -45,6 +49,38 @@ public final class Constants {
         
     }
 
+    public static class ReefConstants {
+        /**
+         * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Angle maximumAngleToFace = Degrees.of(40);
+
+        /**
+         * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
+         */
+        public static final Distance maximumDistanceToFace = Meters.of(3);
+
+        /**
+         * The distance from the center of the robot to the tag while placing coral.
+         */
+        public static final Distance distanceFromTagCoral = Inches.of(20);
+
+        /**
+         * The distance from the center of the robot to the tag while collecting algae.
+         */
+        public static final Distance distanceFromTagAlgae = Inches.of(20);
+
+        /**
+         * The offset from the center of the tag to where we want the arm to be positioned.
+         */
+        public static final Distance leftRightOffset = Inches.of(5);
+
+        /**
+         * The distance from the center of the robot to the arm.
+         */
+        public static final Distance robotToArm = Inches.zero();
+    }
+
     public static class CanConstants {
 
         public static final int grabber = 1;
@@ -60,6 +96,7 @@ public final class Constants {
         // Limelight Names
         public static final String frontLimelightName = "frontlimelight";
         public static final String backLimelightName = "backlimelight";
+        public static final String leftLimelightName = "leftlimelight";
 
         // Odometry Filtering Configuration
         
@@ -89,9 +126,6 @@ public final class Constants {
     }
 
     public static enum RobotType {
-        /** The Alpha Bot (aka the 2024 practice bot drivebase) */
-        ALPHA,
-
         /** The Competition Bot */
         COMPETITION,
 
@@ -103,7 +137,7 @@ public final class Constants {
     }
 
     // This is only a fallback! This will not change the robot type.
-    private static final RobotType defaultRobotType = RobotType.ALPHA;
+    private static final RobotType defaultRobotType = RobotType.SIMBOT ;
 
     private static final Alert invalidRobotType = new Alert(
         "Invalid RobotType selected. Defaulting to " + defaultRobotType.toString(),

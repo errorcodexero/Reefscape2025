@@ -12,6 +12,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.RobotContainer;
 
 public class CollectCoralCmd extends ParallelCommandGroup {
 
@@ -23,6 +24,7 @@ public class CollectCoralCmd extends ParallelCommandGroup {
         addCommands(
             new ManipulatorGotoCmd(m, ElevatorCollectHeight, ArmCollectAngle),
             new WaitForCoralCmd(g),
+            new SetHoldingCmd(RobotContainer.GamePiece.CORAL),
             new RumbleGamepadCmd(Milliseconds.of(500))) ;
     }
 }

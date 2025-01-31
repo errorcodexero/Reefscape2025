@@ -4,6 +4,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GrabberSubsystem extends SubsystemBase {
+
     private final GrabberIO io_; 
     private final GrabberIOInputsAutoLogged inputs_; 
 
@@ -35,5 +36,13 @@ public class GrabberSubsystem extends SubsystemBase {
 
     public boolean isCoralSeenFunnelRisingEdge() {
         return inputs_.coralSensorFunnelRisingEdge ;
+    }
+
+    public boolean isAlgaeHighSeenRisingEdge() {
+        return inputs_.algaeSensorRisingEdgeHigh ;
+    }
+
+    public boolean isAlgaeLowSeenRisingEdge() {
+        return inputs_.algaeSensorRisingEdgeLow ;
     }
 }

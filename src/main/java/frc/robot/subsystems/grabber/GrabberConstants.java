@@ -36,10 +36,11 @@ public class GrabberConstants {
     }   
 
     public class Sensor {
-        public static final int kLow = 1 ;
-        public static final int kHigh = 2 ;
-        public static final int kFunnel = 3 ;
-        public static final int kAlgae = 4 ;
+        public static final int kCoralLow = 1 ;
+        public static final int kCoralHigh = 2 ;
+        public static final int kCoralFunnel = 3 ;
+        public static final int kAlgaeHigh = 4 ;
+        public static final int kAlgaeLow = 5 ;
     }
 
     public class Collect {

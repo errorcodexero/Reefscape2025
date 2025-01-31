@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import frc.robot.subsystems.oi.OIConstants;
+import frc.robot.subsystems.oi.OISubsystem;
 import frc.simulator.engine.SimulationEngine;
 
 public class OI2025 extends OIBaseModel {
@@ -40,22 +41,21 @@ public class OI2025 extends OIBaseModel {
     }
 
     private Map<String, Integer> getLedMap() {
-        ledMap.put("eject", Integer.valueOf(OIConstants.LEDs.kEject)) ;
-        ledMap.put("coral-l1", Integer.valueOf(OIConstants.LEDs.kCoralL1)) ;
-        ledMap.put("coral-l2", Integer.valueOf(OIConstants.LEDs.kCoralL2)) ;
-        ledMap.put("coral-l3", Integer.valueOf(OIConstants.LEDs.kCoralL3)) ;
-        ledMap.put("coral-l4", Integer.valueOf(OIConstants.LEDs.kCoralL4)) ;
-        ledMap.put("coral-collect", Integer.valueOf(OIConstants.LEDs.kCoralCollect)) ;
-        ledMap.put("coral-place", Integer.valueOf(OIConstants.LEDs.kCoralPlace)) ;
-        ledMap.put("algae-ground", Integer.valueOf(OIConstants.LEDs.kAlgaeGround)) ;
-        ledMap.put("algae-score", Integer.valueOf(OIConstants.LEDs.kAlgaeScore)) ;
-        ledMap.put("algae-collect-l2", Integer.valueOf(OIConstants.LEDs.kAlgaeCollectL2)) ;
-        ledMap.put("algae-collect-l3", Integer.valueOf(OIConstants.LEDs.kAlgaeCollectL3)) ;
-        ledMap.put("climb-deploy", Integer.valueOf(OIConstants.LEDs.kClimbDeploy)) ;
-        ledMap.put("climb-execute", Integer.valueOf(OIConstants.LEDs.kClimbExecute)) ;
-        ledMap.put("coral-left", Integer.valueOf(OIConstants.LEDs.kCoralLeft)) ;
-        ledMap.put("coral-right", Integer.valueOf(OIConstants.LEDs.kCoralRight)) ;
-
+        ledMap.put("eject", OISubsystem.OILed.Eject.value) ;
+        ledMap.put("coral-l1", OISubsystem.OILed.CoralL1.value) ;
+        ledMap.put("coral-l2", OISubsystem.OILed.CoralL2.value) ;
+        ledMap.put("coral-l3", OISubsystem.OILed.CoralL3.value) ;
+        ledMap.put("coral-l4", OISubsystem.OILed.CoralL4.value) ;
+        ledMap.put("coral-collect", OISubsystem.OILed.CoralCollect.value) ;
+        ledMap.put("coral-place", OISubsystem.OILed.CoralPlace.value) ;
+        ledMap.put("algae-ground", OISubsystem.OILed.AlgaeGround.value) ;
+        ledMap.put("algae-score", OISubsystem.OILed.AlgaeScore.value) ;
+        ledMap.put("algae-collect-l2", OISubsystem.OILed.AlgaeCollectL2.value) ;
+        ledMap.put("algae-collect-l3", OISubsystem.OILed.AlgaeCollectL3.value) ;
+        ledMap.put("climb-deploy", OISubsystem.OILed.ClimbDeploy.value) ;
+        ledMap.put("climb-execute", OISubsystem.OILed.ClimbExecute.value) ;
+        ledMap.put("coral-left", OISubsystem.OILed.CoralLeft.value) ;
+        ledMap.put("coral-right", OISubsystem.OILed.CoralRight.value) ;
         return ledMap ;
     }
 }

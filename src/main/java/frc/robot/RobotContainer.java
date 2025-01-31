@@ -43,13 +43,29 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.gps.AbortCmd;
+import frc.robot.commands.gps.CollectCoralCmd;
+import frc.robot.commands.gps.EjectCmd;
+import frc.robot.commands.gps.PlaceCoralCmd;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.oi.OIConstants;
+import frc.robot.subsystems.oi.OIIOHID;
+import frc.robot.subsystems.oi.OISubsystem;
+import frc.robot.subsystems.oi.OISubsystem.CoralSide;
+import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.subsystems.oi.OISubsystem.RobotAction;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -63,6 +79,13 @@ import frc.simulator.engine.ISimulatedSubsystem;
 * subsystems, commands, and button mappings) should be declared here.
 */
 public class RobotContainer {
+    
+    public enum GamePiece {
+        NONE,
+        CORAL,
+        ALGAE_HIGH,
+        ALGAE_LOW
+    } ;
 
     private static RobotContainer container_ ;
 
@@ -75,16 +98,20 @@ public class RobotContainer {
     }
 
     // Mapping of subsystems name to subsystems, used by the simulator
-    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
-
+    private HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
     private boolean driver_controller_enabled_ = true ;
 
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private OISubsystem oi_ ;
+    private ManipulatorSubsystem manipulator_ ;
+    private GrabberSubsystem grabber_ ;
+    private ClimberSubsystem climber_ ;
+    private GamePiece holding_ ;
     
     // Controller
-    private final CommandXboxController gamepad_ = new CommandXboxController(0);
+    private final CommandXboxController gamepad_ = new CommandXboxController(OIConstants.kGamepadPort) ;
     
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser_;
@@ -101,44 +128,56 @@ public class RobotContainer {
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
+            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, () -> getRobotActionCommand()) ;
+
             switch (Constants.getRobot()) {
-                case ALPHA:
-
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
-
-                    vision_ = new AprilTagVision(
-                        drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
-                        
-                    break;
-
                 case COMPETITION:
-
-                    /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
-
                     break;
                 
                 case PRACTICE:
+                    try {
+                        drivebase_ =
+                            new Drive(
+                                new GyroIOPigeon2(),
+                                new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                                new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                                new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                                new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    }
+                    catch(Exception e) {
+                        oi_.badDriveBase();
+                    }
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    try {
+                        vision_ = new AprilTagVision(
+                            drivebase_::addVisionMeasurement,
+                            new CameraIOLimelight(VisionConstants.frontLimelightName),
+                            new CameraIOLimelight(VisionConstants.backLimelightName));
+                    }
+                    catch(Exception e) {
+                        oi_.badVision() ;
+                    }
 
-                    vision_ = new AprilTagVision(
-                        drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
+                    }
+                    catch(Exception e) {
+                        oi_.badManipulator() ;
+                    }
+
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
+                    }
+                    catch(Exception e) {
+                        oi_.badGrabber() ;
+                    }
+
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+                    }
+                    catch(Exception e) {
+                        oi_.badClimber() ;
+                    }
                             
                     break;
                 
@@ -210,6 +249,65 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
+    public GamePiece holding() {
+        return holding_ ;
+    }
+
+    public void holding(GamePiece gp) {
+
+        holding_ = gp ;
+        switch(gp) {
+            case NONE:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+
+            case CORAL:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.On) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+                
+            case ALGAE_HIGH:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.On) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+
+            case ALGAE_LOW:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.On) ;
+                break ;
+        }
+    }
+
+    public Command getRobotActionCommand() {
+        Command cmd = null ;
+
+        RobotAction action = oi_.getCurrentAction() ;
+
+        switch (action) {
+            case CollectCoral:
+                cmd = new CollectCoralCmd(manipulator_, grabber_) ;
+                break ;
+            case PlaceCoral:
+                cmd = new PlaceCoralCmd(drivebase_, manipulator_, grabber_, oi_.coralLevel(), oi_.getCoralSide() == CoralSide.Left) ;
+                break ;
+
+            case CollectAlgaeGround:
+            case CollectAlgaeReefL2:
+            case CollectAlgaeReefL3:
+            case PlaceAlgae:
+            case ClimbDeploy:
+            case ClimbExecute:
+                break ;
+        }
+
+        return cmd ;
+    }
+
     public ISimulatedSubsystem get(String name) {
         return this.subsystems_.get(name) ;
     }
@@ -228,9 +326,10 @@ public class RobotContainer {
     * Use this method to define your button -> command mappings for drivers.
     */
     private void configureButtonBindings() {
-        //
-        // Add the OI bindings here
-        //
+        // oi_.climbDeploy().onTrue(new ClimbDeployCommand()) ;
+        // oi_.climbExecute().onTrue(new ClimbExecuteCommand()) ;
+        oi_.abort().onTrue(new AbortCmd(drivebase_, manipulator_, grabber_, climber_)) ;
+        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
     }
 
     private double getLeftX() {

@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.GamepadEnabled;
@@ -31,25 +32,15 @@ import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.WaitForAlgaeCmd;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
-public class PlaceCoralCmd extends SequentialCommandGroup {
-    private static final Angle ArmPlaceAngle[] = {
-        Degrees.of(90.0),
-        Degrees.of(90.0),
-        Degrees.of(90.0),
-        Degrees.of(90.0),
-    } ;
-
-    private static final Distance ElevatorPlaceHeight[] = {
-        Meters.of(1.0),
-        Meters.of(1.0),
-        Meters.of(1.0),
-        Meters.of(1.0)
-    } ;
+public class CollectReefAlgaeCmd extends SequentialCommandGroup {
+    private static final Angle ArmPlaceAngle = Degrees.of(90.0) ;
+    private static final Distance ElevatorPlaceHeight = Meters.of(1.0) ;
 
     private static Voltage nominal = Volts.of(12.0) ;
 
@@ -64,7 +55,7 @@ public class PlaceCoralCmd extends SequentialCommandGroup {
     private static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public PlaceCoralCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, int level, boolean left) {
+    public CollectReefAlgaeCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("PlaceCoralCmd") ;
 
         Optional<Alliance> a = DriverStation.getAlliance() ;
@@ -73,22 +64,24 @@ public class PlaceCoralCmd extends SequentialCommandGroup {
 
             if (target.isPresent()) {
                 ReefFace t = target.get() ;
-                Pose2d place = left ? t.getLeftScoringPose() : t.getRightScoringPose() ;
+                Pose2d place = t.getAlgaeScoringPose() ;
                 Pose2d backup = t.getWallPose() ;
                 
                 PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;
                 PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;
 
                 addCommands(
-                    new ManipulatorGotoCmd(m, ElevatorPlaceHeight[level], ArmPlaceAngle[level]),
-                    AutoBuilder.pathfindToPose(place, place_constraints),
+                    new ManipulatorGotoCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
                     new GamepadEnabled(false),
-                    new DepositCoralCmd(g),
+                    AutoBuilder.pathfindToPose(place, place_constraints),
+                    new WaitForAlgaeCmd(g, false),
                     AutoBuilder.pathfindToPose(backup, backup_constraints),
                     new GamepadEnabled(true),
-                    new SetHoldingCmd(RobotContainer.GamePiece.NONE),
+                    new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_HIGH),
                     new RumbleGamepadCmd(Milliseconds.of(500))) ;
             }
         }
+
+
     }
 }

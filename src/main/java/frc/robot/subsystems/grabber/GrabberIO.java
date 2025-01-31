@@ -31,9 +31,13 @@ public interface GrabberIO {
         public boolean coralSensorFunnelRisingEdge ;
         public boolean coralSensorFunnelFallingEdge ;
 
-        public boolean algaeSensor ;
-        public boolean algaeSensorRisingEdge ;
-        public boolean algaeSensorFallingEdge ;
+        public boolean algaeSensorHigh ;
+        public boolean algaeSensorRisingEdgeHigh ;
+        public boolean algaeSensorFallingEdgeHigh;
+
+        public boolean algaeSensorLow ;
+        public boolean algaeSensorRisingEdgeLow ;
+        public boolean algaeSensorFallingEdgeLow ;
     }
 
     // update all inputs

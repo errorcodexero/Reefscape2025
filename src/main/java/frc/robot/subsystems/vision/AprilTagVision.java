@@ -208,5 +208,4 @@ public class AprilTagVision extends SubsystemBase {
     private String getCameraName(int index) {
         return "Camera" + Integer.toString(index);
     }
-
 }
