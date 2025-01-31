@@ -1,20 +1,49 @@
-/*This is the ClimberSubsystem class. It is going to be used to manage 
-what the climber is going to do on the robot. The climber is what the
-robot is going to use to go up the deep cage. This code is incomplete
+/*Fork and spaghetti - Drive into cage, hooks hook onto bar, climber twists chain and cage into robot, 
+so hover off ground. 
+Commands - DeployClimber, ExecuteClimb
+States(enum) - IDLE, DeployClimber, WaitToHook, Climb
  */
 
-package frc.robot.subsystems.climber;
+ package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+ import edu.wpi.first.wpilibj2.command.SubsystemBase;
+ 
+ public class Climber extends SubsystemBase{
+   private ClimberIO io_; 
+   private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
-public class Climber extends SubsystemBase {
-
-  public Climber() {
-
-  }
-
-  @Override
-  public void periodic() {
-  
-  }
-}
+   enum ClimberState{
+      Idle,
+      DeployClimber,
+      WaitToHook,
+      ExecuteClimb
+   }
+   ClimberState climberState_;
+ 
+   public Climber(ClimberIO io){
+      io_ = io;
+      climberState_ = ClimberState.Idle;
+   }
+ 
+   @Override
+   public void periodic(){
+      io_.updateInputs(inputs_);
+   }
+   public void climber() {
+      switch(climberState_){
+         case Idle:
+            // 1. 
+            // 2. 
+            break;
+         case DeployClimber:
+            break;
+         case WaitToHook:
+            break;
+         case ExecuteClimb:
+            break;
+      }
+   }
+      
+ }
+ 
+ 
