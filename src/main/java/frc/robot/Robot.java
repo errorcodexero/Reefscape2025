@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
+import frc.simulator.engine.ModelFactory;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -135,9 +136,9 @@ public class Robot extends LoggedRobot {
     }
 
     public void addRobotSimulationModels() {
-        //
-        // TODO: add any simulation models for this year's robot
-        //
+        ModelFactory factory = SimulationEngine.getInstance().getModelFactory();
+        factory.registerModel("oi2025", "frc.simulator.models.OI2025");
+        factory.registerModel("grabber", "frc.simulator.models.GrabberModel");  
     }
     
     /** This function is called periodically during all modes. */
@@ -154,14 +155,7 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().run();
         
         // Return to normal thread priority
-        Threads.setCurrentThreadPriority(false, 10);
-
-        if (Robot.useXeroSimulator()) {
-            SimulationEngine engine = SimulationEngine.getInstance();
-            if (engine != null) {
-                engine.run(getPeriod());
-            }
-        }
+        Threads.setCurrentThreadPriority(false, 10);   
     }
     
     /** This function is called once when the robot is disabled. */
@@ -220,7 +214,14 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically whilst in simulation. */
     @Override
-    public void simulationPeriodic() {}
+    public void simulationPeriodic() {
+        if (Robot.useXeroSimulator()) {
+            SimulationEngine engine = SimulationEngine.getInstance();
+            if (engine != null) {
+                engine.run(getPeriod());
+            }
+        }
+    }
 
     public ISimulatedSubsystem getSubSystem(String name) {
         return robotContainer.get(name) ;
