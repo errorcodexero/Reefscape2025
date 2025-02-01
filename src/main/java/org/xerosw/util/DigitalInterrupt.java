@@ -23,7 +23,13 @@ public class DigitalInterrupt {
         input_ = input ;
         interrupt_ = new AsynchronousInterrupt(input_, (rising, falling) -> { handler(rising, falling) ; }) ;
         interrupt_.setInterruptEdges(risingEdge, fallingEdge) ;
+        rising_seen_ = new AtomicBoolean(false) ;
+        falling_seen_ = new AtomicBoolean(false) ;
         count_at_interrupt_ = null ;
+    }
+
+    public boolean hasCountValue() {
+        return count_at_interrupt_ != null ;
     }
 
     public DigitalInput getInput() {
@@ -52,6 +58,7 @@ public class DigitalInterrupt {
 
     public void setCountSupplier(Supplier<Integer> supplier) {
         count_supplier_ = supplier ;
+        count_at_interrupt_ = new AtomicInteger(supplier.get()) ;
     }
 
     private void handler(boolean rising, boolean falling) {

@@ -6,6 +6,8 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
 
  package frc.robot.subsystems.climber;
 
+ import org.littletonrobotics.junction.Logger;
+ 
  import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
  public class ClimberSubsystem extends SubsystemBase{
@@ -28,6 +30,7 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
    @Override
    public void periodic(){
       io_.updateInputs(inputs_);
+      Logger.processInputs("Climber", inputs_);
    }
    public void climber() {
       switch(climberState_){

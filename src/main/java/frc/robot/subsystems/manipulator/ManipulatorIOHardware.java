@@ -1,12 +1,18 @@
 package frc.robot.subsystems.manipulator;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -17,14 +23,25 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.controls.Follower; 
 
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import frc.robot.Robot;
 
 public class ManipulatorIOHardware implements ManipulatorIO {
 
@@ -35,15 +52,17 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private StatusSignal<AngularVelocity> arm_velocity_ ;
     private StatusSignal<Current> arm_current_ ;
     private StatusSignal<Voltage> arm_voltage_ ;
+    private DCMotorSim arm_sim_ ;
 
     // Elevator related members
-    private TalonFX elevator_motor_; 
+    private TalonFX elevator_motor_1_; 
+    private TalonFX elevator_motor_2_;
     private Voltage elevator_volts_ ;
     private StatusSignal<Angle> elevator_position_ ;
     private StatusSignal<AngularVelocity> elevator_velocity_ ;
     private StatusSignal<Current> elevator_current_ ;
     private StatusSignal<Voltage> elevator_voltage_ ;
-
+    private ElevatorSim elevator_sim_ ;
 
     public ManipulatorIOHardware() {
         createArm();
@@ -60,10 +79,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
                         elevator_voltage_)) ;
 
 
-
         arm_motor_.optimizeBusUtilization() ;
-        elevator_motor_.optimizeBusUtilization() ;
-
+        elevator_motor_1_.optimizeBusUtilization() ;
     }
 
     public void updateInputs(ManipulatorIOInputs inputs) {
@@ -76,6 +93,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevatorVelocity = MetersPerSecond.of(elevator_velocity_.refresh().getValue().in(RevolutionsPerSecond) * ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
         inputs.elevatorCurrent = elevator_current_.refresh().getValue() ;
         inputs.elevatorVoltage = elevator_voltage_.refresh().getValue() ;
+
+        if (Robot.isSimulation()) {
+            simulateArm() ;
+            simulateElevator() ;
+        }
     }
 
     // arm related methods
@@ -85,6 +107,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     }
 
     public void setArmMotorVoltage(double volts) {
+        Logger.recordOutput("Arm/charvolts", volts) ;
         arm_volts_ = Volts.of(volts) ;
         ControlRequest ctrl = new VoltageOut(arm_volts_) ;
         arm_motor_.setControl(ctrl) ;
@@ -104,13 +127,13 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public void setElevatorHeight(Distance target) {
         Angle pos = Revolutions.of(target.in(Meters) / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
         ControlRequest ctrl = new MotionMagicVoltage(pos).withSlot(0).withEnableFOC(true) ;
-        elevator_motor_.setControl(ctrl) ;
+        elevator_motor_1_.setControl(ctrl) ;
     }
 
     public void setElevatorMotorVoltage(double volts) {
         elevator_volts_ = Volts.of(volts) ;
         ControlRequest ctrl = new VoltageOut(elevator_volts_) ;
-        elevator_motor_.setControl(ctrl) ;
+        elevator_motor_1_.setControl(ctrl) ;
     }
 
     public void logElevatorMotor(SysIdRoutineLog log) {
@@ -118,7 +141,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         LinearVelocity vel = MetersPerSecond.of(elevator_velocity_.refresh().getValue().in(RevolutionsPerSecond) * ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
 
         log.motor("arm")
-            .voltage(arm_volts_)
+            .voltage(elevator_volts_)
             .linearPosition(pos)
             .linearVelocity(vel) ;
     }
@@ -144,20 +167,30 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(arm_pids)) ;
 
         MotionMagicConfigs armMotionMagicConfigs = new MotionMagicConfigs(); 
-        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity;
-        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration;
+        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
+        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
         armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
         TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs)) ;
+
+        if (Robot.isSimulation()) {
+            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
+                                                                              ManipulatorConstants.Arm.kMOI.in(KilogramSquareMeters), 
+                                                                              ManipulatorConstants.Arm.kGearRatio) ;
+            arm_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(1)) ;
+        }
     }
 
     private void createElevator() {
         TalonFXFactory f = TalonFXFactory.getFactory() ;
-        elevator_motor_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kInverted) ;
+        elevator_motor_1_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID1, ManipulatorConstants.Elevator.kInverted) ;
 
-        elevator_position_ = elevator_motor_.getPosition() ;
-        elevator_velocity_ = elevator_motor_.getVelocity() ;
-        elevator_current_ = elevator_motor_.getSupplyCurrent() ;
-        elevator_voltage_ = elevator_motor_.getMotorVoltage() ;
+        elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, ManipulatorConstants.Elevator.kInverted) ;
+        elevator_motor_2_.setControl(new Follower(elevator_motor_1_.getDeviceID(), true)) ;
+
+        elevator_position_ = elevator_motor_1_.getPosition() ;
+        elevator_velocity_ = elevator_motor_1_.getVelocity() ;
+        elevator_current_ = elevator_motor_1_.getSupplyCurrent() ;
+        elevator_voltage_ = elevator_motor_1_.getMotorVoltage() ;
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
@@ -168,13 +201,45 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_pids.kA = ManipulatorConstants.Elevator.PID.kA;
         elevator_pids.kG = ManipulatorConstants.Elevator.PID.kG;
         elevator_pids.kS = ManipulatorConstants.Elevator.PID.kS;
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "apply", () -> elevator_motor_.getConfigurator().apply(elevator_pids)) ;
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(elevator_pids)) ;
 
         MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
-        elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity;
-        elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration;
-        elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk;
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "apply", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
+        elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity.in(MetersPerSecond) / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters;
+        elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration.in(MetersPerSecondPerSecond) / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters;
+        elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk ;
+
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
+
+        if (Robot.isSimulation()) {
+            DCMotor gearbox = DCMotor.getFalcon500Foc(2) ;
+            elevator_sim_ = new ElevatorSim(gearbox, ManipulatorConstants.Elevator.kGearRatio, 
+                                            ManipulatorConstants.Elevator.kCarriageMass.in(Kilograms), 
+                                            ManipulatorConstants.Elevator.kDrumRadius.in(Meters),
+                                            ManipulatorConstants.Elevator.kMinHeight.in(Meters),
+                                            ManipulatorConstants.Elevator.kMaxHeight.in(Meters),
+                                            true, ManipulatorConstants.Elevator.kMinHeight.in(Meters)) ;
+        }
     }
 
+    private void simulateArm() {
+        TalonFXSimState st = arm_motor_.getSimState() ;
+        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+
+        Voltage mv = st.getMotorVoltageMeasure() ;
+        arm_sim_.setInputVoltage(mv.in(Volts)) ;
+        arm_sim_.update(0.02) ;
+        st.setRawRotorPosition(arm_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
+        st.setRotorVelocity(arm_sim_.getAngularVelocity().times(ManipulatorConstants.Arm.kGearRatio)) ;
+    }
+
+    private void simulateElevator() {
+        TalonFXSimState st = elevator_motor_1_.getSimState() ;
+        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+
+        Voltage mv = st.getMotorVoltageMeasure() ;
+        elevator_sim_.setInputVoltage(mv.in(Volts)) ;
+        elevator_sim_.update(0.02) ;
+        st.setRawRotorPosition(elevator_sim_.getPositionMeters() / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
+        st.setRotorVelocity(elevator_sim_.getVelocityMetersPerSecond() / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
+    }
 }

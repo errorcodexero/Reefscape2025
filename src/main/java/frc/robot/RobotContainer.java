@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
@@ -47,6 +48,7 @@ import frc.robot.commands.gps.AbortCmd;
 import frc.robot.commands.gps.CollectCoralCmd;
 import frc.robot.commands.gps.EjectCmd;
 import frc.robot.commands.gps.PlaceCoralCmd;
+import frc.robot.commands.tests.ManipulatorGotoAutoMode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -201,7 +203,11 @@ public class RobotContainer {
                             new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
                         ), drivebase_::getPose));
-                        
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
+                    climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+
                     break;
             }
         }
@@ -243,10 +249,29 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        autoChooser_.addOption("Manipulator Goto", new ManipulatorGotoAutoMode(manipulator_)) ;
         
         // Configure the button bindings
-        configureDriveBindings();
-        configureButtonBindings();
+        if (Constants.isCharacterization()) {
+            configureCharBindings() ;
+        }
+        else {
+            configureDriveBindings();
+            configureButtonBindings();
+        }
+    }
+
+    public ManipulatorSubsystem manipulator() {
+        return manipulator_ ;
+    }
+
+    public GrabberSubsystem grabber() {
+        return grabber_ ;
+    }
+
+    public ClimberSubsystem climber() {
+        return climber_ ;
     }
 
     public GamePiece holding() {
@@ -320,6 +345,18 @@ public class RobotContainer {
         if (sub instanceof ISimulatedSubsystem) {
             this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
         }
+    }
+
+    private void configureCharBindings() {
+        // gamepad_.a().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kForward)) ;
+        // gamepad_.b().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kReverse)) ;
+        // gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
+        // gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
+
+        gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kReverse)) ;
     }
     
     /**

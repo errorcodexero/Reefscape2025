@@ -14,7 +14,7 @@
                         "start" : 1,
                         "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 15.0,
+                        "teleop" : 1500.0,
                         "fms" : false,
                         "ds" : true
                     }
@@ -22,7 +22,7 @@
             ]
         },
         {
-            "time" : 4.0,
+            "time" : 6.0,
             "events" :
             [
                 {
@@ -31,6 +31,34 @@
                     "values" : 
                     {
                         "coral-collect" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 7.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.0,
+            "events" :
+            [
+                {
+                    "model" : "grabber",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "low-coral-sensor" : true
                     }
                 }
             ]

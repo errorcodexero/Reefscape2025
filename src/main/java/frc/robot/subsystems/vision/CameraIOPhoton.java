@@ -40,6 +40,9 @@ public class CameraIOPhoton implements CameraIO {
         List<PhotonPipelineResult> results = camera_.getAllUnreadResults();
 
         for (PhotonPipelineResult result : results) {
+            if (!result.hasTargets())
+                continue;
+                
             PhotonTrackedTarget bestTarget = result.getBestTarget();
             
             if (bestTarget != null) {

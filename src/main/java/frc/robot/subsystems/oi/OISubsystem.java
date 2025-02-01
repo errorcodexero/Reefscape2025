@@ -4,13 +4,17 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import frc.robot.subsystems.oi.OIIO.OIIosInputs;
 
 public class OISubsystem extends SubsystemBase {
@@ -65,7 +69,7 @@ public class OISubsystem extends SubsystemBase {
     }
 
     private OIIO ios_ ;
-    private OIIosInputs inputs_ ;
+    private OIIosInputsAutoLogged inputs_ ;
 
     private RobotAction current_action_ ;
     private RobotAction next_action_ ;
@@ -144,6 +148,9 @@ public class OISubsystem extends SubsystemBase {
         setLEDState(OILed.AlgaeGround, LEDState.Off) ;
         setLEDState(OILed.AlgaeCollectL2, LEDState.Off) ;
         setLEDState(OILed.AlgaeCollectL3, LEDState.Off) ;
+        setLEDState(OILed.AlgaeScore, LEDState.Off) ;
+        setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
+        setLEDState(OILed.ClimbExecute, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
@@ -184,12 +191,13 @@ public class OISubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        ios_.updateInputs(inputs_) ;
+        Logger.processInputs("OI", inputs_) ;
+
         if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);
             rumbling_ = false ;
         }
-
-        ios_.updateInputs(inputs_) ;
 
         //
         // Process the left versus right status information
@@ -234,6 +242,14 @@ public class OISubsystem extends SubsystemBase {
             setLEDState(OILed.CoralL4, LEDState.Off) ;
         }
 
+        if (RobotState.isEnabled() && RobotState.isTeleop()) {
+            commandProcessing() ;
+        }
+
+        Logger.recordOutput("oi/buttons", getPressedString()) ; 
+    }
+
+    private void commandProcessing() {
         //
         // Process the robot action buttons
         //
@@ -262,7 +278,9 @@ public class OISubsystem extends SubsystemBase {
             setRobotActionLEDState(next_action_, null);
         }
 
-        setRobotActionLEDState(next_action_, LEDState.On);
+        if (next_action_ != null) {
+            setRobotActionLEDState(next_action_, LEDState.On);
+        }
 
         if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
             //
@@ -284,6 +302,9 @@ public class OISubsystem extends SubsystemBase {
                 current_robot_action_command_.schedule();
             }
         }
+
+        Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
+        Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
     }
 
     public RobotAction getCurrentAction() {
@@ -426,6 +447,67 @@ public class OISubsystem extends SubsystemBase {
                 str += "," ;
             str += "coral_side_right" ;
         }
+
+        if (gamepad_.getHID().getAButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "a" ;
+        }
+
+        if (gamepad_.getHID().getBButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "b" ;
+        }
+
+        if (gamepad_.getHID().getXButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "x" ;
+        }
+
+        if (gamepad_.getHID().getYButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "y" ;
+        }
+
+        if (gamepad_.getHID().getStartButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "start" ;
+        }
+
+        if (gamepad_.getHID().getBackButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "back" ;
+        }
+
+        if (gamepad_.getHID().getLeftStickButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "ls" ;
+        }
+
+        if (gamepad_.getHID().getRightStickButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "rs" ;
+        }
+
+        if (gamepad_.getHID().getLeftBumperButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "lb" ;
+        }
+
+        if (gamepad_.getHID().getRightBumperButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "rb" ;
+        }
+        
 
         return str ;
     }

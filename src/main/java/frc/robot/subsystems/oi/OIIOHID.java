@@ -60,7 +60,7 @@ public class OIIOHID implements OIIO {
 
     @Override
     public void setLED(int index, LEDState st) {
-        led_state_[index - 1] = st ;        
+        led_state_[index] = st ;        
     }
 
     public void updateLEDs() {
