@@ -29,21 +29,21 @@ public interface ManipulatorIO {
     }
 
     // updating inputs
-    public default void updateInputs(ManipulatorIOInputs inputs){}
+    public default void updateInputs(ManipulatorIOInputs inputs) {}
 
     // Needed for SYS ID support
-    public default void setArmMotorVoltage(double vol){}
+    public default void setArmMotorVoltage(double vol) {}
 
-    public default void logArmMotor(SysIdRoutineLog log){}
+    public default void logArmMotor(SysIdRoutineLog log) {}
 
-    public default void setElevatorMotorVoltage(double vol){}
+    public default void setElevatorMotorVoltage(double vol) {}
 
-    public default void logElevatorMotor(SysIdRoutineLog log){}
+    public default void logElevatorMotor(SysIdRoutineLog log) {}
 
     // ELEVATOR METHODS
-    public default void setElevatorPosition(Distance dist){}
+    public default void setElevatorPosition(Distance dist) {}
 
     // ARM METHODS
-    public default void setArmPosition(Angle angle){}
+    public default void setArmPosition(Angle angle) {}
 
 }

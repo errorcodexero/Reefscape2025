@@ -145,9 +145,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
     }
 
-    public void setArmPosition(Angle angle){
+    public void setArmPosition(Angle angle) {
         arm_motor_.setControl(new MotionMagicVoltage(angle.div(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
     }
-
-
 }
