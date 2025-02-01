@@ -10,6 +10,10 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 public class AutoCommands {
     private AutoCommands() {}
 
+    /**
+     * TODO: put in numbers and other commands when they are available.
+     */
+
     public static Command sideCoralAuto(ManipulatorSubsystem manipSub, boolean mirroredX, boolean mirroredY){
         if(mirroredY) mirroredX = !mirroredX;
         return Commands.sequence(
