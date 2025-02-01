@@ -150,7 +150,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     public void setElevatorPosition(Distance m) {
         double revs = m.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev ;
-        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlo)t(0));
+        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
     }
 
     public void setArmPosition(Angle deg){
