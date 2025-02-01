@@ -76,6 +76,16 @@ public final class Constants {
         public static final Distance leftRightOffset = Inches.of(5);
 
         /**
+         * How far to back up from the coral scoring pose.
+         */
+        public static final Distance backupDistanceCoral = Inches.of(28);
+
+        /**
+         * How far to back up from the algae scoring pose.
+         */
+        public static final Distance backupDistanceAlgae = Inches.of(28);
+
+        /**
          * The distance from the center of the robot to the arm.
          */
         public static final Distance robotToArm = Inches.zero();
