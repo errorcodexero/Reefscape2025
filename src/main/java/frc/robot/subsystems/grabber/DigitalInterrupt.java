@@ -43,23 +43,23 @@ public class DigitalInterrupt {
         }
     }
 
-    public AtomicBoolean getRising() {
-        return rising_seen_;
+    public boolean getRising() {
+        return rising_seen_.get();
     }
 
     public void setRising(boolean b) {
         rising_seen_.set(b);
     }
 
-    public AtomicBoolean getFalling() {
-        return falling_seen_;
+    public boolean getFalling() {
+        return falling_seen_.get();
     }
 
     public void setFalling(boolean b) {
         falling_seen_.set(b);
     }
 
-    public DigitalInput getSensor() {
-        return sensor_;
+    public boolean getSensor() {
+        return sensor_.get();
     }
 }

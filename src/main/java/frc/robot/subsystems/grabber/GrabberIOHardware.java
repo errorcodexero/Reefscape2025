@@ -73,25 +73,25 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.grabberPosition = grabber_pos_sig.refresh().getValue();
         inputs.grabberVoltage = grabber_vol_sig.refresh().getValue();
 
-        inputs.coralFrontSensor = coral_front_.getSensor().get();
-        inputs.coralFrontRisingEdge = coral_front_.getRising().get();
-        inputs.coralFrontFallingEdge = coral_front_.getFalling().get();
+        inputs.coralFrontSensor = coral_front_.getSensor();
+        inputs.coralFrontRisingEdge = coral_front_.getRising();
+        inputs.coralFrontFallingEdge = coral_front_.getFalling();
         
-        inputs.coralBackSensor = coral_back_.getSensor().get();
-        inputs.coralBackRisingEdge = coral_back_.getRising().get();
-        inputs.coralBackFallingEdge = coral_back_.getFalling().get();
+        inputs.coralBackSensor = coral_back_.getSensor();
+        inputs.coralBackRisingEdge = coral_back_.getRising();
+        inputs.coralBackFallingEdge = coral_back_.getFalling();
 
-        inputs.coralFunnelSensor = coral_funnel_.getSensor().get();
-        inputs.coralFunnelRisingEdge = coral_funnel_.getRising().get();
-        inputs.coralFunnelFallingEdge = coral_funnel_.getFalling().get();
+        inputs.coralFunnelSensor = coral_funnel_.getSensor();
+        inputs.coralFunnelRisingEdge = coral_funnel_.getRising();
+        inputs.coralFunnelFallingEdge = coral_funnel_.getFalling();
 
-        inputs.algaeUpperSensor = algae_upper_.getSensor().get();
-        inputs.algaeUpperRisingEdge = algae_upper_.getRising().get();
-        inputs.algaeUpperFallingEdge = algae_upper_.getFalling().get();
+        inputs.algaeUpperSensor = algae_upper_.getSensor();
+        inputs.algaeUpperRisingEdge = algae_upper_.getRising();
+        inputs.algaeUpperFallingEdge = algae_upper_.getFalling();
 
-        inputs.algaeLowerSensor = algae_lower_.getSensor().get();
-        inputs.algaeLowerRisingEdge = algae_lower_.getRising().get();
-        inputs.algaeLowerFallingEdge = algae_lower_.getFalling().get();
+        inputs.algaeLowerSensor = algae_lower_.getSensor();
+        inputs.algaeLowerRisingEdge = algae_lower_.getRising();
+        inputs.algaeLowerFallingEdge = algae_lower_.getFalling();
 
         coral_front_.setRising(false);
         coral_back_.setFalling(false);
