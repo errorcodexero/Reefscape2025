@@ -1,5 +1,8 @@
 package frc.robot.subsystems.manipulator;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+
 public class ManipulatorConstants {
 
     public class Arm {
@@ -59,5 +62,10 @@ public class ManipulatorConstants {
             public static final double kMaxAcceleration = 0.0 ;
             public static final double kJerk = 0.0 ;
         }
+    }
+
+    public class Keepout {
+        public static final Distance kKeepoutHeight = null; 
+        public static final Angle kKeepoutAngle = null; 
     }
 }

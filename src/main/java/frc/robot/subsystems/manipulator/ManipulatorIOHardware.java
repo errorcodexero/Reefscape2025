@@ -138,27 +138,16 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         log.motor("elevator")
             .voltage(Units.Volts.of(elevator_voltage_))
             .linearVelocity(Units.MetersPerSecond.of(elevator_vel_sig_.refresh().getValueAsDouble()));    
-        }
+        } 
 
-    public void setElevatorPosition(double m){
-        elevator_motor_.setControl(new MotionMagicVoltage(m / ManipulatorConstants.Elevator.kMetersPerRev).withSlot(0));
-    } 
-
-    public void setArmPosition(double deg){
-        arm_motor_.setControl(new MotionMagicVoltage(deg / ManipulatorConstants.Arm.kGearRatio).withSlot(0)); 
-    } 
-
-    public void setElevatorPosition(Distance m) {
-        double revs = m.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev ;
+    public void setElevatorPosition(Distance dist) {
+        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev ;
         elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
     }
 
-    public void setArmPosition(Angle deg){
-        arm_motor_.setControl(new MotionMagicVoltage(deg.div(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+    public void setArmPosition(Angle angle){
+        arm_motor_.setControl(new MotionMagicVoltage(angle.div(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
     }
 
-    public void rGoTo(Distance height, Angle angle){
-        setElevatorPosition(height); 
-        setArmPosition(angle); 
-    }
+
 }
