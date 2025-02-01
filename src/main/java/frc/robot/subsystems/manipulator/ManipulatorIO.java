@@ -6,13 +6,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
  
 public interface ManipulatorIO {
     @AutoLog
     public static class ManipulatorIOInputs {
-        // inputs for now: position, current, voltage, angular velocity (and add acceleration?)
+        // inputs for now: position, current, voltage, velocity (acceleration?)
 
         // arm inputs
         public Angle armPosition; 
@@ -24,27 +25,25 @@ public interface ManipulatorIO {
         public Distance elevatorPosition; 
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 
-        public AngularVelocity elevatorVelocity; 
+        public LinearVelocity elevatorVelocity; 
     }
 
     // updating inputs
-    public void updateInputs(ManipulatorIOInputs inputs); 
+    public default void updateInputs(ManipulatorIOInputs inputs){}
 
-    // Needed for SYS Id support
+    // Needed for SYS ID support
     public default void setArmMotorVoltage(double vol){}
 
     public default void logArmMotor(SysIdRoutineLog log){}
 
+    public default void setElevatorMotorVoltage(double vol){}
+
+    public default void logElevatorMotor(SysIdRoutineLog log){}
+
     // ELEVATOR METHODS
-    public void setElevatorPosition(double m); 
-
-    public double getElevatorFrontPosition();
-
-    public double getElevatorBackPosition();
+    public default void setElevatorPosition(Distance dist){}
 
     // ARM METHODS
-    public void setArmPosition(double deg); 
-
-    public double getArmPosition();
+    public default void setArmPosition(Angle angle){}
 
 }
