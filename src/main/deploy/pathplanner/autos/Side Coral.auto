@@ -44,6 +44,25 @@
                 "data": {
                   "name": "Prep Station Intake"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Prep Station Intake"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -94,6 +113,25 @@
                 "data": {
                   "name": "Prep Station Intake"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Prep Station Intake"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -140,9 +178,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "Prep Station Intake"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Prep Station Intake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    }
+                  ]
                 }
               }
             ]
