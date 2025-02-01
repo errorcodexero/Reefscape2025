@@ -1,5 +1,7 @@
 package frc.robot.subsystems.manipulator;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,6 +18,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
+        Logger.processInputs("Manipulator", inputs_);
     }
 
     public void setArmPosition(Angle angle){
@@ -36,7 +39,17 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return false;
     }
 
-    public boolean isElevAtTarget(Angle current, Angle target){
+    public boolean isElevAtTarget(Distance current, Distance target){
+        if(current.isNear(target, ManipulatorConstants.Elevator.kPosTolerance)){
+            return true; 
+        }
+        return false; 
+    }
+
+    public boolean isArmAtTarget(Angle current, Angle target){
+        if(current.isNear(target, ManipulatorConstants.Arm.kPosTolerance)){
+            return true; 
+        }
         return false; 
     }
 }
