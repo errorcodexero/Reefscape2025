@@ -2,7 +2,6 @@ package frc.robot.subsystems.oi;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Time;
@@ -15,6 +14,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class OISubsystem extends SubsystemBase {
+    
+    //
+    // The LEDs on the driver station
+    //
     public enum OILed {
         Eject(0),
         CoralL1(1),
@@ -42,6 +45,9 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    //
+    // The states of the LEDs
+    //
     public enum LEDState {
         On,
         Off,
@@ -49,11 +55,20 @@ public class OISubsystem extends SubsystemBase {
         Fast
     }
 
+    //
+    // The left or right side of the reef for a given
+    // reef face.
+    //
     public enum CoralSide {
         Left,
         Right
     }
 
+    //
+    // This names the actions a robot can perform.  This is for a current action and a
+    // next action.  Abort is on included in this as abort is immediate and interrupts any
+    // of these that are underway.
+    //
     public enum RobotAction {
         PlaceCoral,
         CollectCoral,
@@ -66,24 +81,44 @@ public class OISubsystem extends SubsystemBase {
         Eject,
     }
 
+    // The IO layer for the OI
     private OIIO ios_ ;
+
+    // The inputs from the OI IO layer during the last robot loop
     private OIIosInputsAutoLogged inputs_ ;
 
+    // The currently executing action, can be null if nothing is being executed
     private RobotAction current_action_ ;
+
+    // The next action to be executed, can be null if no action is pending
     private RobotAction next_action_ ;
     
+    // The gamepad controller attached for driving the robot
     private CommandXboxController gamepad_ ;
+
+    // If true, we are rumbling the xbox controller
     private boolean rumbling_ ;
+
+    // The time when the rumbling will end
     private double end_time_ ;
+
+    // The current coral level
     private int coral_level_ ;
 
+    // The trigger for the abort button
     private Trigger abort_trigger_ ;
+
+    // The trigger for the eject button, this interrupts anything that is going on and
+    // is immediate.  It also sets the eject as a command being executed.
     private Trigger eject_trigger_ ;
 
+    // The command associated with the current robot action
     private Command current_robot_action_command_ ;
-    private Supplier<Command> robot_action_command_supplier_ ;
 
-    public OISubsystem(OIIO ios, CommandXboxController ctrl, Supplier<Command> robotActionCommandSupplier) {
+    // The supplier for the robot action command based on the OI state
+    private OICommandSupplier robot_action_command_supplier_ ;
+
+    public OISubsystem(OIIO ios, CommandXboxController ctrl, OICommandSupplier robotActionCommandSupplier) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
@@ -276,7 +311,7 @@ public class OISubsystem extends SubsystemBase {
             //
             current_action_ = next_action_ ;
             next_action_ = null ;
-            current_robot_action_command_ = robot_action_command_supplier_.get() ;
+            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
             if (current_robot_action_command_ != null) {
                 current_robot_action_command_.schedule();
             }

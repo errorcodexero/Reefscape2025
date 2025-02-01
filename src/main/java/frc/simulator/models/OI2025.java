@@ -15,7 +15,7 @@ public class OI2025 extends OIBaseModel {
         super(engine, model, inst) ;
 
         setButtonMap(getButtonMap());
-        setLedMap(getLedMap());
+        setLEDMap(getLedMap());
     }
 
     private Map<String, Integer> getButtonMap() {
