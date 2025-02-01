@@ -10,7 +10,7 @@ public class GrabberConstants {
     
     public class Grabber {
         // motor CAN ID
-        public static final int kMotorCANID = 0; 
+        public static final int kMotorCANID = 3; 
 
         // gear ratio- degrees per rev
         public static final double kGearRatio = 1; 

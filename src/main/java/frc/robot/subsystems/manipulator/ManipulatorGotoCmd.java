@@ -32,7 +32,7 @@ public class ManipulatorGotoCmd extends Command {
         Angle curarm = manip_.getCurrentArmAngle() ;
         Distance curelev = manip_.getCurrentElevatorHeight() ;
 
-        if (!isTargetValid()) {
+        if (isTargetInvalid()) {
             state_ = State.InvalidRequest ;
             return ;
         }
@@ -156,10 +156,12 @@ public class ManipulatorGotoCmd extends Command {
         }
     }
 
-    private boolean isTargetValid() {
-        return arm_.gte(ManipulatorConstants.Goto.kArmKeepOutMinAngle) && 
-                arm_.lte(ManipulatorConstants.Goto.kArmKeepOutMaxAngle) &&
-                elev_.lte(ManipulatorConstants.Goto.kElevatorKeepOutHeight) ;
+    private boolean isTargetInvalid() {
+        return (arm_.gt(ManipulatorConstants.Goto.kArmKeepOutMinAngle) && 
+                arm_.lt(ManipulatorConstants.Goto.kArmKeepOutMaxAngle) &&
+                elev_.lt(ManipulatorConstants.Goto.kElevatorKeepOutHeight)) ||
+                elev_.lt(ManipulatorConstants.Elevator.kMinHeight) ||
+                elev_.gt(ManipulatorConstants.Elevator.kMaxHeight) ;
     }
 
     private boolean doesArmCrossKeepout() {

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,6 +18,7 @@ public class GrabberSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
+        Logger.processInputs("Grabber", inputs_);
     }
 
     public void setGrabberVelocity(AngularVelocity vel) {

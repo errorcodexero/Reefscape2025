@@ -159,5 +159,8 @@ public final class Constants {
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }
-    
+
+    public static final boolean isCharacterization() {
+        return true ;
+    }
 }

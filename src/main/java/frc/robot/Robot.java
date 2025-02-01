@@ -27,7 +27,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.tests.ManipulatorGotoAutoMode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.simulator.engine.ISimulatedSubsystem;
 import frc.simulator.engine.ModelFactory;
 import frc.simulator.engine.SimulationEngine;
@@ -108,7 +110,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "init" ;
+            String str = "automode" ;
             SimulationEngine.initializeSimulator(this);
             addRobotSimulationModels();
             SimulationEngine.getInstance().initAll(str);
@@ -137,6 +139,7 @@ public class Robot extends LoggedRobot {
     public void addRobotSimulationModels() {
         ModelFactory factory = SimulationEngine.getInstance().getModelFactory();
         factory.registerModel("oi2025", "frc.simulator.models.OI2025");
+        factory.registerModel("grabber", "frc.simulator.models.GrabberModel");  
     }
     
     /** This function is called periodically during all modes. */
@@ -153,14 +156,7 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().run();
         
         // Return to normal thread priority
-        Threads.setCurrentThreadPriority(false, 10);
-
-        if (Robot.useXeroSimulator()) {
-            SimulationEngine engine = SimulationEngine.getInstance();
-            if (engine != null) {
-                engine.run(getPeriod());
-            }
-        }        
+        Threads.setCurrentThreadPriority(false, 10);   
     }
     
     /** This function is called once when the robot is disabled. */
@@ -174,17 +170,24 @@ public class Robot extends LoggedRobot {
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {
-        autonomousCommand = robotContainer.getAutonomousCommand();
-        
+        if (Robot.useXeroSimulator()) {
+            ManipulatorSubsystem mani = RobotContainer.getRobotContainer().manipulator() ;
+            autonomousCommand = new ManipulatorGotoAutoMode(mani) ;
+        }
+        else {
+            autonomousCommand = robotContainer.getAutonomousCommand();
+        }
+            
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
-        }
+        }        
     }
     
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+    }
     
     /** This function is called once when teleop is enabled. */
     @Override
@@ -200,7 +203,8 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {        
+    }
     
     /** This function is called once when test mode is enabled. */
     @Override
@@ -211,15 +215,26 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically during test mode. */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+
+    }
     
     /** This function is called once when the robot is first started up. */
     @Override
-    public void simulationInit() {}
+    public void simulationInit() {
+
+    }
     
     /** This function is called periodically whilst in simulation. */
     @Override
-    public void simulationPeriodic() {}
+    public void simulationPeriodic() {
+        if (Robot.useXeroSimulator()) {
+            SimulationEngine engine = SimulationEngine.getInstance();
+            if (engine != null) {
+                engine.run(getPeriod());
+            }
+        }
+    }
 
     public ISimulatedSubsystem getSubSystem(String name) {
         return robotContainer.get(name) ;
