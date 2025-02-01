@@ -51,44 +51,46 @@ public final class Constants {
 
     public static class ReefConstants {
         /**
-         * The maximum angle from the robot to the nearest face of the reef for it to be considered targeting that face.
+         * The maximum angle from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
          */
         public static final Angle maximumAngleToFace = Degrees.of(40);
 
         /**
-         * The maximum distance from the robot to the nearest face of the reef for it to be considered targeting that face.
+         * The maximum distance from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
          */
         public static final Distance maximumDistanceToFace = Meters.of(3);
 
         /**
-         * The distance from the center of the robot to the tag while placing coral.
+         * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
         public static final Distance distanceFromTagCoral = Inches.of(20);
 
         /**
-         * The distance from the center of the robot to the tag while collecting algae.
+         * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
         public static final Distance distanceFromTagAlgae = Inches.of(20);
 
         /**
-         * The offset from the center of the tag to where we want the arm to be positioned.
+         * The offset from the center of the TAG to where we want the ARM to be positioned.
+         * (Half the distance between pipes on the REEF)
          */
-        public static final Distance leftRightOffset = Inches.of(5);
+        public static final Distance leftRightOffset = Inches.of(13 / 2);
 
         /**
-         * How far to back up from the coral scoring pose.
+         * How far to back up from the CORAL scoring pose.
          */
         public static final Distance backupDistanceCoral = Inches.of(28);
 
         /**
-         * How far to back up from the algae scoring pose.
+         * How far to back up from the ALGAE scoring pose.
          */
         public static final Distance backupDistanceAlgae = Inches.of(28);
 
         /**
-         * The distance from the center of the robot to the arm.
+         * The distance from the center of the ROBOT to the ARM.
+         * (LEFT of the robot is POSITIVE)
          */
-        public static final Distance robotToArm = Inches.zero();
+        public static final Distance robotToArm = Inches.of(0.125);
     }
 
     public static class CanConstants {

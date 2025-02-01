@@ -66,7 +66,7 @@ public class ReefUtil {
             algaeScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
                     ReefConstants.distanceFromTagAlgae,
-                    Meters.zero()
+                    ReefConstants.robotToArm
                 ),
                 new Rotation2d(Degrees.of(180))
             ));
@@ -82,7 +82,7 @@ public class ReefUtil {
             leftScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
                     ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset.unaryMinus()
+                    ReefConstants.leftRightOffset.unaryMinus().plus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d(Degrees.of(180))
             ));
@@ -98,7 +98,7 @@ public class ReefUtil {
             rightScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
                     ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset
+                    ReefConstants.leftRightOffset.plus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d(Degrees.of(180))
             ));
@@ -150,23 +150,39 @@ public class ReefUtil {
         if (Constants.getMode() != Mode.REAL) {
             ReefFace[] faces = ReefFace.values();
 
-            ArrayList<Pose2d> poses = new ArrayList<>();
+            ArrayList<Pose2d> algaeScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> algaeBackupPoses = new ArrayList<>();
+            ArrayList<Pose2d> leftScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> leftBackupPoses = new ArrayList<>();
+            ArrayList<Pose2d> rightScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> rightBackupPoses = new ArrayList<>();
 
             for (ReefFace face : faces) {
                 String path = "ReefFaces/" + face.toString() + "/";
 
                 Logger.recordOutput(path + "TagId", face.getTagID());
-                Logger.recordOutput(path + "WallPose", face.getTagPose());
+                Logger.recordOutput(path + "TagPose", face.getTagPose());
                 Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
+                Logger.recordOutput(path + "BackupPoseAlgae", face.getAlgaeBackupPose());
                 Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
+                Logger.recordOutput(path + "BackupPoseLeft", face.getLeftBackupPose());
                 Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
-
-                poses.add(face.getAlgaeScoringPose());
-                poses.add(face.getLeftScoringPose());
-                poses.add(face.getRightScoringPose());
+                Logger.recordOutput(path + "BackupPoseRight", face.getRightBackupPose());
+                
+                algaeScoringPoses.add(face.getAlgaeScoringPose());
+                algaeBackupPoses.add(face.getAlgaeBackupPose());
+                leftScoringPoses.add(face.getLeftScoringPose());
+                leftBackupPoses.add(face.getLeftBackupPose());
+                rightScoringPoses.add(face.getRightScoringPose());
+                rightBackupPoses.add(face.getRightBackupPose());
             }
 
-            Logger.recordOutput("ReefFaces/AllBotPoses", poses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/AlgaeScoringPoses", algaeScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/AlgaeBackupPoses", algaeBackupPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/LeftScoringPoses", leftScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/LeftBackupPoses", leftBackupPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/RightScoringPoses", rightScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/RightBackupPoses", rightBackupPoses.toArray(new Pose2d[0]));
         }
     }
 
