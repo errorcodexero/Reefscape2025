@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Revolution;
+import static edu.wpi.first.units.Units.Revolutions;
 
 import org.xerosw.util.TalonFXFactory;
 
@@ -19,6 +20,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
@@ -145,4 +147,18 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public void setArmPosition(double deg){
         arm_motor_.setControl(new MotionMagicVoltage(deg / ManipulatorConstants.Arm.kGearRatio).withSlot(0)); 
     } 
+
+    public void setElevatorPosition(Distance m) {
+        double revs = m.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev ;
+        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlo)t(0));
+    }
+
+    public void setArmPosition(Angle deg){
+        arm_motor_.setControl(new MotionMagicVoltage(deg.div(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+    }
+
+    public void rGoTo(Distance height, Angle angle){
+        setElevatorPosition(height); 
+        setArmPosition(angle); 
+    }
 }

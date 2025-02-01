@@ -41,9 +41,16 @@ public interface ManipulatorIO {
     public default void logElevatorMotor(SysIdRoutineLog log){}
 
     // ELEVATOR METHODS
-    public void setElevatorPosition(double m); 
+    public default void setElevatorPosition(double m){}
+
+    public default void setElevatorPosition(Distance m){}
 
     // ARM METHODS
-    public void setArmPosition(double deg); 
+    public default void setArmPosition(double deg){}
+
+    public default void setArmPosition(Angle deg){}
+
+    // BOTH 
+    public default void rGoTo(Distance height, Angle angle){}
 
 }
