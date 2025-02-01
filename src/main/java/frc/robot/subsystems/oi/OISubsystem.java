@@ -2,18 +2,22 @@ package frc.robot.subsystems.oi;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.oi.OIIO.OIIosInputs;
 
 public class OISubsystem extends SubsystemBase {
+    
+    //
+    // The LEDs on the driver station
+    //
     public enum OILed {
         Eject(0),
         CoralL1(1),
@@ -41,6 +45,9 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    //
+    // The states of the LEDs
+    //
     public enum LEDState {
         On,
         Off,
@@ -48,11 +55,20 @@ public class OISubsystem extends SubsystemBase {
         Fast
     }
 
+    //
+    // The left or right side of the reef for a given
+    // reef face.
+    //
     public enum CoralSide {
         Left,
         Right
     }
 
+    //
+    // This names the actions a robot can perform.  This is for a current action and a
+    // next action.  Abort is on included in this as abort is immediate and interrupts any
+    // of these that are underway.
+    //
     public enum RobotAction {
         PlaceCoral,
         CollectCoral,
@@ -61,30 +77,48 @@ public class OISubsystem extends SubsystemBase {
         CollectAlgaeReefL3,
         PlaceAlgae,
         ClimbDeploy,
-        ClimbExecute
+        ClimbExecute,
+        Eject,
     }
 
+    // The IO layer for the OI
     private OIIO ios_ ;
-    private OIIosInputs inputs_ ;
 
+    // The inputs from the OI IO layer during the last robot loop
+    private OIIosInputsAutoLogged inputs_ ;
+
+    // The currently executing action, can be null if nothing is being executed
     private RobotAction current_action_ ;
+
+    // The next action to be executed, can be null if no action is pending
     private RobotAction next_action_ ;
     
+    // The gamepad controller attached for driving the robot
     private CommandXboxController gamepad_ ;
+
+    // If true, we are rumbling the xbox controller
     private boolean rumbling_ ;
+
+    // The time when the rumbling will end
     private double end_time_ ;
+
+    // The current coral level
     private int coral_level_ ;
 
-    private Trigger eject_trigger_ ;
+    // The trigger for the abort button
     private Trigger abort_trigger_ ;
-    private Trigger execute_trigger_ ;
-    private Trigger climb_deploy_trigger_ ;
-    private Trigger climb_execute_trigger_ ;
 
+    // The trigger for the eject button, this interrupts anything that is going on and
+    // is immediate.  It also sets the eject as a command being executed.
+    private Trigger eject_trigger_ ;
+
+    // The command associated with the current robot action
     private Command current_robot_action_command_ ;
-    private Supplier<Command> robot_action_command_supplier_ ;
 
-    public OISubsystem(OIIO ios, CommandXboxController ctrl, Supplier<Command> robotActionCommandSupplier) {
+    // The supplier for the robot action command based on the OI state
+    private OICommandSupplier robot_action_command_supplier_ ;
+
+    public OISubsystem(OIIO ios, CommandXboxController ctrl, OICommandSupplier robotActionCommandSupplier) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
@@ -94,34 +128,14 @@ public class OISubsystem extends SubsystemBase {
         next_action_ = null ;
         current_robot_action_command_ = null ;
 
-        clearAllActionLEDs() ;
-
         // Create the action triggers
-        eject_trigger_ = new Trigger(() -> inputs_.eject) ;
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
-        execute_trigger_ = new Trigger(() -> inputs_.execute) ;
-        climb_deploy_trigger_ = new Trigger(() -> inputs_.climb_deploy && !inputs_.climb_lock) ;
-        climb_execute_trigger_ = new Trigger(() -> inputs_.climb_execute && !inputs_.climb_lock) ;
+        eject_trigger_ = new Trigger(() -> inputs_.eject) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
-    }
-
-    public void badDriveBase() {
-    }
-
-    public void badVision() {
-    }
-
-    public void badGrabber() {
-    }
-
-    public void badManipulator() {
-    }
-
-    public void badClimber() {
     }
 
     public void rumble(Time duration) {
@@ -144,10 +158,17 @@ public class OISubsystem extends SubsystemBase {
         setLEDState(OILed.AlgaeGround, LEDState.Off) ;
         setLEDState(OILed.AlgaeCollectL2, LEDState.Off) ;
         setLEDState(OILed.AlgaeCollectL3, LEDState.Off) ;
+        setLEDState(OILed.AlgaeScore, LEDState.Off) ;
+        setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
+        setLEDState(OILed.ClimbExecute, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
+            case Eject:
+                setLEDState(OILed.Eject, st) ;
+                break ;
+
             case PlaceCoral:
                 setLEDState(OILed.CoralPlace, st) ;
                 break ;
@@ -184,12 +205,13 @@ public class OISubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        ios_.updateInputs(inputs_) ;
+        Logger.processInputs("OI", inputs_) ;
+
         if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);
             rumbling_ = false ;
         }
-
-        ios_.updateInputs(inputs_) ;
 
         //
         // Process the left versus right status information
@@ -234,6 +256,14 @@ public class OISubsystem extends SubsystemBase {
             setLEDState(OILed.CoralL4, LEDState.Off) ;
         }
 
+        if (RobotState.isEnabled() && RobotState.isTeleop()) {
+            commandProcessing() ;
+        }
+
+        Logger.recordOutput("oi/buttons", getPressedString()) ; 
+    }
+
+    private void commandProcessing() {
         //
         // Process the robot action buttons
         //
@@ -262,7 +292,9 @@ public class OISubsystem extends SubsystemBase {
             setRobotActionLEDState(next_action_, null);
         }
 
-        setRobotActionLEDState(next_action_, LEDState.On);
+        if (next_action_ != null) {
+            setRobotActionLEDState(next_action_, LEDState.On);
+        }
 
         if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
             //
@@ -279,11 +311,14 @@ public class OISubsystem extends SubsystemBase {
             //
             current_action_ = next_action_ ;
             next_action_ = null ;
-            current_robot_action_command_ = robot_action_command_supplier_.get() ;
+            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
             if (current_robot_action_command_ != null) {
                 current_robot_action_command_.schedule();
             }
         }
+
+        Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
+        Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
     }
 
     public RobotAction getCurrentAction() {
@@ -298,24 +333,12 @@ public class OISubsystem extends SubsystemBase {
         return inputs_.coral_side ? CoralSide.Left : CoralSide.Right ;
     }
 
-    public Trigger eject() {
-        return eject_trigger_ ;
-    }
-
     public Trigger abort() {
         return abort_trigger_ ;
     }
 
-    public Trigger execute() {
-        return execute_trigger_ ;
-    }
-
-    public Trigger climbDeploy() {
-        return climb_deploy_trigger_ ;
-    }
-
-    public Trigger climbExecute() {
-        return climb_execute_trigger_ ;
+    public Trigger eject() {
+        return eject_trigger_ ;
     }
 
     public String getPressedString() {
@@ -426,6 +449,67 @@ public class OISubsystem extends SubsystemBase {
                 str += "," ;
             str += "coral_side_right" ;
         }
+
+        if (gamepad_.getHID().getAButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "a" ;
+        }
+
+        if (gamepad_.getHID().getBButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "b" ;
+        }
+
+        if (gamepad_.getHID().getXButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "x" ;
+        }
+
+        if (gamepad_.getHID().getYButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "y" ;
+        }
+
+        if (gamepad_.getHID().getStartButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "start" ;
+        }
+
+        if (gamepad_.getHID().getBackButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "back" ;
+        }
+
+        if (gamepad_.getHID().getLeftStickButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "ls" ;
+        }
+
+        if (gamepad_.getHID().getRightStickButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "rs" ;
+        }
+
+        if (gamepad_.getHID().getLeftBumperButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "lb" ;
+        }
+
+        if (gamepad_.getHID().getRightBumperButton()) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "rb" ;
+        }
+        
 
         return str ;
     }

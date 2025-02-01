@@ -22,7 +22,8 @@ public class OIConstants {
         public static final int kClimbExecute = 15 ;        // Action
         public static final int kClimbLock = 16 ;           // Status
         public static final int kCoralSide = 17 ;           // Status
-        public static final int kSpare1 = 30 ;
-        public static final int kSpare2 = 31 ;
+
+        public static final int kSpare1 = 18 ;              // Spare
+        public static final int kSpare2 = 19 ;              // Spare
     }
 }

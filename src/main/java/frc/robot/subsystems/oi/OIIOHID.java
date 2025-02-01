@@ -1,7 +1,10 @@
 package frc.robot.subsystems.oi;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import frc.robot.Robot;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.simulator.engine.SimulationEngine;
+import frc.simulator.models.OIBaseModel;
 
 public class OIIOHID implements OIIO {
     private static final int kMaxLeds = 32 ;
@@ -60,7 +63,12 @@ public class OIIOHID implements OIIO {
 
     @Override
     public void setLED(int index, LEDState st) {
-        led_state_[index - 1] = st ;        
+        led_state_[index] = st ;        
+    }
+
+    private void setSimulatedLED(int index, boolean on) {
+        OIBaseModel model = (OIBaseModel) SimulationEngine.getInstance().getModelByNameInst("oi2025", "1") ;
+        model.setLED(index, on) ;
     }
 
     public void updateLEDs() {
@@ -95,7 +103,13 @@ public class OIIOHID implements OIIO {
             }
 
             if (desired != led_onoff_[i - 1]) {
-                hid_.setOutput(i, desired);
+                if (Robot.isReal()) {
+                    hid_.setOutput(i, desired);
+                }
+                else {
+                    setSimulatedLED(i, desired) ;
+                }
+
                 led_onoff_[i - 1] = desired ;
             }
         }
