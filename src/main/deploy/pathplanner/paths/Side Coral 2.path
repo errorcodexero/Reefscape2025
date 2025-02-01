@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.14839527027027,
+        "y": 2.888597972972972
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.846174207469165,
+        "y": 3.290527914676127
+      },
+      "isLocked": false,
+      "linkedName": "1 alliance side"
+    },
+    {
+      "anchor": {
+        "x": 1.6008445945945946,
+        "y": 0.7442567567567562
+      },
+      "prevControl": {
+        "x": 1.3743544596857948,
+        "y": 0.6384162220406387
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Station Close"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 53.719746506237335
+  },
+  "reversed": false,
+  "folder": "Side Coral",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 119.95360816780152
+  },
+  "useDefaultConstraints": false
+}

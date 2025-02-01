@@ -124,6 +124,7 @@ public class Robot extends LoggedRobot {
 
     public void robotInit() {
         super.robotInit() ;
+        //Pathfinding.setPathfinder(new LocalADStarAK());
 
         if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
             //
@@ -160,7 +161,7 @@ public class Robot extends LoggedRobot {
             if (engine != null) {
                 engine.run(getPeriod());
             }
-        }        
+        }
     }
     
     /** This function is called once when the robot is disabled. */

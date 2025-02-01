@@ -13,10 +13,10 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -30,11 +30,20 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -70,7 +79,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
@@ -87,41 +96,60 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case ALPHA:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
-                        
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
+
                     break;
 
                 case COMPETITION:
 
-                    /** TODO: Instantiate Competition Subsystems, for now its a no-op. */
+                    // TODO: Replace TunerConstants with new set of constants for comp bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
+
+                    vision_ = new AprilTagVision(
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight(VisionConstants.frontLimelightName),
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
 
                     break;
                 
                 case PRACTICE:
 
-                    drivebase_ =
-                        new Drive(
-                            new GyroIOPigeon2(),
-                            new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                            new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
+                    // TODO: Replace TunerConstants with new set of constants for practice bot.
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                    );
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName));
+                        new CameraIOLimelight(VisionConstants.backLimelightName),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                    );
                             
                     break;
                 
@@ -138,13 +166,21 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
                         new CameraIOPhotonSim("Front", new Transform3d(
-                            new Translation3d(Inches.of(14), Inches.zero(), Centimeters.of(20)),
+                            new Translation3d(Meters.of(0.3048), Meters.of(0.12), Meters.of(0.12)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())
-                        ), drivebase_::getPose),
+                        ), drivebase_::getPose, true),
                         new CameraIOPhotonSim("Back", new Transform3d(
-                            new Translation3d(Inches.of(-14), Inches.zero(), Centimeters.of(20)),
-                            new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
-                        ), drivebase_::getPose));
+                            new Translation3d(Meters.of(-0.3048), Inches.zero(), Meters.of(0.12)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Rotations.of(0.5))
+                        ), drivebase_::getPose, false),
+                        new CameraIOPhotonSim("LeftCamera", new Transform3d(
+                            new Translation3d(Meters.of(-0.12), Meters.of(0.3048), Meters.of(0.12)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(90))
+                        ), drivebase_::getPose, false),
+                        new CameraIOPhotonSim("RightCamera", new Transform3d(
+                            new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
+                            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
+                        ), drivebase_::getPose, false));
                         
                     break;
             }
@@ -154,21 +190,21 @@ public class RobotContainer {
          * Empty subsystem setup (required in replay)
          */
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
-            drivebase_ =
-                new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {});
-
+            drivebase_ = new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {}
+            );
         }
         
         if (vision_ == null) {
             vision_ = new AprilTagVision(
                 drivebase_::addVisionMeasurement,
                 new CameraIO() {},
-                new CameraIO() {});
+                new CameraIO() {}
+            );
         }
 
         // Simulation setup
@@ -178,7 +214,24 @@ public class RobotContainer {
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Add mirrored autos
-        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("Example Auto", true));
+        autoChooser_.addOption("Alliance Side Coral", new PathPlannerAuto("Side Coral", true));
+        autoChooser_.addOption("Opposing Side Coral", new PathPlannerAuto("Side Coral"));
+        autoChooser_.addOption("Center Coral (alliance side station)", new PathPlannerAuto("Center Coral", true));
+        autoChooser_.addOption("Center Coral (opposing side station)", new PathPlannerAuto("Center Coral"));
+        autoChooser_.addOption("Algae (center)", new PathPlannerAuto("Algae"));
+
+        autoChooser_.addOption(
+            "testing driveto", 
+            DriveCommands.swerveDriveToCommand(
+                new Pose2d(
+                    Meters.of(3.2), 
+                    Meters.of(4.0),
+                    new Rotation2d(
+                        Rotations.of(0.0)
+                    )
+                )
+            )
+        );
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
@@ -216,11 +269,11 @@ public class RobotContainer {
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
-            DriveCommands.joystickDrive(
-                drivebase_,
-                () -> -gamepad_.getLeftY(),
-                () -> -gamepad_.getLeftX(),
-                () -> -gamepad_.getRightX()));
+        DriveCommands.joystickDrive(
+            drivebase_,
+            () -> -gamepad_.getLeftY(),
+            () -> -gamepad_.getLeftX(),
+            () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
@@ -248,6 +301,23 @@ public class RobotContainer {
         
         gamepad_.povRight().whileTrue(
             drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
+        );
+
+        // Robot relative diagonal
+        gamepad_.povUpLeft().whileTrue(
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povUpRight().whileTrue(
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
+        );
+        
+        gamepad_.povDownLeft().whileTrue(
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
+        );
+
+        gamepad_.povDownRight().whileTrue(
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
 
         // Robot relative diagonal
