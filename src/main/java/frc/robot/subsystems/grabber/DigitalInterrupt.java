@@ -18,7 +18,7 @@ public class DigitalInterrupt {
         rising_seen_ = new AtomicBoolean();
         falling_seen_ = new AtomicBoolean();
 
-        interrupt_ = new AsynchronousInterrupt(sensor_, (rising_, falling_) -> {interruptHandler(rising_, falling_);});
+        interrupt_ = new AsynchronousInterrupt(sensor_, (rising, falling) -> {interruptHandler(rising, falling);});
 
         interrupt_.enable();
     }

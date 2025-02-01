@@ -26,10 +26,10 @@ public class GrabberIOHardware implements GrabberIO {
 
     private double grabber_voltage_;
 
-    private StatusSignal<Angle> grabber_pos_sig;
-    private StatusSignal<AngularVelocity> grabber_vel_sig;
-    private StatusSignal<Current> grabber_curr_sig;
-    private StatusSignal<Voltage> grabber_vol_sig;
+    private StatusSignal<Angle> grabber_pos_sig_;
+    private StatusSignal<AngularVelocity> grabber_vel_sig_;
+    private StatusSignal<Current> grabber_curr_sig_;
+    private StatusSignal<Voltage> grabber_vol_sig_;
 
     public GrabberIOHardware() throws Exception {
         grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
@@ -51,10 +51,10 @@ public class GrabberIOHardware implements GrabberIO {
         TalonFXFactory.checkError(0, null, () -> grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs), 5);
 
         TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> BaseStatusSignal.setUpdateFrequencyForAll(1.0,
-                                                                        grabber_curr_sig,
-                                                                        grabber_pos_sig,
-                                                                        grabber_vel_sig,
-                                                                        grabber_vol_sig));
+                                                                        grabber_curr_sig_,
+                                                                        grabber_pos_sig_,
+                                                                        grabber_vel_sig_,
+                                                                        grabber_vol_sig_));
 
         TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
 
@@ -68,10 +68,10 @@ public class GrabberIOHardware implements GrabberIO {
      @Override
     public void updateInputs(GrabberIOInputs inputs) {
 
-        inputs.grabberCurrent = grabber_curr_sig.refresh().getValue();
-        inputs.grabberVelocity = grabber_vel_sig.refresh().getValue();
-        inputs.grabberPosition = grabber_pos_sig.refresh().getValue();
-        inputs.grabberVoltage = grabber_vol_sig.refresh().getValue();
+        inputs.grabberCurrent = grabber_curr_sig_.refresh().getValue();
+        inputs.grabberVelocity = grabber_vel_sig_.refresh().getValue();
+        inputs.grabberPosition = grabber_pos_sig_.refresh().getValue();
+        inputs.grabberVoltage = grabber_vol_sig_.refresh().getValue();
 
         inputs.coralFrontSensor = coral_front_.getSensor();
         inputs.coralFrontRisingEdge = coral_front_.getRising();

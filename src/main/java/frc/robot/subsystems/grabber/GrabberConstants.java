@@ -4,7 +4,7 @@ public class GrabberConstants {
 
     public class Grabber {
 
-        public static final int kMotorCANID = 47;
+        public static final int kMotorCANID = 1;
         public static final double kGearRatio = 0.0;
         public static final boolean kInverted = false; 
 
@@ -47,6 +47,13 @@ public class GrabberConstants {
         public class AlgaeLowerSensor {
             public static final int kChannel = 5;
             public static final boolean kInverted = false;
+        }
+
+        public class Positions {
+            public static final double waitForCoralVelocity = 0.0;
+            public static final double ejectCoralVelocty = 0.0;
+
+            public static final double ejectCoralWait = 1.0;
         }
 
     }
