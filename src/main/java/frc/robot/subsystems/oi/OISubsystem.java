@@ -3,7 +3,6 @@ package frc.robot.subsystems.oi;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Time;
@@ -63,7 +62,8 @@ public class OISubsystem extends SubsystemBase {
         CollectAlgaeReefL3,
         PlaceAlgae,
         ClimbDeploy,
-        ClimbExecute
+        ClimbExecute,
+        Eject,
     }
 
     private OIIO ios_ ;
@@ -77,11 +77,8 @@ public class OISubsystem extends SubsystemBase {
     private double end_time_ ;
     private int coral_level_ ;
 
-    private Trigger eject_trigger_ ;
     private Trigger abort_trigger_ ;
-    private Trigger execute_trigger_ ;
-    private Trigger climb_deploy_trigger_ ;
-    private Trigger climb_execute_trigger_ ;
+    private Trigger eject_trigger_ ;
 
     private Command current_robot_action_command_ ;
     private Supplier<Command> robot_action_command_supplier_ ;
@@ -96,34 +93,14 @@ public class OISubsystem extends SubsystemBase {
         next_action_ = null ;
         current_robot_action_command_ = null ;
 
-        clearAllActionLEDs() ;
-
         // Create the action triggers
-        eject_trigger_ = new Trigger(() -> inputs_.eject) ;
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
-        execute_trigger_ = new Trigger(() -> inputs_.execute) ;
-        climb_deploy_trigger_ = new Trigger(() -> inputs_.climb_deploy && !inputs_.climb_lock) ;
-        climb_execute_trigger_ = new Trigger(() -> inputs_.climb_execute && !inputs_.climb_lock) ;
+        eject_trigger_ = new Trigger(() -> inputs_.eject) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
-    }
-
-    public void badDriveBase() {
-    }
-
-    public void badVision() {
-    }
-
-    public void badGrabber() {
-    }
-
-    public void badManipulator() {
-    }
-
-    public void badClimber() {
     }
 
     public void rumble(Time duration) {
@@ -153,6 +130,10 @@ public class OISubsystem extends SubsystemBase {
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
+            case Eject:
+                setLEDState(OILed.Eject, st) ;
+                break ;
+
             case PlaceCoral:
                 setLEDState(OILed.CoralPlace, st) ;
                 break ;
@@ -317,24 +298,12 @@ public class OISubsystem extends SubsystemBase {
         return inputs_.coral_side ? CoralSide.Left : CoralSide.Right ;
     }
 
-    public Trigger eject() {
-        return eject_trigger_ ;
-    }
-
     public Trigger abort() {
         return abort_trigger_ ;
     }
 
-    public Trigger execute() {
-        return execute_trigger_ ;
-    }
-
-    public Trigger climbDeploy() {
-        return climb_deploy_trigger_ ;
-    }
-
-    public Trigger climbExecute() {
-        return climb_execute_trigger_ ;
+    public Trigger eject() {
+        return eject_trigger_ ;
     }
 
     public String getPressedString() {
