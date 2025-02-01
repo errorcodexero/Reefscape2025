@@ -1,0 +1,99 @@
+{
+    "name": "Nautilus",
+    "disableSimplification": false,
+    "rotations": [
+      {"axis": "x", "degrees": 90}
+    ],
+    "position": [0, 0, 0],
+    "cameras": [
+      {
+        "name": "Front Camera",
+        "rotations": [
+          {
+            "axis": "y",
+            "degrees": -20
+          }
+        ],
+        "position": [
+          0.3048,
+          0.12,
+          0.12
+        ],
+        "resolution": [
+          1280,
+          960
+        ],
+        "fov": 82
+      },
+      {
+        "name": "Back Camera",
+        "rotations": [
+          {
+            "axis": "y",
+            "degrees": -20
+          },
+          {
+            "axis": "z",
+            "degrees": 180
+          }
+        ],
+        "position": [
+          -0.3048,
+          0,
+          0.12
+        ],
+        "resolution": [
+          960,
+          720
+        ],
+        "fov": 62.5
+      },
+      {
+        "name": "Left Camera",
+        "rotations": [
+          {
+            "axis": "y",
+            "degrees": -25
+          },
+          {
+            "axis": "z",
+            "degrees": 100
+          }
+        ],
+        "position": [
+          -0.12,
+          0.3048,
+          0.12
+        ],
+        "resolution": [
+          960,
+          720
+        ],
+        "fov": 62.5
+      },
+      {
+        "name": "Right Camera",
+        "rotations": [
+          {
+            "axis": "y",
+            "degrees": -20
+          },
+          {
+            "axis": "z",
+            "degrees": -90
+          }
+        ],
+        "position": [
+          0.07,
+          -0.3048,
+          0.50
+        ],
+        "resolution": [
+          960,
+          720
+        ],
+        "fov": 62.5
+      }
+    ],
+    "components": []
+  }
