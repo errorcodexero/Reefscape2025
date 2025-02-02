@@ -80,7 +80,8 @@ public class ReefUtil {
                     Meters.zero()
                 ),
                 new Rotation2d()
-              
+            ));
+
             leftScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
                     ReefConstants.distanceFromTagCoral.unaryMinus(),
@@ -101,14 +102,6 @@ public class ReefUtil {
                 new Translation2d(
                     ReefConstants.distanceFromTagCoral.unaryMinus(),
                     ReefConstants.leftRightOffset.unaryMinus().minus(ReefConstants.robotToArm)
-                ),
-                new Rotation2d()
-            ));
-
-            rightBackupPose_ = rightScoringPose_.transformBy(new Transform2d(
-                new Translation2d(
-                    ReefConstants.backupDistanceCoral.unaryMinus(),
-                    Meters.zero()
                 ),
                 new Rotation2d()
             ));
