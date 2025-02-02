@@ -7,9 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class GoToCmd extends Command {
     private Distance target_height_; 
     private Angle target_angle_;
-    private Distance current_height_; 
-    private Angle current_angle_;  
-    private Distance keepout_height_; 
     private ManipulatorSubsystem sub_;
     private State state_; 
 
@@ -20,40 +17,40 @@ public class GoToCmd extends Command {
       Done
     }
 
-  public GoToCmd(ManipulatorSubsystem sub, Distance targetElevPos, Angle targetArmPos, Distance currentElevPos, Angle currentArmPos) {
+  public GoToCmd(ManipulatorSubsystem sub, Distance targetElevPos, Angle targetArmPos) {
     addRequirements(sub); 
       
     sub_ = sub;
     target_height_ = targetElevPos; 
     target_angle_ = targetArmPos; 
-    current_height_ = currentElevPos; 
-    current_angle_ = currentArmPos; 
-    keepout_height_ = ManipulatorConstants.Keepout.kKeepoutHeight; 
   }
     
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if((current_height_.gt(keepout_height_)) && (target_height_.gt(keepout_height_))) {
+    Distance current_height = sub_.getElevatorPosition() ;
+    Angle current_angle = sub_.getArmPosition() ;
+
+    if((current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) && (target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight))) {
       sub_.setElevatorPosition(target_height_);
       sub_.setArmPosition(target_angle_);
 
       state_ = State.GoToFinalPos;  
 
-    } else if(current_height_.gt(keepout_height_) && target_height_.lte(keepout_height_)) {
-      sub_.setElevatorPosition(keepout_height_);
+    } else if(current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight) && target_height_.lte(ManipulatorConstants.Keepout.kKeepoutHeight)) {
+      sub_.setElevatorPosition(ManipulatorConstants.Keepout.kKeepoutHeight);
       sub_.setArmPosition(target_angle_);
 
       state_ = State.WaitForArm; 
 
-    } else if(current_height_.lte(keepout_height_) && !sub_.doesCrossKZ(current_angle_, target_angle_)) {
+    } else if(current_height.lte(ManipulatorConstants.Keepout.kKeepoutHeight) && !sub_.doesCrossKZ(current_angle, target_angle_)) {
       sub_.setElevatorPosition(target_height_);
       sub_.setArmPosition(target_angle_);
 
       state_ = State.GoToFinalPos; 
 
-    } else if(current_height_.lte(keepout_height_) && sub_.doesCrossKZ(current_angle_, target_angle_)) {
-      sub_.setElevatorPosition(keepout_height_); 
+    } else if(current_height.lte(ManipulatorConstants.Keepout.kKeepoutHeight) && sub_.doesCrossKZ(current_angle, target_angle_)) {
+      sub_.setElevatorPosition(ManipulatorConstants.Keepout.kKeepoutHeight); 
       
       state_ = State.WaitForElevator; 
     }
@@ -63,39 +60,39 @@ public class GoToCmd extends Command {
   @Override
   public void execute() {
     switch(state_) {
-
       case GoToFinalPos:
-        if(sub_.isElevAtTarget(current_height_, target_height_) && sub_.isArmAtTarget(current_angle_, target_angle_)) {
+        if(sub_.isElevAtTarget() && sub_.isArmAtTarget()) {
           state_ = State.Done; 
         }
         break;
 
       case WaitForArm:
-        if(sub_.isArmAtTarget(current_angle_, target_angle_)) {
+        if(sub_.isArmAtTarget()) {
           sub_.setElevatorPosition(target_height_);
         }
-        if(sub_.isElevAtTarget(current_height_, target_height_)) {
+        
+        if(sub_.isElevAtTarget()) {
           state_ = State.Done; 
         }
         break;
 
       case WaitForElevator:
-      if(sub_.isElevAtTarget(current_height_, target_height_)) {
-        if(target_height_.gt(keepout_height_)) {
-          sub_.setElevatorPosition(target_height_);
-          sub_.setArmPosition(target_angle_);
+        if(sub_.isElevAtTarget()) {
+          if(target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) {
+            sub_.setElevatorPosition(target_height_);
+            sub_.setArmPosition(target_angle_);
 
-          state_ = State.GoToFinalPos; 
-        } else {
-          sub_.setArmPosition(target_angle_); 
+            state_ = State.GoToFinalPos; 
+          } else {
+            sub_.setArmPosition(target_angle_); 
 
-          state_ = State.WaitForArm; 
+            state_ = State.WaitForArm; 
+          }
         }
-      }
-      break;
+        break;
 
       case Done: 
-      break; 
+        break; 
     }
   }
 
