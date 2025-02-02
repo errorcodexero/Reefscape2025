@@ -20,14 +20,14 @@ public class GoToCmd extends Command {
       Done
     }
 
-  public GoToCmd(ManipulatorSubsystem sub, Distance targetElevPos, Angle targetArmPos, Distance currentElevPos, Angle currentArmPos) {
+  public GoToCmd(ManipulatorSubsystem sub, Distance targetElevPos, Angle targetArmPos) {
     addRequirements(sub); 
       
     sub_ = sub;
     target_height_ = targetElevPos; 
     target_angle_ = targetArmPos; 
-    current_height_ = currentElevPos; 
-    current_angle_ = currentArmPos; 
+    current_height_ = sub_.getElevatorPosition(); 
+    current_angle_ = sub_.getArmPosition(); 
     keepout_height_ = ManipulatorConstants.Keepout.kKeepoutHeight; 
   }
     

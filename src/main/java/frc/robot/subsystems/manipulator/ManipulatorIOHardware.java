@@ -13,6 +13,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 public class ManipulatorIOHardware implements ManipulatorIO {
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
+    private TalonFX elevator_motor_2_; 
 
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
@@ -44,7 +46,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public ManipulatorIOHardware() throws Exception{
 
         arm_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, ManipulatorConstants.Arm.kCANBusName, ManipulatorConstants.Arm.kInverted); 
-        elevator_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kCANBusName, ManipulatorConstants.Elevator.kInverted); 
+        elevator_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kCANBusName, ManipulatorConstants.Elevator.kInverted);
+        elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
+        // elevator_motor_2_ = new Follower(ManipulatorConstants.Elevator.kMotorCANID, true));  
 
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
