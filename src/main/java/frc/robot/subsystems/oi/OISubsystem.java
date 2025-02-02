@@ -14,11 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-<<<<<<< HEAD
-=======
-import frc.robot.Robot;
-import frc.robot.subsystems.oi.OIIO.OIIosInputs;
->>>>>>> 67f7b1d9a0b7199f5debfdfcd5223059701de942
 
 public class OISubsystem extends SubsystemBase {
     
@@ -90,10 +85,6 @@ public class OISubsystem extends SubsystemBase {
 
     // The IO layer for the OI
     private OIIO ios_ ;
-<<<<<<< HEAD
-=======
-    private OIIosInputsAutoLogged inputs_ ;
->>>>>>> 67f7b1d9a0b7199f5debfdfcd5223059701de942
 
     // The inputs from the OI IO layer during the last robot loop
     private OIIosInputsAutoLogged inputs_ ;
@@ -525,4 +516,3 @@ public class OISubsystem extends SubsystemBase {
         return str ;
     }
 }
-

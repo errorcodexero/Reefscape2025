@@ -110,7 +110,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "automode" ;
+            String str = "collect" ;
             SimulationEngine.initializeSimulator(this);
             addRobotSimulationModels();
             SimulationEngine.getInstance().initAll(str);

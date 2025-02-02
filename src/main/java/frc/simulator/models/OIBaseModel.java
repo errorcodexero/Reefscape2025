@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.littletonrobotics.junction.Logger;
 
 import frc.simulator.utils.BadParameterTypeException;
 import frc.simulator.utils.MessageLogger;
@@ -49,6 +52,15 @@ public abstract class OIBaseModel extends SimulationModel {
         button_map_ = new HashMap<String, Integer>() ;
         led_map_ = new HashMap<String, Integer>() ;
         multi_buttons_ = new ArrayList<>() ;
+    }
+
+    public void setLED(int index, boolean state) {
+        for(Entry<String, Integer> entry : led_map_.entrySet()) {
+            if (entry.getValue() == index) {
+                Logger.recordOutput("OI/LEDs/" + entry.getKey(), state) ;
+                break ;
+            }
+        }
     }
 
     protected void setButtonMap(Map<String, Integer> map) {

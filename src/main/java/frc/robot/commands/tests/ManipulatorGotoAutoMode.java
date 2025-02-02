@@ -2,6 +2,7 @@ package frc.robot.commands.tests;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class ManipulatorGotoAutoMode extends Command {
         if (elevator_ == null) {
             elevator_ = tab_.add("Elevator", 0.0)
                 .withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(2, 1)
+                .withSize(4, 1)
                 .withPosition(0, 0)
                 .withProperties(Map.of("min", 0.0, "max", 3.0)) ;
         }
@@ -42,9 +43,9 @@ public class ManipulatorGotoAutoMode extends Command {
         if (arm_ == null) {
             arm_ = tab_.add("Arm", 0.0)
                 .withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(2, 1)
+                .withSize(4, 1)
                 .withPosition(0, 1)
-                .withProperties(Map.of("min", 0.0, "max", 270.0)) ;
+                .withProperties(Map.of("min", 0.0, "max", 3.0 * Math.PI / 2.0 )) ;
         }
 
         if (apply_ == null) {
@@ -58,7 +59,7 @@ public class ManipulatorGotoAutoMode extends Command {
         if (shouldApplyNewSettings()) {
             double elevator = elevator_.getEntry().getDouble(0.0);
             double arm = arm_.getEntry().getDouble(0.0);
-            ManipulatorGotoCmd cmd = new ManipulatorGotoCmd(m_, Meters.of(elevator), Degrees.of(arm)) ;
+            ManipulatorGotoCmd cmd = new ManipulatorGotoCmd(m_, Meters.of(elevator), Radians.of(arm)) ;
             cmd.schedule() ;
         }
     }

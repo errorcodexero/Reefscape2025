@@ -26,7 +26,6 @@ import java.util.HashMap;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -130,7 +129,7 @@ public class RobotContainer {
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
-            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, () -> getRobotActionCommand()) ;
+            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -147,7 +146,6 @@ public class RobotContainer {
                                 new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName));
                     }
                     catch(Exception e) {
-                        oi_.badDriveBase();
                     }
 
                     try {
@@ -157,28 +155,24 @@ public class RobotContainer {
                             new CameraIOLimelight(VisionConstants.backLimelightName));
                     }
                     catch(Exception e) {
-                        oi_.badVision() ;
                     }
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
                     }
                     catch(Exception e) {
-                        oi_.badManipulator() ;
                     }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                     }
                     catch(Exception e) {
-                        oi_.badGrabber() ;
                     }
 
                     try {
                         climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
                     }
                     catch(Exception e) {
-                        oi_.badClimber() ;
                     }
                             
                     break;
@@ -240,7 +234,6 @@ public class RobotContainer {
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Add mirrored autos
-        autoChooser_.addOption("Mirrored Example Auto", new PathPlannerAuto("Example Auto", true));
         
         // Add SysId routines to the chooser
         autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
@@ -308,10 +301,8 @@ public class RobotContainer {
         }
     }
 
-    public Command getRobotActionCommand() {
+    public Command getRobotActionCommand(RobotAction action, int level, CoralSide side) {
         Command cmd = null ;
-
-        RobotAction action = oi_.getCurrentAction() ;
 
         switch (action) {
             case CollectCoral:
@@ -327,6 +318,7 @@ public class RobotContainer {
             case PlaceAlgae:
             case ClimbDeploy:
             case ClimbExecute:
+            case Eject:
                 break ;
         }
 

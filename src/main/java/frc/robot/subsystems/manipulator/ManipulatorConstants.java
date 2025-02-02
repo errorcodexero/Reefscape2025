@@ -50,7 +50,7 @@ public class ManipulatorConstants {
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
 
         public class PID {
-            public static final double kP = 3 ; 
+            public static final double kP = 6 ; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.059557 ;
