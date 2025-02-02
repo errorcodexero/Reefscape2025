@@ -4,11 +4,16 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
     private final ManipulatorIOInputsAutoLogged inputs_;  
+
+    private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevatorDisconnected_ = new Alert("Elevator motor failed to configure or is disconnected!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -19,6 +24,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
+
+        armDisconnected_.set(!inputs_.armReady);
+        elevatorDisconnected_.set(!inputs_.elevatorReady);
     }
 
     public void setArmPosition(Angle angle) {

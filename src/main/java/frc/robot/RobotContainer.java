@@ -45,9 +45,6 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -57,6 +54,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
@@ -81,7 +79,6 @@ public class RobotContainer {
     private AprilTagVision vision_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
-    private Climber climber_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -118,8 +115,6 @@ public class RobotContainer {
 
                     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
 
-                    climber_ = new Climber(new ClimberIOHardware());
-
                     break;
 
                 case COMPETITION:
@@ -143,8 +138,6 @@ public class RobotContainer {
                     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
 
                     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-
-                    climber_ = new Climber(new ClimberIOHardware());
 
                     break;
                 
@@ -170,8 +163,6 @@ public class RobotContainer {
 
                     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
 
-                    climber_ = new Climber(new ClimberIOHardware());
-                    
                     break;
                 
                 case SIMBOT:
@@ -231,16 +222,11 @@ public class RobotContainer {
         }
 
         if (manipulator_ == null) {
-            // TODO: Once all methods are default methods, replace this with an anon inner type.
-            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIO() {});
         }
 
         if (grabber_ == null) {
             grabber_ = new GrabberSubsystem(new GrabberIO() {});
-        }
-
-        if (climber_ == null) {
-            climber_ = new Climber(new ClimberIO() {});
         }
 
         // Simulation setup

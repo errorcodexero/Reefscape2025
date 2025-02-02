@@ -3,12 +3,14 @@ package frc.robot.subsystems.grabber;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -31,9 +33,16 @@ public class GrabberIOHardware implements GrabberIO {
     private StatusSignal<Current> grabber_curr_sig_;
     private StatusSignal<Voltage> grabber_vol_sig_;
 
-    public GrabberIOHardware() throws Exception {
+    private final Debouncer grabberErrorDebounce_ = new Debouncer(0.5);
+    private boolean grabberError_ = false;
 
-        grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+    public GrabberIOHardware() {
+
+        try {
+            grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+        } catch (Exception e) {
+            grabberError_ = true;
+        }
             
         Slot0Configs grabber_pids_ = new Slot0Configs();
         grabber_pids_.kP = GrabberConstants.Grabber.PID.kP;
@@ -43,23 +52,34 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_pids_.kA = GrabberConstants.Grabber.PID.kA;
         grabber_pids_.kG = GrabberConstants.Grabber.PID.kG;
         grabber_pids_.kS = GrabberConstants.Grabber.PID.kS;
-        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> grabber_motor_.getConfigurator().apply(grabber_pids_));
-
+        
         MotionMagicConfigs grabberMotionMagicConfigs = new MotionMagicConfigs();
         grabberMotionMagicConfigs.MotionMagicCruiseVelocity = GrabberConstants.Grabber.MotionMagic.kMaxVelocity;
         grabberMotionMagicConfigs.MotionMagicAcceleration = GrabberConstants.Grabber.MotionMagic.kMaxAcceleration;
         grabberMotionMagicConfigs.MotionMagicJerk = GrabberConstants.Grabber.MotionMagic.kJerk;
+
+        try {
+            TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> grabber_motor_.getConfigurator().apply(grabber_pids_));
+
+            TalonFXFactory.checkError(0, null, () -> grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs), 5);
+
+            TalonFXFactory.checkError(
+                GrabberConstants.Grabber.kMotorCANID,
+                null,
+                () -> BaseStatusSignal.setUpdateFrequencyForAll(
+                    1.0,
+                    grabber_curr_sig_,
+                    grabber_pos_sig_,
+                    grabber_vel_sig_,
+                    grabber_vol_sig_
+                )
+            );
+    
+            TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
+        } catch (Exception e) {
+            grabberError_ = true;
+        }
         
-        TalonFXFactory.checkError(0, null, () -> grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs), 5);
-
-        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> BaseStatusSignal.setUpdateFrequencyForAll(1.0,
-                                                                        grabber_curr_sig_,
-                                                                        grabber_pos_sig_,
-                                                                        grabber_vel_sig_,
-                                                                        grabber_vol_sig_));
-
-        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
-
         coral_front_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralFrontSensor.kChannel);
         coral_back_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralBackSensor.kChannel);
         coral_funnel_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralFunnelSensor.kChannel);
@@ -70,10 +90,19 @@ public class GrabberIOHardware implements GrabberIO {
      @Override
     public void updateInputs(GrabberIOInputs inputs) {
 
-        inputs.grabberCurrent = grabber_curr_sig_.refresh().getValue();
-        inputs.grabberVelocity = grabber_vel_sig_.refresh().getValue();
-        inputs.grabberPosition = grabber_pos_sig_.refresh().getValue();
-        inputs.grabberVoltage = grabber_vol_sig_.refresh().getValue();
+        StatusCode grabberStatus = BaseStatusSignal.refreshAll(
+            grabber_curr_sig_,
+            grabber_vel_sig_,
+            grabber_pos_sig_,
+            grabber_vol_sig_
+        );
+        
+        inputs.grabberReady = grabberErrorDebounce_.calculate(grabberStatus.isOK()) && !grabberError_;
+
+        inputs.grabberCurrent = grabber_curr_sig_.getValue();
+        inputs.grabberVelocity = grabber_vel_sig_.getValue();
+        inputs.grabberPosition = grabber_pos_sig_.getValue();
+        inputs.grabberVoltage = grabber_vol_sig_.getValue();
 
         inputs.coralFrontSensor = coral_front_.getSensor();
         inputs.coralFrontRisingEdge = coral_front_.getRising();
