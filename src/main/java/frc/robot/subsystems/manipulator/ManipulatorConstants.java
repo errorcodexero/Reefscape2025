@@ -1,5 +1,10 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+
 public class ManipulatorConstants {
 
     public class Arm {
@@ -11,6 +16,12 @@ public class ManipulatorConstants {
         public static final boolean kInverted = false; 
 
         public static final double kGearRatio = 0; 
+
+        public static final String kCANBusName = null; 
+
+        // calculate based on distance at the end of the arm
+        // (use tangent)
+        public static final Angle kPosTolerance = null;
 
         public class PID {
             public static final double kP = 0.0; 
@@ -40,6 +51,10 @@ public class ManipulatorConstants {
         // meters that elevator moves per revolution of motor
         public static final double kMetersPerRev = 0; 
 
+        public static final String kCANBusName = null; 
+
+        public static final Distance kPosTolerance = Meters.of(0.01); 
+
         public class PID {
             public static final double kP = 0.0; 
             public static final double kI = 0.0 ;
@@ -55,5 +70,11 @@ public class ManipulatorConstants {
             public static final double kMaxAcceleration = 0.0 ;
             public static final double kJerk = 0.0 ;
         }
+    }
+
+    public class Keepout {
+        public static final Distance kKeepoutHeight = null; 
+        public static final Angle kKeepoutMinAngle = null;
+        public static final Angle kKeepoutMaxAngle = null;
     }
 }
