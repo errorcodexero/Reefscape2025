@@ -21,7 +21,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.lang.StackWalker.Option;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -45,6 +47,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -63,6 +66,8 @@ import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.util.ReefUtil;
+import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -261,6 +266,15 @@ public class RobotContainer {
     */
     private void configureButtonBindings() {
         // Add subsystem button bindings here
+        gamepad_.rightBumper().onTrue(
+            Commands.runOnce(() -> {
+                Optional<ReefFace> face = ReefUtil.getTargetedReefFace(drivebase_.getPose());
+
+                if (face.isPresent()) {
+                    DriveCommands.swerveDriveToCommand(face.get().getAlgaeScoringPose()).schedule();
+                }
+            }, drivebase_)
+        );
     }
     
     /**
