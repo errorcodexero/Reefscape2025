@@ -61,9 +61,10 @@ public class ReefUtil {
 
         private ReefFace(int aprilTagID) {
             tagID_ = aprilTagID;
-            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().rotateBy(
+            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().transformBy(new Transform2d(
+                new Translation2d(),
                 new Rotation2d(Degrees.of(180))
-            );
+            ));
 
             algaeScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
@@ -100,7 +101,7 @@ public class ReefUtil {
             rightScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
                     ReefConstants.distanceFromTagCoral.unaryMinus(),
-                    ReefConstants.leftRightOffset.minus(ReefConstants.robotToArm)
+                    ReefConstants.leftRightOffset.unaryMinus().minus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d()
             ));
