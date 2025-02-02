@@ -1,4 +1,4 @@
-package frc.robot.subsystems.grabber;
+package frc.robot.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

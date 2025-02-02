@@ -1,8 +1,12 @@
 package frc.simulator.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.littletonrobotics.junction.Logger;
 
 import frc.simulator.utils.BadParameterTypeException;
 import frc.simulator.utils.MessageLogger;
@@ -33,6 +37,7 @@ public abstract class OIBaseModel extends SimulationModel {
     }
 
     private Map<String, Integer> button_map_ ;
+    private Map<String, Integer> led_map_ ;
     private List<MultiButtonConfig> multi_buttons_ ;
 
     private int index_ ;
@@ -41,11 +46,29 @@ public abstract class OIBaseModel extends SimulationModel {
     private float[] axes_ ;
     private short[] povs_ ;
 
-    public OIBaseModel(SimulationEngine engine, String model, String inst, Map<String, Integer> buttonMap) {
+    public OIBaseModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
 
-        button_map_ = buttonMap ;
+        button_map_ = new HashMap<String, Integer>() ;
+        led_map_ = new HashMap<String, Integer>() ;
         multi_buttons_ = new ArrayList<>() ;
+    }
+
+    public void setLED(int index, boolean state) {
+        for(Entry<String, Integer> entry : led_map_.entrySet()) {
+            if (entry.getValue() == index) {
+                Logger.recordOutput("OI/LEDs/" + entry.getKey(), state) ;
+                break ;
+            }
+        }
+    }
+
+    protected void setButtonMap(Map<String, Integer> map) {
+        button_map_ = map ;
+    }
+
+    protected void setLedMap(Map<String, Integer> map) {
+        led_map_ = map ;
     }
 
     protected boolean registerMultiButton(String name, int[] ios, String[] states) {

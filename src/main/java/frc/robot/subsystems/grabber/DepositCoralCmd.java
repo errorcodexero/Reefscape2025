@@ -1,9 +1,7 @@
-package frc.robot.commands.grabber;
+package frc.robot.subsystems.grabber;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.grabber.GrabberConstants;
-import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class DepositCoralCmd extends Command {
 
