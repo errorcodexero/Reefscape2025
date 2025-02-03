@@ -53,6 +53,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.grabber.GrabberIO;
+import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorIO;
+import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -75,6 +81,8 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private ManipulatorSubsystem manipulator_;
+    private GrabberSubsystem grabber_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -107,6 +115,10 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+
                     break;
 
                 case COMPETITION:
@@ -127,6 +139,10 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+
                     break;
                 
                 case PRACTICE:
@@ -146,7 +162,11 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.backLimelightName),
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
-                            
+
+                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+
+                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+
                     break;
                 
                 case SIMBOT:
@@ -177,6 +197,8 @@ public class RobotContainer {
                             new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
                         ), drivebase_::getPose, false));
+
+                    // Other subsystems should be added here once we have simulation support for them.
                         
                     break;
             }
@@ -201,6 +223,14 @@ public class RobotContainer {
                 new CameraIO() {},
                 new CameraIO() {}
             );
+        }
+
+        if (manipulator_ == null) {
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIO() {});
+        }
+
+        if (grabber_ == null) {
+            grabber_ = new GrabberSubsystem(new GrabberIO() {});
         }
 
         // Simulation setup

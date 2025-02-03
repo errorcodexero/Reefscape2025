@@ -16,12 +16,14 @@ public interface ManipulatorIO {
         // inputs for now: position, current, voltage, velocity (acceleration?)
 
         // arm inputs
+        public boolean armReady = false;
         public Angle armPosition; 
         public Current armCurrent; 
         public Voltage armVoltage; 
         public AngularVelocity armVelocity; 
 
         // elevator inputs
+        public boolean elevatorReady = false;
         public Distance elevatorPosition; 
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 

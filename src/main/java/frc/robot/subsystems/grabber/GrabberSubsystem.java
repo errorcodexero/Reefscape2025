@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GrabberSubsystem extends SubsystemBase {
+
     private final GrabberIO io_;
     private final GrabberIOInputsAutoLogged inputs_;
 
@@ -65,4 +66,5 @@ public class GrabberSubsystem extends SubsystemBase {
         Logger.recordOutput("algae", has_algae_);
         Logger.processInputs("grabber", inputs_);
     }
+
 }

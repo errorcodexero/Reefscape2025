@@ -1,14 +1,13 @@
 package frc.robot.subsystems.climber;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-//import org.xerosw.util.TalonFXFactory;
-import edu.wpi.first.units.measure.Angle;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 
 
 public class ClimberIOHardware implements ClimberIO {
+    
     private TalonFX climber_motor_;
 
     public ClimberIOHardware() {
