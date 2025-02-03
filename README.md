@@ -3,7 +3,7 @@
 ![Pull Requests](https://img.shields.io/github/issues-pr/errorcodexero/Reefscape2025?logo=github&color=orange)
 ![Last Commit](https://img.shields.io/github/last-commit/errorcodexero/Reefscape2025?logo=git&color=yellow&logoColor=white)
 
-This project is the source code for 1425's robot designed for the First Robotics Competition 2025 game, REEFSCAPE.
+This project is the source code for Nautilus, 1425's robot designed for the First Robotics Competition 2025 game, REEFSCAPE.
 
 ![Reefscape](/reefscape.png)
 
