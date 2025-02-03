@@ -61,14 +61,17 @@ public class ReefUtil {
 
         private ReefFace(int aprilTagID) {
             tagID_ = aprilTagID;
-            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d();
+            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().transformBy(new Transform2d(
+                new Translation2d(),
+                new Rotation2d(Degrees.of(180))
+            ));
 
             algaeScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagAlgae,
-                    ReefConstants.robotToArm
+                    ReefConstants.distanceFromTagAlgae.unaryMinus(),
+                    ReefConstants.robotToArm.unaryMinus()
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
             ));
 
             algaeBackupPose_ = algaeScoringPose_.transformBy(new Transform2d(
@@ -81,10 +84,10 @@ public class ReefUtil {
 
             leftScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset.unaryMinus().plus(ReefConstants.robotToArm)
+                    ReefConstants.distanceFromTagCoral.unaryMinus(),
+                    ReefConstants.leftRightOffset.minus(ReefConstants.robotToArm)
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
             ));
 
             leftBackupPose_ = leftScoringPose_.transformBy(new Transform2d(
@@ -97,10 +100,10 @@ public class ReefUtil {
 
             rightScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset.plus(ReefConstants.robotToArm)
+                    ReefConstants.distanceFromTagCoral.unaryMinus(),
+                    ReefConstants.leftRightOffset.unaryMinus().minus(ReefConstants.robotToArm)
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
             ));
 
             rightBackupPose_ = rightScoringPose_.transformBy(new Transform2d(
