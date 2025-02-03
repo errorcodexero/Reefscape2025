@@ -17,12 +17,18 @@ public interface ManipulatorIO {
 
         // arm inputs
         public Angle armPosition; 
+        public Angle armRawPosition ;
+        public AngularVelocity armRawVelocity ;
+        public int armRawEncoder ;
+        public Angle armEncoderValue ;
         public Current armCurrent; 
         public Voltage armVoltage; 
         public AngularVelocity armVelocity; 
 
         // elevator inputs
-        public Distance elevatorPosition; 
+        public Distance elevatorPosition;
+        public Angle elevatorRawPosition ;
+        public AngularVelocity elevatorRawVelocity ;
         public Current elevatorCurrent; 
         public Voltage elevatorVoltage; 
         public LinearVelocity elevatorVelocity;

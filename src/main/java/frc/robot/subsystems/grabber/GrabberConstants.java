@@ -10,13 +10,13 @@ public class GrabberConstants {
     
     public class Grabber {
         // motor CAN ID
-        public static final int kMotorCANID = 3; 
+        public static final int kMotorCANID = 9; 
 
         // gear ratio- degrees per rev
         public static final double kGearRatio = 1; 
 
         // if motor is inverted 
-        public static final boolean kInverted = false; 
+        public static final boolean kInverted = true; 
 
         public class PID {
             public static final double kP = 0.0; 
@@ -36,11 +36,11 @@ public class GrabberConstants {
     }   
 
     public class Sensor {
-        public static final int kCoralLow = 1 ;
-        public static final int kCoralHigh = 2 ;
-        public static final int kCoralFunnel = 3 ;
-        public static final int kAlgaeHigh = 4 ;
-        public static final int kAlgaeLow = 5 ;
+        public static final int kCoralLow = 2 ;
+        // public static final int kCoralHigh = 2 ;
+        // public static final int kCoralFunnel = 3 ;
+        public static final int kAlgaeHigh = 3 ;
+        // public static final int kAlgaeLow = 5 ;
     }
 
     public class Collect {
@@ -50,6 +50,6 @@ public class GrabberConstants {
 
     public class Place {
         public static final AngularVelocity kVelocity = RevolutionsPerSecond.of(10.0) ;
-        public static final Time kDelay = Milliseconds.of(250) ;
+        public static final Time kDelay = Milliseconds.of(2000) ;
     }
 }

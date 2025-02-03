@@ -1,8 +1,11 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GrabberSubsystem extends SubsystemBase {
@@ -23,6 +26,10 @@ public class GrabberSubsystem extends SubsystemBase {
 
     public void setGrabberVelocity(AngularVelocity vel) {
         io_.setGrabberVelocity(vel);
+    }
+
+    public void setGrabberVoltage(Voltage v) {
+        io_.setGrabberMotorVoltage(v.in(Volts)) ;
     }
 
     public boolean isCoralSeenHighRisingEdge() {

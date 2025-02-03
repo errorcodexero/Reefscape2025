@@ -20,15 +20,36 @@ public class ManipulatorGotoCmd extends Command {
     private Distance elev_ ;
     private Angle arm_ ;
     private State state_ ;
-    
+    private boolean direct_ ;
+
     public ManipulatorGotoCmd(ManipulatorSubsystem manip, Distance elev, Angle arm) {
+        this(manip, elev, arm, false) ;
+    }   
+    
+    public ManipulatorGotoCmd(ManipulatorSubsystem manip, Distance elev, Angle arm, boolean direct) {
         manip_ = manip ;
         elev_ = elev ;
         arm_ = arm ;        
+        direct_ = direct ;
     }   
 
     @Override
     public void initialize() {
+        if (direct_) {
+            initializeDirect() ;
+        }
+        else {
+            initializeNonDirect() ;
+        }
+    }
+
+    private void initializeDirect() {
+        manip_.setArmAngleTarget(arm_);
+        manip_.setElevatorHeightTarget(elev_);
+        state_ = State.FinishHeight ;
+    }
+
+    private void initializeNonDirect() {
         Angle curarm = manip_.getCurrentArmAngle() ;
         Distance curelev = manip_.getCurrentElevatorHeight() ;
 

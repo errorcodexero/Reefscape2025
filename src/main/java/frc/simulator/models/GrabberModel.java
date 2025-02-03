@@ -3,7 +3,6 @@ package frc.simulator.models;
 import edu.wpi.first.hal.simulation.DIODataJNI;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.engine.SimulationModel;
-import frc.simulator.utils.BadParameterTypeException;
 import frc.simulator.utils.MessageLogger;
 import frc.simulator.utils.MessageType;
 import frc.simulator.utils.SettingsValue;

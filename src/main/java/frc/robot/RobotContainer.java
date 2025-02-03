@@ -47,7 +47,7 @@ import frc.robot.commands.gps.AbortCmd;
 import frc.robot.commands.gps.CollectCoralCmd;
 import frc.robot.commands.gps.EjectCmd;
 import frc.robot.commands.gps.PlaceCoralCmd;
-import frc.robot.commands.tests.ManipulatorGotoAutoMode;
+import frc.robot.commands.tests.ManualPlaceReadyCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -57,10 +57,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants ;
 import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -129,7 +132,7 @@ public class RobotContainer {
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
-            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
+            // oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -169,11 +172,11 @@ public class RobotContainer {
                     catch(Exception e) {
                     }
 
-                    try {
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
-                    }
-                    catch(Exception e) {
-                    }
+                    // try {
+                    //     climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+                    // }
+                    // catch(Exception e) {
+                    // }
                             
                     break;
                 
@@ -242,8 +245,6 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-        autoChooser_.addOption("Manipulator Goto", new ManipulatorGotoAutoMode(manipulator_)) ;
         
         // Configure the button bindings
         if (Constants.isCharacterization()) {
@@ -251,7 +252,12 @@ public class RobotContainer {
         }
         else {
             configureDriveBindings();
-            configureButtonBindings();
+
+            gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 4, true)) ;
+            gamepad_.rightTrigger().onTrue(new DepositCoralCmd(grabber_)) ;
+            gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(10)), Degrees.of(0.0)));
+            
+            // configureButtonBindings();
         }
     }
 

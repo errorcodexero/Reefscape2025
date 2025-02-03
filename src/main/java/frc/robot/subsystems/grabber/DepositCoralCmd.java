@@ -1,6 +1,7 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.XeroTimer;
@@ -29,8 +30,10 @@ public class DepositCoralCmd extends Command {
         //
         // Turn on the roller motors
         //
-        grabber_.setGrabberVelocity(GrabberConstants.Place.kVelocity) ;
-        state_ = State.WaitingForSensor ;
+        // grabber_.setGrabberVelocity(GrabberConstants.Place.kVelocity) ;
+        grabber_.setGrabberVoltage(Volts.of(12.0)) ;
+        wait_timer_.start();
+        state_ = State.WaitingForDelay ;
     }
 
     @Override
@@ -44,7 +47,8 @@ public class DepositCoralCmd extends Command {
                 break ;
             case WaitingForDelay:
                 if (wait_timer_.isExpired()) {
-                    grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    // grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    grabber_.setGrabberVoltage(Volts.of(0.0)) ;
                     state_ = State.Done ;
                 }
                 break ;

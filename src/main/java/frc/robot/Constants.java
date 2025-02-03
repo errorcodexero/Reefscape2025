@@ -35,7 +35,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.SIMBOT;
+    private static final RobotType robotType = RobotType.PRACTICE;
 
     public static class DriveConstants {
         
@@ -79,16 +79,6 @@ public final class Constants {
          * The distance from the center of the robot to the arm.
          */
         public static final Distance robotToArm = Inches.zero();
-    }
-
-    public static class CanConstants {
-
-        public static final int grabber = 1;
-        public static final int armFront = 2;
-        public static final int armBack = 3;
-        public static final int elevatorFront = 4;
-        public static final int elevatorBack = 5;
-
     }
 
     public static class VisionConstants {
@@ -161,6 +151,6 @@ public final class Constants {
     }
 
     public static final boolean isCharacterization() {
-        return true ;
+        return false ;
     }
 }

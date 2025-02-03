@@ -1,5 +1,7 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -28,6 +30,10 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
+        Logger.recordOutput("Manipulator/elevrotspos", inputs_.elevatorRawPosition.in(Rotations)) ;
+        Logger.recordOutput("Manipulator/elevrotsvel", inputs_.elevatorRawVelocity.in(RotationsPerSecond)) ;
+        Logger.recordOutput("Manipulator/armrotspos", inputs_.armRawPosition.in(Rotations)) ;
+        Logger.recordOutput("Manipulator/armrotsvel", inputs_.armRawVelocity.in(RotationsPerSecond)) ;
 
         if (target_arm_position_ != null) {
             Logger.recordOutput("Manipulator/arm-target", target_arm_position_) ;
@@ -103,7 +109,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     private SysIdRoutine elevatorIdRoutine() {
         Voltage step = Volts.of(7) ;
-        Time to = Seconds.of(10.0) ;
+        Time to = Seconds.of(20.0) ;
         SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
 
         SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
