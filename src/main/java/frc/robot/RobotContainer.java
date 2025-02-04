@@ -192,7 +192,7 @@ public class RobotContainer {
                 case SIMBOT:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        new GyroIO() {},
                         ModuleIOSim::new,
                         CompTunerConstants.FrontLeft,
                         CompTunerConstants.FrontRight,
