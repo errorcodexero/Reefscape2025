@@ -25,21 +25,22 @@ public class Climber extends SubsystemBase{
       climberState_ = ClimberState.Idle;
    }
 
-   public void deployclimberstate() {
-      
+   public void deployClimber() {
+   }
+   public void executeClimb() {
    }
  
    public void climber() {
       switch(climberState_){
          case Idle:
-            // 1. 
-            // 2. 
             break;
          case DeployClimber:
+            deployClimber();
             break;
          case WaitToHook:
             break;
          case ExecuteClimb:
+            executeClimb();
             break;
       }
    }
