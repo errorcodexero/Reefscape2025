@@ -1,6 +1,5 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
@@ -20,7 +19,6 @@ import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -101,10 +99,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.armRawEncoder = encoder_.get() ;
         inputs.armEncoderValue = Degrees.of(mapper_.toRobot(inputs.armRawEncoder)) ;
 
-        inputs.elevatorPosition = Meters.of(elevator_position_.refresh().getValue().in(Revolutions) * ManipulatorConstants.Elevator.kMotorRevsToHeightMeters).plus(ManipulatorConstants.Elevator.kMinHeight) ;
+        inputs.elevatorPosition = Meters.of(elevator_position_.refresh().getValue().in(Revolutions) / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters).plus(ManipulatorConstants.Elevator.kMinHeight) ;
         inputs.elevatorRawPosition = elevator_position_.refresh().getValue() ;
         inputs.elevatorRawVelocity = elevator_velocity_.refresh().getValue() ;
-        inputs.elevatorVelocity = MetersPerSecond.of(elevator_velocity_.refresh().getValue().in(RevolutionsPerSecond) * ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
+        inputs.elevatorVelocity = MetersPerSecond.of(elevator_velocity_.refresh().getValue().in(RevolutionsPerSecond) / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
         inputs.elevatorCurrent = elevator_current_.refresh().getValue() ;
         inputs.elevatorVoltage = elevator_voltage_.refresh().getValue() ;
 
@@ -176,13 +174,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     private void createArm() {
         TalonFXFactory f = TalonFXFactory.getFactory() ;
-        arm_motor_ = f.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, ManipulatorConstants.Arm.kInverted) ;
-
-        CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
-                .withStatorCurrentLimitEnable(false)
-                .withSupplyCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(40.0);
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(limits)) ;       
+        arm_motor_ = f.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, 
+                                     ManipulatorConstants.Arm.kInverted,
+                                     ManipulatorConstants.Arm.kCurrentLimit) ;
 
         arm_position_ = arm_motor_.getPosition() ;
         arm_velocity_ = arm_motor_.getVelocity() ;
@@ -228,18 +222,15 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     private void createElevator() {
         TalonFXFactory f = TalonFXFactory.getFactory() ;
-        elevator_motor_1_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID1, ManipulatorConstants.Elevator.kInverted) ;
+        elevator_motor_1_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID1, 
+                                            ManipulatorConstants.Elevator.kInverted,
+                                            ManipulatorConstants.Elevator.kCurrentLimit) ;
         elevator_motor_1_.setPosition(Degrees.of(0.0)) ;
 
-        CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
-                .withStatorCurrentLimitEnable(false)
-                .withSupplyCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(40.0);
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(limits)) ;       
-
-        elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, ManipulatorConstants.Elevator.kInverted) ;
+        elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, 
+                                            ManipulatorConstants.Elevator.kInverted,
+                                            ManipulatorConstants.Elevator.kCurrentLimit) ;
         elevator_motor_2_.setControl(new Follower(elevator_motor_1_.getDeviceID(), true)) ;
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID2, "apply", () -> elevator_motor_2_.getConfigurator().apply(limits)) ;       
 
         elevator_position_ = elevator_motor_1_.getPosition() ;
         elevator_velocity_ = elevator_motor_1_.getVelocity() ;

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.XeroTimer;
@@ -31,7 +32,8 @@ public class WaitForAlgaeCmd extends Command {
         //
         // Turn on the roller motors
         //
-        grabber_.setGrabberVelocity(GrabberConstants.Collect.kVelocity) ;
+        // grabber_.setGrabberVelocity(GrabberConstants.Collect.kVelocity) ;
+        grabber_.setGrabberVoltage(Volts.of(-4.0));
         state_ = State.WaitingForSensor ;
     }
 

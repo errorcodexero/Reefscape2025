@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
@@ -54,14 +55,16 @@ public class GrabberIOHardware implements GrabberIO {
     }
     
     public void updateInputs(GrabberIOInputs inputs) {
+        Logger.recordOutput("xyzzy", algae_sensor_high_.getInput().get());
+        
         inputs.grabberPosition = grabber_position_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberVelocity = grabber_velocity_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberCurrent = grabber_current_.refresh().getValue() ;
         inputs.grabberVoltage = grabber_voltage_.refresh().getValue() ;
 
-        // inputs.algaeSensorLow = algae_sensor_low_.getInput().get() ;
-        // inputs.algaeSensorRisingEdgeLow = algae_sensor_low_.risingEdge();
-        // inputs.algaeSensorFallingEdgeLow = algae_sensor_low_.fallingEdge();
+        inputs.algaeSensorLow = algae_sensor_low_.getInput().get() ;
+        inputs.algaeSensorRisingEdgeLow = algae_sensor_low_.risingEdge();
+        inputs.algaeSensorFallingEdgeLow = algae_sensor_low_.fallingEdge();
 
         inputs.algaeSensorHigh = algae_sensor_high_.getInput().get() ;
         inputs.algaeSensorRisingEdgeHigh = algae_sensor_high_.risingEdge();
@@ -72,14 +75,14 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.coralSensorLowFallingEdge = coral_sensor_low_.fallingEdge();
         inputs.coralSensorPositionLow = coral_sensor_low_.getCount() ;
 
-        // inputs.coralSensorHigh = coral_sensor_high_.getInput().get() ;
-        // inputs.coralSensorHighRisingEdge = coral_sensor_high_.risingEdge();
-        // inputs.coralSensorHighFallingEdge = coral_sensor_high_.fallingEdge();
-        // inputs.coralSensorPositionHigh = coral_sensor_high_.getCount() ;
+        inputs.coralSensorHigh = coral_sensor_high_.getInput().get() ;
+        inputs.coralSensorHighRisingEdge = coral_sensor_high_.risingEdge();
+        inputs.coralSensorHighFallingEdge = coral_sensor_high_.fallingEdge();
+        inputs.coralSensorPositionHigh = coral_sensor_high_.getCount() ;
 
-        // inputs.coralSensorFunnel = coral_sensor_funnel_.getInput().get() ;
-        // inputs.coralSensorFunnelRisingEdge = coral_sensor_funnel_.risingEdge();
-        // inputs.coralSensorFunnelFallingEdge = coral_sensor_funnel_.fallingEdge();
+        inputs.coralSensorFunnel = coral_sensor_funnel_.getInput().get() ;
+        inputs.coralSensorFunnelRisingEdge = coral_sensor_funnel_.risingEdge();
+        inputs.coralSensorFunnelFallingEdge = coral_sensor_funnel_.fallingEdge();
     }
 
     public void setGrabberVelocity(AngularVelocity target) {
@@ -108,15 +111,15 @@ public class GrabberIOHardware implements GrabberIO {
         coral_sensor_low_.setCountSupplier(()->(int)(grabber_position_.refresh().getValue().in(Revolutions) * kPositionScale)) ;
         coral_sensor_low_.enable() ;
 
-        // coral_sensor_high_ = new DigitalInterrupt(GrabberConstants.Sensor.kCoralHigh, true, true) ;
-        // coral_sensor_high_.setCountSupplier(()->(int)(grabber_position_.refresh().getValue().in(Revolutions) * kPositionScale)) ;
-        // coral_sensor_high_.enable() ;
+        coral_sensor_high_ = new DigitalInterrupt(GrabberConstants.Sensor.kCoralHigh, true, true) ;
+        coral_sensor_high_.setCountSupplier(()->(int)(grabber_position_.refresh().getValue().in(Revolutions) * kPositionScale)) ;
+        coral_sensor_high_.enable() ;
 
-        // coral_sensor_funnel_ = new DigitalInterrupt(GrabberConstants.Sensor.kCoralFunnel, true, true) ;
-        // coral_sensor_funnel_.enable() ;
+        coral_sensor_funnel_ = new DigitalInterrupt(GrabberConstants.Sensor.kCoralFunnel, true, true) ;
+        coral_sensor_funnel_.enable() ;
 
-        // algae_sensor_low_ = new DigitalInterrupt(GrabberConstants.Sensor.kAlgaeLow, true, true) ;
-        // algae_sensor_low_.enable() ;
+        algae_sensor_low_ = new DigitalInterrupt(GrabberConstants.Sensor.kAlgaeLow, true, true) ;
+        algae_sensor_low_.enable() ;
 
         algae_sensor_high_ = new DigitalInterrupt(GrabberConstants.Sensor.kAlgaeHigh, true, true) ;
         algae_sensor_high_.enable() ;
@@ -124,7 +127,9 @@ public class GrabberIOHardware implements GrabberIO {
 
     private void createGrabber() {
         TalonFXFactory f = TalonFXFactory.getFactory() ;
-        grabber_motor_ = f.createTalonFX(GrabberConstants.Grabber.kMotorCANID, GrabberConstants.Grabber.kInverted) ;
+        grabber_motor_ = f.createTalonFX(GrabberConstants.Grabber.kMotorCANID, 
+                                         GrabberConstants.Grabber.kInverted,
+                                         GrabberConstants.Grabber.kCurrentLimit) ;
 
         grabber_position_ = grabber_motor_.getPosition() ;
         grabber_velocity_ = grabber_motor_.getVelocity() ;

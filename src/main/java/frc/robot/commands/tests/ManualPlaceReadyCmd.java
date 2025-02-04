@@ -15,17 +15,17 @@ public class ManualPlaceReadyCmd extends Command {
     private ManipulatorGotoCmd cmd_ ;
     private boolean direct_ ;
 
-    private static final Distance L4Dist = Centimeters.of(214.0) ;
+    private static final Distance L4Dist = Centimeters.of(194.0) ;
     private static final Angle L4Angle = Degrees.of(60.0) ;
 
-    private static final Distance L3Dist = Centimeters.of(214.0) ;
-    private static final Angle L3Angle = Degrees.of(60.0) ;
+    private static final Distance L3Dist = Centimeters.of(130.0) ;
+    private static final Angle L3Angle = Degrees.of(40.0) ;
 
-    private static final Distance L2Dist = Centimeters.of(214.0) ;
-    private static final Angle L2Angle = Degrees.of(60.0) ;
+    private static final Distance L2Dist = Centimeters.of(90.0) ;
+    private static final Angle L2Angle = Degrees.of(40.0) ;
 
-    private static final Distance L1Dist = Centimeters.of(214.0) ;
-    private static final Angle L1Angle = Degrees.of(60.0) ;
+    private static final Distance L1Dist = Centimeters.of(70.0) ;
+    private static final Angle L1Angle = Degrees.of(0.0) ;
 
     public ManualPlaceReadyCmd(ManipulatorSubsystem m, int level, boolean direct) {
         level_ = level ;
@@ -48,7 +48,7 @@ public class ManualPlaceReadyCmd extends Command {
                 cmd_ = new ManipulatorGotoCmd(m_, L3Dist, L3Angle, direct_) ;
                 break ;
 
-            case- 4:
+            case 4:
                 cmd_ = new ManipulatorGotoCmd(m_, L4Dist, L4Angle, direct_) ;
                 break ;
         }

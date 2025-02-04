@@ -49,6 +49,9 @@ public class ManipulatorConstants {
         // if motor is inverted 
         public static final boolean kInverted = true; 
 
+        // Current limit
+        public static final double kCurrentLimit = 40.0 ;
+
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
 
@@ -87,8 +90,10 @@ public class ManipulatorConstants {
         public static final boolean kInverted = false; 
 
         // Mapping from motor turns to linear height
-        public static final double kMotorRevsToHeightMeters = 42.375
-        ;
+        public static final double kMotorRevsToHeightMeters = 42.375 ;
+
+        // Current limit
+        public static final double kCurrentLimit = 40.0 ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around
         

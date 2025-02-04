@@ -22,8 +22,8 @@ public class ManipulatorGotoCmd extends Command {
     private State state_ ;
     private boolean direct_ ;
 
-    public ManipulatorGotoCmd(ManipulatorSubsystem manip, Distance elev, Angle arm) {
-        this(manip, elev, arm, false) ;
+    public ManipulatorGotoCmd(ManipulatorSubsystem m_, Distance elev, Angle arm) {
+        this(m_, elev, arm, false) ;
     }   
     
     public ManipulatorGotoCmd(ManipulatorSubsystem manip, Distance elev, Angle arm, boolean direct) {

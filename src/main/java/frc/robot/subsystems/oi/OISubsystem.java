@@ -113,7 +113,7 @@ public class OISubsystem extends SubsystemBase {
     private Trigger eject_trigger_ ;
 
     // The command associated with the current robot action
-    private Command current_robot_action_command_ ;
+    private OICommandSupplier.Pair<Command, Command> current_robot_action_command_ ;
 
     // The supplier for the robot action command based on the OI state
     private OICommandSupplier robot_action_command_supplier_ ;
@@ -296,26 +296,26 @@ public class OISubsystem extends SubsystemBase {
             setRobotActionLEDState(next_action_, LEDState.On);
         }
 
-        if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
-            //
-            // The currently executing command has finished, we need to clear the LED
-            // and mark the command as complete but setting it to null
-            //
-            setRobotActionLEDState(current_action_, LEDState.Off);
-            current_robot_action_command_ = null ;
-        }
+        // if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
+        //     //
+        //     // The currently executing command has finished, we need to clear the LED
+        //     // and mark the command as complete but setting it to null
+        //     //
+        //     setRobotActionLEDState(current_action_, LEDState.Off);
+        //     current_robot_action_command_ = null ;
+        // }
 
-        if (next_action_ != null && current_robot_action_command_ == null) {
-            //
-            // We are ready to execute a new command, we schedule the command
-            //
-            current_action_ = next_action_ ;
-            next_action_ = null ;
-            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
-            if (current_robot_action_command_ != null) {
-                current_robot_action_command_.schedule();
-            }
-        }
+        // if (next_action_ != null && current_robot_action_command_ == null) {
+        //     //
+        //     // We are ready to execute a new command, we schedule the command
+        //     //
+        //     current_action_ = next_action_ ;
+        //     next_action_ = null ;
+        //     current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
+        //     if (current_robot_action_command_ != null) {
+        //         current_robot_action_command_.schedule();
+        //     }
+        // }
 
         Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;

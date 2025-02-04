@@ -18,6 +18,9 @@ public class GrabberConstants {
         // if motor is inverted 
         public static final boolean kInverted = true; 
 
+        // Current limit for the grabber motor
+        public static final double kCurrentLimit = 40.0 ;
+
         public class PID {
             public static final double kP = 0.0; 
             public static final double kI = 0.0 ;
@@ -36,11 +39,11 @@ public class GrabberConstants {
     }   
 
     public class Sensor {
-        public static final int kCoralLow = 2 ;
-        // public static final int kCoralHigh = 2 ;
-        // public static final int kCoralFunnel = 3 ;
-        public static final int kAlgaeHigh = 3 ;
-        // public static final int kAlgaeLow = 5 ;
+        public static final int kCoralLow = 3 ;
+        public static final int kCoralHigh = 4;
+        public static final int kCoralFunnel = 5 ;
+        public static final int kAlgaeHigh = 2 ;
+        public static final int kAlgaeLow = 6 ;
     }
 
     public class Collect {

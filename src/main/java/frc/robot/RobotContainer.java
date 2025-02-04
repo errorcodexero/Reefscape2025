@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.HashMap;
 
@@ -47,6 +48,7 @@ import frc.robot.commands.gps.AbortCmd;
 import frc.robot.commands.gps.CollectCoralCmd;
 import frc.robot.commands.gps.EjectCmd;
 import frc.robot.commands.gps.PlaceCoralCmd;
+import frc.robot.commands.tests.ManipulatorGrabAlgaeReefCmd;
 import frc.robot.commands.tests.ManualPlaceReadyCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.ClimberIOHardware;
@@ -60,10 +62,12 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.SetGrabberVelocityCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants ;
+import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -253,9 +257,10 @@ public class RobotContainer {
         else {
             configureDriveBindings();
 
-            gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 4, true)) ;
-            gamepad_.rightTrigger().onTrue(new DepositCoralCmd(grabber_)) ;
-            gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(10)), Degrees.of(0.0)));
+            gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
+            // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
+            gamepad_.rightTrigger().onTrue(new SetGrabberVoltsCmd(grabber_, Volts.of(6.0))) ;
+            gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
             
             // configureButtonBindings();
         }
@@ -307,17 +312,14 @@ public class RobotContainer {
         }
     }
 
-    public Command getRobotActionCommand(RobotAction action, int level, CoralSide side) {
-        Command cmd = null ;
+    public OICommandSupplier.Pair<Command, Command> getRobotActionCommand(RobotAction action, int level, CoralSide side) {
+        OICommandSupplier.Pair<Command, Command> ret = null ;
 
         switch (action) {
             case CollectCoral:
-                cmd = new CollectCoralCmd(manipulator_, grabber_) ;
                 break ;
             case PlaceCoral:
-                cmd = new PlaceCoralCmd(drivebase_, manipulator_, grabber_, oi_.coralLevel(), oi_.getCoralSide() == CoralSide.Left) ;
                 break ;
-
             case CollectAlgaeGround:
             case CollectAlgaeReefL2:
             case CollectAlgaeReefL3:
@@ -328,7 +330,7 @@ public class RobotContainer {
                 break ;
         }
 
-        return cmd ;
+        return ret ;
     }
 
     public ISimulatedSubsystem get(String name) {
