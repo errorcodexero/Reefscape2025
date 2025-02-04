@@ -4,13 +4,18 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
-    private final ManipulatorIOInputsAutoLogged inputs_; 
-    private Distance elevator_target_; 
-    private Angle arm_target_; 
+    private final ManipulatorIOInputsAutoLogged inputs_;  
+    private Angle target_angle_ ;
+    private Distance target_height_ ;
+
+    private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevatorDisconnected_ = new Alert("Elevator motor failed to configure or is disconnected!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -21,22 +26,27 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
+
+        armDisconnected_.set(!inputs_.armReady);
+        elevatorDisconnected_.set(!inputs_.elevatorReady);
+    }
+
+    public Angle getArmPosition() {
+        return inputs_.armPosition ;
     }
 
     public void setArmPosition(Angle angle) {
-        io_.setArmPosition(angle);
+        target_angle_ = angle;  
+        io_.setArmPosition(angle); 
+    }
+
+    public Distance getElevatorPosition() {
+        return inputs_.elevatorPosition; 
     }
 
     public void setElevatorPosition(Distance dist) {
+        target_height_ = dist ;
         io_.setElevatorPosition(dist); 
-    }
-
-    public Angle getArmPosition(){
-        return inputs_.armPosition; 
-    }
-
-    public Distance getElevatorPosition(){
-        return inputs_.elevatorPosition; 
     }
 
     public boolean doesCrossKZ(Angle current, Angle target) {
@@ -52,16 +62,14 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public boolean isElevAtTarget() {
-        Distance current = getElevatorPosition(); 
-        if(current.isNear(elevator_target_, ManipulatorConstants.Elevator.kPosTolerance)) {
+        if(inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) {
             return true; 
         }
         return false; 
     }
 
     public boolean isArmAtTarget() {
-        Angle current = getArmPosition(); 
-        if(current.isNear(arm_target_, ManipulatorConstants.Arm.kPosTolerance)) {
+        if(inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) {
             return true; 
         }
         return false; 

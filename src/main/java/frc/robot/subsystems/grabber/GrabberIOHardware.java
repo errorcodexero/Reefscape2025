@@ -1,48 +1,49 @@
 package frc.robot.subsystems.grabber;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.AsynchronousInterrupt;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-
-import org.xerosw.util.TalonFXFactory;
+import frc.robot.util.DigitalInterrupt;
 
 public class GrabberIOHardware implements GrabberIO {
+    private DigitalInterrupt coral_front_;
+    private DigitalInterrupt coral_back_;
+    private DigitalInterrupt coral_funnel_;
+    private DigitalInterrupt algae_upper_;
+    private DigitalInterrupt algae_lower_;
+
     private TalonFX grabber_motor_;
-
-    private DigitalInput coral_sensor_;
-    private DigitalInput algae_sensor_;
-
-    private AsynchronousInterrupt coral_interrupt_;
-    private AsynchronousInterrupt algae_interrupt_;
-
-    private AtomicBoolean coral_rising_seen_;
-    private AtomicBoolean coral_falling_seen_;
-    private AtomicBoolean algae_rising_seen_;
-    private AtomicBoolean algae_falling_seen_;
 
     private double grabber_voltage_;
 
-    private StatusSignal<Angle> grabber_pos_sig;
-    private StatusSignal<AngularVelocity> grabber_vel_sig;
-    private StatusSignal<Current> grabber_curr_sig;
-    private StatusSignal<Voltage> grabber_vol_sig;
+    private StatusSignal<Angle> grabber_pos_sig_;
+    private StatusSignal<AngularVelocity> grabber_vel_sig_;
+    private StatusSignal<Current> grabber_curr_sig_;
+    private StatusSignal<Voltage> grabber_vol_sig_;
 
-    public GrabberIOHardware() throws Exception {
-        grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+    private final Debouncer grabberErrorDebounce_ = new Debouncer(0.5);
+    private boolean grabberError_ = false;
+
+    public GrabberIOHardware() {
+
+        try {
+            grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+        } catch (Exception e) {
+            grabberError_ = true;
+        }
             
         Slot0Configs grabber_pids_ = new Slot0Configs();
         grabber_pids_.kP = GrabberConstants.Grabber.PID.kP;
@@ -52,60 +53,92 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_pids_.kA = GrabberConstants.Grabber.PID.kA;
         grabber_pids_.kG = GrabberConstants.Grabber.PID.kG;
         grabber_pids_.kS = GrabberConstants.Grabber.PID.kS;
-        grabber_motor_.getConfigurator().apply(grabber_pids_);
-
+        
         MotionMagicConfigs grabberMotionMagicConfigs = new MotionMagicConfigs();
         grabberMotionMagicConfigs.MotionMagicCruiseVelocity = GrabberConstants.Grabber.MotionMagic.kMaxVelocity;
         grabberMotionMagicConfigs.MotionMagicAcceleration = GrabberConstants.Grabber.MotionMagic.kMaxAcceleration;
         grabberMotionMagicConfigs.MotionMagicJerk = GrabberConstants.Grabber.MotionMagic.kJerk;
-        grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs);
 
-        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> BaseStatusSignal.setUpdateFrequencyForAll(1.0,
-                                                                        grabber_curr_sig,
-                                                                        grabber_pos_sig,
-                                                                        grabber_vel_sig,
-                                                                        grabber_vol_sig));
+        try {
+            TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, null, () -> grabber_motor_.getConfigurator().apply(grabber_pids_));
 
+            TalonFXFactory.checkError(0, null, () -> grabber_motor_.getConfigurator().apply(grabberMotionMagicConfigs), 5);
 
-        coral_sensor_ = new DigitalInput(GrabberConstants.Grabber.CoralSensor.kChannel);
-        algae_sensor_ = new DigitalInput(GrabberConstants.Grabber.AlgaeSensor.kChannel);
-
-        coral_rising_seen_ = new AtomicBoolean();
-        coral_falling_seen_ = new AtomicBoolean();
-        algae_rising_seen_ = new AtomicBoolean();
-        algae_falling_seen_ = new AtomicBoolean();
-
-        coral_interrupt_ = new AsynchronousInterrupt(coral_sensor_, (coral_rising_, coral_falling_) -> {coralInterruptHandler(coral_rising_, coral_falling_);});
-        algae_interrupt_ = new AsynchronousInterrupt(algae_sensor_, (algae_rising_, algae_falling_) -> {coralInterruptHandler(algae_rising_, algae_falling_);});
-
-        coral_interrupt_.setInterruptEdges(true, true);
-        algae_interrupt_.setInterruptEdges(true, true);
-
-        coral_interrupt_.enable();
-        algae_interrupt_.enable();
+            TalonFXFactory.checkError(
+                GrabberConstants.Grabber.kMotorCANID,
+                null,
+                () -> BaseStatusSignal.setUpdateFrequencyForAll(
+                    1.0,
+                    grabber_curr_sig_,
+                    grabber_pos_sig_,
+                    grabber_vel_sig_,
+                    grabber_vol_sig_
+                )
+            );
+    
+            TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
+        } catch (Exception e) {
+            grabberError_ = true;
+        }
+        
+        coral_front_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralFrontSensor.kChannel);
+        coral_back_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralBackSensor.kChannel);
+        coral_funnel_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralFunnelSensor.kChannel);
+        algae_upper_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeUpperSensor.kChannel);
+        algae_lower_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeLowerSensor.kChannel);
     }
 
      @Override
     public void updateInputs(GrabberIOInputs inputs) {
 
-        inputs.grabberCurrent = grabber_curr_sig.refresh().getValue();
-        inputs.grabberVelocity = grabber_vel_sig.refresh().getValue();
-        inputs.grabberPosition = grabber_pos_sig.refresh().getValue();
-        inputs.grabberVoltage = grabber_vol_sig.refresh().getValue();
+        StatusCode grabberStatus = BaseStatusSignal.refreshAll(
+            grabber_curr_sig_,
+            grabber_vel_sig_,
+            grabber_pos_sig_,
+            grabber_vol_sig_
+        );
+        
+        inputs.grabberReady = grabberErrorDebounce_.calculate(grabberStatus.isOK()) && !grabberError_;
 
-        inputs.coralRisingEdge = coral_rising_seen_.get();
-        inputs.coralRisingEdge = coral_falling_seen_.get();
+        inputs.grabberCurrent = grabber_curr_sig_.getValue();
+        inputs.grabberVelocity = grabber_vel_sig_.getValue();
+        inputs.grabberPosition = grabber_pos_sig_.getValue();
+        inputs.grabberVoltage = grabber_vol_sig_.getValue();
 
-        inputs.algaeRisingEdge = algae_rising_seen_.get();
-        inputs.algaeRisingEdge = algae_falling_seen_.get();
+        inputs.coralFrontSensor = coral_front_.getSensor();
+        inputs.coralFrontRisingEdge = coral_front_.getRising();
+        inputs.coralFrontFallingEdge = coral_front_.getFalling();
+        
+        inputs.coralBackSensor = coral_back_.getSensor();
+        inputs.coralBackRisingEdge = coral_back_.getRising();
+        inputs.coralBackFallingEdge = coral_back_.getFalling();
 
-        inputs.coralSensor = coral_sensor_.get();
-        inputs.algaeSensor = algae_sensor_.get();
+        inputs.coralFunnelSensor = coral_funnel_.getSensor();
+        inputs.coralFunnelRisingEdge = coral_funnel_.getRising();
+        inputs.coralFunnelFallingEdge = coral_funnel_.getFalling();
 
-        coral_rising_seen_.set(false);
-        coral_falling_seen_.set(false);
-        algae_rising_seen_.set(false);
-        algae_falling_seen_.set(false);
+        inputs.algaeUpperSensor = algae_upper_.getSensor();
+        inputs.algaeUpperRisingEdge = algae_upper_.getRising();
+        inputs.algaeUpperFallingEdge = algae_upper_.getFalling();
+
+        inputs.algaeLowerSensor = algae_lower_.getSensor();
+        inputs.algaeLowerRisingEdge = algae_lower_.getRising();
+        inputs.algaeLowerFallingEdge = algae_lower_.getFalling();
+
+        coral_front_.setRising(false);
+        coral_back_.setFalling(false);
+
+        coral_back_.setRising(false);
+        coral_back_.setFalling(false);
+
+        coral_funnel_.setRising(false);
+        coral_funnel_.setFalling(false);
+
+        algae_upper_.setRising(false);
+        algae_upper_.setFalling(false);
+
+        algae_lower_.setRising(false);
+        algae_lower_.setFalling(false);
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
@@ -122,43 +155,5 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_motor_.setControl(new MotionMagicVelocityVoltage(cvel));
     }
 
-    public void coralInterruptHandler(boolean rising, boolean falling) {
-        if (rising) {
-            if (RobotBase.isReal()){
-                coral_rising_seen_.set(true);
-            }
-            else {
-                coral_falling_seen_.set(true);
-            }
-        }
-
-        if (falling) {
-            if (RobotBase.isReal()) {
-                coral_falling_seen_.set(true);
-            }
-            else {
-                coral_rising_seen_.set(true);
-            }
-        }
-    }
-
-    public void algaeInterruptHandler(boolean rising, boolean falling) {
-        if (rising) {
-            if (RobotBase.isReal()){
-                algae_rising_seen_.set(true);
-            }
-            else {
-                algae_falling_seen_.set(true);
-            }
-        }
-
-        if (falling) {
-            if (RobotBase.isReal()) {
-                algae_falling_seen_.set(true);
-            }
-            else {
-                algae_rising_seen_.set(true);
-            }
-        }
-    }
+    
 }

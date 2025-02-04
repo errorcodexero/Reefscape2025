@@ -13,9 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,6 +45,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
@@ -78,7 +77,7 @@ public class Drive extends SubsystemBase {
     Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
     
     // PathPlanner config constants
-    private static final double ROBOT_MASS_KG = 15.8;
+    private static final double ROBOT_MASS_KG = 63.5;
     private static final double ROBOT_MOI = 6.883;
     private static final double WHEEL_COF = 1.2;
     private static final RobotConfig PP_CONFIG =
