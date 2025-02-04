@@ -65,22 +65,22 @@ public class GoToCmd extends Command {
     switch(state_) {
 
       case GoToFinalPos:
-        if(sub_.isElevAtTarget(current_height_, target_height_) && sub_.isArmAtTarget(current_angle_, target_angle_)) {
+        if(sub_.isElevAtTarget() && sub_.isArmAtTarget()) {
           state_ = State.Done; 
         }
         break;
 
       case WaitForArm:
-        if(sub_.isArmAtTarget(current_angle_, target_angle_)) {
+        if(sub_.isArmAtTarget()) {
           sub_.setElevatorPosition(target_height_);
         }
-        if(sub_.isElevAtTarget(current_height_, target_height_)) {
+        if(sub_.isElevAtTarget()) {
           state_ = State.Done; 
         }
         break;
 
       case WaitForElevator:
-      if(sub_.isElevAtTarget(current_height_, target_height_)) {
+      if(sub_.isElevAtTarget()) {
         if(target_height_.gt(keepout_height_)) {
           sub_.setElevatorPosition(target_height_);
           sub_.setArmPosition(target_angle_);

@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
-    private final ManipulatorIOInputsAutoLogged inputs_;  
+    private final ManipulatorIOInputsAutoLogged inputs_; 
+    private Distance elevator_target_; 
+    private Angle arm_target_; 
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -22,7 +24,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void setArmPosition(Angle angle) {
-        io_.setArmPosition(angle); 
+        io_.setArmPosition(angle);
     }
 
     public void setElevatorPosition(Distance dist) {
@@ -49,19 +51,19 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return false;
     }
 
-    public boolean isElevAtTarget(Distance current, Distance target) {
-        if(current.isNear(target, ManipulatorConstants.Elevator.kPosTolerance)) {
+    public boolean isElevAtTarget() {
+        Distance current = getElevatorPosition(); 
+        if(current.isNear(elevator_target_, ManipulatorConstants.Elevator.kPosTolerance)) {
             return true; 
         }
         return false; 
     }
 
-    public boolean isArmAtTarget(Angle current, Angle target) {
-        if(current.isNear(target, ManipulatorConstants.Arm.kPosTolerance)) {
+    public boolean isArmAtTarget() {
+        Angle current = getArmPosition(); 
+        if(current.isNear(arm_target_, ManipulatorConstants.Arm.kPosTolerance)) {
             return true; 
         }
         return false; 
     }
-
-
 }

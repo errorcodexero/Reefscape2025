@@ -1,5 +1,7 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.*;
+
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Angle;
@@ -16,16 +18,19 @@ public interface ManipulatorIO {
         // inputs for now: position, current, voltage, velocity (acceleration?)
 
         // arm inputs
-        public Angle armPosition; 
-        public Current armCurrent; 
-        public Voltage armVoltage; 
-        public AngularVelocity armVelocity; 
+        public Angle armPosition = Degrees.of(0); 
+        public Current armCurrent = Amps.of(0); 
+        public Voltage armVoltage = Volts.of(0); 
+        public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
 
         // elevator inputs
-        public Distance elevatorPosition; 
-        public Current elevatorCurrent; 
-        public Voltage elevatorVoltage; 
-        public LinearVelocity elevatorVelocity; 
+        public Distance elevatorPosition = Meters.of(0); 
+        public Current elevatorCurrent = Amps.of(0);  
+        public Voltage elevatorVoltage = Volts.of(0);
+        public LinearVelocity elevatorVelocity = MetersPerSecond.of(0); 
+
+        public Voltage elevator2Voltage = Volts.of(0);
+        public Current elevator2Current = Amps.of(0); 
     }
 
     // updating inputs

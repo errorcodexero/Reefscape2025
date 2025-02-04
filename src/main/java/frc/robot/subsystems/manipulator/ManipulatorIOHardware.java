@@ -40,6 +40,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private StatusSignal<Voltage> elevator_vol_sig_; 
     private StatusSignal<Current> elevator_current_sig_;
 
+    private StatusSignal<Voltage> elevator_2_vol_sig_; 
+    private StatusSignal<Current> elevator_2_current_sig_;
+
     private Voltage arm_voltage_; 
     private Voltage elevator_voltage_; 
 
@@ -48,7 +51,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, ManipulatorConstants.Arm.kCANBusName, ManipulatorConstants.Arm.kInverted); 
         elevator_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kCANBusName, ManipulatorConstants.Elevator.kInverted);
         elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
-        // elevator_motor_2_ = new Follower(ManipulatorConstants.Elevator.kMotorCANID, true));  
+        elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID2, true)); 
 
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
@@ -119,6 +122,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         inputs.elevatorVoltage = elevator_vol_sig_.refresh().getValue();
         inputs.elevatorCurrent = elevator_current_sig_.refresh().getValue();
+
+        inputs.elevator2Voltage = elevator_2_vol_sig_.refresh().getValue();
+        inputs.elevator2Current = elevator_2_current_sig_.refresh().getValue();
+
     }
 
     public void setArmMotorVoltage(Voltage vol) {
