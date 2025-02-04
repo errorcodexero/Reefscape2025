@@ -115,9 +115,13 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
 
@@ -139,9 +143,13 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
                 
@@ -163,9 +171,13 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
                 

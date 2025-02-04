@@ -52,29 +52,21 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
-    private boolean armError_ = true;
-    private boolean elevatorError_ = true;
+    public ManipulatorIOHardware() throws Exception {
 
-    public ManipulatorIOHardware() {
+        arm_motor_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Arm.kMotorCANID,
+            ManipulatorConstants.Arm.kCANBusName,
+            ManipulatorConstants.Arm.kInverted
+        );
 
-        try {
-            arm_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, ManipulatorConstants.Arm.kCANBusName, ManipulatorConstants.Arm.kInverted);
-        } catch (Exception e) {
-            armError_ = true;
-        }
+        elevator_motor_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Elevator.kMotorCANID,
+            ManipulatorConstants.Elevator.kCANBusName,
+            ManipulatorConstants.Elevator.kInverted
+        );
 
-
-        try {
-            elevator_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kCANBusName, ManipulatorConstants.Elevator.kInverted);
-        } catch (Exception e) {
-            elevatorError_ = true;
-        } 
-
-        try {
-            elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
-        } catch (Exception e) {
-            elevatorError_ = true; 
-        }
+        elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
         elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID2, true));
 
         // ARM CONFIGS: 
@@ -92,13 +84,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity;
         armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration;
         armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
-        
-        try {
-            TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-PID-values", () -> arm_motor_.getConfigurator().apply(arm_pids));
-            TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-MM-values", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs));
-        } catch (Exception e) {
-            armError_ = true;
-        } 
+
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-PID-values", () -> arm_motor_.getConfigurator().apply(arm_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-MM-values", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs));
 
         arm_pos_sig_ = arm_motor_.getPosition();
         arm_vel_sig_ = arm_motor_.getVelocity();
@@ -120,12 +108,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration;
         elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk;
 
-        try {
-            TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
-            TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
-        } catch (Exception e) {
-            elevatorError_ = true;
-        } 
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();
@@ -133,23 +117,19 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_current_sig_ = elevator_motor_.getSupplyCurrent();
 
         // setting signal update frequency: 
-        try {
-            TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
-                BaseStatusSignal.setUpdateFrequencyForAll(
-                    50.0,
-                    arm_pos_sig_,
-                    arm_vel_sig_,
-                    arm_vol_sig_,
-                    arm_current_sig_,
-                    elevator_pos_sig_,
-                    elevator_vel_sig_,
-                    elevator_vol_sig_,
-                    elevator_current_sig_
-                ));
-        } catch (Exception e) {
-            armError_ = true;
-            elevatorError_ = true;
-        }
+        TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0,
+                arm_pos_sig_,
+                arm_vel_sig_,
+                arm_vol_sig_,
+                arm_current_sig_,
+                elevator_pos_sig_,
+                elevator_vel_sig_,
+                elevator_vol_sig_,
+                elevator_current_sig_
+            )
+        );
     }
 
     // updates all of the inputs from ManipulatorIO 
@@ -174,14 +154,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             elevator_2_vol_sig_,
             elevator_2_current_sig_
         );
-        
-        // TODO: redo error checking to new system
-        inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK()) && !armError_;
-        inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK()) && !elevatorError_;
+
+        inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
+        inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK());
         inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
 
         // arm inputs:
-
         inputs.armPosition = arm_pos_sig_.getValue().times(ManipulatorConstants.Arm.kGearRatio);
         inputs.armVelocity = arm_vel_sig_.getValue().times(ManipulatorConstants.Arm.kGearRatio);
         inputs.armVoltage = arm_vol_sig_.getValue();
