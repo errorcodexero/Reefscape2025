@@ -2,6 +2,8 @@ package frc.robot.subsystems.grabber;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GrabberSubsystem extends SubsystemBase {
@@ -11,6 +13,8 @@ public class GrabberSubsystem extends SubsystemBase {
 
     private boolean has_coral_;
     private boolean has_algae_;
+
+    private final Alert grabberErrorAlert_ = new Alert("Grabber error is disconnected or failed to initialize!", AlertType.kError);
 
     public GrabberSubsystem(GrabberIO io) {
         io_ = io;
@@ -62,9 +66,12 @@ public class GrabberSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
-        Logger.recordOutput("coral", has_coral_);
-        Logger.recordOutput("algae", has_algae_);
-        Logger.processInputs("grabber", inputs_);
+        Logger.processInputs("Grabber", inputs_);
+
+        grabberErrorAlert_.set(!inputs_.grabberReady);
+
+        Logger.recordOutput("Grabber/HasCoral", has_coral_);
+        Logger.recordOutput("Grabber/HasAlgae", has_algae_);
     }
 
 }

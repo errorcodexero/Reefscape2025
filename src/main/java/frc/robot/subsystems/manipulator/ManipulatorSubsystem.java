@@ -14,8 +14,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private Angle target_angle_ ;
     private Distance target_height_ ;
 
-    private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
-    private final Alert elevatorDisconnected_ = new Alert("Elevator motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert armDisconnected_ = new Alert("Arm motor is disconnected or the manipulator couldnt initialize!", AlertType.kError);
+    private final Alert elevatorDisconnected_ = new Alert("Elevator motor is disconnected or the manipulator couldnt initialize!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
