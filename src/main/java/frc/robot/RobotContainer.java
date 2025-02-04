@@ -52,7 +52,7 @@ import frc.robot.generated.PracticeTunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.grabber.GrabberIO;
@@ -103,11 +103,13 @@ public class RobotContainer {
                 case ALPHA:
 
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, AlphaTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(AlphaTunerConstants.FrontLeft, AlphaTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(AlphaTunerConstants.FrontRight, AlphaTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(AlphaTunerConstants.BackLeft, AlphaTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(AlphaTunerConstants.BackRight, AlphaTunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        AlphaTunerConstants.FrontLeft,
+                        AlphaTunerConstants.FrontRight,
+                        AlphaTunerConstants.BackLeft,
+                        AlphaTunerConstants.BackRight,
+                        AlphaTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -131,11 +133,13 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(CompTunerConstants.FrontLeft, CompTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(CompTunerConstants.FrontRight, CompTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(CompTunerConstants.BackLeft, CompTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(CompTunerConstants.BackRight, CompTunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -159,11 +163,13 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for practice bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, PracticeTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(PracticeTunerConstants.FrontLeft, PracticeTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(PracticeTunerConstants.FrontRight, PracticeTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(PracticeTunerConstants.BackLeft, PracticeTunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(PracticeTunerConstants.BackRight, PracticeTunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        PracticeTunerConstants.FrontLeft,
+                        PracticeTunerConstants.FrontRight,
+                        PracticeTunerConstants.BackLeft,
+                        PracticeTunerConstants.BackRight,
+                        PracticeTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -185,13 +191,15 @@ public class RobotContainer {
                 
                 case SIMBOT:
                     // Sim robot, instantiate physics sim IO implementations
-                    drivebase_ =
-                        new Drive(
-                            new GyroIO() {},
-                            new ModuleIOSim(AlphaTunerConstants.FrontLeft),
-                            new ModuleIOSim(AlphaTunerConstants.FrontRight),
-                            new ModuleIOSim(AlphaTunerConstants.BackLeft),
-                            new ModuleIOSim(AlphaTunerConstants.BackRight));
+                    drivebase_ = new Drive(
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOSim::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
@@ -224,10 +232,12 @@ public class RobotContainer {
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
             drivebase_ = new Drive(
                 new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {}
+                ModuleIOReplay::new,
+                CompTunerConstants.FrontLeft,
+                CompTunerConstants.FrontRight,
+                CompTunerConstants.BackLeft,
+                CompTunerConstants.BackRight,
+                CompTunerConstants.kSpeedAt12Volts
             );
         }
         
