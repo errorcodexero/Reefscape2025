@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.757727384340691,
-        "y": 1.097669841337107
+        "x": 1.7799973042948918,
+        "y": 0.918625064103708
       },
       "isLocked": false,
       "linkedName": "Station Close"
     },
     {
       "anchor": {
-        "x": 3.2,
-        "y": 4.0
+        "x": 3.6894886363636368,
+        "y": 2.953053977272727
       },
       "prevControl": {
-        "x": 2.5031254140221355,
-        "y": 2.6662435219249527
+        "x": 3.48061137731492,
+        "y": 2.741157652515371
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Side Coral 5"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.5,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.719746506237335
+    "rotation": 53.72
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
