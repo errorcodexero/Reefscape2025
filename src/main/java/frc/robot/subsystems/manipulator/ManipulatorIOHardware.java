@@ -49,7 +49,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private Voltage elevator_voltage_; 
 
     private final Debouncer armErrorDebounce_ = new Debouncer(0.5);
-    private final Debouncer elevatorErrorDebounce_ = new Debouncer(0.5);
+    private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
+    private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
     private boolean armError_ = true;
     private boolean elevatorError_ = true;
@@ -162,15 +163,22 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             arm_current_sig_
         );
 
-        StatusCode elevatorStatus = BaseStatusSignal.refreshAll(
+        StatusCode elevator1Status = BaseStatusSignal.refreshAll(
             elevator_pos_sig_,
             elevator_vel_sig_,
             elevator_vol_sig_,
             elevator_current_sig_
         );
 
+        StatusCode elevator2Status = BaseStatusSignal.refreshAll(
+            elevator_2_vol_sig_,
+            elevator_2_current_sig_
+        );
+        
+        // TODO: redo error checking to new system
         inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK()) && !armError_;
-        inputs.elevatorReady = elevatorErrorDebounce_.calculate(elevatorStatus.isOK()) && !elevatorError_;
+        inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK()) && !elevatorError_;
+        inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
 
         // arm inputs:
 
@@ -179,18 +187,19 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.armVoltage = arm_vol_sig_.getValue();
         inputs.armCurrent = arm_current_sig_.getValue();
         
-        // elevator inputs: 
+        // elevator inputs:
+
         double rev = elevator_pos_sig_.getValue().in(Revolution); 
         inputs.elevatorPosition = Meters.of(rev * ManipulatorConstants.Elevator.kMetersPerRev);
 
         double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
         inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
 
-        inputs.elevatorVoltage = elevator_vol_sig_.refresh().getValue();
-        inputs.elevatorCurrent = elevator_current_sig_.refresh().getValue();
+        inputs.elevator1Voltage = elevator_vol_sig_.getValue();
+        inputs.elevator1Current = elevator_current_sig_.getValue();
 
-        inputs.elevator2Voltage = elevator_2_vol_sig_.refresh().getValue();
-        inputs.elevator2Current = elevator_2_current_sig_.refresh().getValue();
+        inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
+        inputs.elevator2Current = elevator_2_current_sig_.getValue();
 
     }
 

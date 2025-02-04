@@ -15,7 +15,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private Distance target_height_ ;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
-    private final Alert elevatorDisconnected_ = new Alert("Elevator motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -28,7 +29,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
         Logger.processInputs("Manipulator", inputs_);
 
         armDisconnected_.set(!inputs_.armReady);
-        elevatorDisconnected_.set(!inputs_.elevatorReady);
+        elevator1Disconnected_.set(!inputs_.elevator1Ready);
+        elevator2Disconnected_.set(!inputs_.elevator2Ready);
     }
 
     public Angle getArmPosition() {
