@@ -6,7 +6,7 @@ public class ClimberConstants {
     public class Climber{
        
         // motor CAN ID
-        public static final int kMotorCANID = 0; 
+        public static final int kMotorCANID = 5; 
 
         // gear ratio
         public static final double kGearRatio = 0; 

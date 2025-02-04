@@ -7,7 +7,11 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 
@@ -47,6 +51,12 @@ public class ClimberIOHardware implements ClimberIO {
         BaseStatusSignal.setUpdateFrequencyForAll(50, climber_pos_sig_, climber_vel_sig_, 
         climber_vol_sig_, climber_current_sig_);
 
+
+    }
+
+    public void moveClimber(Angle angle) {
+        climber_motor_.setControl(new MotionMagicVoltage(angle));
+        
     }
 
     @Override
