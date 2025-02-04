@@ -14,8 +14,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private Angle target_angle_ ;
     private Distance target_height_ ;
 
-    private final Alert armDisconnected_ = new Alert("Arm motor is disconnected or the manipulator couldnt initialize!", AlertType.kError);
-    private final Alert elevatorDisconnected_ = new Alert("Elevator motor is disconnected or the manipulator couldnt initialize!", AlertType.kError);
+    private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -28,7 +29,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
         Logger.processInputs("Manipulator", inputs_);
 
         armDisconnected_.set(!inputs_.armReady);
-        elevatorDisconnected_.set(!inputs_.elevatorReady);
+        elevator1Disconnected_.set(!inputs_.elevator1Ready);
+        elevator2Disconnected_.set(!inputs_.elevator2Ready);
     }
 
     public Angle getArmPosition() {
@@ -51,7 +53,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public boolean doesCrossKZ(Angle current, Angle target) {
         Angle keepout_min = ManipulatorConstants.Keepout.kKeepoutMinAngle; 
-        Angle keepout_max= ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
+        Angle keepout_max = ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
 
         if(current.lt(keepout_min) && target.gt(keepout_max)) {
             return true; 
