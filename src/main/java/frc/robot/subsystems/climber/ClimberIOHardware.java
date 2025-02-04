@@ -14,6 +14,7 @@ import com.ctre.phoenix6.StatusSignal;
 
 
 public class ClimberIOHardware implements ClimberIO {
+    
     private TalonFX climber_motor_;
 
     private StatusSignal<Angle> climber_pos_sig_; 

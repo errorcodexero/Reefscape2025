@@ -26,8 +26,15 @@ public class Climber extends SubsystemBase{
    }
 
    public void deployClimber() {
+      
    }
+
+   public void waitToHook() {
+
+   }
+
    public void executeClimb() {
+
    }
  
    public void climber() {

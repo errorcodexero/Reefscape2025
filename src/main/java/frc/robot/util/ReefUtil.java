@@ -51,37 +51,67 @@ public class ReefUtil {
 
         private final int tagID_;
 
-        private final Pose2d wallPose_;
+        private final Pose2d tagPose_;
         private final Pose2d algaeScoringPose_;
         private final Pose2d leftScoringPose_;
         private final Pose2d rightScoringPose_;
+        private final Pose2d algaeBackupPose_;
+        private final Pose2d leftBackupPose_;
+        private final Pose2d rightBackupPose_;
 
         private ReefFace(int aprilTagID) {
             tagID_ = aprilTagID;
-            wallPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d();
+            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().transformBy(new Transform2d(
+                new Translation2d(),
+                new Rotation2d(Degrees.of(180))
+            ));
 
-            algaeScoringPose_ = wallPose_.transformBy(new Transform2d(
+            algaeScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagAlgae,
+                    ReefConstants.distanceFromTagAlgae.unaryMinus(),
+                    ReefConstants.robotToArm.unaryMinus()
+                ),
+                new Rotation2d()
+            ));
+
+            algaeBackupPose_ = algaeScoringPose_.transformBy(new Transform2d(
+                new Translation2d(
+                    ReefConstants.backupDistanceAlgae.unaryMinus(),
                     Meters.zero()
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
             ));
 
-            leftScoringPose_ = wallPose_.transformBy(new Transform2d(
+            leftScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset.unaryMinus()
+                    ReefConstants.distanceFromTagCoral.unaryMinus(),
+                    ReefConstants.leftRightOffset.minus(ReefConstants.robotToArm)
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
             ));
 
-            rightScoringPose_ = wallPose_.transformBy(new Transform2d(
+            leftBackupPose_ = leftScoringPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral,
-                    ReefConstants.leftRightOffset
+                    ReefConstants.backupDistanceCoral.unaryMinus(),
+                    Meters.zero()
                 ),
-                new Rotation2d(Degrees.of(180))
+                new Rotation2d()
+            ));
+
+            rightScoringPose_ = tagPose_.transformBy(new Transform2d(
+                new Translation2d(
+                    ReefConstants.distanceFromTagCoral.unaryMinus(),
+                    ReefConstants.leftRightOffset.unaryMinus().minus(ReefConstants.robotToArm)
+                ),
+                new Rotation2d()
+            ));
+
+            rightBackupPose_ = rightScoringPose_.transformBy(new Transform2d(
+                new Translation2d(
+                    ReefConstants.backupDistanceCoral.unaryMinus(),
+                    Meters.zero()
+                ),
+                new Rotation2d()
             ));
         }
 
@@ -89,20 +119,32 @@ public class ReefUtil {
             return tagID_;
         }
 
-        public Pose2d getWallPose() {
-            return wallPose_;
+        public Pose2d getTagPose() {
+            return tagPose_;
         }
 
         public Pose2d getAlgaeScoringPose() {
             return algaeScoringPose_;
         }
 
+        public Pose2d getAlgaeBackupPose() {
+            return algaeBackupPose_;
+        }
+
         public Pose2d getLeftScoringPose() {
             return leftScoringPose_;
         }
 
+        public Pose2d getLeftBackupPose() {
+            return leftBackupPose_;
+        }
+
         public Pose2d getRightScoringPose() {
             return rightScoringPose_;
+        }
+
+        public Pose2d getRightBackupPose() {
+            return rightBackupPose_;
         }
     }
 
@@ -111,23 +153,39 @@ public class ReefUtil {
         if (Constants.getMode() != Mode.REAL) {
             ReefFace[] faces = ReefFace.values();
 
-            ArrayList<Pose2d> poses = new ArrayList<>();
+            ArrayList<Pose2d> algaeScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> algaeBackupPoses = new ArrayList<>();
+            ArrayList<Pose2d> leftScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> leftBackupPoses = new ArrayList<>();
+            ArrayList<Pose2d> rightScoringPoses = new ArrayList<>();
+            ArrayList<Pose2d> rightBackupPoses = new ArrayList<>();
 
             for (ReefFace face : faces) {
                 String path = "ReefFaces/" + face.toString() + "/";
 
                 Logger.recordOutput(path + "TagId", face.getTagID());
-                Logger.recordOutput(path + "WallPose", face.getWallPose());
+                Logger.recordOutput(path + "TagPose", face.getTagPose());
                 Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
+                Logger.recordOutput(path + "BackupPoseAlgae", face.getAlgaeBackupPose());
                 Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
+                Logger.recordOutput(path + "BackupPoseLeft", face.getLeftBackupPose());
                 Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
-
-                poses.add(face.getAlgaeScoringPose());
-                poses.add(face.getLeftScoringPose());
-                poses.add(face.getRightScoringPose());
+                Logger.recordOutput(path + "BackupPoseRight", face.getRightBackupPose());
+                
+                algaeScoringPoses.add(face.getAlgaeScoringPose());
+                algaeBackupPoses.add(face.getAlgaeBackupPose());
+                leftScoringPoses.add(face.getLeftScoringPose());
+                leftBackupPoses.add(face.getLeftBackupPose());
+                rightScoringPoses.add(face.getRightScoringPose());
+                rightBackupPoses.add(face.getRightBackupPose());
             }
 
-            Logger.recordOutput("ReefFaces/AllBotPoses", poses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/AlgaeScoringPoses", algaeScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/AlgaeBackupPoses", algaeBackupPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/LeftScoringPoses", leftScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/LeftBackupPoses", leftBackupPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/RightScoringPoses", rightScoringPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("ReefFaces/Summary/RightBackupPoses", rightBackupPoses.toArray(new Pose2d[0]));
         }
     }
 
@@ -138,7 +196,7 @@ public class ReefUtil {
      */
     public static Optional<ReefFace> getTargetedReefFace(Pose2d robotPose) {
         ReefFace nearestFace = getNearestReefFace(robotPose);
-        Pose2d nearestWall = nearestFace.getWallPose();
+        Pose2d nearestWall = nearestFace.getTagPose();
 
         Rotation2d rotationToFace = new Rotation2d(
             nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
@@ -184,7 +242,7 @@ public class ReefUtil {
      * @return
      */
     public static double getDistanceFromFace(Pose2d robot, ReefFace face) {
-        return robot.getTranslation().getDistance(face.getWallPose().getTranslation());
+        return robot.getTranslation().getDistance(face.getTagPose().getTranslation());
     }
 
 }
