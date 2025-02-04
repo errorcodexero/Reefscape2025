@@ -46,7 +46,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.AlphaTunerConstants;
+import frc.robot.generated.CompTunerConstants;
+import frc.robot.generated.PracticeTunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -101,11 +103,11 @@ public class RobotContainer {
                 case ALPHA:
 
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, AlphaTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(AlphaTunerConstants.FrontLeft, AlphaTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(AlphaTunerConstants.FrontRight, AlphaTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(AlphaTunerConstants.BackLeft, AlphaTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(AlphaTunerConstants.BackRight, AlphaTunerConstants.DrivetrainConstants.CANBusName)
                     );
 
                     vision_ = new AprilTagVision(
@@ -129,11 +131,11 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(CompTunerConstants.FrontLeft, CompTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(CompTunerConstants.FrontRight, CompTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(CompTunerConstants.BackLeft, CompTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(CompTunerConstants.BackRight, CompTunerConstants.DrivetrainConstants.CANBusName)
                     );
 
                     vision_ = new AprilTagVision(
@@ -157,11 +159,11 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for practice bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, PracticeTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(PracticeTunerConstants.FrontLeft, PracticeTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(PracticeTunerConstants.FrontRight, PracticeTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(PracticeTunerConstants.BackLeft, PracticeTunerConstants.DrivetrainConstants.CANBusName),
+                        new ModuleIOTalonFX(PracticeTunerConstants.BackRight, PracticeTunerConstants.DrivetrainConstants.CANBusName)
                     );
 
                     vision_ = new AprilTagVision(
@@ -186,10 +188,10 @@ public class RobotContainer {
                     drivebase_ =
                         new Drive(
                             new GyroIO() {},
-                            new ModuleIOSim(TunerConstants.FrontLeft),
-                            new ModuleIOSim(TunerConstants.FrontRight),
-                            new ModuleIOSim(TunerConstants.BackLeft),
-                            new ModuleIOSim(TunerConstants.BackRight));
+                            new ModuleIOSim(AlphaTunerConstants.FrontLeft),
+                            new ModuleIOSim(AlphaTunerConstants.FrontRight),
+                            new ModuleIOSim(AlphaTunerConstants.BackLeft),
+                            new ModuleIOSim(AlphaTunerConstants.BackRight));
 
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
