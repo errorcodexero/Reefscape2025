@@ -252,7 +252,7 @@ public class RobotContainer {
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
-        
+
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -285,7 +285,7 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // Add choosers and widgets to tabs.
-        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser());
+        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
         
         // Configure the button bindings
         configureDriveBindings();
