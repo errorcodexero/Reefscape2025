@@ -29,7 +29,7 @@ public class Climber extends SubsystemBase{
    }
 
    public void Idle() {
-      //if oi button pressed
+      //Climber is idle and doesn't do anything here
       climberState_ = ClimberState.DeployClimberState;
    }
 
@@ -39,7 +39,7 @@ public class Climber extends SubsystemBase{
    }
 
    public void waitToHook() {
-      //if oi button pressed
+      //waits here until drivers hooks the climber onto the bar
       climberState_ = ClimberState.ExecuteClimbState;
    }
 
