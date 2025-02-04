@@ -6,22 +6,18 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
 
  package frc.robot.subsystems.climber;
 
- import org.littletonrobotics.junction.Logger;
- 
- import edu.wpi.first.wpilibj2.command.SubsystemBase;
+ import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
  public class ClimberSubsystem extends SubsystemBase{
    private ClimberIO io_; 
    private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
+   private Angle target_ ;
 
-   enum ClimberState{
-      IDLE,
-      DeployClimber,
-      WaitToHook,
-      ExecuteClimb
-   }
-   ClimberState climberState_;
- 
    public ClimberSubsystem(ClimberIO io) {
       io_ = io;
       inputs_ = new ClimberIOInputsAutoLogged();
@@ -32,19 +28,16 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
       io_.updateInputs(inputs_);
       Logger.processInputs("Climber", inputs_);
    }
-   public void climber() {
-      switch(climberState_){
-         case IDLE:
-            break;
-         case DeployClimber:
-            break;
-         case WaitToHook:
-            break;
-         case ExecuteClimb:
-            break;
-      }
+
+   public void setClimberPosition(Angle a) {
+      target_ = a ;
+      io_.setClimberPosition(a);
    }
-      
- }
+
+   public boolean isAtTarget() {
+      return inputs_.climberPosition.isNear(target_, ClimberConstants.kPositionTolerance) && 
+             inputs_.climberVelocity.isNear(DegreesPerSecond.of(0.0), ClimberConstants.kVelocityTolerance) ;
+   }
+}
  
  

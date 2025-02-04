@@ -11,14 +11,21 @@ public interface ClimberIO {
     @AutoLog
     public class ClimberIOInputs {
 
-        //climber arm inputs
+        // climber arm inputs
         public Angle climberPosition;
         public AngularVelocity climberVelocity;
         public Voltage climberVoltage;
         public Current climberCurrent;
 
+        public boolean cage_sensor_1_ ;
+        public boolean cage_sensor_2_ ;
+        public boolean cage_sensor_3_ ;
+
+        public boolean door_sensor_1_ ;
+        public boolean door_sensor_2_ ;
+
     }
     //Update Inputs
     public default void updateInputs(ClimberIOInputsAutoLogged inputs) {}
-
+    public default void setClimberPosition(Angle target) { }
 }

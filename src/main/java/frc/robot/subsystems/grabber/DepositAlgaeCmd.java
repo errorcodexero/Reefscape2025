@@ -31,6 +31,7 @@ public class DepositAlgaeCmd extends Command {
     public void execute() {
         if (wait_timer_.isExpired()) {
             grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGP(GamePieceLocation.None);
             done_ = true ;
         }
     }

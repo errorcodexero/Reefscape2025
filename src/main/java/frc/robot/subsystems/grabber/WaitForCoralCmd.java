@@ -45,6 +45,7 @@ public class WaitForCoralCmd extends Command {
             case WaitingForDelay:
                 if (wait_timer_.isExpired()) {
                     grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    grabber_.setGP(GamePieceLocation.Coral);
                     state_ = State.Done ;
                 }
                 break ;

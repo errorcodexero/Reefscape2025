@@ -32,6 +32,7 @@ public class DepositCoralCmd extends Command {
         //
         // grabber_.setGrabberVelocity(GrabberConstants.Place.kVelocity) ;
         grabber_.setGrabberVoltage(Volts.of(12.0)) ;
+
         wait_timer_.start();
         state_ = State.WaitingForDelay ;
     }
@@ -49,6 +50,7 @@ public class DepositCoralCmd extends Command {
                 if (wait_timer_.isExpired()) {
                     // grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
                     grabber_.setGrabberVoltage(Volts.of(0.0)) ;
+                    grabber_.setGP(GamePieceLocation.None);
                     state_ = State.Done ;
                 }
                 break ;

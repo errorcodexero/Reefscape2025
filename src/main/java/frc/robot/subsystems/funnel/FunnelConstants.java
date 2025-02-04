@@ -1,4 +1,4 @@
-package frc.robot.subsystems.climber;
+package frc.robot.subsystems.funnel;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -6,13 +6,13 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-public class ClimberConstants {
+public class FunnelConstants {
     // this information would go inside classes for each motor in the subsystem
 
     public static Angle kPositionTolerance = Degrees.of(5.0) ;
     public static AngularVelocity kVelocityTolerance = DegreesPerSecond.of(5.0) ;
 
-    public class ClimberArm{
+    public class Funnel {
        
         // motor CAN ID
         public static final int kMotorCANID = 4; 
@@ -43,17 +43,8 @@ public class ClimberConstants {
         }
     }
 
-    public class Sensors {
-        public static final int kCageSensor1 = 10 ;
-        public static final int kCageSensor2 = 11 ;
-        public static final int kCageSensor3 = 12 ;
-        public static final int kDoorSensor1 = 13 ;
-        public static final int kDoorSensor2 = 14 ;
-    }
-
     public class Positions {
-        public static final Angle kDeployed = Degrees.of(0.0) ;
-        public static final Angle kRetracted = Degrees.of(90.0) ;
-        public static final Angle kClimbPosition = Degrees.of(180.0) ;
+        public static final Angle kDownPosition = Degrees.of(0.0) ;
+        public static final Angle kUpPosition = Degrees.of(90.0) ;
     }
 }

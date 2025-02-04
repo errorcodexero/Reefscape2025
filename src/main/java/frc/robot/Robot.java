@@ -111,7 +111,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "automode" ;
+            String str = "collect-place" ;
             SimulationEngine.initializeSimulator(this);
             addRobotSimulationModels();
             SimulationEngine.getInstance().initAll(str);

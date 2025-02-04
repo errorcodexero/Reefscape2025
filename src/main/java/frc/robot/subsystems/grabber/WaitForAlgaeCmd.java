@@ -49,6 +49,7 @@ public class WaitForAlgaeCmd extends Command {
             case WaitingForDelay:
                 if (wait_timer_.isExpired()) {
                     grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    grabber_.setGP(low_ ? GamePieceLocation.AlgaeLow : GamePieceLocation.AlgaeHigh);
                     state_ = State.Done ;
                 }
                 break ;

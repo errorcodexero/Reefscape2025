@@ -287,8 +287,4 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         st.setRawRotorPosition(elevator_sim_.getPositionMeters() / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
         st.setRotorVelocity(elevator_sim_.getVelocityMetersPerSecond() / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;
     }
-
-    private double armDegreesToMotorRevs(double degs) {
-        return degs / 360.0 * ManipulatorConstants.Arm.kGearRatio ;
-    }
 }

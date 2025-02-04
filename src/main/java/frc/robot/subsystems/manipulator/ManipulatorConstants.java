@@ -7,15 +7,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
-
-import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.PerUnit;
-import edu.wpi.first.units.TimeUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -33,6 +26,11 @@ public class ManipulatorConstants {
 
         public static final Angle kArmTolerance = Degrees.of(5.0) ;
         public static final Distance kElevatorTolerance = Centimeters.of(20.0) ;
+    }
+
+    public class Positions {
+        public static final Angle kStowedAngle = Degrees.of(0.0) ;
+        public static final Distance kStowedHeight = Centimeters.of(59.0) ;
     }
 
     public class Arm {

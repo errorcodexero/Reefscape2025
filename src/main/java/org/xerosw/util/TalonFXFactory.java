@@ -42,14 +42,6 @@ public class TalonFXFactory {
         return fx ;
     }       
 
-    public TalonFX createTalonFX(int id, String bus, boolean invert) {
-        return createTalonFX(id, invert, Double.NaN) ;
-    }     
-
-    public TalonFX createTalonFX(int id, boolean invert) {
-        return createTalonFX(id, "", invert, Double.NaN) ;
-    }   
-
     public TalonFX createTalonFX(int id, boolean invert, double limit) {
         return createTalonFX(id, "", invert, limit) ;
     }     

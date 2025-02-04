@@ -55,32 +55,6 @@ public class OISubsystem extends SubsystemBase {
         Fast
     }
 
-    //
-    // The left or right side of the reef for a given
-    // reef face.
-    //
-    public enum CoralSide {
-        Left,
-        Right
-    }
-
-    //
-    // This names the actions a robot can perform.  This is for a current action and a
-    // next action.  Abort is on included in this as abort is immediate and interrupts any
-    // of these that are underway.
-    //
-    public enum RobotAction {
-        PlaceCoral,
-        CollectCoral,
-        CollectAlgaeGround,
-        CollectAlgaeReefL2,
-        CollectAlgaeReefL3,
-        PlaceAlgae,
-        ClimbDeploy,
-        ClimbExecute,
-        Eject,
-    }
-
     // The IO layer for the OI
     private OIIO ios_ ;
 
@@ -105,17 +79,35 @@ public class OISubsystem extends SubsystemBase {
     // The current coral level
     private int coral_level_ ;
 
-    // The trigger for the abort button
-    private Trigger abort_trigger_ ;
+    // The current left/right side coral placement
+    private CoralSide coral_side_ ;
 
-    // The trigger for the eject button, this interrupts anything that is going on and
-    // is immediate.  It also sets the eject as a command being executed.
+    // If true, we do not accept any robot actions
+    private boolean locked_ ;
+
+    // Triggers
+    private Trigger abort_trigger_ ;
     private Trigger eject_trigger_ ;
+    private Trigger climb_lock_trigger_ ;
+    private Trigger climb_exec_trigger_ ;
+    private Trigger coral_place_trigger_ ;
+    private Trigger coral_collect_trigger_ ;
+    private Trigger algae_ground_trigger_ ;
+    private Trigger algae_collect_l2_ ;
+    private Trigger algae_collect_l3_ ;
+    private Trigger algae_score_ ;
 
     // The command associated with the current robot action
     private OICommandSupplier.Pair<Command, Command> current_robot_action_command_ ;
 
-    // The supplier for the robot action command based on the OI state
+    // The command we are running
+    private Command current_cmd_ ;
+
+    //
+    // This supplier provides a pair of commands that must be executed in order to perform a given
+    // robot action.  The second command may be null indicating the robot action can complete with a 
+    // single command.
+    //
     private OICommandSupplier robot_action_command_supplier_ ;
 
     public OISubsystem(OIIO ios, CommandXboxController ctrl, OICommandSupplier robotActionCommandSupplier) {
@@ -131,6 +123,14 @@ public class OISubsystem extends SubsystemBase {
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
         eject_trigger_ = new Trigger(() -> inputs_.eject) ;
+        climb_lock_trigger_ = new Trigger(() -> inputs_.climb_lock) ;
+        climb_exec_trigger_ = new Trigger(()-> inputs_.climb_execute) ;
+        coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
+        coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
+        algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
+        algae_collect_l2_ = new Trigger(()-> inputs_.algae_collect_l2) ;
+        algae_collect_l3_ = new Trigger(()-> inputs_.algae_collect_l3) ;
+        algae_score_ = new Trigger(()-> inputs_.algae_score) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
@@ -138,6 +138,58 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    public Trigger abort() {
+        return abort_trigger_ ;
+    }
+
+    public Trigger eject() {
+        return eject_trigger_ ;
+    }    
+
+    public Trigger climbLock() {
+        return climb_lock_trigger_ ;
+    }
+
+    public Trigger climbExecute() {
+        return climb_exec_trigger_ ;
+    }
+
+    public Trigger coralPlace() {
+        return coral_place_trigger_ ;
+    }
+
+    public Trigger coralCollect() {
+        return coral_collect_trigger_ ;
+    }
+
+    public Trigger algaeGround() {
+        return algae_ground_trigger_ ;
+    }
+
+    public Trigger algaeCollectL2() {
+        return algae_collect_l2_ ;
+    }
+
+    public Trigger algaeCollectL3() {
+        return algae_collect_l3_ ;
+    }
+
+    public Trigger algaeScore() {
+        return algae_score_ ;
+    }
+
+    public boolean readyForAction() {
+        return current_action_ == null || next_action_ == null ;
+    }
+
+    public void queueRobotAction(RobotAction action) {
+        if (!locked_) {
+            next_action_ = action ;
+            if (current_action_ == null) {
+                commandProcessing();
+            }
+        }
+    }
     public void rumble(Time duration) {
         end_time_ = Timer.getFPGATimestamp() + duration.in(Seconds) ;
         rumbling_ = true ;
@@ -147,10 +199,6 @@ public class OISubsystem extends SubsystemBase {
     public void setLEDState(OILed led, LEDState st) {
         ios_.setLED(led.value, st) ;
     }    
-
-    public int coralLevel() {
-        return coral_level_ ;
-    }
 
     public void clearAllActionLEDs() {
         setLEDState(OILed.CoralPlace, LEDState.Off) ;
@@ -165,10 +213,6 @@ public class OISubsystem extends SubsystemBase {
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
-            case Eject:
-                setLEDState(OILed.Eject, st) ;
-                break ;
-
             case PlaceCoral:
                 setLEDState(OILed.CoralPlace, st) ;
                 break ;
@@ -192,14 +236,6 @@ public class OISubsystem extends SubsystemBase {
             case PlaceAlgae:
                 setLEDState(OILed.AlgaeScore, st) ;
                 break ;
-
-            case ClimbDeploy:
-                setLEDState(OILed.ClimbDeploy, st) ;
-                break ;
-
-            case ClimbExecute:
-                setLEDState(OILed.ClimbExecute, st) ;
-                break ;
         }
     }
 
@@ -219,10 +255,12 @@ public class OISubsystem extends SubsystemBase {
         if (inputs_.coral_side) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
+            coral_side_ = CoralSide.Left ;
         }
         else {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
+            coral_side_ = CoralSide.Right ;
         }
 
         //
@@ -263,82 +301,52 @@ public class OISubsystem extends SubsystemBase {
         Logger.recordOutput("oi/buttons", getPressedString()) ; 
     }
 
+    //
+    // This clears the state of the OI to a basic default, no actions 
+    // scheduled state.
+    // 
+    public void clearRobotActions() {
+        if (current_cmd_ != null) {
+            current_cmd_.cancel() ;
+        }
+
+        current_action_ = null ;
+        next_action_ = null ;
+        clearAllActionLEDs();
+    }
+
+    public void lock() {
+        locked_ = true ;
+    }
+
+    public void unlock() {
+        locked_ = false ;
+    }
+
     private void commandProcessing() {
-        //
-        // Process the robot action buttons
-        //
-        if (inputs_.coral_collect) {
-            next_action_ = RobotAction.CollectCoral ;
-            setRobotActionLEDState(next_action_, null);
+        if (current_action_ == null && current_cmd_ != null) {
         }
-        else if (inputs_.coral_place) {
-            next_action_ = RobotAction.PlaceCoral ;
-            setRobotActionLEDState(next_action_, null);
+        else if (current_action_ == null) {
+            //
+            // We are executing nothing, see if there are things to run
+            //
+            if (next_action_ != null) {
+                current_action_ = next_action_ ;
+                next_action_ = null ;
+                current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, coral_side_) ;
+                if (current_robot_action_command_ == null) {
+                    current_action_ = null ;
+                    current_cmd_ = null ;
+                }
+                else {
+                    current_cmd_ = current_robot_action_command_.one() ;
+                    current_robot_action_command_.one().schedule() ;
+                }
+            }
         }
-        else if (inputs_.algae_ground) {
-            next_action_ = RobotAction.CollectAlgaeGround ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_score) {
-            next_action_ = RobotAction.PlaceAlgae ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_collect_l2) {
-            next_action_ = RobotAction.CollectAlgaeReefL2 ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_collect_l3) {
-            next_action_ = RobotAction.CollectAlgaeReefL3 ;
-            setRobotActionLEDState(next_action_, null);
-        }
-
-        if (next_action_ != null) {
-            setRobotActionLEDState(next_action_, LEDState.On);
-        }
-
-        // if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
-        //     //
-        //     // The currently executing command has finished, we need to clear the LED
-        //     // and mark the command as complete but setting it to null
-        //     //
-        //     setRobotActionLEDState(current_action_, LEDState.Off);
-        //     current_robot_action_command_ = null ;
-        // }
-
-        // if (next_action_ != null && current_robot_action_command_ == null) {
-        //     //
-        //     // We are ready to execute a new command, we schedule the command
-        //     //
-        //     current_action_ = next_action_ ;
-        //     next_action_ = null ;
-        //     current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
-        //     if (current_robot_action_command_ != null) {
-        //         current_robot_action_command_.schedule();
-        //     }
-        // }
 
         Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
-    }
-
-    public RobotAction getCurrentAction() {
-        return current_action_ ;
-    }
-
-    public RobotAction getNextAction() {
-        return next_action_ ;
-    }
-
-    public CoralSide getCoralSide() {
-        return inputs_.coral_side ? CoralSide.Left : CoralSide.Right ;
-    }
-
-    public Trigger abort() {
-        return abort_trigger_ ;
-    }
-
-    public Trigger eject() {
-        return eject_trigger_ ;
     }
 
     public String getPressedString() {

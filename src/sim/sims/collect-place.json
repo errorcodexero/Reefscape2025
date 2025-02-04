@@ -1,0 +1,95 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 1500.0,
+                        "fms" : false,
+                        "ds" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 7.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 7.5,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.0,
+            "events" :
+            [
+                {
+                    "model" : "grabber",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "low-coral-sensor" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.2,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : false
+                    }
+                }
+            ]
+        }
+    ]
+}

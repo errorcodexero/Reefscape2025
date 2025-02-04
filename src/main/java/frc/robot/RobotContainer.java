@@ -20,8 +20,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -45,35 +43,32 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.gps.AbortCmd;
-import frc.robot.commands.gps.CollectCoralCmd;
 import frc.robot.commands.gps.EjectCmd;
-import frc.robot.commands.gps.PlaceCoralCmd;
-import frc.robot.commands.tests.ManipulatorGrabAlgaeReefCmd;
-import frc.robot.commands.tests.ManualPlaceReadyCmd;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.ClimbExecuteCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.climber.DeployClimberCmd;
+import frc.robot.subsystems.climber.RetractClimberCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.grabber.DepositCoralCmd;
+import frc.robot.subsystems.funnel.FunnelIOHardware;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.SetGrabberVelocityCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
-import frc.robot.subsystems.manipulator.ManipulatorConstants ;
 import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OIConstants;
-import frc.robot.subsystems.oi.OIIOHID;
+import frc.robot.subsystems.oi.OIQueueRobotActionCmd;
 import frc.robot.subsystems.oi.OISubsystem;
-import frc.robot.subsystems.oi.OISubsystem.CoralSide;
+import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
-import frc.robot.subsystems.oi.OISubsystem.RobotAction;
+import frc.robot.subsystems.oi.RobotAction;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -116,6 +111,7 @@ public class RobotContainer {
     private ManipulatorSubsystem manipulator_ ;
     private GrabberSubsystem grabber_ ;
     private ClimberSubsystem climber_ ;
+    private FunnelSubsystem funnel_ ;
     private GamePiece holding_ ;
     
     // Controller
@@ -181,6 +177,13 @@ public class RobotContainer {
                     // }
                     // catch(Exception e) {
                     // }
+
+                    // try {
+                    //     funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
+                    // }
+                    // catch(Exception e) {
+
+                    // }
                             
                     break;
                 
@@ -208,6 +211,7 @@ public class RobotContainer {
                     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
                     grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                     climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+                    funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
 
                     break;
             }
@@ -257,12 +261,12 @@ public class RobotContainer {
         else {
             configureDriveBindings();
 
-            gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
-            // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
-            gamepad_.rightTrigger().onTrue(new SetGrabberVoltsCmd(grabber_, Volts.of(6.0))) ;
-            gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
+            // gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
+            // // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
+            // gamepad_.rightTrigger().onTrue(new SetGrabberVelocityCmd(grabber_, Volts.of(6.0))) ;
+            // gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
             
-            // configureButtonBindings();
+            configureButtonBindings();
         }
     }
 
@@ -314,22 +318,6 @@ public class RobotContainer {
 
     public OICommandSupplier.Pair<Command, Command> getRobotActionCommand(RobotAction action, int level, CoralSide side) {
         OICommandSupplier.Pair<Command, Command> ret = null ;
-
-        switch (action) {
-            case CollectCoral:
-                break ;
-            case PlaceCoral:
-                break ;
-            case CollectAlgaeGround:
-            case CollectAlgaeReefL2:
-            case CollectAlgaeReefL3:
-            case PlaceAlgae:
-            case ClimbDeploy:
-            case ClimbExecute:
-            case Eject:
-                break ;
-        }
-
         return ret ;
     }
 
@@ -363,10 +351,19 @@ public class RobotContainer {
     * Use this method to define your button -> command mappings for drivers.
     */
     private void configureButtonBindings() {
-        // oi_.climbDeploy().onTrue(new ClimbDeployCommand()) ;
-        // oi_.climbExecute().onTrue(new ClimbExecuteCommand()) ;
-        oi_.abort().onTrue(new AbortCmd(drivebase_, manipulator_, grabber_, climber_)) ;
-        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
+        oi_.climbLock().onTrue(new DeployClimberCmd(climber_, funnel_)) ;
+        oi_.climbLock().onFalse(new RetractClimberCmd(climber_, funnel_)) ;
+
+        oi_.climbExecute().onTrue(new ClimbExecuteCmd(climber_)) ;
+        oi_.abort().onTrue(new AbortCmd(oi_)) ;
+        oi_.eject().onTrue(new EjectCmd(oi_, manipulator_, grabber_)) ;
+
+        oi_.coralPlace().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.PlaceCoral)) ;
+        oi_.coralCollect().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectCoral)) ;
+        oi_.algaeCollectL2().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeReefL2)) ;
+        oi_.algaeCollectL3().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeReefL3)) ;
+        oi_.algaeGround().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeGround)) ;
+        oi_.algaeScore().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.PlaceAlgae)) ;
     }
 
     private double getLeftX() {
