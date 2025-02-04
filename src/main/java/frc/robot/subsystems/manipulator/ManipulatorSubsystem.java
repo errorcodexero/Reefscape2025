@@ -51,7 +51,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public boolean doesCrossKZ(Angle current, Angle target) {
         Angle keepout_min = ManipulatorConstants.Keepout.kKeepoutMinAngle; 
-        Angle keepout_max= ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
+        Angle keepout_max = ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
 
         if(current.lt(keepout_min) && target.gt(keepout_max)) {
             return true; 

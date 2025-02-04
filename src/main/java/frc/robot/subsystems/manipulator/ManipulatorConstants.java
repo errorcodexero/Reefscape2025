@@ -10,7 +10,7 @@ public class ManipulatorConstants {
     public class Arm {
        
         // motor CAN ID
-        public static final int kMotorCANID = 0; 
+        public static final int kMotorCANID = 2; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
@@ -43,7 +43,8 @@ public class ManipulatorConstants {
     public class Elevator {
 
         // motor CAN ID
-        public static final int kMotorCANID = 0;
+        public static final int kMotorCANID = 3;
+        public static final int kMotorCANID2 = 4;
 
         // if motor is inverted 
         public static final boolean kInverted = false;

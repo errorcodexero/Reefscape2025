@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Revolution;
 import static edu.wpi.first.units.Units.Revolutions;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
 import org.xerosw.util.TalonFXFactory;
 
@@ -13,12 +14,12 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 public class ManipulatorIOHardware implements ManipulatorIO {
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
+    private TalonFX elevator_motor_2_; 
 
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
@@ -40,8 +42,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private StatusSignal<Voltage> elevator_vol_sig_; 
     private StatusSignal<Current> elevator_current_sig_;
 
-    private double arm_voltage_; 
-    private double elevator_voltage_; 
+    private StatusSignal<Voltage> elevator_2_vol_sig_; 
+    private StatusSignal<Current> elevator_2_current_sig_;
+
+    private Voltage arm_voltage_; 
+    private Voltage elevator_voltage_; 
 
     private final Debouncer armErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevatorErrorDebounce_ = new Debouncer(0.5);
@@ -63,6 +68,13 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         } catch (Exception e) {
             elevatorError_ = true;
         } 
+
+        try {
+            elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
+        } catch (Exception e) {
+            elevatorError_ = true; 
+        }
+        elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID2, true));
 
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
@@ -174,31 +186,35 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
         inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
 
-        inputs.elevatorVoltage = elevator_vol_sig_.getValue();
-        inputs.elevatorCurrent = elevator_current_sig_.getValue();
+        inputs.elevatorVoltage = elevator_vol_sig_.refresh().getValue();
+        inputs.elevatorCurrent = elevator_current_sig_.refresh().getValue();
+
+        inputs.elevator2Voltage = elevator_2_vol_sig_.refresh().getValue();
+        inputs.elevator2Current = elevator_2_current_sig_.refresh().getValue();
+
     }
 
-    public void setArmMotorVoltage(double vol) {
+    public void setArmMotorVoltage(Voltage vol) {
         arm_voltage_ = vol;
         arm_motor_.setControl(new VoltageOut(arm_voltage_));
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
         log.motor("arm")
-            .voltage(Units.Volts.of(arm_voltage_))
-            .angularPosition(Units.Revolutions.of(arm_pos_sig_.refresh().getValueAsDouble()))
-            .angularVelocity(Units.RevolutionsPerSecond.of(arm_vel_sig_.refresh().getValueAsDouble()));
+            .voltage(arm_voltage_)
+            .angularPosition(Revolutions.of(arm_pos_sig_.refresh().getValueAsDouble()))
+            .angularVelocity(RevolutionsPerSecond.of(arm_vel_sig_.refresh().getValueAsDouble()));
     }
 
-    public void setElevatorMotorVoltage(double vol) {
+    public void setElevatorMotorVoltage(Voltage vol) {
         elevator_voltage_ = vol;
         elevator_motor_.setControl(new VoltageOut(elevator_voltage_));    
     }
 
     public void logElevatorMotor(SysIdRoutineLog log) {
         log.motor("elevator")
-            .voltage(Units.Volts.of(elevator_voltage_))
-            .linearVelocity(Units.MetersPerSecond.of(elevator_vel_sig_.refresh().getValueAsDouble()));    
+            .voltage(elevator_voltage_)
+            .linearVelocity(MetersPerSecond.of(elevator_vel_sig_.refresh().getValueAsDouble()));    
         } 
 
     public void setElevatorPosition(Distance dist) {
