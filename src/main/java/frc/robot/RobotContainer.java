@@ -18,7 +18,6 @@ import java.util.HashMap;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -42,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -207,11 +207,16 @@ public class RobotContainer {
         // Add mirrored autos
         
         
-        autoChooser_.addOption("Alliance Side Coral", new PathPlannerAuto("Side Coral", true));
-        autoChooser_.addOption("Opposing Side Coral", new PathPlannerAuto("Side Coral"));
-        autoChooser_.addOption("Center Coral (alliance side station)", new PathPlannerAuto("Center Coral", true));
-        autoChooser_.addOption("Center Coral (opposing side station)", new PathPlannerAuto("Center Coral"));
-        autoChooser_.addOption("Algae (center)", new PathPlannerAuto("Algae"));
+        autoChooser_.addOption("Alliance Side Coral, Red", AutoCommands.sideCoralAuto(null, true, true));
+        autoChooser_.addOption("Alliance Side Coral, Blue", AutoCommands.sideCoralAuto(null, true, false));
+        autoChooser_.addOption("Opposing Side Coral, Red", AutoCommands.sideCoralAuto(null, false, true));
+        autoChooser_.addOption("Opposing Side Coral, Blue", AutoCommands.sideCoralAuto(null, false, false));
+        autoChooser_.addOption("Center Coral (alliance side station), Red", AutoCommands.centerCoralAuto(null, true, true));
+        autoChooser_.addOption("Center Coral (alliance side station), Blue", AutoCommands.centerCoralAuto(null, true, false));
+        autoChooser_.addOption("Center Coral (opposing side station), Red", AutoCommands.centerCoralAuto(null, false, true));
+        autoChooser_.addOption("Center Coral (opposing side station), Blue", AutoCommands.centerCoralAuto(null, false, false));
+        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(null, true));
+        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(null, false));
 
         autoChooser_.addOption(
             "testing driveto", 
