@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Revolution;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.xerosw.util.TalonFXFactory;
 
@@ -57,16 +58,24 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_motor_ = TalonFXFactory.createTalonFX(
             ManipulatorConstants.Arm.kMotorCANID,
             ManipulatorConstants.Arm.kCANBusName,
-            ManipulatorConstants.Arm.kInverted
+            ManipulatorConstants.Arm.kInverted,
+            ManipulatorConstants.Arm.kCurrentLimit,
+            Seconds.of(1) // TODO: add this time to constants
         );
       
         elevator_motor_ = TalonFXFactory.createTalonFX(
             ManipulatorConstants.Elevator.kMotorCANID,
             ManipulatorConstants.Elevator.kCANBusName,
-            ManipulatorConstants.Elevator.kInverted
+            ManipulatorConstants.Elevator.kInverted,
+            ManipulatorConstants.Elevator.kCurrentLimit,
+            Seconds.of(1) // TODO: also this one
         );
 
-        elevator_motor_2_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2);
+        elevator_motor_2_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Elevator.kMotorCANID2,
+            ManipulatorConstants.Elevator.kCurrentLimit,
+            Seconds.of(1) // TODO: also this
+        );
         elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID2, true));
 
         // ARM CONFIGS: 
