@@ -52,7 +52,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -80,7 +79,7 @@ public class Drive extends SubsystemBase {
     private static final double ROBOT_MASS_KG = 63.5;
     private static final double ROBOT_MOI = 6.883;
     private static final double WHEEL_COF = 1.2;
-    private static final RobotConfig PP_CONFIG =
+    public static final RobotConfig PP_CONFIG =
     new RobotConfig(
     ROBOT_MASS_KG,
     ROBOT_MOI,
@@ -373,7 +372,7 @@ public class Drive extends SubsystemBase {
     
     /** Returns the measured chassis speeds of the robot. */
     @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-    private ChassisSpeeds getChassisSpeeds() {
+    public ChassisSpeeds getChassisSpeeds() {
         return kinematics.toChassisSpeeds(getModuleStates());
     }
     

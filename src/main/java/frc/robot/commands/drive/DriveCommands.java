@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -314,5 +315,19 @@ public class DriveCommands {
     return pathfind;
   }
 
+  public static Command followPathCommand(String pathName, boolean mirrored) {
+    try{
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        return AutoBuilder.followPath(mirrored ? path : path.mirrorPath());
+    } catch (Exception e) {
+        DriverStation.reportError("womp womp " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+    }
+  }
+
+  public static Command setPoseCommand(Drive drive, Pose2d pose){
+    return Commands.runOnce(() -> drive.setPose(pose));
+  }
   
 }
