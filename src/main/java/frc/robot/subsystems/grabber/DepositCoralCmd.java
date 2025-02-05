@@ -1,3 +1,4 @@
+package frc.robot.subsystems.grabber.commands;
 package frc.robot.subsystems.grabber;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -23,7 +24,7 @@ public class DepositCoralCmd extends Command {
 
     @Override
     public void initialize() {
-        grabber_.stopGrabber();
+        DepositCoralCmdState_ = DepositCoralCmdState.RollersOn;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class DepositCoralCmd extends Command {
     public void execute() {
         switch(DepositCoralCmdState_){
             case RollersOn:
-                grabber_.ejectCoralReef();
+                
                 DepositCoralCmdState_ = DepositCoralCmdState.WaitingForCoralEject;
                 break;
             case WaitingForCoralEject:

@@ -1,7 +1,12 @@
-package frc.robot.subsystems.grabber;
+package frc.robot.subsystems.grabber.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
+/*
+ * 
+ * UNFINISHED COMMAND
+ *
+ */
 public class WaitForCoralCmd extends Command {
 
     private GrabberSubsystem grabber_;
@@ -20,7 +25,8 @@ public class WaitForCoralCmd extends Command {
 
     @Override
     public void initialize() {
-        grabber_.stopGrabber();
+        grabber_.setGrabberTargetVelocity(35);
+        WaitForCoralCmdState_ = WaitForCoralCmdState.WaitingForCoral;
     }
 
     @Override
@@ -32,11 +38,14 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(WaitForCoralCmdState_) {
             case WaitingForCoral:
-                grabber_.waitForCoral();
+                if (grabber_.coralFunnelRising()) {
+                    grabber_.setHasCoral(true);
+                }
+                
                 WaitForCoralCmdState_ = WaitForCoralCmdState.RollersOff;
                 break;
             case RollersOff:
-                grabber_.holdingCoral();
+                
                 WaitForCoralCmdState_ = WaitForCoralCmdState.Finish;
                 break;
             case Finish:
