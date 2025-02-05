@@ -28,11 +28,11 @@ import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
-public class PlaceCoralCmdAfter extends PlaceCoralCmd {
-
+public class PlaceCoralAfterCmd extends PlaceCoralCmd {
 
     private static Voltage nominal = Volts.of(12.0) ;
 
@@ -41,13 +41,12 @@ public class PlaceCoralCmdAfter extends PlaceCoralCmd {
     private static final AngularVelocity PlaceMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration PlaceMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-
     private static final LinearVelocity BackupMaxVelocity = MetersPerSecond.of(1.0) ;
     private static final LinearAcceleration BackupMaxAcceleration = MetersPerSecondPerSecond.of(1.0) ;
     private static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public PlaceCoralCmdAfter(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, int level, boolean left) {
+    public PlaceCoralAfterCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, int level, CoralSide side) {
         setName("PlaceCoralCmd") ;
 
         Optional<Alliance> a = DriverStation.getAlliance() ;
@@ -56,7 +55,7 @@ public class PlaceCoralCmdAfter extends PlaceCoralCmd {
 
             if (target.isPresent()) {
                 ReefFace t = target.get() ;
-                Pose2d place = left ? t.getLeftScoringPose() : t.getRightScoringPose() ;
+                Pose2d place = (side == CoralSide.Left) ? t.getLeftScoringPose() : t.getRightScoringPose() ;
                 Pose2d backup = t.getWallPose() ;
                 
                 PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;

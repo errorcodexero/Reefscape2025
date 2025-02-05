@@ -48,7 +48,7 @@ public class ManipulatorConstants {
         public static final boolean kInverted = true; 
 
         // Current limit
-        public static final double kCurrentLimit = 40.0 ;
+        public static final Current kCurrentLimit = Amps.of(40.0) ;
 
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
@@ -91,26 +91,23 @@ public class ManipulatorConstants {
         public static final double kMotorRevsToHeightMeters = 42.375 ;
 
         // Current limit
-        public static final double kCurrentLimit = 40.0 ;
+        public static final Current kCurrentLimit = Amps.of(40.0) ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around
         
-        public static final double kGearRatio = 3 ;
+        public static final double kGearRatio = 34.0 ;
 
         // The carriage mass
-        public static final Mass kCarriageMass = Kilograms.of(1.0) ;
+        public static final Mass kCarriageMass = Kilograms.of(4.0) ;
 
         // The drum radius in meters
-        public static final Distance kDrumRadius = Inches.of(3.0) ;
+        public static final Distance kDrumRadius = Inches.of(2.0) ;
 
         // The maximum height of the elevator
         public static final Distance kMaxHeight = Centimeters.of(177.0) ;
 
         // The minimum height of the elevator
         public static final Distance kMinHeight = Centimeters.of(59.0) ;
-
-        // The max current draw for the elevator motors
-        public static final Current kMaxSupplyCurrent = Amps.of(40.0) ;
 
         public class PID {
             public static final double kP = 8.0; 

@@ -129,6 +129,10 @@ public class Robot extends LoggedRobot {
     public void robotInit() {
         super.robotInit() ;
 
+        CommandScheduler.getInstance().onCommandInitialize(command -> {
+            Logger.recordOutput("oi/command", command.getName());
+        });
+
         if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
             //
             // If we are simulating, create the simulation modules required

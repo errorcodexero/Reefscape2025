@@ -43,7 +43,10 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.gps.AbortCmd;
+import frc.robot.commands.gps.CollectCoralCmd;
 import frc.robot.commands.gps.EjectCmd;
+import frc.robot.commands.gps.PlaceCoralAfterCmd;
+import frc.robot.commands.gps.PlaceCoralBeforeCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.ClimbExecuteCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
@@ -60,10 +63,12 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OIConstants;
+import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OIQueueRobotActionCmd;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.CoralSide;
@@ -132,7 +137,7 @@ public class RobotContainer {
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
-            // oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
+            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -318,6 +323,19 @@ public class RobotContainer {
 
     public OICommandSupplier.Pair<Command, Command> getRobotActionCommand(RobotAction action, int level, CoralSide side) {
         OICommandSupplier.Pair<Command, Command> ret = null ;
+
+        switch(action) {
+            case CollectCoral:
+                ret = new OICommandSupplier.Pair<>(new CollectCoralCmd(manipulator_, grabber_), null) ;
+                break ;
+
+            case PlaceCoral:
+                ret = new OICommandSupplier.Pair<>(
+                            new PlaceCoralBeforeCmd(manipulator_, level),
+                            new PlaceCoralAfterCmd(drivebase_, manipulator_, grabber_, level, side)) ;
+                break ;
+        }
+
         return ret ;
     }
 

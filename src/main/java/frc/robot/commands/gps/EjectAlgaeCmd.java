@@ -1,32 +1,20 @@
 package frc.robot.commands.gps;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
-public class EjectAlgaeCmd extends Command {
+public class EjectAlgaeCmd extends SequentialCommandGroup {
     private ManipulatorSubsystem manipulator_ ;
     private GrabberSubsystem grabber_ ;
 
     public EjectAlgaeCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
         manipulator_ = m;
         grabber_ = g;
-    }
 
-    @Override
-    public void initialize() {
-    }
-
-    @Override
-    public void execute() {
-    }
-
-    @Override
-    public boolean isFinished() {
-        return true;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
+        addCommands(
+            new ManipulatorGotoCmd(m, null, null)
+        );
     }
 }

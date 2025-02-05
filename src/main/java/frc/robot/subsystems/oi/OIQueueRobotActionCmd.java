@@ -4,16 +4,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class OIQueueRobotActionCmd extends Command {
     private OISubsystem oi_ ;
-    private RobotAction action;
+    private RobotAction action_;
 
     public OIQueueRobotActionCmd(OISubsystem oi, RobotAction action) {
-        this.action = action;
+        oi_ = oi ;
+        action_ = action;
     }
 
     @Override
     public void initialize() {
         if (oi_.readyForAction()) {
-            oi_.queueRobotAction(action);
+            oi_.queueRobotAction(action_);
         }
     }
 
@@ -28,5 +29,9 @@ public class OIQueueRobotActionCmd extends Command {
 
     @Override
     public void end(boolean interrupted) {
+    }
+
+    public String getName() {
+        return "OIQueueRobotActionCmd:" + action_.toString() ;
     }
 }

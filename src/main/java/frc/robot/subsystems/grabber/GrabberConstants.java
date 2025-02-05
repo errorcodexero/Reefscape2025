@@ -1,9 +1,11 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Time;
 
 public class GrabberConstants {
@@ -19,7 +21,7 @@ public class GrabberConstants {
         public static final boolean kInverted = true; 
 
         // Current limit for the grabber motor
-        public static final double kCurrentLimit = 40.0 ;
+        public static final Current kCurrentLimit = Amps.of(40.0) ;
 
         public class PID {
             public static final double kP = 0.0; 

@@ -183,7 +183,7 @@ public class OISubsystem extends SubsystemBase {
     }
 
     public void queueRobotAction(RobotAction action) {
-        if (!locked_) {
+        if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
             next_action_ = action ;
             if (current_action_ == null) {
                 commandProcessing();
@@ -323,28 +323,67 @@ public class OISubsystem extends SubsystemBase {
         locked_ = false ;
     }
 
-    private void commandProcessing() {
-        if (current_action_ == null && current_cmd_ != null) {
+    public void execute() {
+        if (current_cmd_ != null && current_cmd_.isFinished()) {
+            Logger.recordOutput("oi/execute", true) ;
+            current_cmd_ = current_robot_action_command_.two() ;
+            current_cmd_.schedule();
         }
-        else if (current_action_ == null) {
+    }
+
+    private void commandProcessing() {
+        String status = "" ;
+
+        Logger.recordOutput("oi/execute", false) ;
+        if (current_action_ == null) {
             //
-            // We are executing nothing, see if there are things to run
+            // We are executing nothing, see if there are things to run queued
             //
             if (next_action_ != null) {
                 current_action_ = next_action_ ;
                 next_action_ = null ;
                 current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, coral_side_) ;
                 if (current_robot_action_command_ == null) {
+                    status = current_action_.toString() + ":no command" ;
                     current_action_ = null ;
                     current_cmd_ = null ;
                 }
                 else {
                     current_cmd_ = current_robot_action_command_.one() ;
-                    current_robot_action_command_.one().schedule() ;
+                    status = current_action_.toString() + ":" + current_cmd_.getName() ;
+                    current_cmd_.schedule() ;
                 }
+            }
+            else {
+                status = "idle" ;
+            }
+        }
+        else {
+            if (current_cmd_ == null) {
+                status = current_action_.toString() + ":waiting" ;
+            } 
+            else if (current_cmd_.isFinished()) {
+                if (current_cmd_ == current_robot_action_command_.two() || current_robot_action_command_.two() == null) {
+                    current_action_ = null ;
+                    current_cmd_ = null ;
+
+                    //
+                    // We are done with the current command.  We call recursively back into this code to be sure the next
+                    // command starts in the same robot loop
+                    //
+                    commandProcessing();
+                }
+                else {
+                    current_cmd_ = null ;
+                }
+            }
+            else {
+                status = current_action_.toString() + ":" + current_cmd_.getName() ;
             }
         }
 
+        Logger.recordOutput("oi/status", status) ;
+        Logger.recordOutput("oi/locked", locked_) ;
         Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
     }

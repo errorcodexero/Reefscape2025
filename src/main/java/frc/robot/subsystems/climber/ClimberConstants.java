@@ -1,10 +1,12 @@
 package frc.robot.subsystems.climber;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
@@ -24,7 +26,7 @@ public class ClimberConstants {
         public static final boolean kInverted = false; 
 
         // Current limit
-        public static final double kCurrentLimit = 80.0 ;
+        public static final Current kCurrentLimit = Amps.of(80.0) ;
 
         public class PID {
             public static final double kP = 0.0; 

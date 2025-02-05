@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
@@ -55,8 +54,6 @@ public class GrabberIOHardware implements GrabberIO {
     }
     
     public void updateInputs(GrabberIOInputs inputs) {
-        Logger.recordOutput("xyzzy", algae_sensor_high_.getInput().get());
-        
         inputs.grabberPosition = grabber_position_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberVelocity = grabber_velocity_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberCurrent = grabber_current_.refresh().getValue() ;
