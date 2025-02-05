@@ -19,7 +19,7 @@ public interface ManipulatorIO {
         public Angle armPosition; 
         public Angle armRawPosition ;
         public AngularVelocity armRawVelocity ;
-        public int armRawEncoder ;
+        public double armRawEncoder ;
         public Angle armEncoderValue ;
         public Current armCurrent; 
         public Voltage armVoltage; 

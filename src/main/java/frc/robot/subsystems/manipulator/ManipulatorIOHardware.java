@@ -38,7 +38,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -56,7 +56,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private StatusSignal<Voltage> arm_voltage_ ;
     private DCMotorSim arm_sim_ ;
 
-    private Encoder encoder_ ;
+    private DutyCycleEncoder encoder_ ;
     private EncoderMapper mapper_ ;
 
     // Elevator related members
@@ -200,14 +200,15 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
         TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs)) ;
 
-        encoder_ = new Encoder(0, 1) ;
-        mapper_ = new EncoderMapper(ManipulatorConstants.Arm.AbsoluteEncoder.kRobotMax,
-                                    ManipulatorConstants.Arm.AbsoluteEncoder.kRobotMin,
-                                    ManipulatorConstants.Arm.AbsoluteEncoder.kEncoderMax,
-                                    ManipulatorConstants.Arm.AbsoluteEncoder.kEncoderMin) ;
+        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kDutyCyclePin) ; 
 
-        mapper_.calibrate(ManipulatorConstants.Arm.AbsoluteEncoder.kRobotCalibrationValue,
-                          ManipulatorConstants.Arm.AbsoluteEncoder.kEncoderCalibrationValue) ;
+        mapper_ = new EncoderMapper(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
+                                    ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMin,
+                                    ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMax,
+                                    ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMin) ;
+
+        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
+                          ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue) ;
 
         // For now, force the arm to the zero position when the robot is initialized.
         arm_motor_.setPosition(Rotations.of(0.0)) ;
