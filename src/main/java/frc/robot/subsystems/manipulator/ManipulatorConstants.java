@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 
 public class ManipulatorConstants {
 
@@ -23,6 +24,8 @@ public class ManipulatorConstants {
         public static final Current kCurrentLimit = null; 
 
         public static final Angle kPosTolerance = null;
+
+        public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         public class PID {
             public static final double kP = 0.0; 
@@ -58,6 +61,8 @@ public class ManipulatorConstants {
         public static final Current kCurrentLimit = null; 
 
         public static final Distance kPosTolerance = Meters.of(0.01); 
+
+        public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         public class PID {
             public static final double kP = 0.0; 

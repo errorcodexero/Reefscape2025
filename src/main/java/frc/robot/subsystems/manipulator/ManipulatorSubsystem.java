@@ -1,7 +1,6 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.*; 
 
 import org.littletonrobotics.junction.Logger;
 
