@@ -11,7 +11,7 @@ public interface ClimberIO {
     @AutoLog
     public class ClimberIOInputs {
 
-        //climber arm inputs
+        //climber inputs
         public Angle climberPosition;
         public AngularVelocity climberVelocity;
         public Voltage climberVoltage;
@@ -20,5 +20,7 @@ public interface ClimberIO {
     }
     //Update Inputs
     public default void updateInputs(ClimberIOInputsAutoLogged inputs) {}
+
+    public default void moveClimber(Angle angle) {}
 
 }

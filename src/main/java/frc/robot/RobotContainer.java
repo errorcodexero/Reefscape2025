@@ -37,6 +37,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,11 +48,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.AlphaTunerConstants;
+import frc.robot.generated.CompTunerConstants;
+import frc.robot.generated.PracticeTunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.grabber.GrabberIO;
@@ -101,11 +105,13 @@ public class RobotContainer {
                 case ALPHA:
 
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        AlphaTunerConstants.FrontLeft,
+                        AlphaTunerConstants.FrontRight,
+                        AlphaTunerConstants.BackLeft,
+                        AlphaTunerConstants.BackRight,
+                        AlphaTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -115,9 +121,13 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
 
@@ -125,11 +135,13 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -139,9 +151,13 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
                 
@@ -149,11 +165,13 @@ public class RobotContainer {
 
                     // TODO: Replace TunerConstants with new set of constants for practice bot.
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.FrontRight, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackLeft, TunerConstants.DrivetrainConstants.CANBusName),
-                        new ModuleIOTalonFX(TunerConstants.BackRight, TunerConstants.DrivetrainConstants.CANBusName)
+                        new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
+                        ModuleIOTalonFX::new,
+                        PracticeTunerConstants.FrontLeft,
+                        PracticeTunerConstants.FrontRight,
+                        PracticeTunerConstants.BackLeft,
+                        PracticeTunerConstants.BackRight,
+                        PracticeTunerConstants.kSpeedAt12Volts
                     );
 
                     vision_ = new AprilTagVision(
@@ -163,21 +181,27 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {}
 
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
 
                     break;
                 
                 case SIMBOT:
                     // Sim robot, instantiate physics sim IO implementations
-                    drivebase_ =
-                        new Drive(
-                            new GyroIO() {},
-                            new ModuleIOSim(TunerConstants.FrontLeft),
-                            new ModuleIOSim(TunerConstants.FrontRight),
-                            new ModuleIOSim(TunerConstants.BackLeft),
-                            new ModuleIOSim(TunerConstants.BackRight));
+                    drivebase_ = new Drive(
+                        new GyroIO() {},
+                        ModuleIOSim::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
                         (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {},
@@ -210,10 +234,12 @@ public class RobotContainer {
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
             drivebase_ = new Drive(
                 new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {}
+                ModuleIOReplay::new,
+                CompTunerConstants.FrontLeft,
+                CompTunerConstants.FrontRight,
+                CompTunerConstants.BackLeft,
+                CompTunerConstants.BackRight,
+                CompTunerConstants.kSpeedAt12Volts
             );
         }
         
@@ -235,6 +261,9 @@ public class RobotContainer {
 
         // Simulation setup
         this.addSubsystem(drivebase_) ;
+
+        // Shuffleboard Tabs
+        ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
 
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -266,6 +295,9 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // Add choosers and widgets to tabs.
+        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
         
         // Configure the button bindings
         configureDriveBindings();

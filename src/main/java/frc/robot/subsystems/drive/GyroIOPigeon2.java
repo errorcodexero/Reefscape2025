@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.generated.CompTunerConstants;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
@@ -34,10 +35,10 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<Angle> yaw;
   private final StatusSignal<AngularVelocity> yawVelocity;
 
-  public GyroIOPigeon2(int Pigeon2Id, String CANBusName) {
+  public GyroIOPigeon2(int Pigeon2Id) {
 
     // Init Pigeon and Statuses
-    pigeon = new Pigeon2(Pigeon2Id, CANBusName);
+    pigeon = new Pigeon2(Pigeon2Id, CompTunerConstants.kCANBus.getName());
     yaw = pigeon.getYaw();
     yawVelocity = pigeon.getAngularVelocityZWorld();
 

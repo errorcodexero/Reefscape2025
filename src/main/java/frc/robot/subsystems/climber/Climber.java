@@ -2,21 +2,24 @@
 so hover off ground. 
 Commands - DeployClimber, ExecuteClimb
 States(enum) - IDLE, DeployClimber, WaitToHook, Climb
- */
+*/
 
- package frc.robot.subsystems.climber;
+package frc.robot.subsystems.climber;
 
- import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import static edu.wpi.first.units.Units.Degrees;
+
  
- public class Climber extends SubsystemBase{
+public class Climber extends SubsystemBase{
    private ClimberIO io_; 
    private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
    enum ClimberState{
       Idle,
-      DeployClimber,
-      WaitToHook,
-      ExecuteClimb
+      DeployClimberState,
+      WaitToHookState,
+      ExecuteClimbState
    }
    ClimberState climberState_;
  
@@ -24,26 +27,45 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
       io_ = io;
       climberState_ = ClimberState.Idle;
    }
+
+   public void Idle() {
+      //Climber is idle and doesn't do anything here
+      climberState_ = ClimberState.DeployClimberState;
+   }
+
+   public void deployClimber() {
+      io_.moveClimber(Degrees.of(90));
+      climberState_ = ClimberState.WaitToHookState;
+   }
+
+   public void waitToHook() {
+      //waits here until drivers hooks the climber onto the bar
+      climberState_ = ClimberState.ExecuteClimbState;
+   }
+
+   public void executeClimb() {
+      io_.moveClimber(Degrees.of(180));
+      climberState_ = ClimberState.Idle;
+   }
  
+   public void climber() {
+      switch(climberState_){
+         case Idle:
+            break;
+         case DeployClimberState:
+            deployClimber();
+            break;
+         case WaitToHookState:
+            break;
+         case ExecuteClimbState:
+            executeClimb();
+            break;
+      }
+   }
    @Override
    public void periodic(){
       io_.updateInputs(inputs_);
    }
-   public void climber() {
-      switch(climberState_){
-         case Idle:
-            // 1. 
-            // 2. 
-            break;
-         case DeployClimber:
-            break;
-         case WaitToHook:
-            break;
-         case ExecuteClimb:
-            break;
-      }
-   }
-      
- }
+}
  
  
