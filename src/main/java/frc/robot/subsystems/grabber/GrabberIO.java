@@ -46,6 +46,7 @@ public interface GrabberIO {
 
     // grabber related methods
     public default void setGrabberVelocity(AngularVelocity target) {}
+    public default void setGrabberPosition(Angle target) {}
     public default void setGrabberMotorVoltage(double volts) {}
-    public default void logGrabberMotor(SysIdRoutineLog log) {} ;    
+    public default void logGrabberMotor(SysIdRoutineLog log) {} 
 }

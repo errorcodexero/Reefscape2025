@@ -334,7 +334,7 @@ public class RobotContainer {
             case PlaceCoral:
                 ret = new OICommandSupplier.Pair<>(
                             new PlaceCoralBeforeCmd(manipulator_, level),
-                            new PlaceCoralAfterCmd(drivebase_, manipulator_, grabber_, level, side)) ;
+                            new PlaceCoralAfterCmd(drivebase_, manipulator_, grabber_, level, side, false)) ;
                 break ;
         }
 

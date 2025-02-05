@@ -11,8 +11,10 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -88,6 +90,11 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_motor_.setControl(ctrl) ;
     }
 
+    public void setGrabberPosition(Angle target) {
+        ControlRequest ctrl = new MotionMagicVoltage(target.div(GrabberConstants.Grabber.kGearRatio)).withSlot(1) ;
+        grabber_motor_.setControl(ctrl) ;
+    }
+
     public void setGrabberMotorVoltage(double volts) {
         grabber_volts_ = Volts.of(volts) ;
         ControlRequest ctrl = new VoltageOut(grabber_volts_) ;
@@ -135,15 +142,25 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_voltage_ = grabber_motor_.getMotorVoltage() ;        
 
         // ELEVATOR CONFIGS:
-        Slot0Configs grabber_pids = new Slot0Configs();
-        grabber_pids.kP = GrabberConstants.Grabber.PID.kP;
-        grabber_pids.kI = GrabberConstants.Grabber.PID.kI;
-        grabber_pids.kD = GrabberConstants.Grabber.PID.kD;
-        grabber_pids.kV = GrabberConstants.Grabber.PID.kV;
-        grabber_pids.kA = GrabberConstants.Grabber.PID.kA;
-        grabber_pids.kG = GrabberConstants.Grabber.PID.kG;
-        grabber_pids.kS = GrabberConstants.Grabber.PID.kS;
-        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "apply", () -> grabber_motor_.getConfigurator().apply(grabber_pids)) ;
+        Slot0Configs grabber_velocity_pids = new Slot0Configs();
+        grabber_velocity_pids.kP = GrabberConstants.Grabber.Velocity.PID.kP;
+        grabber_velocity_pids.kI = GrabberConstants.Grabber.Velocity.PID.kI;
+        grabber_velocity_pids.kD = GrabberConstants.Grabber.Velocity.PID.kD;
+        grabber_velocity_pids.kV = GrabberConstants.Grabber.Velocity.PID.kV;
+        grabber_velocity_pids.kA = GrabberConstants.Grabber.Velocity.PID.kA;
+        grabber_velocity_pids.kG = GrabberConstants.Grabber.Velocity.PID.kG;
+        grabber_velocity_pids.kS = GrabberConstants.Grabber.Velocity.PID.kS;
+        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "apply", () -> grabber_motor_.getConfigurator().apply(grabber_velocity_pids)) ;
+
+        Slot1Configs grabber_position_pids = new Slot1Configs();
+        grabber_position_pids.kP = GrabberConstants.Grabber.Position.PID.kP;
+        grabber_position_pids.kI = GrabberConstants.Grabber.Position.PID.kI;
+        grabber_position_pids.kD = GrabberConstants.Grabber.Position.PID.kD;
+        grabber_position_pids.kV = GrabberConstants.Grabber.Position.PID.kV;
+        grabber_position_pids.kA = GrabberConstants.Grabber.Position.PID.kA;
+        grabber_position_pids.kG = GrabberConstants.Grabber.Position.PID.kG;
+        grabber_position_pids.kS = GrabberConstants.Grabber.Position.PID.kS;
+        TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "apply", () -> grabber_motor_.getConfigurator().apply(grabber_position_pids)) ;        
 
         MotionMagicConfigs rollerMotionMagicConfigs = new MotionMagicConfigs();
         rollerMotionMagicConfigs.MotionMagicCruiseVelocity = GrabberConstants.Grabber.MotionMagic.kMaxVelocity;

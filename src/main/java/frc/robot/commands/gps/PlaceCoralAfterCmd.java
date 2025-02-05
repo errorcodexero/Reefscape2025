@@ -46,7 +46,7 @@ public class PlaceCoralAfterCmd extends PlaceCoralCmd {
     private static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public PlaceCoralAfterCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, int level, CoralSide side) {
+    public PlaceCoralAfterCmd(Drive db, ManipulatorSubsystem m, GrabberSubsystem g, int level, CoralSide side, boolean automode) {
         setName("PlaceCoralCmd") ;
 
         Optional<Alliance> a = DriverStation.getAlliance() ;
@@ -61,15 +61,31 @@ public class PlaceCoralAfterCmd extends PlaceCoralCmd {
                 PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;
                 PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;
 
-                addCommands(
-                    new ManipulatorGotoCmd(m, ElevatorPlaceHeight[level], ArmPlaceAngle[level]),            // We should already be at the correct height
-                    AutoBuilder.pathfindToPose(place, place_constraints),
-                    new GamepadEnabled(false),
-                    new DepositCoralCmd(g),
-                    AutoBuilder.pathfindToPose(backup, backup_constraints),
-                    new GamepadEnabled(true),
-                    new SetHoldingCmd(RobotContainer.GamePiece.NONE),
-                    new RumbleGamepadCmd(Milliseconds.of(500))) ;
+                if (automode) {
+                    addCommands(
+                        new ReportStateCmd(getName(), "deposit-coral"),
+                        new DepositCoralCmd(g),
+                        new SetHoldingCmd(RobotContainer.GamePiece.NONE)) ;
+                }
+                else {
+                    addCommands(
+                        new ReportStateCmd(getName(), "goto"),
+                        new ManipulatorGotoCmd(m, ElevatorPlaceHeight[level], ArmPlaceAngle[level]),            // We should already be at the correct height
+                        new ReportStateCmd(getName(), "drive-place"),
+                        AutoBuilder.pathfindToPose(place, place_constraints),
+                        new ReportStateCmd(getName(), "gp-disabled"),
+                        new GamepadEnabled(false),
+                        new ReportStateCmd(getName(), "deposit-coral"),
+                        new DepositCoralCmd(g),
+                        new ReportStateCmd(getName(), "drive-backup"),
+                        AutoBuilder.pathfindToPose(backup, backup_constraints),
+                        new ReportStateCmd(getName(), "gamepad-enabled"),
+                        new GamepadEnabled(true),
+                        new ReportStateCmd(getName(), "set-holding"),
+                        new SetHoldingCmd(RobotContainer.GamePiece.NONE),
+                        new ReportStateCmd(getName(), "rumble"),
+                        new RumbleGamepadCmd(Milliseconds.of(500))) ;
+                }
             }
         }
     }

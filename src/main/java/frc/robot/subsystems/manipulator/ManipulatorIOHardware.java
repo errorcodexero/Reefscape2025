@@ -228,10 +228,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
                                             ManipulatorConstants.Elevator.kCurrentLimit) ;
         elevator_motor_1_.setPosition(Degrees.of(0.0)) ;
 
-        elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, 
-                                            ManipulatorConstants.Elevator.kInverted,
-                                            ManipulatorConstants.Elevator.kCurrentLimit) ;
-        elevator_motor_2_.setControl(new Follower(elevator_motor_1_.getDeviceID(), true)) ;
+        if (!Robot.isSimulation()) {
+            elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, 
+                                                ManipulatorConstants.Elevator.kInverted,
+                                                ManipulatorConstants.Elevator.kCurrentLimit) ;
+            elevator_motor_2_.setControl(new Follower(elevator_motor_1_.getDeviceID(), true)) ;
+        }
 
         elevator_position_ = elevator_motor_1_.getPosition() ;
         elevator_velocity_ = elevator_motor_1_.getVelocity() ;
@@ -280,9 +282,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     private void simulateElevator() {
         TalonFXSimState st = elevator_motor_1_.getSimState() ;
-        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+        double voltage = RobotController.getBatteryVoltage() ;
+        st.setSupplyVoltage(voltage) ;
 
         Voltage mv = st.getMotorVoltageMeasure() ;
+        Logger.recordOutput("Elevator/simvolts", mv.in(Volts)) ;
+        Logger.recordOutput("Elevator/battery", voltage) ;
         elevator_sim_.setInputVoltage(mv.in(Volts)) ;
         elevator_sim_.update(0.02) ;
         st.setRawRotorPosition(elevator_sim_.getPositionMeters() / ManipulatorConstants.Elevator.kMotorRevsToHeightMeters) ;

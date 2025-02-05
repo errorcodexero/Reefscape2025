@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
@@ -18,6 +19,7 @@ public class GrabberSubsystem extends SubsystemBase {
     private GamePieceLocation gp_ ;
     private final GrabberIO io_; 
     private final GrabberIOInputsAutoLogged inputs_; 
+    private Angle target_ ;
 
     public GrabberSubsystem(GrabberIO io){
         io_ = io; 
@@ -40,8 +42,21 @@ public class GrabberSubsystem extends SubsystemBase {
         Logger.recordOutput("Grabber/rawvel", inputs_.grabberRawVelocity.in(RotationsPerSecond)) ;
     }
 
+    public Angle getPosition() {
+        return inputs_.grabberPosition ;
+    }
+
     public void setGrabberVelocity(AngularVelocity vel) {
         io_.setGrabberVelocity(vel);
+    }
+
+    public void setGrabberPosition(Angle target) {
+        target_ = target ;
+        io_.setGrabberPosition(target);
+    }
+
+    public boolean isAtTarget() {
+        return inputs_.grabberPosition.isNear(target_, GrabberConstants.Grabber.kTolerance) ;
     }
 
     public void setGrabberVoltage(Voltage v) {

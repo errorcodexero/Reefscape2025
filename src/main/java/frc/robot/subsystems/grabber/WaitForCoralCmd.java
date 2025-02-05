@@ -1,30 +1,24 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
-import org.littletonrobotics.junction.Logger;
-
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.util.XeroTimer;
 
 public class WaitForCoralCmd extends Command {
     private enum State {
         WaitingForSensor,
-        WaitingForDelay,
+        Backup,
         Done,
         Interrupted
     }
 
     private GrabberSubsystem grabber_ ;
-    private XeroTimer wait_timer_ ;
     private State state_ ;
 
     public WaitForCoralCmd(GrabberSubsystem g) {
         addRequirements(g);
 
         grabber_ = g ;
-        wait_timer_ = new XeroTimer(GrabberConstants.Collect.kDelay) ;
     }   
 
     @Override
@@ -41,13 +35,13 @@ public class WaitForCoralCmd extends Command {
         switch(state_) {
             case WaitingForSensor:
                 if (grabber_.isCoralSeenLowFallingEdge()) {
-                    wait_timer_.start() ;
-                    state_ = State.WaitingForDelay ;
+                    Angle a = grabber_.getPosition() ;
+                    grabber_.setGrabberPosition(a.plus(GrabberConstants.Collect.kBackup)) ;
+                    state_ = State.Backup ;
                 }
                 break ;
-            case WaitingForDelay:
-                if (wait_timer_.isExpired()) {
-                    grabber_.setGrabberVoltage(Volts.of(0.0)) ;
+            case Backup:
+                if (grabber_.isAtTarget()) {
                     grabber_.setGP(GamePieceLocation.Coral);
                     state_ = State.Done ;
                 }
@@ -56,7 +50,6 @@ public class WaitForCoralCmd extends Command {
             case Interrupted:
                 break ;
         }
-        Logger.recordOutput("Grabber/state", state_.toString()) ;
     }
 
     @Override
