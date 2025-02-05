@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.*;
+
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -38,7 +40,12 @@ public class GrabberIOHardware implements GrabberIO {
 
     public GrabberIOHardware() throws Exception {
 
-        grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+        grabber_motor_ = TalonFXFactory.createTalonFX(
+            GrabberConstants.Grabber.kMotorCANID,
+            null, GrabberConstants.Grabber.kInverted,
+            Amps.of(40),
+            Seconds.of(1)
+        );
 
         Slot0Configs grabber_pids_ = new Slot0Configs();
         grabber_pids_.kP = GrabberConstants.Grabber.PID.kP;
