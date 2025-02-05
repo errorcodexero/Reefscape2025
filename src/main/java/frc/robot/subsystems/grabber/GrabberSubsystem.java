@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GrabberSubsystem extends SubsystemBase {
-
+    
     private final GrabberIO io_;
     private final GrabberIOInputsAutoLogged inputs_;
-
+    
     private boolean has_coral_;
     private boolean has_algae_;
 
-    private final Alert grabberErrorAlert_ = new Alert("Grabber error is disconnected or failed to initialize!", AlertType.kError);
-
+    private final Alert disconnectedAlert = new Alert("Grabber motor was not initialized correctly!", AlertType.kError);
+    
     public GrabberSubsystem(GrabberIO io) {
         io_ = io;
         inputs_ = new GrabberIOInputsAutoLogged();

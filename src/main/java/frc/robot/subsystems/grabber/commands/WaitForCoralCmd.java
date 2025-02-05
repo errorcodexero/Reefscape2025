@@ -1,6 +1,7 @@
 package frc.robot.subsystems.grabber.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 /*
  * 
