@@ -167,8 +167,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
 
         // arm inputs:
-        inputs.armPosition = arm_pos_sig_.getValue().times(ManipulatorConstants.Arm.kGearRatio);
-        inputs.armVelocity = arm_vel_sig_.getValue().times(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armPosition = arm_pos_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armVelocity = arm_vel_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
         inputs.armVoltage = arm_vol_sig_.getValue();
         inputs.armCurrent = arm_current_sig_.getValue();
         
@@ -210,11 +210,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     } 
 
     public void setElevatorPosition(Distance dist) {
-        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev ;
+        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
         elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
     }
 
     public void setArmPosition(Angle angle) {
-        arm_motor_.setControl(new MotionMagicVoltage(angle.div(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
     }
 }

@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
     private final ManipulatorIOInputsAutoLogged inputs_;  
-    private Angle target_angle_ ;
-    private Distance target_height_ ;
+    private Angle target_angle_;
+    private Distance target_height_;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
@@ -36,7 +36,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public Angle getArmPosition() {
-        return inputs_.armPosition ;
+        return inputs_.armPosition;
     }
 
     public void setArmPosition(Angle angle) {
@@ -49,7 +49,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void setElevatorPosition(Distance dist) {
-        target_height_ = dist ;
+        target_height_ = dist;
         io_.setElevatorPosition(dist); 
     }
 
