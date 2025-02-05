@@ -156,9 +156,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             elevator_pos_sig_,
             elevator_vel_sig_,
             elevator_vol_sig_,
-            elevator_current_sig_,
-            elevator_2_current_sig_,
-            elevator_2_vol_sig_
+            elevator_current_sig_
         );
 
         StatusCode elevator2Status = BaseStatusSignal.refreshAll(
