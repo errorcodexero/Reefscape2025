@@ -37,6 +37,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -248,6 +250,9 @@ public class RobotContainer {
         // Simulation setup
         this.addSubsystem(drivebase_) ;
 
+        // Shuffleboard Tabs
+        ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
+
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -278,6 +283,9 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // Add choosers and widgets to tabs.
+        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
         
         // Configure the button bindings
         configureDriveBindings();
