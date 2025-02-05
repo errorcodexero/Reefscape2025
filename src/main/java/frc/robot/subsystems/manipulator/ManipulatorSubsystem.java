@@ -1,5 +1,8 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
@@ -62,14 +65,14 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public boolean isElevAtTarget() {
-        if(inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) {
+        if((inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) && (inputs_.elevatorVelocity == MetersPerSecond.of(0))) {
             return true; 
         }
         return false; 
     }
 
     public boolean isArmAtTarget() {
-        if(inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) {
+        if((inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) && (inputs_.armVelocity == DegreesPerSecond.of(0))) {
             return true; 
         }
         return false; 

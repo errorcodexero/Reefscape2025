@@ -62,7 +62,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             armError_ = true;
         }
 
-
         try {
             elevator_motor_ = TalonFXFactory.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID, ManipulatorConstants.Elevator.kCANBusName, ManipulatorConstants.Elevator.kInverted);
         } catch (Exception e) {
@@ -166,7 +165,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             elevator_pos_sig_,
             elevator_vel_sig_,
             elevator_vol_sig_,
-            elevator_current_sig_
+            elevator_current_sig_,
+            elevator_2_current_sig_,
+            elevator_2_vol_sig_
         );
 
         inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK()) && !armError_;
@@ -186,11 +187,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
         inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
 
-        inputs.elevatorVoltage = elevator_vol_sig_.refresh().getValue();
-        inputs.elevatorCurrent = elevator_current_sig_.refresh().getValue();
+        inputs.elevatorVoltage = elevator_vol_sig_.getValue();
+        inputs.elevatorCurrent = elevator_current_sig_.getValue();
 
-        inputs.elevator2Voltage = elevator_2_vol_sig_.refresh().getValue();
-        inputs.elevator2Current = elevator_2_current_sig_.refresh().getValue();
+        inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
+        inputs.elevator2Current = elevator_2_current_sig_.getValue();
 
     }
 
