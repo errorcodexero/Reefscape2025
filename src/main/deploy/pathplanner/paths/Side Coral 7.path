@@ -8,20 +8,34 @@
       },
       "prevControl": null,
       "nextControl": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Side Coral 7.path
         "x": 1.6949353318710194,
         "y": 1.015934359656041
+========
+        "x": 1.757727384340691,
+        "y": 1.097669841337107
+>>>>>>>> main:src/main/deploy/pathplanner/paths/Side Coral 5.path
       },
       "isLocked": false,
       "linkedName": "Station Close"
     },
     {
       "anchor": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Side Coral 7.path
         "x": 3.1809375,
         "y": 3.8504971590909087
       },
       "prevControl": {
         "x": 2.5590812089613926,
         "y": 2.5684463255692194
+========
+        "x": 3.2,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 2.5031254140221355,
+        "y": 2.6662435219249527
+>>>>>>>> main:src/main/deploy/pathplanner/paths/Side Coral 5.path
       },
       "nextControl": null,
       "isLocked": false,

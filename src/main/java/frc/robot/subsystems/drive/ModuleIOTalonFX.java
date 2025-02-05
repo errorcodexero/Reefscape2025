@@ -43,6 +43,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.generated.CompTunerConstants;
 
 /**
 * Module IO implementation for Talon FX drive motor controller, Talon FX turn motor controller, and
@@ -95,13 +96,12 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
     
     public ModuleIOTalonFX(
-        SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants,
-        String CANBusName
+        SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants
     ) {
         this.constants = constants;
-        driveTalon = new TalonFX(constants.DriveMotorId, CANBusName);
-        turnTalon = new TalonFX(constants.SteerMotorId, CANBusName);
-        cancoder = new CANcoder(constants.EncoderId, CANBusName);
+        driveTalon = new TalonFX(constants.DriveMotorId, CompTunerConstants.kCANBus.getName());
+        turnTalon = new TalonFX(constants.SteerMotorId, CompTunerConstants.kCANBus.getName());
+        cancoder = new CANcoder(constants.EncoderId, CompTunerConstants.kCANBus.getName());
         
         // Configure drive motor
         var driveConfig = constants.DriveMotorInitialConfigs;

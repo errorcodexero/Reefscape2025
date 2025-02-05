@@ -1,20 +1,71 @@
-/*This is the ClimberSubsystem class. It is going to be used to manage 
-what the climber is going to do on the robot. The climber is what the
-robot is going to use to go up the deep cage. This code is incomplete
- */
+/*Fork and spaghetti - Drive into cage, hooks hook onto bar, climber twists chain and cage into robot, 
+so hover off ground. 
+Commands - DeployClimber, ExecuteClimb
+States(enum) - IDLE, DeployClimber, WaitToHook, Climb
+*/
 
 package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climber extends SubsystemBase {
+import static edu.wpi.first.units.Units.Degrees;
 
-  public Climber() {
+ 
+public class Climber extends SubsystemBase{
+   private ClimberIO io_; 
+   private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
 
-  }
+   enum ClimberState{
+      Idle,
+      DeployClimberState,
+      WaitToHookState,
+      ExecuteClimbState
+   }
+   ClimberState climberState_;
+ 
+   public Climber(ClimberIO io){
+      io_ = io;
+      climberState_ = ClimberState.Idle;
+   }
 
-  @Override
-  public void periodic() {
-  
-  }
+   public void Idle() {
+      //Climber is idle and doesn't do anything here
+      climberState_ = ClimberState.DeployClimberState;
+   }
+
+   public void deployClimber() {
+      io_.moveClimber(Degrees.of(90));
+      climberState_ = ClimberState.WaitToHookState;
+   }
+
+   public void waitToHook() {
+      //waits here until drivers hooks the climber onto the bar
+      climberState_ = ClimberState.ExecuteClimbState;
+   }
+
+   public void executeClimb() {
+      io_.moveClimber(Degrees.of(180));
+      climberState_ = ClimberState.Idle;
+   }
+ 
+   public void climber() {
+      switch(climberState_){
+         case Idle:
+            break;
+         case DeployClimberState:
+            deployClimber();
+            break;
+         case WaitToHookState:
+            break;
+         case ExecuteClimbState:
+            executeClimb();
+            break;
+      }
+   }
+   @Override
+   public void periodic(){
+      io_.updateInputs(inputs_);
+   }
 }
+ 
+ 

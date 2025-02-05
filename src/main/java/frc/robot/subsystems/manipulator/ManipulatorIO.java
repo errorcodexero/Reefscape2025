@@ -1,50 +1,60 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.*;
+
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
  
 public interface ManipulatorIO {
     @AutoLog
     public static class ManipulatorIOInputs {
-        // inputs for now: position, current, voltage, angular velocity (and add acceleration?)
+        // inputs for now: position, current, voltage, velocity (acceleration?)
 
         // arm inputs
-        public Angle armPosition; 
-        public Current armCurrent; 
-        public Voltage armVoltage; 
-        public AngularVelocity armVelocity; 
+        public boolean armReady = false;
+        public Angle armPosition = Degrees.of(0); 
+        public Current armCurrent = Amps.of(0); 
+        public Voltage armVoltage = Volts.of(0); 
+        public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
+      
+        // elevator
+        public Distance elevatorPosition = Meters.of(0); 
+        public LinearVelocity elevatorVelocity = MetersPerSecond.of(0); 
 
-        // elevator inputs
-        public Distance elevatorPosition; 
-        public Current elevatorCurrent; 
-        public Voltage elevatorVoltage; 
-        public AngularVelocity elevatorVelocity; 
+        // elevator 1
+        public boolean elevator1Ready = false;
+        public Voltage elevator1Voltage = Volts.of(0);
+        public Current elevator1Current = Amps.of(0);  
+
+        // elevator 2
+        public boolean elevator2Ready = false;
+        public Voltage elevator2Voltage = Volts.of(0);
+        public Current elevator2Current = Amps.of(0); 
     }
 
     // updating inputs
-    public void updateInputs(ManipulatorIOInputs inputs); 
+    public default void updateInputs(ManipulatorIOInputs inputs) {}
 
-    // Needed for SYS Id support
-    public default void setArmMotorVoltage(double vol){}
+    // Needed for SYS ID support
+    public default void setArmMotorVoltage(double vol) {}
 
-    public default void logArmMotor(SysIdRoutineLog log){}
+    public default void logArmMotor(SysIdRoutineLog log) {}
+
+    public default void setElevatorMotorVoltage(double vol) {}
+
+    public default void logElevatorMotor(SysIdRoutineLog log) {}
 
     // ELEVATOR METHODS
-    public void setElevatorPosition(double m); 
-
-    public double getElevatorFrontPosition();
-
-    public double getElevatorBackPosition();
+    public default void setElevatorPosition(Distance dist) {}
 
     // ARM METHODS
-    public void setArmPosition(double deg); 
-
-    public double getArmPosition();
+    public default void setArmPosition(Angle angle) {}
 
 }
