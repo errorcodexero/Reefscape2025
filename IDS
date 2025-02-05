@@ -1,0 +1,24 @@
+CAN IDS
+=================================================
+Manipulator/Elevator1           4
+Manipulator/Elevator2           5
+Manipulator/Arm                 8
+Grabber/Grabber                 9
+Climber/Arm                     1
+CoralCollector/UpDown           2
+Swerve                          11, 12, 13 
+Swerve                          21, 22, 23
+Swerve                          31, 32, 33
+Swerve                          41, 42, 43
+
+DIOs
+=================================================
+Manipulator/Arm Abs Encoder     0
+Coral Low                       1
+Coral High                      2
+Coral Funnel                    3
+Algae High                      4
+Algae Low                       5
+Cage Door 1                     6
+Cage Door 2                     7
+Cage Back Switch                8

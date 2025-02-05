@@ -23,14 +23,14 @@ public class DepositAlgaeCmd extends Command {
         // Turn on the roller motors
         //
         done_ = false ;
-        grabber_.setGrabberVelocity(GrabberConstants.Place.kVelocity) ;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Place.kVelocity) ;
         wait_timer_.start() ;
     }
 
     @Override
     public void execute() {
         if (wait_timer_.isExpired()) {
-            grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
             grabber_.setGP(GamePieceLocation.None);
             done_ = true ;
         }
@@ -44,7 +44,7 @@ public class DepositAlgaeCmd extends Command {
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
             done_ = true ;
         }
     }

@@ -38,12 +38,13 @@ public interface ManipulatorIO {
     public default void updateInputs(ManipulatorIOInputs inputs) {}
 
     // arm related methods
-    public default void setArmAngle(Angle target) {}
+    public default void setArmTarget(Angle target) {}
+    public default void setArmMotorPosition(Angle pos) {} ;
     public default void setArmMotorVoltage(double volts) {}
     public default void logArmMotor(SysIdRoutineLog log) {}
 
     // elevator related methods
-    public default void setElevatorHeight(Distance target) {}
+    public default void setElevatorTarget(Distance target) {}
     public default void setElevatorMotorVoltage(double volts) {}
     public default void logElevatorMotor(SysIdRoutineLog log) {} ;
 }

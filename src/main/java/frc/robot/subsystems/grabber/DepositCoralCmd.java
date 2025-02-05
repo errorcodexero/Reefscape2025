@@ -41,7 +41,7 @@ public class DepositCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForSensor:
-                if (grabber_.isCoralSeenLowFallingEdge()) {
+                if (grabber_.coralLowSensorFallingEdge()) {
                     wait_timer_.start() ;
                     state_ = State.WaitingForDelay ;
                 }
@@ -69,7 +69,7 @@ public class DepositCoralCmd extends Command {
     public void end(boolean interrupted) {
         if (interrupted) {
             state_ = State.Interrupted ;
-            grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
         }
     }
 }

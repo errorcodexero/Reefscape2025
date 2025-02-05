@@ -48,7 +48,7 @@ public class WaitForAlgaeCmd extends Command {
                 break ;
             case WaitingForDelay:
                 if (wait_timer_.isExpired()) {
-                    grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
                     grabber_.setGP(low_ ? GamePieceLocation.AlgaeLow : GamePieceLocation.AlgaeHigh);
                     state_ = State.Done ;
                 }
@@ -68,11 +68,11 @@ public class WaitForAlgaeCmd extends Command {
     public void end(boolean interrupted) {
         if (interrupted) {
             state_ = State.Interrupted ;
-            grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
         }
     }
 
     private boolean isAlgaeSensorSeen() {
-        return low_ ? grabber_.isAlgaeLowSeenRisingEdge() : grabber_.isAlgaeHighSeenRisingEdge() ;
+        return low_ ? grabber_.algaeLowRisingEdge() : grabber_.algaeHighRisingEdge() ;
     }
 }

@@ -20,6 +20,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIOInputsAutoLogged inputs_;
     private Angle target_arm_position_ ;
     private Distance target_elevator_position_ ;
+    private boolean arm_angle_inited_ = false ;
 
     public ManipulatorSubsystem(ManipulatorIO io){
         io_ = io; 
@@ -44,6 +45,11 @@ public class ManipulatorSubsystem extends SubsystemBase{
             Logger.recordOutput("Manipulator/elevator-target", target_elevator_position_) ;
             Logger.recordOutput("Manipulator/elevator-done", isElevatorAtTarget()) ;
         }
+
+        if (!arm_angle_inited_) {
+            io_.setArmMotorPosition(inputs_.armEncoderValue) ;
+            arm_angle_inited_ = true ;
+        }
     }
 
     public Angle getCurrentArmAngle() {
@@ -52,7 +58,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public void setArmAngleTarget(Angle target) {
         target_arm_position_ = target ;
-        io_.setArmAngle(target);
+        io_.setArmTarget(target);
     }
 
     public Distance getCurrentElevatorHeight() {
@@ -61,7 +67,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public void setElevatorHeightTarget(Distance target) {
         target_elevator_position_ = target ;
-        io_.setElevatorHeight(target);
+        io_.setElevatorTarget(target);
     }
 
     public boolean isArmAtTarget() {

@@ -40,7 +40,7 @@ public class FunnelIOHardware implements FunnelIO {
     }
 
     public void setFunnelPosition(Angle target) {
-        ControlRequest ctrl = new MotionMagicVoltage(target.div(FunnelConstants.Funnel.kGearRatio)) ;
+        ControlRequest ctrl = new MotionMagicVoltage(target.div(FunnelConstants.Funnel.kGearRatio)).withEnableFOC(true) ;
         motor_.setControl(ctrl) ;
     }
 

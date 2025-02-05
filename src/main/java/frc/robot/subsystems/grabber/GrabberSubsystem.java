@@ -39,6 +39,7 @@ public class GrabberSubsystem extends SubsystemBase {
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Grabber", inputs_);
+        Logger.recordOutput("Grabber/target", target_);
         Logger.recordOutput("Grabber/rawvel", inputs_.grabberRawVelocity.in(RotationsPerSecond)) ;
     }
 
@@ -46,13 +47,13 @@ public class GrabberSubsystem extends SubsystemBase {
         return inputs_.grabberPosition ;
     }
 
-    public void setGrabberVelocity(AngularVelocity vel) {
-        io_.setGrabberVelocity(vel);
+    public void setGrabberTargetVelocity(AngularVelocity vel) {
+        io_.setGrabberTargetVelocity(vel);
     }
 
-    public void setGrabberPosition(Angle target) {
+    public void setGrabberTargetPosition(Angle target) {
         target_ = target ;
-        io_.setGrabberPosition(target);
+        io_.setGrabberTargetPosition(target);
     }
 
     public boolean isAtTarget() {
@@ -63,28 +64,40 @@ public class GrabberSubsystem extends SubsystemBase {
         io_.setGrabberMotorVoltage(v.in(Volts)) ;
     }
 
-    public boolean isCoralSeenHighRisingEdge() {
-        return inputs_.coralSensorHighRisingEdge ;
+    public Angle getGrabberPositionAtCoralLowEdge() {
+        return inputs_.grabberPositionCoralSensorLowEdge ;
+    }
+    
+    public Angle getGrabberPositionAtCoralHighEdge() {
+        return inputs_.grabberPositionCoralSensorHighEdge ;
     }
 
-    public boolean isCoralSeenLowRisingEdge() {
+    public boolean coralHighSensorRisingEdge() {
+        return inputs_.coralHighRisingEdge ;
+    }
+
+    public boolean coralHighSensorFallingEdge() {
+        return inputs_.coralHighFallingEdge ;
+    }    
+
+    public boolean coralLowSensorRisingEdge() {
         return inputs_.coralSensorLowRisingEdge ;
     }
 
-    public boolean isCoralSeenLowFallingEdge() {
+    public boolean coralLowSensorFallingEdge() {
         return inputs_.coralSensorLowFallingEdge ;
     }
 
-    public boolean isCoralSeenFunnelRisingEdge() {
-        return inputs_.coralSensorFunnelRisingEdge ;
+    public boolean coralFunnelRisingEdge() {
+        return inputs_.coralFunnelRisingEdge ;
     }
 
-    public boolean isAlgaeHighSeenRisingEdge() {
-        return inputs_.algaeSensorRisingEdgeHigh ;
+    public boolean algaeHighRisingEdge() {
+        return inputs_.algaeHighRisingEdge ;
     }
 
-    public boolean isAlgaeLowSeenRisingEdge() {
-        return inputs_.algaeSensorRisingEdgeLow ;
+    public boolean algaeLowRisingEdge() {
+        return inputs_.algaeLowRisingEdge ;
     }
 
     public Command grabberSysIdQuasistatic(SysIdRoutine.Direction dir) {

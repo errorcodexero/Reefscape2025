@@ -1,6 +1,10 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -26,7 +30,7 @@ public class WaitForCoralCmd extends Command {
         //
         // Turn on the roller motors
         //
-        grabber_.setGrabberVelocity(GrabberConstants.Collect.kVelocity) ;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Collect.kVelocity) ;
         state_ = State.WaitingForSensor ;
     }
 
@@ -34,9 +38,10 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForSensor:
-                if (grabber_.isCoralSeenLowFallingEdge()) {
-                    Angle a = grabber_.getPosition() ;
-                    grabber_.setGrabberPosition(a.plus(GrabberConstants.Collect.kBackup)) ;
+                if (grabber_.coralLowSensorFallingEdge()) {
+                    grabber_.setGrabberVoltage(Volts.of(0.0)) ;
+                    // Angle a = grabber_.getPosition() ;
+                    // grabber_.setGrabberTargetPosition(a.plus(GrabberConstants.Collect.kBackup)) ;
                     state_ = State.Backup ;
                 }
                 break ;
@@ -50,6 +55,8 @@ public class WaitForCoralCmd extends Command {
             case Interrupted:
                 break ;
         }
+
+        Logger.recordOutput("Grabber/State", state_.toString()) ;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class WaitForCoralCmd extends Command {
     public void end(boolean interrupted) {
         if (interrupted) {
             state_ = State.Interrupted ;
-            grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+            grabber_.setGrabberTargetVelocity(RevolutionsPerSecond.of(0.0)) ;
         }
     }
 }

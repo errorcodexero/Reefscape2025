@@ -3,9 +3,7 @@ package frc.robot.subsystems.manipulator;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -14,7 +12,6 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 
 public class ManipulatorConstants {
@@ -53,6 +50,9 @@ public class ManipulatorConstants {
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
 
+        // The starting angle of the ARM as seen by the absolute encoder
+        public static final Angle kStartAbsEncoderAngle = Degrees.of(-45.0) ;
+
         public class PID {
             public static final double kP = 24.0 ; 
             public static final double kI = 0.0 ;
@@ -71,8 +71,8 @@ public class ManipulatorConstants {
 
         public class ThruBoreEncoder {
             public static final int kDutyCyclePin = 0 ;
-            public static final double kRobotMax = 1.0 ;
-            public static final double kRobotMin = 0.0 ;
+            public static final double kRobotMax = 180.0 ;
+            public static final double kRobotMin = -180.0 ;
             public static final double kEncoderMax = 1.0 ;
             public static final double kEncoderMin = 0.0 ;
             public static final double kRobotCalibrationValue = 0.0 ;
@@ -89,26 +89,22 @@ public class ManipulatorConstants {
         public static final boolean kInverted = false; 
 
         // Mapping from motor turns to linear height
-        public static final double kMotorRevsToHeightMeters = 42.375 ;
+        public static final double kMotorRevsPerMeters = 42.375 ;
 
         // Current limit
         public static final Current kCurrentLimit = Amps.of(40.0) ;
 
-        // Gear ratio between the motor and the wheel that the cable wraps around
-        
-        public static final double kGearRatio = 34.0 ;
-
-        // The carriage mass
-        public static final Mass kCarriageMass = Kilograms.of(4.0) ;
-
-        // The drum radius in meters
-        public static final Distance kDrumRadius = Inches.of(2.0) ;
+        // Gear ratio between the motor and the wheel that the cable wraps around       
+        public static final double kGearRatio = 36.0 ;
 
         // The maximum height of the elevator
         public static final Distance kMaxHeight = Centimeters.of(177.0) ;
 
         // The minimum height of the elevator
         public static final Distance kMinHeight = Centimeters.of(59.0) ;
+
+        // The MOI of the elevator, used only for simulation
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.004) ;
 
         public class PID {
             public static final double kP = 8.0; 
@@ -121,9 +117,10 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(16) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32) ;
+            // public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(16) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(1000) ;
-            public static final double kJerk = 0.0 ;
+            public static final double kJerk = 8000.0 ;
         }
     } 
 }

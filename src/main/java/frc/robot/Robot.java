@@ -113,7 +113,6 @@ public class Robot extends LoggedRobot {
         if (Robot.useXeroSimulator()) {
             String str = "collect-place" ;
             SimulationEngine.initializeSimulator(this);
-            addRobotSimulationModels();
             SimulationEngine.getInstance().initAll(str);
         }        
         
@@ -141,12 +140,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    public void addRobotSimulationModels() {
-        ModelFactory factory = SimulationEngine.getInstance().getModelFactory();
-        factory.registerModel("oi2025", "frc.simulator.models.OI2025");
-        factory.registerModel("grabber", "frc.simulator.models.GrabberModel");  
-    }
-    
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {

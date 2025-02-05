@@ -57,7 +57,7 @@ public class ClimberIOHardware implements ClimberIO {
     }
 
     public void setClimberPosition(Angle target) {
-        ControlRequest ctrl = new MotionMagicVoltage(target.div(ClimberConstants.ClimberArm.kGearRatio)) ;
+        ControlRequest ctrl = new MotionMagicVoltage(target.div(ClimberConstants.ClimberArm.kGearRatio)).withEnableFOC(true) ;
         motor_.setControl(ctrl) ;
     }
 

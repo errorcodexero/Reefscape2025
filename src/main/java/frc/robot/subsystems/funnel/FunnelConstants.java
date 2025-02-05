@@ -17,7 +17,7 @@ public class FunnelConstants {
     public class Funnel {
        
         // motor CAN ID
-        public static final int kMotorCANID = 4; 
+        public static final int kMotorCANID = 2; 
 
         // gear ratio- degrees per rev
         public static final double kGearRatio = 0; 

@@ -21,32 +21,32 @@ public interface GrabberIO {
         public boolean coralSensorLow ;
         public boolean coralSensorLowRisingEdge ;
         public boolean coralSensorLowFallingEdge ;
-        public double coralSensorPositionLow ;
+        public Angle grabberPositionCoralSensorLowEdge ;
 
-        public boolean coralSensorHigh ;
-        public boolean coralSensorHighRisingEdge ;
-        public boolean coralSensorHighFallingEdge ;
-        public double coralSensorPositionHigh ;
+        public boolean coralHigh ;
+        public boolean coralHighRisingEdge ;
+        public boolean coralHighFallingEdge ;
+        public Angle grabberPositionCoralSensorHighEdge ;
 
-        public boolean coralSensorFunnel ;
-        public boolean coralSensorFunnelRisingEdge ;
-        public boolean coralSensorFunnelFallingEdge ;
+        public boolean coralFunnel ;
+        public boolean coralFunnelRisingEdge ;
+        public boolean coralFunnelFallingEdge ;
 
-        public boolean algaeSensorHigh ;
-        public boolean algaeSensorRisingEdgeHigh ;
-        public boolean algaeSensorFallingEdgeHigh;
+        public boolean algaeHigh ;
+        public boolean algaeHighRisingEdge ;
+        public boolean algaeHighFallingEdge;
 
-        public boolean algaeSensorLow ;
-        public boolean algaeSensorRisingEdgeLow ;
-        public boolean algaeSensorFallingEdgeLow ;
+        public boolean algaeLow ;
+        public boolean algaeLowRisingEdge ;
+        public boolean algaeLowFallingEdge ;
     }
 
     // update all inputs
     public default void updateInputs(GrabberIOInputs inputs) {}
 
     // grabber related methods
-    public default void setGrabberVelocity(AngularVelocity target) {}
-    public default void setGrabberPosition(Angle target) {}
+    public default void setGrabberTargetVelocity(AngularVelocity target) {}
+    public default void setGrabberTargetPosition(Angle target) {}
     public default void setGrabberMotorVoltage(double volts) {}
     public default void logGrabberMotor(SysIdRoutineLog log) {} 
 }

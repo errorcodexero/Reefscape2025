@@ -48,7 +48,7 @@
                     }
                 }
             ]
-        },
+        },      
         {
             "time" : 7.5,
             "events" :
@@ -78,6 +78,20 @@
             ]
         },
         {
+            "time" : 8.1,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "low-coral-sensor" : false
+                    }
+                }
+            ]
+        },          
+        {
             "time" : 8.2,
             "events" :
             [
@@ -87,6 +101,20 @@
                     "values" : 
                     {
                         "coral-place" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.6,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "low-coral-sensor" : true
                     }
                 }
             ]

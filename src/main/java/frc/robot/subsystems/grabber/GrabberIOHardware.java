@@ -1,7 +1,9 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Revolutions;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.xerosw.util.DigitalInterrupt;
@@ -17,12 +19,22 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import frc.robot.Robot;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 
 public class GrabberIOHardware implements GrabberIO {
     private final static double kPositionScale = 100000.0 ;
@@ -34,6 +46,8 @@ public class GrabberIOHardware implements GrabberIO {
     private StatusSignal<AngularVelocity> grabber_velocity_ ;
     private StatusSignal<Current> grabber_current_ ;
     private StatusSignal<Voltage> grabber_voltage_ ;
+
+    private DCMotorSim grabber_sim_ ;
 
     private DigitalInterrupt coral_sensor_low_ ;
     private DigitalInterrupt coral_sensor_high_ ;
@@ -56,42 +70,44 @@ public class GrabberIOHardware implements GrabberIO {
     }
     
     public void updateInputs(GrabberIOInputs inputs) {
-        inputs.grabberPosition = grabber_position_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
-        inputs.grabberVelocity = grabber_velocity_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
+        inputs.grabberPosition = grabber_position_.refresh().getValue().div(GrabberConstants.Grabber.kGearRatio) ;
+        inputs.grabberVelocity = grabber_velocity_.refresh().getValue().div(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberRawVelocity = grabber_velocity_.refresh().getValue() ;
         inputs.grabberCurrent = grabber_current_.refresh().getValue() ;
         inputs.grabberVoltage = grabber_voltage_.refresh().getValue() ;
 
-        inputs.algaeSensorLow = algae_sensor_low_.getInput().get() ;
-        inputs.algaeSensorRisingEdgeLow = algae_sensor_low_.risingEdge();
-        inputs.algaeSensorFallingEdgeLow = algae_sensor_low_.fallingEdge();
+        inputs.algaeLow = algae_sensor_low_.getInput().get() ;
+        inputs.algaeLowRisingEdge = algae_sensor_low_.risingEdge();
+        inputs.algaeLowFallingEdge = algae_sensor_low_.fallingEdge();
 
-        inputs.algaeSensorHigh = algae_sensor_high_.getInput().get() ;
-        inputs.algaeSensorRisingEdgeHigh = algae_sensor_high_.risingEdge();
-        inputs.algaeSensorFallingEdgeHigh = algae_sensor_high_.fallingEdge();
+        inputs.algaeHigh = algae_sensor_high_.getInput().get() ;
+        inputs.algaeHighRisingEdge = algae_sensor_high_.risingEdge();
+        inputs.algaeHighFallingEdge = algae_sensor_high_.fallingEdge();
 
         inputs.coralSensorLow = coral_sensor_low_.getInput().get() ;
         inputs.coralSensorLowRisingEdge = coral_sensor_low_.risingEdge();
         inputs.coralSensorLowFallingEdge = coral_sensor_low_.fallingEdge();
-        inputs.coralSensorPositionLow = coral_sensor_low_.getCount() ;
+        inputs.grabberPositionCoralSensorLowEdge = Rotations.of(coral_sensor_low_.getCount() / kPositionScale) ;
 
-        inputs.coralSensorHigh = coral_sensor_high_.getInput().get() ;
-        inputs.coralSensorHighRisingEdge = coral_sensor_high_.risingEdge();
-        inputs.coralSensorHighFallingEdge = coral_sensor_high_.fallingEdge();
-        inputs.coralSensorPositionHigh = coral_sensor_high_.getCount() ;
+        inputs.coralHigh = coral_sensor_high_.getInput().get() ;
+        inputs.coralHighRisingEdge = coral_sensor_high_.risingEdge();
+        inputs.coralHighFallingEdge = coral_sensor_high_.fallingEdge();
+        inputs.grabberPositionCoralSensorHighEdge = Rotations.of(coral_sensor_high_.getCount() / kPositionScale) ;
 
-        inputs.coralSensorFunnel = coral_sensor_funnel_.getInput().get() ;
-        inputs.coralSensorFunnelRisingEdge = coral_sensor_funnel_.risingEdge();
-        inputs.coralSensorFunnelFallingEdge = coral_sensor_funnel_.fallingEdge();
+        inputs.coralFunnel = coral_sensor_funnel_.getInput().get() ;
+        inputs.coralFunnelRisingEdge = coral_sensor_funnel_.risingEdge();
+        inputs.coralFunnelFallingEdge = coral_sensor_funnel_.fallingEdge();
+
+        simulateGrabber();
     }
 
-    public void setGrabberVelocity(AngularVelocity target) {
-        ControlRequest ctrl = new MotionMagicVelocityVoltage(target.div(GrabberConstants.Grabber.kGearRatio)) ;
+    public void setGrabberTargetVelocity(AngularVelocity target) {
+        ControlRequest ctrl = new MotionMagicVelocityVoltage(target.times(GrabberConstants.Grabber.kGearRatio)).withSlot(0).withEnableFOC(true) ;
         grabber_motor_.setControl(ctrl) ;
     }
 
-    public void setGrabberPosition(Angle target) {
-        ControlRequest ctrl = new MotionMagicVoltage(target.div(GrabberConstants.Grabber.kGearRatio)).withSlot(1) ;
+    public void setGrabberTargetPosition(Angle target) {
+        ControlRequest ctrl = new MotionMagicVoltage(target.times(GrabberConstants.Grabber.kGearRatio)).withSlot(1).withEnableFOC(true) ;
         grabber_motor_.setControl(ctrl) ;
     }
 
@@ -167,5 +183,23 @@ public class GrabberIOHardware implements GrabberIO {
         rollerMotionMagicConfigs.MotionMagicAcceleration = GrabberConstants.Grabber.MotionMagic.kMaxAcceleration;
         rollerMotionMagicConfigs.MotionMagicJerk = GrabberConstants.Grabber.MotionMagic.kJerk;
         TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "apply", () -> grabber_motor_.getConfigurator().apply(rollerMotionMagicConfigs)) ;
+
+        if (Robot.isSimulation()) {
+            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
+                                                                              GrabberConstants.Grabber.kMOI.in(KilogramSquareMeters), 
+                                                                              GrabberConstants.Grabber.kGearRatio) ;
+            grabber_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(1)) ;
+        }
     }    
+
+    private void simulateGrabber() {
+        TalonFXSimState st = grabber_motor_.getSimState() ;
+        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+
+        Voltage mv = st.getMotorVoltageMeasure() ;
+        grabber_sim_.setInputVoltage(mv.in(Volts)) ;
+        grabber_sim_.update(0.02) ;
+        st.setRawRotorPosition(grabber_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
+        st.setRotorVelocity(grabber_sim_.getAngularVelocity().times(ManipulatorConstants.Arm.kGearRatio)) ;        
+    }
 }

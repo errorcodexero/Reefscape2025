@@ -14,7 +14,7 @@ public class SetGrabberVelocityCmd extends Command {
 
     @Override
     public void initialize() {
-        g_.setGrabberVelocity(v_) ;
+        g_.setGrabberTargetVelocity(v_) ;
     }
 
     @Override
