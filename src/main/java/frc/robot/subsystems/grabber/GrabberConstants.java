@@ -24,18 +24,18 @@ public class GrabberConstants {
         public static final Current kCurrentLimit = Amps.of(40.0) ;
 
         public class PID {
-            public static final double kP = 0.0; 
+            public static final double kP = 0.75; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
-            public static final double kV = 0.0 ;
+            public static final double kV = 0.14 ;
             public static final double kA = 0.0 ;
             public static final double kG = 0.0 ;
-            public static final double kS = 0.0 ;
+            public static final double kS = 0.36102 ;
         }
 
         public class MotionMagic {
-            public static final double kMaxVelocity = 0.0 ;
-            public static final double kMaxAcceleration = 0.0 ;
+            public static final double kMaxVelocity = 100.0 ;
+            public static final double kMaxAcceleration = 100.0 ;
             public static final double kJerk = 0.0 ;
         }
     }   
@@ -49,8 +49,8 @@ public class GrabberConstants {
     }
 
     public class Collect {
-        public static final AngularVelocity kVelocity = RevolutionsPerSecond.of(10.0) ;
-        public static final Time kDelay = Milliseconds.of(250) ;
+        public static final AngularVelocity kVelocity = RevolutionsPerSecond.of(20.0) ;
+        public static final Time kDelay = Milliseconds.of(0) ;
     }
 
     public class Place {

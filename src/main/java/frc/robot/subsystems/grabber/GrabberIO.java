@@ -16,6 +16,7 @@ public interface GrabberIO {
         public Voltage grabberVoltage ;
         public Angle grabberPosition ;
         public AngularVelocity grabberVelocity ;
+        public AngularVelocity grabberRawVelocity ;
 
         public boolean coralSensorLow ;
         public boolean coralSensorLowRisingEdge ;

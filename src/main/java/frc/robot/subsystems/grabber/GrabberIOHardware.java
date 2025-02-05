@@ -56,6 +56,7 @@ public class GrabberIOHardware implements GrabberIO {
     public void updateInputs(GrabberIOInputs inputs) {
         inputs.grabberPosition = grabber_position_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
         inputs.grabberVelocity = grabber_velocity_.refresh().getValue().times(GrabberConstants.Grabber.kGearRatio) ;
+        inputs.grabberRawVelocity = grabber_velocity_.refresh().getValue() ;
         inputs.grabberCurrent = grabber_current_.refresh().getValue() ;
         inputs.grabberVoltage = grabber_voltage_.refresh().getValue() ;
 

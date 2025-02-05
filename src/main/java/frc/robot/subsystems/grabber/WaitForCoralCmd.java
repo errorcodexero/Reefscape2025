@@ -1,6 +1,9 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.XeroTimer;
@@ -37,14 +40,14 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForSensor:
-                if (grabber_.isCoralSeenLowRisingEdge()) {
+                if (grabber_.isCoralSeenLowFallingEdge()) {
                     wait_timer_.start() ;
                     state_ = State.WaitingForDelay ;
                 }
                 break ;
             case WaitingForDelay:
                 if (wait_timer_.isExpired()) {
-                    grabber_.setGrabberVelocity(RevolutionsPerSecond.of(0.0)) ;
+                    grabber_.setGrabberVoltage(Volts.of(0.0)) ;
                     grabber_.setGP(GamePieceLocation.Coral);
                     state_ = State.Done ;
                 }
@@ -53,6 +56,7 @@ public class WaitForCoralCmd extends Command {
             case Interrupted:
                 break ;
         }
+        Logger.recordOutput("Grabber/state", state_.toString()) ;
     }
 
     @Override

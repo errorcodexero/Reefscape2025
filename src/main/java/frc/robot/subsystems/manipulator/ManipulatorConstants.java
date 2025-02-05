@@ -71,12 +71,12 @@ public class ManipulatorConstants {
 
         public class ThruBoreEncoder {
             public static final int kDutyCyclePin = 0 ;
-            public static final double kRobotMax = 90 ;
-            public static final double kRobotMin = -180 ;
-            public static final double kEncoderMax = 2652 ;
-            public static final double kEncoderMin = 1104 ;
+            public static final double kRobotMax = 1.0 ;
+            public static final double kRobotMin = 0.0 ;
+            public static final double kEncoderMax = 1.0 ;
+            public static final double kEncoderMin = 0.0 ;
             public static final double kRobotCalibrationValue = 0.0 ;
-            public static final double kEncoderCalibrationValue = 2117 ;
+            public static final double kEncoderCalibrationValue = 0.0 ;
         }
     }
 

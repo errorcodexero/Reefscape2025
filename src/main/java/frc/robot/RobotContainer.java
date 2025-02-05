@@ -63,6 +63,7 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -266,8 +267,9 @@ public class RobotContainer {
         else {
             configureDriveBindings();
 
+            gamepad_.leftTrigger().onTrue(new WaitForCoralCmd(grabber_)) ;
             // gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
-            // // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
+            // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
             // gamepad_.rightTrigger().onTrue(new SetGrabberVelocityCmd(grabber_, Volts.of(6.0))) ;
             // gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
             
@@ -359,10 +361,15 @@ public class RobotContainer {
         // gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
         // gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
 
-        gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
-        gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;
-        gamepad_.x().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kForward)) ;
-        gamepad_.y().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kReverse)) ;
+        // gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
+        // gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;
+        // gamepad_.x().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kForward)) ;
+        // gamepad_.y().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kReverse)) ;
+
+        gamepad_.a().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(grabber_.grabberSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(grabber_.grabberSysIdDynamic(Direction.kReverse)) ;
     }
     
     /**
