@@ -23,7 +23,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -57,8 +56,6 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
-import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -87,7 +84,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    private ManipulatorSubsystem manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+    private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
 
     // Controller
@@ -98,7 +95,11 @@ public class RobotContainer {
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-
+        try {
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+        }catch(Exception e){
+            System.out.println("Failed to create Manipulator Subsystem: " + e.getMessage());
+        }
         /**
          * Subsystem setup
          */
