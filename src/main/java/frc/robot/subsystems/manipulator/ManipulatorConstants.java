@@ -1,8 +1,9 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 
 public class ManipulatorConstants {
@@ -10,7 +11,7 @@ public class ManipulatorConstants {
     public class Arm {
        
         // motor CAN ID
-        public static final int kMotorCANID = 0; 
+        public static final int kMotorCANID = 2; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
@@ -19,8 +20,8 @@ public class ManipulatorConstants {
 
         public static final String kCANBusName = null; 
 
-        // calculate based on distance at the end of the arm
-        // (use tangent)
+        public static final Current kCurrentLimit = null; 
+
         public static final Angle kPosTolerance = null;
 
         public class PID {
@@ -43,7 +44,8 @@ public class ManipulatorConstants {
     public class Elevator {
 
         // motor CAN ID
-        public static final int kMotorCANID = 0;
+        public static final int kMotorCANID = 3;
+        public static final int kMotorCANID2 = 4;
 
         // if motor is inverted 
         public static final boolean kInverted = false;
@@ -52,6 +54,8 @@ public class ManipulatorConstants {
         public static final double kMetersPerRev = 0; 
 
         public static final String kCANBusName = null; 
+
+        public static final Current kCurrentLimit = null; 
 
         public static final Distance kPosTolerance = Meters.of(0.01); 
 

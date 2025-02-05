@@ -21,6 +21,6 @@ public interface ClimberIO {
     //Update Inputs
     public default void updateInputs(ClimberIOInputsAutoLogged inputs) {}
 
-    public default void moveClimber(Angle angle) {}
+    public void setClimberPosition(Angle angle);
 
 }

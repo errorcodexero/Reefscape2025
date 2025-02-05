@@ -27,7 +27,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.CompTunerConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
 import frc.simulator.engine.SimulationEngine;
 
@@ -91,10 +91,10 @@ public class Robot extends LoggedRobot {
         // Check for valid swerve config
         var modules =
         new SwerveModuleConstants[] {
-            TunerConstants.FrontLeft,
-            TunerConstants.FrontRight,
-            TunerConstants.BackLeft,
-            TunerConstants.BackRight
+            CompTunerConstants.FrontLeft,
+            CompTunerConstants.FrontRight,
+            CompTunerConstants.BackLeft,
+            CompTunerConstants.BackRight
         };
 
         for (var constants : modules) {

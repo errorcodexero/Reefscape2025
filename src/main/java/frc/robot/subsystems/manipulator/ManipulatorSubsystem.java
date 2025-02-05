@@ -1,5 +1,8 @@
 package frc.robot.subsystems.manipulator;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
@@ -15,7 +18,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private Distance target_height_ ;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
-    private final Alert elevatorDisconnected_ = new Alert("Elevator motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);
 
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
@@ -28,7 +32,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
         Logger.processInputs("Manipulator", inputs_);
 
         armDisconnected_.set(!inputs_.armReady);
-        elevatorDisconnected_.set(!inputs_.elevatorReady);
+        elevator1Disconnected_.set(!inputs_.elevator1Ready);
+        elevator2Disconnected_.set(!inputs_.elevator2Ready);
     }
 
     public Angle getArmPosition() {
@@ -51,7 +56,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public boolean doesCrossKZ(Angle current, Angle target) {
         Angle keepout_min = ManipulatorConstants.Keepout.kKeepoutMinAngle; 
-        Angle keepout_max= ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
+        Angle keepout_max = ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
 
         if(current.lt(keepout_min) && target.gt(keepout_max)) {
             return true; 
@@ -62,14 +67,14 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public boolean isElevAtTarget() {
-        if(inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) {
+        if((inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) && (inputs_.elevatorVelocity == MetersPerSecond.of(0))) {
             return true; 
         }
         return false; 
     }
 
     public boolean isArmAtTarget() {
-        if(inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) {
+        if((inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) && (inputs_.armVelocity == DegreesPerSecond.of(0))) {
             return true; 
         }
         return false; 

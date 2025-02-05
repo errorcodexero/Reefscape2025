@@ -60,10 +60,14 @@ public class ClimberIOHardware implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberIOInputsAutoLogged inputs) {
-        inputs.climberPosition = climber_pos_sig_.getValue();
-        inputs.climberVelocity = climber_vel_sig_.getValue();
+        inputs.climberPosition = climber_pos_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
+        inputs.climberVelocity = climber_vel_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
         inputs.climberVoltage = climber_vol_sig_.getValue();
         inputs.climberCurrent = climber_current_sig_.getValue();
+    }
+
+    public void setClimberPosition(Angle angle) {
+        climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)));
     }
         
 }
