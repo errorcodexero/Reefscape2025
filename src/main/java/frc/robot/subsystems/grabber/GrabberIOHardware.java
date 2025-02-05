@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -141,6 +142,8 @@ public class GrabberIOHardware implements GrabberIO {
 
     public void logArmMotor(SysIdRoutineLog log) {
         // code goes here, look at documentation 
+        log.motor("grabber")
+            .voltage(Units.Volts.of(grabber_voltage_));
     }
 
     public void setGrabberMotorVoltage(double vol) {
