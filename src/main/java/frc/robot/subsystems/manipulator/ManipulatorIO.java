@@ -23,15 +23,15 @@ public interface ManipulatorIO {
         public Current armCurrent = Amps.of(0); 
         public Voltage armVoltage = Volts.of(0); 
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
-
+      
         // elevator
         public Distance elevatorPosition = Meters.of(0); 
         public LinearVelocity elevatorVelocity = MetersPerSecond.of(0); 
 
         // elevator 1
         public boolean elevator1Ready = false;
-        public Current elevator1Current = Amps.of(0);  
         public Voltage elevator1Voltage = Volts.of(0);
+        public Current elevator1Current = Amps.of(0);  
 
         // elevator 2
         public boolean elevator2Ready = false;
