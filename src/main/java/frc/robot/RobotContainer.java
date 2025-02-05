@@ -87,7 +87,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    private ManipulatorSubsystem manip_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+    private ManipulatorSubsystem manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
     private GrabberSubsystem grabber_;
 
     // Controller
@@ -273,16 +273,16 @@ public class RobotContainer {
         // Add mirrored autos
         
         
-        autoChooser_.addOption("Alliance Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manip_, false, true));
-        autoChooser_.addOption("Alliance Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manip_, true, false));
-        autoChooser_.addOption("Opposing Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manip_, true, true));
-        autoChooser_.addOption("Opposing Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manip_, false, false));
-        autoChooser_.addOption("Center Coral (alliance side station), Red", AutoCommands.centerCoralAuto(drivebase_, manip_, false, true));
-        autoChooser_.addOption("Center Coral (alliance side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manip_, true, false));
-        autoChooser_.addOption("Center Coral (opposing side station), Red", AutoCommands.centerCoralAuto(drivebase_, manip_, true, true));
-        autoChooser_.addOption("Center Coral (opposing side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manip_, false, false));
-        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manip_, true));
-        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manip_, false));
+        autoChooser_.addOption("Alliance Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false, true));
+        autoChooser_.addOption("Alliance Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, false));
+        autoChooser_.addOption("Opposing Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, true));
+        autoChooser_.addOption("Opposing Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false, false));
+        autoChooser_.addOption("Center Coral (alliance side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false, true));
+        autoChooser_.addOption("Center Coral (alliance side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, false));
+        autoChooser_.addOption("Center Coral (opposing side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, true));
+        autoChooser_.addOption("Center Coral (opposing side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false, false));
+        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manipulator_, true));
+        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manipulator_, false));
 
         autoChooser_.addOption(
             "testing driveto", 
