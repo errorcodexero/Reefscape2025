@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.*;
+
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -11,6 +13,7 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -38,7 +41,12 @@ public class GrabberIOHardware implements GrabberIO {
 
     public GrabberIOHardware() throws Exception {
 
-        grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, null, GrabberConstants.Grabber.kInverted);
+        grabber_motor_ = TalonFXFactory.createTalonFX(
+            GrabberConstants.Grabber.kMotorCANID,
+            null, GrabberConstants.Grabber.kInverted,
+            Amps.of(40),
+            Seconds.of(1)
+        );
 
         Slot0Configs grabber_pids_ = new Slot0Configs();
         grabber_pids_.kP = GrabberConstants.Grabber.PID.kP;
@@ -134,6 +142,8 @@ public class GrabberIOHardware implements GrabberIO {
 
     public void logArmMotor(SysIdRoutineLog log) {
         // code goes here, look at documentation 
+        log.motor("grabber")
+            .voltage(Units.Volts.of(grabber_voltage_));
     }
 
     public void setGrabberMotorVoltage(double vol) {

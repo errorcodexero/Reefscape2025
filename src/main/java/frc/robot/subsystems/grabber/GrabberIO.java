@@ -13,7 +13,7 @@ public interface GrabberIO {
     public static class GrabberIOInputs {
 
         // Grabber Inputs
-        public boolean grabberReady;
+        public boolean grabberReady = false;
         public Angle grabberPosition;
         public Current grabberCurrent;
         public Voltage grabberVoltage;
