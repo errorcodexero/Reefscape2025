@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class AutoCommands {
@@ -91,7 +92,7 @@ public class AutoCommands {
         );
     }
 
-    public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredY){
+    public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, boolean mirroredY){
         Distance startX = Meters.of(8.050);
         Distance startY = Meters.of(3.850);
         Angle startAngle = Rotations.of(0.5);

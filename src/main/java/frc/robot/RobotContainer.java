@@ -273,8 +273,8 @@ public class RobotContainer {
         autoChooser_.addOption("Alliance Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, false));
         autoChooser_.addOption("Opposing Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, true));
         autoChooser_.addOption("Opposing Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false, false));
-        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manipulator_, true));
-        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manipulator_, false));
+        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_, true));
+        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_, false));
         autoChooser_.addOption("Center Coral (alliance side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false, true));
         autoChooser_.addOption("Center Coral (alliance side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, false));
         autoChooser_.addOption("Center Coral (opposing side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, true));
