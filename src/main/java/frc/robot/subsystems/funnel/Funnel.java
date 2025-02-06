@@ -17,7 +17,7 @@ public class Funnel extends SubsystemBase {
     private boolean has_coral_;
 
     public Funnel(FunnelIO io) {
-        io_ = io; 
+        io_ = io;
         inputs_ = new FunnelInputsAutoLogged();
     }
 
