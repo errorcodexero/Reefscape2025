@@ -14,7 +14,7 @@ public class Funnel extends SubsystemBase {
 
     private final Alert disconnectedAlert_ = new Alert("Funnel motor is disconnected or failed to initialize!", AlertType.kError);
 
-    private boolean has_coral_;
+    private boolean hasSeenCoral_;
 
     public Funnel(FunnelIO io) {
         io_ = io; 
@@ -28,15 +28,42 @@ public class Funnel extends SubsystemBase {
 
         disconnectedAlert_.set(!inputs_.funnelReady);
 
-        has_coral_ = inputs_.coralFunnelRisingEdge; // TODO: Figure out whether or not we have a coral, is this sufficient?s
+        hasSeenCoral_ = inputs_.coralFunnelSensor || inputs_.coralFunnelRisingEdge;
     }
     
     public void runPosition(Angle angle) {
         io_.setPosition(angle);
     }
 
-    public boolean hasCoral() {
-        return has_coral_;
+    /**
+     * Resets the value returned by {@link #hasSeenCoral()}. (If the Funnel has seen Coral since a call of this method)
+     * This is intended to be called at the end of a collect cycle.
+     */
+    public void resetSeenCoral() {
+        hasSeenCoral_ = false;
+    }
+
+    /**
+     * Finds out if the Funnel has seen Coral since the last {@link #resetSeenCoral()}.
+     * @return Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
+     * @implNote A convenience method that automatically resets this flag for you, is {@link #hasSeenCoralWithReset()}
+     */
+    public boolean hasSeenCoral() {
+        return hasSeenCoral_;
+    }
+
+    /**
+     * Functionally the same as {@link #hasSeenCoral()}, but in the event that you have seen coral,
+     * this automatically resets the flag for you.
+     * @return Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
+     */
+    public boolean hasSeenCoralWithReset() {
+        if (hasSeenCoral()) {
+            resetSeenCoral();
+            return true;
+        }
+
+        return false;
     }
 
 }
