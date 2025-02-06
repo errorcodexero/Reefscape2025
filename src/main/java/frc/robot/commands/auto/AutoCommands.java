@@ -42,11 +42,12 @@ public class AutoCommands {
 
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
+            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Side Coral 1", mirroredX),
+                DriveCommands.followPathCommand("Side Coral 1", mirroredX)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
-                DriveCommands.setPoseCommand(driveSub, startPose)
+                
             ),
             // Place Coral command here
             Commands.parallel(
@@ -109,11 +110,11 @@ public class AutoCommands {
         }
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
+            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1", true),
+                DriveCommands.followPathCommand("Algae 1", true)//,
                 ////new GotoCmd(manipSub)// add positions later, L4 place
-                // add has coral later\
-                DriveCommands.setPoseCommand(driveSub, startPose)
+                // add has coral later
             ),
             // Place Coral command here,
             Commands.parallel(
@@ -183,11 +184,11 @@ public class AutoCommands {
 
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
+            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Center Coral 1", mirroredX),
+                DriveCommands.followPathCommand("Center Coral 1", mirroredX)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
-                DriveCommands.setPoseCommand(driveSub, startPose)
             ),
             // Place Coral command here
             Commands.parallel(
@@ -251,11 +252,11 @@ public class AutoCommands {
 
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
+            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Just Coral 1", true),
+                DriveCommands.followPathCommand("Just Coral 1", true)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
-                DriveCommands.setPoseCommand(driveSub, startPose)
             ),
             // Place Coral command here
             Commands.parallel(
