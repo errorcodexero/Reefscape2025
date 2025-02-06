@@ -94,12 +94,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser_;
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
-        try {
-            manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-        }catch(Exception e){
-            System.out.println("Failed to create Manipulator Subsystem: " + e.getMessage());
-        }
+    public RobotContainer () {
         /**
          * Subsystem setup
          */
@@ -278,12 +273,14 @@ public class RobotContainer {
         autoChooser_.addOption("Alliance Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, false));
         autoChooser_.addOption("Opposing Side Coral, Red", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true, true));
         autoChooser_.addOption("Opposing Side Coral, Blue", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false, false));
+        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manipulator_, true));
+        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manipulator_, false));
         autoChooser_.addOption("Center Coral (alliance side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false, true));
         autoChooser_.addOption("Center Coral (alliance side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, false));
         autoChooser_.addOption("Center Coral (opposing side station), Red", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true, true));
         autoChooser_.addOption("Center Coral (opposing side station), Blue", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false, false));
-        autoChooser_.addOption("Algae, Red", AutoCommands.algaeAuto(drivebase_, manipulator_, true));
-        autoChooser_.addOption("Algae, Blue", AutoCommands.algaeAuto(drivebase_, manipulator_, false));
+        autoChooser_.addOption("Just Coral, Red", AutoCommands.justCoralAuto(drivebase_, manipulator_, true));
+        autoChooser_.addOption("Just Coral, Blue", AutoCommands.justCoralAuto(drivebase_, manipulator_, false));
 
         autoChooser_.addOption(
             "testing driveto", 

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.182386363636363,
-        "y": 4.538536931818178
+        "x": 6.282102272727273,
+        "y": 4.538536931818181
       },
       "isLocked": false,
       "linkedName": "Collection station"
@@ -20,8 +20,8 @@
         "y": 5.1811655405405395
       },
       "prevControl": {
-        "x": 6.48153409090909,
-        "y": 4.727997159090909
+        "x": 5.933096590909091,
+        "y": 5.934559659090909
       },
       "nextControl": null,
       "isLocked": false,

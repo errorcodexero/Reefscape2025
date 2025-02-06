@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.14839527027027,
-        "y": 2.888597972972972
+        "x": 5.294914772727273,
+        "y": 2.953053977272727
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.466058273873866,
-        "y": 1.4854771448274184
+        "x": 5.76332315529675,
+        "y": 3.1277956721755737
       },
       "isLocked": false,
-      "linkedName": "1 alliance side"
+      "linkedName": "Center Coral 5"
     },
     {
       "anchor": {
-        "x": 6.331960227272727,
-        "y": 0.519985795454545
+        "x": 1.6008445945945946,
+        "y": 0.7442567567567562
       },
       "prevControl": {
-        "x": 4.870179667548882,
-        "y": 1.8617470640607325
+        "x": 1.2781046216242409,
+        "y": 0.5544045355343736
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Collection station"
+      "linkedName": "Station Close"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.5,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 53.719746506237335
   },
   "reversed": false,
-  "folder": "Center Algae",
+  "folder": "Center Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.95360816780152
+    "rotation": 120.80144597613692
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

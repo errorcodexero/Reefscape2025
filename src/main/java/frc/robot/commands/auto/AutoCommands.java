@@ -32,7 +32,8 @@ public class AutoCommands {
         if(mirroredY) {
             startX = Meters.of(17.550 - 8.050);
             startAngle = Rotations.of(0);
-            //mirroredX = !mirroredX; /// Might not be needed
+        } else {
+            mirroredX = !mirroredX; // Might not be needed
         }
 
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
@@ -104,20 +105,20 @@ public class AutoCommands {
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1", mirroredY), // might not be needed, might just be false
+                DriveCommands.followPathCommand("Algae 1", true), // might not be needed, might just be false
                 ////new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later\
                 DriveCommands.setPoseCommand(driveSub, startPose)
             ),
             // Place Coral command here,
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1.5", mirroredY)//,
+                DriveCommands.followPathCommand("Algae 1.5", true)//,
                 //new GotoCmd(manipSub)// add positions later, Algae L2 collect
                 // Might need to do the sequence thing, but probably not
             ),
             //Collect Algae L2 here,
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 2", mirroredY),
+                DriveCommands.followPathCommand("Algae 2", true),
                 Commands.sequence(
                     Commands.waitSeconds(0.4)//,
                     //new GotoCmd(manipSub)
@@ -126,12 +127,12 @@ public class AutoCommands {
             ),
             // Score algae here
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 3", mirroredY)//,
+                DriveCommands.followPathCommand("Algae 3", true)//,
                 //new GotoCmd(manipSub)// add positions later, L3 algae collect
             ), 
             // Collect algae L3 command here
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 4", mirroredY),
+                DriveCommands.followPathCommand("Algae 4", true),
                 Commands.sequence(
                     Commands.waitSeconds(0.4)//,
                     //new GotoCmd(manipSub)
@@ -140,12 +141,12 @@ public class AutoCommands {
             ),
             // Score algae
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 5", mirroredY)//,
+                DriveCommands.followPathCommand("Algae 5", true)//,
                 //new GotoCmd(manipSub)// add positions later, L3 collect algae
             ),
             // Algae L3 collect here
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 6", mirroredY),
+                DriveCommands.followPathCommand("Algae 6", true),
                 Commands.sequence(
                     Commands.waitSeconds(0.4)//,
                     //new GotoCmd(manipSub)
@@ -170,7 +171,8 @@ public class AutoCommands {
         if(mirroredY) {
             startX = Meters.of(17.550 - 8.050);
             startAngle = Rotations.of(0);
-            //mirroredX = !mirroredX; /// Might not be needed
+        } else {
+            mirroredX = !mirroredX; // Might not be needed
         }
 
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
@@ -208,8 +210,55 @@ public class AutoCommands {
             Commands.parallel(
                 DriveCommands.followPathCommand("Center Coral 5", mirroredX)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
+            ),
+            // Place Coral command here
+            Commands.parallel(
+                DriveCommands.followPathCommand("Center Coral 6", mirroredX),
+                Commands.sequence(
+                    Commands.waitSeconds(0.4)//,
+                    //new GotoCmd(manipSub)
+                )
+                // add positions later, station collect
+            ),
+            // Wait for coral command here
+            Commands.parallel(
+                DriveCommands.followPathCommand("Center Coral 7", mirroredX)//,
+                //new GotoCmd(manipSub)// add positions later, L4 place
             )
             // Place Coral command here
+        );
+    }
+
+    public static Command justCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredY){
+        Distance startX = Meters.of(8.050);
+        Distance startY = Meters.of(3.850);
+        Angle startAngle = Rotations.of(0.5);
+        // 4.015 (y) 8.030
+        // 8.775 (x) 17.550
+        if(mirroredY) {
+            startX = Meters.of(17.550 - 8.050);
+            startAngle = Rotations.of(0);
+            startY = Meters.of(8.030 - 3.850);
+            //mirroredX = !mirroredX; /// Might not be needed
+        }
+
+        Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
+        return Commands.sequence(
+            Commands.parallel(
+                DriveCommands.followPathCommand("Just Coral 1", true),
+                //new GotoCmd(manipSub)// add positions later, L4 place
+                // add has coral later
+                DriveCommands.setPoseCommand(driveSub, startPose)
+            ),
+            // Place Coral command here
+            Commands.parallel(
+                DriveCommands.followPathCommand("Just Coral 2", true),
+                Commands.sequence(
+                    Commands.waitSeconds(0.4)//,
+                    //new GotoCmd(manipSub)
+                )
+                // add positions later, station collect
+            )
         );
     }
 

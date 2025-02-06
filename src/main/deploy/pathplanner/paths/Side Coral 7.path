@@ -8,34 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Side Coral 7.path
-        "x": 1.6949353318710194,
-        "y": 1.015934359656041
-========
-        "x": 1.757727384340691,
-        "y": 1.097669841337107
->>>>>>>> main:src/main/deploy/pathplanner/paths/Side Coral 5.path
+        "x": 1.323466596338488,
+        "y": 0.218131656630008
       },
       "isLocked": false,
-      "linkedName": "Station Close"
+      "linkedName": null
     },
     {
       "anchor": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Side Coral 7.path
-        "x": 3.1809375,
-        "y": 3.8504971590909087
+        "x": 3.175,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 2.5590812089613926,
-        "y": 2.5684463255692194
-========
-        "x": 3.2,
-        "y": 4.0
-      },
-      "prevControl": {
-        "x": 2.5031254140221355,
-        "y": 2.6662435219249527
->>>>>>>> main:src/main/deploy/pathplanner/paths/Side Coral 5.path
+        "x": 3.0025992381580044,
+        "y": 3.461202935313655
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,7 +48,7 @@
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.719746506237335
+    "rotation": 53.72
   },
   "useDefaultConstraints": false
 }
