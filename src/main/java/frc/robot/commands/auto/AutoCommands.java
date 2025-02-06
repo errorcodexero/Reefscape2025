@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.drive.DriveCommands;
@@ -21,7 +23,8 @@ public class AutoCommands {
      * TODO: put in numbers and other commands when they are available.
      */
 
-    public static Command sideCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX, boolean mirroredY){
+    public static Command sideCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
+        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
         Distance startX = Meters.of(8.050);
         Distance startY = Meters.of(2.800);
         Angle startAngle = Rotations.of(0.5);
@@ -92,7 +95,8 @@ public class AutoCommands {
         );
     }
 
-    public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, boolean mirroredY){
+    public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub){
+        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
         Distance startX = Meters.of(8.050);
         Distance startY = Meters.of(3.850);
         Angle startAngle = Rotations.of(0.5);
@@ -106,7 +110,7 @@ public class AutoCommands {
         Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1", true), // might not be needed, might just be false
+                DriveCommands.followPathCommand("Algae 1", true),
                 ////new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later\
                 DriveCommands.setPoseCommand(driveSub, startPose)
@@ -160,7 +164,8 @@ public class AutoCommands {
     }
 
 
-    public static Command centerCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX, boolean mirroredY){
+    public static Command centerCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
+        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
         Distance startX = Meters.of(8.050);
         Distance startY = Meters.of(3.850);
         Angle startAngle = Rotations.of(0.5);
@@ -230,7 +235,8 @@ public class AutoCommands {
         );
     }
 
-    public static Command justCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredY){
+    public static Command justCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub){
+        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
         Distance startX = Meters.of(8.050);
         Distance startY = Meters.of(3.850);
         Angle startAngle = Rotations.of(0.5);
