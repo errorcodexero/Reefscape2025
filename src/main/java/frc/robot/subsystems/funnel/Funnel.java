@@ -24,7 +24,7 @@ public class Funnel extends SubsystemBase {
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
-        Logger.processInputs("Manipulator", inputs_);
+        Logger.processInputs("Funnel", inputs_);
 
         disconnectedAlert_.set(!inputs_.funnelReady);
 
