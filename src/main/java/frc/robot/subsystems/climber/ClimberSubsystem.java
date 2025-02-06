@@ -1,0 +1,49 @@
+/*Fork and spaghetti - Drive into cage, hooks hook onto bar, climber twists chain and cage into robot, 
+so hover off ground. 
+Commands - DeployClimber, ExecuteClimb
+States(enum) - IDLE, DeployClimber, WaitToHook, Climb
+*/
+
+package frc.robot.subsystems.climber;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOInputsAutoLogged;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
+
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.Angle;
+
+ 
+public class ClimberSubsystem extends SubsystemBase{
+   private ClimberIO io_; 
+   private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
+   private Angle target_angle_ ;
+
+    public ClimberSubsystem(ClimberIO io) {
+        io_ = io; 
+        inputs_ = new ClimberIOInputsAutoLogged(); 
+    }
+
+//io_.moveClimber(Degrees.of(180));
+
+   public void setClimberPosition(Angle angle) {
+      target_angle_ = angle;
+      io_.setClimberPosition(angle);
+   }
+
+   public boolean isClimberAtTarget() {
+        if((inputs_.climberPosition.isNear(target_angle_, ClimberConstants.Climber.kPosTolerance)) && (inputs_.climberVelocity == DegreesPerSecond.of(0))) {
+            return true; 
+        }
+        return false; 
+    }
+
+   @Override
+   public void periodic(){
+      io_.updateInputs(inputs_);
+   }
+}
+ 
+ 
