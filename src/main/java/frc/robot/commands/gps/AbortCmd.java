@@ -1,19 +1,16 @@
 package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.oi.OISubsystem;
+import frc.robot.RobotContainer;
 
 public class AbortCmd extends Command {
-    private OISubsystem oi_;
-
-    public AbortCmd(OISubsystem oi) {
-        oi_ = oi;
+    public AbortCmd() {
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        oi_.clearRobotActions();
+        RobotContainer.getRobotContainer().getExecutor().clearRobotActions() ;
     }
 
     // Returns true when the command should end.

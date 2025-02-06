@@ -28,29 +28,39 @@ public class GrabberConstants {
         public static final Current kCurrentLimit = Amps.of(40.0) ;
 
         // Tolerance for the grabber position
-        public static final Angle kTolerance = Degrees.of(1.0) ;
+        public static final Angle kTolerance = Degrees.of(5.0) ;
 
         // Moment of inertia for the grabber
-        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.0001) ;
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.0005) ;
 
         public class Velocity {
+            // public class PID {
+            //     public static final double kP = 0.75; 
+            //     public static final double kI = 0.0 ;
+            //     public static final double kD = 0.0 ;
+            //     public static final double kV = 0.14 ;
+            //     public static final double kA = 0.0 ;
+            //     public static final double kG = 0.0 ;
+            //     public static final double kS = 0.36102 ;
+            // }
+
             public class PID {
-                public static final double kP = 0.75; 
+                public static final double kP = 0.0;
                 public static final double kI = 0.0 ;
                 public static final double kD = 0.0 ;
-                public static final double kV = 0.14 ;
+                public static final double kV = 0.005 ;
                 public static final double kA = 0.0 ;
                 public static final double kG = 0.0 ;
-                public static final double kS = 0.36102 ;
+                public static final double kS = 0.0 ;
             }
         }
 
         public class Position {
             public class PID {
-                public static final double kP = 0.0; 
+                public static final double kP = 0.3;
                 public static final double kI = 0.0 ;
                 public static final double kD = 0.0 ;
-                public static final double kV = 0.0 ;
+                public static final double kV = 0.01 ;
                 public static final double kA = 0.0 ;
                 public static final double kG = 0.0 ;
                 public static final double kS = 0.0 ;
@@ -77,7 +87,7 @@ public class GrabberConstants {
         public static final Time kDelay = Milliseconds.of(0) ;
 
         // Backup amount
-        public static final Angle kBackup = Degrees.of(-720.0) ;
+        public static final Angle kBackup = Degrees.of(-10.0) ;
     }
 
     public class Place {

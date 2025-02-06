@@ -1,8 +1,6 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
@@ -39,9 +37,8 @@ public class WaitForCoralCmd extends Command {
         switch(state_) {
             case WaitingForSensor:
                 if (grabber_.coralLowSensorFallingEdge()) {
-                    grabber_.setGrabberVoltage(Volts.of(0.0)) ;
-                    // Angle a = grabber_.getPosition() ;
-                    // grabber_.setGrabberTargetPosition(a.plus(GrabberConstants.Collect.kBackup)) ;
+                    Angle a = grabber_.getPosition() ;
+                    grabber_.setGrabberTargetPosition(a.plus(GrabberConstants.Collect.kBackup)) ;
                     state_ = State.Backup ;
                 }
                 break ;

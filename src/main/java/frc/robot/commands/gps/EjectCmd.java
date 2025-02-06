@@ -1,34 +1,32 @@
 package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.oi.OISubsystem;
 
 public class EjectCmd extends Command {
 
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
-    private OISubsystem oi_ ;
     private ManipulatorSubsystem manipulator_ ;
     private GrabberSubsystem grabber_ ;
 
     private Command goto_ ;
     private Command eject_gp_ ;
 
-    public EjectCmd(OISubsystem oi, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public EjectCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
         manipulator_ = m;
         grabber_ = g;
-        oi_ = oi ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        oi_.lock() ;
-        oi_.clearRobotActions();
+        RobotContainer.getRobotContainer().getExecutor().lock() ;
+        RobotContainer.getRobotContainer().getExecutor().clearRobotActions();
 
         switch(grabber_.gp()) {
             case Coral:
@@ -65,7 +63,7 @@ public class EjectCmd extends Command {
             }
         }
         else {
-            oi_.unlock() ;
+            RobotContainer.getRobotContainer().getExecutor().unlock() ;
         }
     }
 

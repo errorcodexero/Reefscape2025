@@ -64,7 +64,6 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForCoralCmd;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OICommandSupplier;
@@ -118,7 +117,9 @@ public class RobotContainer {
     private GrabberSubsystem grabber_ ;
     private ClimberSubsystem climber_ ;
     private FunnelSubsystem funnel_ ;
+
     private GamePiece holding_ ;
+    private Executor executor_ ;
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(OIConstants.kGamepadPort) ;
@@ -138,7 +139,8 @@ public class RobotContainer {
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
-            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_, this::getRobotActionCommand) ;
+            oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_) ;
+            executor_ = new Executor(oi_, this::getRobotActionCommand) ;
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -293,6 +295,10 @@ public class RobotContainer {
         return holding_ ;
     }
 
+    public Executor getExecutor() {
+        return executor_ ;
+    }
+
     public void holding(GamePiece gp) {
 
         holding_ = gp ;
@@ -335,6 +341,22 @@ public class RobotContainer {
                 ret = new OICommandSupplier.Pair<>(
                             new PlaceCoralBeforeCmd(manipulator_, level),
                             new PlaceCoralAfterCmd(drivebase_, manipulator_, grabber_, level, side, false)) ;
+                break ;
+
+            case PlaceAlgae:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeReefL2:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeReefL3:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeGround:
+                // TODO: write me
                 break ;
         }
 
@@ -380,15 +402,15 @@ public class RobotContainer {
         oi_.climbLock().onFalse(new RetractClimberCmd(climber_, funnel_)) ;
 
         oi_.climbExecute().onTrue(new ClimbExecuteCmd(climber_)) ;
-        oi_.abort().onTrue(new AbortCmd(oi_)) ;
-        oi_.eject().onTrue(new EjectCmd(oi_, manipulator_, grabber_)) ;
+        oi_.abort().onTrue(new AbortCmd()) ;
+        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
 
-        oi_.coralPlace().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.PlaceCoral)) ;
-        oi_.coralCollect().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectCoral)) ;
-        oi_.algaeCollectL2().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeReefL2)) ;
-        oi_.algaeCollectL3().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeReefL3)) ;
-        oi_.algaeGround().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.CollectAlgaeGround)) ;
-        oi_.algaeScore().onTrue(new OIQueueRobotActionCmd(oi_, RobotAction.PlaceAlgae)) ;
+        oi_.coralPlace().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.PlaceCoral)) ;
+        oi_.coralCollect().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectCoral)) ;
+        oi_.algaeCollectL2().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeReefL2)) ;
+        oi_.algaeCollectL3().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeReefL3)) ;
+        oi_.algaeGround().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeGround)) ;
+        oi_.algaeScore().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.PlaceAlgae)) ;
     }
 
     private double getLeftX() {

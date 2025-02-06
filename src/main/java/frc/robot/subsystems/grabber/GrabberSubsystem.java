@@ -1,6 +1,6 @@
 package frc.robot.subsystems.grabber;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -40,7 +40,7 @@ public class GrabberSubsystem extends SubsystemBase {
         io_.updateInputs(inputs_);
         Logger.processInputs("Grabber", inputs_);
         Logger.recordOutput("Grabber/target", target_);
-        Logger.recordOutput("Grabber/rawvel", inputs_.grabberRawVelocity.in(RotationsPerSecond)) ;
+        Logger.recordOutput("Grabber/ready", isAtTarget()) ;
     }
 
     public Angle getPosition() {
@@ -57,6 +57,12 @@ public class GrabberSubsystem extends SubsystemBase {
     }
 
     public boolean isAtTarget() {
+        if (target_ == null) {
+            return false ;
+        }
+
+        Logger.recordOutput("Grabber/test-pos", inputs_.grabberPosition.in(Degrees)) ;
+        Logger.recordOutput("Grabber/test-target", target_.in(Degrees)) ;
         return inputs_.grabberPosition.isNear(target_, GrabberConstants.Grabber.kTolerance) ;
     }
 

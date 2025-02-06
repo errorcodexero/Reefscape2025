@@ -32,7 +32,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.simulator.engine.ISimulatedSubsystem;
-import frc.simulator.engine.ModelFactory;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -202,7 +201,10 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {        
+    public void teleopPeriodic() {
+        if (robotContainer != null) {
+            robotContainer.getExecutor().commandProcessing() ;
+        }
     }
     
     /** This function is called once when test mode is enabled. */

@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
@@ -112,6 +113,9 @@ public class GrabberIOHardware implements GrabberIO {
     }
 
     public void setGrabberMotorVoltage(double volts) {
+        ControlRequest vctrl = new MotionMagicVelocityVoltage(0.0) ;
+        grabber_motor_.setControl(vctrl) ;
+
         grabber_volts_ = Volts.of(volts) ;
         ControlRequest ctrl = new VoltageOut(grabber_volts_) ;
         grabber_motor_.setControl(ctrl) ;
@@ -197,6 +201,8 @@ public class GrabberIOHardware implements GrabberIO {
         st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
 
         Voltage mv = st.getMotorVoltageMeasure() ;
+        Logger.recordOutput("Grabber/motor-voltage", mv) ;
+        
         grabber_sim_.setInputVoltage(mv.in(Volts)) ;
         grabber_sim_.update(0.02) ;
         st.setRawRotorPosition(grabber_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
