@@ -1,12 +1,5 @@
 package frc.robot.commands.auto;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotations;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,27 +17,14 @@ public class AutoCommands {
      */
 
     public static Command sideCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
-        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
-        Distance startX = Meters.of(8.050);
-        Distance startY = Meters.of(2.800);
-        Angle startAngle = Rotations.of(0.5);
-        // 4.015 (y) 8.030
-        // 8.775 (x) 17.550
-        if(mirroredX) {
-            startY = Meters.of(8.030 - 2.800); 
-        }
-        if(mirroredY) {
-            startX = Meters.of(17.550 - 8.050);
-            startAngle = Rotations.of(0);
-        } else {
-            mirroredX = !mirroredX; // Might not be needed
+        boolean mirroredY = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().equals(Alliance.Red) : false;
+        if(!mirroredY) {
+            mirroredX = !mirroredX; 
         }
 
-        Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
-            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Side Coral 1", mirroredX)//,
+                DriveCommands.followPathCommand("Side Coral 1", mirroredX, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
                 
@@ -97,22 +77,9 @@ public class AutoCommands {
     }
 
     public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub){
-        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
-        Distance startX = Meters.of(8.050);
-        Distance startY = Meters.of(3.850);
-        Angle startAngle = Rotations.of(0.5);
-        // 4.015 (y) 8.030
-        // 8.775 (x) 17.550
-        if(mirroredY) {
-            startY = Meters.of(8.030 - 3.850); 
-            startAngle = Rotations.of(0);
-            startX = Meters.of(17.550 - 8.050);
-        }
-        Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
-            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1", true)//,
+                DriveCommands.followPathCommand("Algae 1", true, driveSub)//,
                 ////new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
@@ -166,27 +133,13 @@ public class AutoCommands {
 
 
     public static Command centerCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
-        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
-        Distance startX = Meters.of(8.050);
-        Distance startY = Meters.of(3.850);
-        Angle startAngle = Rotations.of(0.5);
-        // 4.015 (y) 8.030
-        // 8.775 (x) 17.550
-        if(mirroredX) {
-            startY = Meters.of(8.030 - 3.850); 
-        }
-        if(mirroredY) {
-            startX = Meters.of(17.550 - 8.050);
-            startAngle = Rotations.of(0);
-        } else {
+        boolean mirroredY = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().equals(Alliance.Red) : false;
+        if(!mirroredY) {
             mirroredX = !mirroredX; // Might not be needed
         }
-
-        Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
-            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Center Coral 1", mirroredX)//,
+                DriveCommands.followPathCommand("Center Coral 1", mirroredX, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
@@ -237,24 +190,10 @@ public class AutoCommands {
     }
 
     public static Command justCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub){
-        boolean mirroredY = DriverStation.getAlliance().get() == Alliance.Red;
-        Distance startX = Meters.of(8.050);
-        Distance startY = Meters.of(3.850);
-        Angle startAngle = Rotations.of(0.5);
-        // 4.015 (y) 8.030
-        // 8.775 (x) 17.550
-        if(mirroredY) {
-            startX = Meters.of(17.550 - 8.050);
-            startAngle = Rotations.of(0);
-            startY = Meters.of(8.030 - 3.850);
-            //mirroredX = !mirroredX; /// Might not be needed
-        }
 
-        Pose2d startPose = new Pose2d(new Translation2d(startX, startY), new Rotation2d(startAngle));
         return Commands.sequence(
-            DriveCommands.setPoseCommand(driveSub, startPose),
             Commands.parallel(
-                DriveCommands.followPathCommand("Just Coral 1", true)//,
+                DriveCommands.followPathCommand("Just Coral 1", true, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),

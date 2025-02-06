@@ -315,6 +315,21 @@ public class DriveCommands {
     return pathfind;
   }
 
+  public static Command followPathCommand(String pathName, boolean mirrored, Drive drive) {
+    try{
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        if(drive != null){
+          drive.setPose(path.getStartingHolonomicPose().get());
+        }
+
+        return AutoBuilder.followPath(mirrored ? path : path.mirrorPath());
+    } catch (Exception e) {
+        DriverStation.reportError("womp womp " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+    }
+  }
+
   public static Command followPathCommand(String pathName, boolean mirrored) {
     try{
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
@@ -329,5 +344,15 @@ public class DriveCommands {
   public static Command setPoseCommand(Drive drive, Pose2d pose){
     return Commands.runOnce(() -> drive.setPose(pose));
   }
+
+  // public Command getStartingPoseCommand(Pose2d pose, boolean mirroredX){
+  //   return Commands.runOnce(() -> {
+  //     if (mirroredX) {
+  //       drive.setPose(pose.transformBy(new Transform2d(new Translation2d(0, 0), new Rotation2d(Math.PI))));
+  //     } else {
+  //       drive.setPose(pose);
+  //     }
+  //   });
+  // }
   
 }
