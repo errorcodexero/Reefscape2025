@@ -3,10 +3,12 @@ package frc.robot.subsystems.climber;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.MomentOfInertia;
 
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
@@ -14,19 +16,22 @@ public class ClimberConstants {
     public static Angle kPositionTolerance = Degrees.of(5.0) ;
     public static AngularVelocity kVelocityTolerance = DegreesPerSecond.of(5.0) ;
 
-    public class ClimberArm{
+    public class ClimberArm {
        
         // motor CAN ID
         public static final int kMotorCANID = 1; 
 
         // gear ratio- degrees per rev
-        public static final double kGearRatio = 0; 
+        public static final double kGearRatio = 32; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
 
         // Current limit
         public static final Current kCurrentLimit = Amps.of(80.0) ;
+
+        // Moment of inertia for the grabber
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.0005) ;             
 
         public class PID {
             public static final double kP = 0.0; 

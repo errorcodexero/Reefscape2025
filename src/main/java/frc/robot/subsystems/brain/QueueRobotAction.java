@@ -1,13 +1,13 @@
-package frc.robot.subsystems.oi;
+package frc.robot.subsystems.brain;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Executor;
+import frc.robot.subsystems.oi.RobotAction;
 
-public class OIQueueRobotActionCmd extends Command {
-    private Executor exec_ ;
+public class QueueRobotAction extends Command {
+    private Brain exec_ ;
     private RobotAction action_;
 
-    public OIQueueRobotActionCmd(Executor ex, RobotAction action) {
+    public QueueRobotAction(Brain ex, RobotAction action) {
         exec_ = ex ;
         action_ = action;
     }

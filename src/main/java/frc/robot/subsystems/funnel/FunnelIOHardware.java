@@ -1,19 +1,31 @@
 package frc.robot.subsystems.funnel;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import frc.robot.Robot;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Volts;
+
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -28,6 +40,8 @@ public class FunnelIOHardware implements FunnelIO {
     private StatusSignal<Current> current_ ;
     private StatusSignal<Voltage> voltage_ ;
 
+    private DCMotorSim funnel_sim_ ;
+
     public FunnelIOHardware() {
         createFunnel();
     }
@@ -37,6 +51,8 @@ public class FunnelIOHardware implements FunnelIO {
         inputs.funnelVelocity = velocity_.refresh().getValue().times(FunnelConstants.Funnel.kGearRatio) ;
         inputs.funnelCurrent = current_.refresh().getValue() ;
         inputs.funnelVoltage = voltage_.refresh().getValue() ;
+
+        simulateFunnel() ;
     }
 
     public void setFunnelPosition(Angle target) {
@@ -87,5 +103,23 @@ public class FunnelIOHardware implements FunnelIO {
         rollerMotionMagicConfigs.MotionMagicAcceleration = FunnelConstants.Funnel.MotionMagic.kMaxAcceleration;
         rollerMotionMagicConfigs.MotionMagicJerk = FunnelConstants.Funnel.MotionMagic.kJerk;
         TalonFXFactory.checkError(FunnelConstants.Funnel.kMotorCANID, "apply", () -> motor_.getConfigurator().apply(rollerMotionMagicConfigs)) ;
+
+        if (Robot.isSimulation()) {
+            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
+                                                                              FunnelConstants.Funnel.kMOI.in(KilogramSquareMeters), 
+                                                                              FunnelConstants.Funnel.kGearRatio) ;
+            funnel_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(1)) ;
+        }
     } 
+
+    private void simulateFunnel() {
+        TalonFXSimState st = motor_.getSimState() ;
+        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+
+        Voltage mv = st.getMotorVoltageMeasure() ;
+        funnel_sim_.setInputVoltage(mv.in(Volts)) ;
+        funnel_sim_.update(0.02) ;
+        st.setRawRotorPosition(funnel_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
+        st.setRotorVelocity(funnel_sim_.getAngularVelocity().times(ManipulatorConstants.Arm.kGearRatio)) ;        
+    }    
 }

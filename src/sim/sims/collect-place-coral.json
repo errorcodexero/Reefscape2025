@@ -118,6 +118,48 @@
                     }
                 }
             ]
-        }
+        },
+        {
+            "time" : 11.0,
+            "events" :
+            [
+                {
+                    "model" : "drivebase",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "pose" : "3.167, 5.578, -35.0"
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 12.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "execute" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 12.4,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "execute" : false
+                    }
+                }
+            ]
+        }        
     ]
 }

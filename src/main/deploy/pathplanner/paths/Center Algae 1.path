@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.053631756756758,
-        "y": 4.034881756756757
+        "x": 3.167167207792208,
+        "y": 5.5777191558441555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.6808163940159,
-        "y": 4.037885436763077
+        "x": 3.6942370129870126,
+        "y": 5.216842532467533
       },
       "isLocked": false,
       "linkedName": "Center Start"
@@ -45,10 +45,10 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Center Algae",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 125.72739822279969
   },
   "useDefaultConstraints": false
 }

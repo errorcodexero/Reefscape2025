@@ -31,7 +31,6 @@ import frc.robot.commands.tests.ManipulatorGotoAutoMode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.simulator.engine.ISimulatedSubsystem;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -110,7 +109,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "collect-place" ;
+            String str = "reef-collect-algae" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        
@@ -202,9 +201,6 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        if (robotContainer != null) {
-            robotContainer.getExecutor().commandProcessing() ;
-        }
     }
     
     /** This function is called once when test mode is enabled. */
@@ -236,9 +232,4 @@ public class Robot extends LoggedRobot {
             }
         }
     }
-
-    public ISimulatedSubsystem getSubSystem(String name) {
-        return robotContainer.get(name) ;
-    }
-    
 }

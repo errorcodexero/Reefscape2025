@@ -1,16 +1,17 @@
-package frc.robot;
+package frc.robot.subsystems.brain;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.RobotAction;
 
-public class Executor {
+public class Brain extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
     private RobotAction current_action_ ;
 
@@ -25,6 +26,9 @@ public class Executor {
 
     // The command we are running
     private Command current_cmd_ ;
+
+    // The last command we ran
+    private Command last_cmd_ ;
 
     // The OI subsystem, for LED control
     private OISubsystem oi_ ;
@@ -42,7 +46,7 @@ public class Executor {
     //
     private OICommandSupplier robot_action_command_supplier_ ;
 
-    public Executor(OISubsystem oi, OICommandSupplier robotActionCommandSupplier) {
+    public Brain(OISubsystem oi, OICommandSupplier robotActionCommandSupplier) {
         oi_ = oi ;
         robot_action_command_supplier_ = robotActionCommandSupplier ;
         current_action_ = null ;
@@ -50,28 +54,29 @@ public class Executor {
         current_robot_action_command_ = null ;
 
         CommandScheduler.getInstance().onCommandFinish(this::cmdFinished) ;
-        CommandScheduler.getInstance().onCommandInitialize(this::cmdInit) ;
-        CommandScheduler.getInstance().onCommandInterrupt(this::cmdInterrupt) ;
     }
 
     private void cmdFinished(Command c) {
-        System.out.println(c.toString()) ;
-    }
-
-    private void cmdInit(Command c) {
-        System.out.println(c.toString()) ;
-    }
-
-    private void cmdInterrupt(Command c) {
-        System.out.println(c.toString()) ;
+        if (current_cmd_ == c) {
+            last_cmd_ = c ;
+            current_cmd_ = null ;
+        }
     }
 
     public void setCoralLevel(int l) {
         coral_level_ = l ;
     }
 
+    public int coralLevel() {
+        return coral_level_ ;
+    }
+
     public void setCoralSide(CoralSide s) {
         coral_side_ = s ;
+    }
+
+    public CoralSide coralSide() {
+        return coral_side_ ;
     }
 
     public boolean readyForAction() {
@@ -82,7 +87,7 @@ public class Executor {
         if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
             next_action_ = action ;
             if (current_action_ == null) {
-                commandProcessing();
+                periodic();
             }
         }
     }    
@@ -111,14 +116,15 @@ public class Executor {
     }
 
     public void execute() {
-        if (current_cmd_ != null && current_cmd_.isFinished()) {
-            Logger.recordOutput("oi/execute", true) ;
+        if (current_cmd_ == null && current_robot_action_command_ != null && current_robot_action_command_.two() != null) {
+            Logger.recordOutput("oi/execute", false) ;
             current_cmd_ = current_robot_action_command_.two() ;
             current_cmd_.schedule();
         }
     }
 
-    public void commandProcessing() {
+    @Override
+    public void periodic() {
         String status = "" ;
 
         if (current_action_ == null) {
@@ -145,25 +151,26 @@ public class Executor {
             }
         }
         else {
-            if (current_cmd_ != null) {
-                Logger.recordOutput("exec/finished", current_cmd_.isFinished()) ;
-            }
-            if (current_cmd_ == null) {
+            if (current_cmd_ == null && last_cmd_ == null) {
                 status = current_action_.toString() + ":waiting" ;
             } 
-            else if (current_cmd_.isFinished()) {
-                if (current_cmd_ == current_robot_action_command_.two() || current_robot_action_command_.two() == null) {
+            else if (current_cmd_ == null && last_cmd_ != null) {
+                if (last_cmd_ == current_robot_action_command_.two() || current_robot_action_command_.two() == null) {
                     current_action_ = null ;
-                    current_cmd_ = null ;
+                    last_cmd_ = null ;
+                    status = "idle" ;
+
 
                     //
                     // We are done with the current command.  We call recursively back into this code to be sure the next
                     // command starts in the same robot loop
                     //
-                    commandProcessing();
+                    periodic();
                 }
                 else {
                     current_cmd_ = null ;
+                    last_cmd_ = null ;
+                    status = "finished" ;
                 }
             }
             else {

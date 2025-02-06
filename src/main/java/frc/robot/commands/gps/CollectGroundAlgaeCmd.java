@@ -1,6 +1,5 @@
 package frc.robot.commands.gps;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -15,20 +14,19 @@ import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CollectGroundAlgaeCmd extends SequentialCommandGroup {
-    private static final Angle ArmPlaceAngle = Degrees.of(90.0) ;
-    private static final Distance ElevatorPlaceHeight = Centimeters.of(1.0) ;
-
-    private static final Angle ArmStowAngle = Degrees.of(90.0) ;
-    private static final Distance ElevatorStowHeight = Meters.of(1.0) ;
+    private static final Distance ElevatorCollectHeight = Meters.of(1.0) ;
+    private static final Angle ArmAngleAngle = Degrees.of(90.0) ;
+    private static final Distance ElevatorStowHeight = Meters.of(0.0) ;
+    private static final Angle ArmStowAngle = Degrees.of(0.0) ;
 
     public CollectGroundAlgaeCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("PlaceCoralCmd") ;
 
-            addCommands(
-                new ManipulatorGotoCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
-                new WaitForAlgaeCmd(g, false),
-                new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_LOW),
-                new ManipulatorGotoCmd(m, ElevatorStowHeight, ArmStowAngle),
-                new RumbleGamepadCmd(Milliseconds.of(500))) ;
+        addCommands(
+            new ManipulatorGotoCmd(m, ElevatorCollectHeight, ArmAngleAngle),
+            new WaitForAlgaeCmd(g, false),
+            new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_LOW),
+            new ManipulatorGotoCmd(m, ElevatorStowHeight, ArmStowAngle),
+            new RumbleGamepadCmd(Milliseconds.of(500))) ;
     }
 }

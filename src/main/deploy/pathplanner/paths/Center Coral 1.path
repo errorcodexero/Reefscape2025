@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.053631756756758,
-        "y": 4.034881756756757
+        "x": 3.167167207792208,
+        "y": 5.5777191558441555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.9319100846110695,
-        "y": 4.026301466114415
+        "x": 2.045445535646519,
+        "y": 5.569138865201813
       },
       "isLocked": false,
       "linkedName": "Center Start"
@@ -45,10 +45,10 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Center Coral",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 125.72739822279969
   },
   "useDefaultConstraints": false
 }

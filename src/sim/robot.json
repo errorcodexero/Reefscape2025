@@ -11,6 +11,12 @@
             }            
         },
         {
+            "model" : "drivebase",
+            "instance" : "1",
+            "props" : {
+            }
+        },
+        {
             "model": "drivergamepad",
             "instance": "1",
             "props": {

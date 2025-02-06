@@ -63,7 +63,7 @@ public class CollectReefAlgaeCmd extends SequentialCommandGroup {
             if (target.isPresent()) {
                 ReefFace t = target.get() ;
                 Pose2d place = t.getAlgaeScoringPose() ;
-                Pose2d backup = t.getWallPose() ;
+                Pose2d backup = t.getAlgaeBackupPose() ;
                 
                 PathConstraints place_constraints = new PathConstraints(PlaceMaxVelocity, PlaceMaxAcceleration, PlaceMaxAngularVelocity, PlaceMaxAngularAcceleration, nominal, false) ;
                 PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;

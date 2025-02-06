@@ -81,8 +81,7 @@ public class OISubsystem extends SubsystemBase {
     private Trigger algae_collect_l2_ ;
     private Trigger algae_collect_l3_ ;
     private Trigger algae_score_ ;
-
-
+    private Trigger execute_trigger_ ;
 
     public OISubsystem(OIIO ios, CommandXboxController ctrl) {
         this.ios_ = ios ;
@@ -102,6 +101,7 @@ public class OISubsystem extends SubsystemBase {
         algae_collect_l2_ = new Trigger(()-> inputs_.algae_collect_l2) ;
         algae_collect_l3_ = new Trigger(()-> inputs_.algae_collect_l3) ;
         algae_score_ = new Trigger(()-> inputs_.algae_score) ;
+        execute_trigger_ = new Trigger(()-> inputs_.execute) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
@@ -149,6 +149,9 @@ public class OISubsystem extends SubsystemBase {
         return algae_score_ ;
     }
 
+    public Trigger execute() {
+        return execute_trigger_ ;
+    }
 
     public void rumble(Time duration) {
         end_time_ = Timer.getFPGATimestamp() + duration.in(Seconds) ;

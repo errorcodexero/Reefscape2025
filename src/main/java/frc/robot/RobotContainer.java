@@ -20,7 +20,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -34,7 +33,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -44,10 +42,15 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.gps.AbortCmd;
 import frc.robot.commands.gps.CollectCoralCmd;
+import frc.robot.commands.gps.CollectReefAlgaeAfterCmd;
+import frc.robot.commands.gps.CollectReefAlgaeBeforeCmd;
 import frc.robot.commands.gps.EjectCmd;
 import frc.robot.commands.gps.PlaceCoralAfterCmd;
 import frc.robot.commands.gps.PlaceCoralBeforeCmd;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.ExecuteRobotAction;
+import frc.robot.subsystems.brain.QueueRobotAction;
 import frc.robot.subsystems.climber.ClimbExecuteCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -69,7 +72,6 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIIOHID;
-import frc.robot.subsystems.oi.OIQueueRobotActionCmd;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
@@ -78,7 +80,6 @@ import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
-import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
 * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -106,7 +107,6 @@ public class RobotContainer {
     }
 
     // Mapping of subsystems name to subsystems, used by the simulator
-    private HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
     private boolean driver_controller_enabled_ = true ;
 
     // Subsystems
@@ -117,9 +117,10 @@ public class RobotContainer {
     private GrabberSubsystem grabber_ ;
     private ClimberSubsystem climber_ ;
     private FunnelSubsystem funnel_ ;
+    private Brain brain_ ;
 
     private GamePiece holding_ ;
-    private Executor executor_ ;
+
     
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(OIConstants.kGamepadPort) ;
@@ -140,7 +141,7 @@ public class RobotContainer {
          */
         if (Constants.getMode() != Mode.REPLAY) {
             oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_) ;
-            executor_ = new Executor(oi_, this::getRobotActionCommand) ;
+            brain_ = new Brain(oi_, this::getRobotActionCommand) ;
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -246,9 +247,6 @@ public class RobotContainer {
                 new CameraIO() {});
         }
 
-        // Simulation setup
-        this.addSubsystem(drivebase_) ;
-
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -269,7 +267,7 @@ public class RobotContainer {
         else {
             configureDriveBindings();
 
-            gamepad_.leftTrigger().onTrue(new WaitForCoralCmd(grabber_)) ;
+            // gamepad_.leftTrigger().onTrue(new WaitForCoralCmd(grabber_)) ;
             // gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
             // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
             // gamepad_.rightTrigger().onTrue(new SetGrabberVelocityCmd(grabber_, Volts.of(6.0))) ;
@@ -277,6 +275,10 @@ public class RobotContainer {
             
             configureButtonBindings();
         }
+    }
+
+    public Drive drivebase() {
+        return drivebase_ ;
     }
 
     public ManipulatorSubsystem manipulator() {
@@ -295,8 +297,8 @@ public class RobotContainer {
         return holding_ ;
     }
 
-    public Executor getExecutor() {
-        return executor_ ;
+    public Brain getExecutor() {
+        return brain_ ;
     }
 
     public void holding(GamePiece gp) {
@@ -340,7 +342,7 @@ public class RobotContainer {
             case PlaceCoral:
                 ret = new OICommandSupplier.Pair<>(
                             new PlaceCoralBeforeCmd(manipulator_, level),
-                            new PlaceCoralAfterCmd(drivebase_, manipulator_, grabber_, level, side, false)) ;
+                            new PlaceCoralAfterCmd(brain_, drivebase_, manipulator_, grabber_, false)) ;
                 break ;
 
             case PlaceAlgae:
@@ -348,7 +350,9 @@ public class RobotContainer {
                 break ;
 
             case CollectAlgaeReefL2:
-                // TODO: write me
+            ret = new OICommandSupplier.Pair<>(
+                new CollectReefAlgaeBeforeCmd(manipulator_, level),
+                new CollectReefAlgaeAfterCmd(brain_, drivebase_, manipulator_, grabber_, false)) ;
                 break ;
 
             case CollectAlgaeReefL3:
@@ -363,18 +367,8 @@ public class RobotContainer {
         return ret ;
     }
 
-    public ISimulatedSubsystem get(String name) {
-        return this.subsystems_.get(name) ;
-    }
-
     public void enableGamepad(boolean enabled) {
         this.driver_controller_enabled_ = enabled ;
-    }
-
-    private void addSubsystem(SubsystemBase sub) {
-        if (sub instanceof ISimulatedSubsystem) {
-            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
-        }
     }
 
     private void configureCharBindings() {
@@ -405,12 +399,13 @@ public class RobotContainer {
         oi_.abort().onTrue(new AbortCmd()) ;
         oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
 
-        oi_.coralPlace().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.PlaceCoral)) ;
-        oi_.coralCollect().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectCoral)) ;
-        oi_.algaeCollectL2().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeReefL2)) ;
-        oi_.algaeCollectL3().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeReefL3)) ;
-        oi_.algaeGround().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.CollectAlgaeGround)) ;
-        oi_.algaeScore().onTrue(new OIQueueRobotActionCmd(executor_, RobotAction.PlaceAlgae)) ;
+        oi_.coralPlace().onTrue(new QueueRobotAction(brain_, RobotAction.PlaceCoral)) ;
+        oi_.coralCollect().onTrue(new QueueRobotAction(brain_, RobotAction.CollectCoral)) ;
+        oi_.algaeCollectL2().onTrue(new QueueRobotAction(brain_, RobotAction.CollectAlgaeReefL2)) ;
+        oi_.algaeCollectL3().onTrue(new QueueRobotAction(brain_, RobotAction.CollectAlgaeReefL3)) ;
+        oi_.algaeGround().onTrue(new QueueRobotAction(brain_, RobotAction.CollectAlgaeGround)) ;
+        oi_.algaeScore().onTrue(new QueueRobotAction(brain_, RobotAction.PlaceAlgae)) ;
+        oi_.execute().onTrue(new ExecuteRobotAction(brain_)) ;
     }
 
     private double getLeftX() {

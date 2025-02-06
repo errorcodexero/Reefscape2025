@@ -3,10 +3,12 @@ package frc.robot.subsystems.funnel;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.MomentOfInertia;
 
 public class FunnelConstants {
     // this information would go inside classes for each motor in the subsystem
@@ -20,13 +22,16 @@ public class FunnelConstants {
         public static final int kMotorCANID = 2; 
 
         // gear ratio- degrees per rev
-        public static final double kGearRatio = 0; 
+        public static final double kGearRatio = 8; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
 
         // Current limit
         public static final Current kCurrentLimit = Amps.of(40.0) ;
+
+        // Moment of inertia for the grabber
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.0005) ;        
 
         public class PID {
             public static final double kP = 0.0; 
