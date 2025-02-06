@@ -44,11 +44,26 @@ public class Funnel extends SubsystemBase {
     }
 
     /**
-     * Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
-     * @return
+     * Finds out if the Funnel has seen Coral since the last {@link #resetSeenCoral()}.
+     * @return Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
+     * @implNote A convenience method that automatically resets this flag for you, is {@link #hasSeenCoralWithReset()}
      */
     public boolean hasSeenCoral() {
         return hasSeenCoral_;
+    }
+
+    /**
+     * Functionally the same as {@link #hasSeenCoral()}, but in the event that you have seen coral,
+     * this automatically resets the flag for you.
+     * @return Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
+     */
+    public boolean hasSeenCoralWithReset() {
+        if (hasSeenCoral()) {
+            resetSeenCoral();
+            return true;
+        }
+
+        return false;
     }
 
 }
