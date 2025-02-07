@@ -20,25 +20,13 @@ public interface GrabberIO {
         public AngularVelocity grabberVelocity;
 
         // Sensor Inputs
-        public boolean coralFrontSensor;
-        public boolean coralFrontRisingEdge;
-        public boolean coralFrontFallingEdge;
+        public boolean coralSensor;
+        public boolean coralRisingEdge;
+        public boolean coralFallingEdge;
 
-        public boolean coralBackSensor;
-        public boolean coralBackRisingEdge;
-        public boolean coralBackFallingEdge;
-
-        public boolean coralFunnelSensor;
-        public boolean coralFunnelRisingEdge;
-        public boolean coralFunnelFallingEdge;
-
-        public boolean algaeUpperSensor;
-        public boolean algaeUpperRisingEdge;
-        public boolean algaeUpperFallingEdge;
-
-        public boolean algaeLowerSensor;
-        public boolean algaeLowerRisingEdge;
-        public boolean algaeLowerFallingEdge;
+        public boolean algaeSensor;
+        public boolean algaeRisingEdge;
+        public boolean algaeFallingEdge;
     }
 
     public default void updateInputs(GrabberIOInputs inputs) {}

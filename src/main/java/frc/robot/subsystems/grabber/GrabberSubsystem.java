@@ -64,64 +64,31 @@ public class GrabberSubsystem extends SubsystemBase {
         return has_algae_;
     }
 
-    ///////////////////////////
-    // CoralFront Sensor States
-    ///////////////////////////
-
-    public boolean coralFrontRising() {
-        return inputs_.coralFrontRisingEdge;
-    }
-
-    public boolean coralFrontFalling() {
-        return inputs_.coralFrontFallingEdge;
-    }
-
-    //////////////////////////
-    // CoralBack Sensor States
-    //////////////////////////
-
-    public boolean coralBackRising() {
-        return inputs_.coralBackRisingEdge;
-    }
-
-    public boolean coralBackFalling() {
-        return inputs_.coralBackFallingEdge;
-    }
-
-    ////////////////////////////
-    // CoralFunnel Sensor States 
-    ////////////////////////////
-
-    public boolean coralFunnelRising() {
-        return inputs_.coralFunnelRisingEdge;
-    }
-
-    public boolean coralFunnelFalling() {
-        return inputs_.coralFunnelFallingEdge;
+    public void setHasAlgae(boolean b) {
+        has_algae_ = b;
     }
 
     ///////////////////////////
-    // AlgaeUpper Sensor States
+    // Coral Sensor State
     ///////////////////////////
 
-    public boolean AlgaeUpperRising() {
-        return inputs_.algaeUpperRisingEdge;
+    public boolean coralRising() {
+        return inputs_.coralRisingEdge;
     }
 
-    public boolean AlgaeUpperFalling() {
-        return inputs_.algaeUpperFallingEdge;
+    public boolean coralFalling() {
+        return inputs_.coralFallingEdge;
     }
 
     ///////////////////////////
-    // AlgaeLower Sensor States
+    // Algae Sensor State
     ///////////////////////////
 
-    public boolean AlgaeLowerRising() {
-        return inputs_.algaeLowerRisingEdge;
+    public boolean AlgaeRising() {
+        return inputs_.algaeRisingEdge;
     }
 
-    public boolean AlgaeLowerFalling() {
-        return inputs_.algaeLowerFallingEdge;
+    public boolean AlgaeFalling() {
+        return inputs_.algaeFallingEdge;
     }
-
 }
