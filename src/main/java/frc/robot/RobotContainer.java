@@ -28,9 +28,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -38,6 +35,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,7 +87,7 @@ public class RobotContainer {
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
 
-    private final LoggedDashboardChooser<Command> autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
+    private final LoggedDashboardChooser<Command> autoChooser_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -259,6 +258,8 @@ public class RobotContainer {
 
         // Simulation setup
         this.addSubsystem(drivebase_) ;
+
+        autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Configure the button bindings
         configureDriveBindings();

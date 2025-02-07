@@ -317,13 +317,17 @@ public class DriveCommands {
 
   public static Command followPathCommand(String pathName, boolean mirrored, Drive drive) {
     try{
-        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        PathPlannerPath path = mirrored 
+          ? PathPlannerPath.fromPathFile(pathName).mirrorPath() 
+          : PathPlannerPath.fromPathFile(pathName);
 
-        if(drive != null){
-          drive.setPose(path.getStartingHolonomicPose().get());
-        }
-
-        return AutoBuilder.followPath(mirrored ? path : path.mirrorPath());
+        return Commands.sequence(
+          Commands.runOnce(() -> {
+            if(drive != null){
+              drive.setPose(path.getStartingHolonomicPose().get());
+            }
+          }), 
+          AutoBuilder.followPath(path));
     } catch (Exception e) {
         DriverStation.reportError("womp womp " + e.getMessage(), e.getStackTrace());
         return Commands.none();
