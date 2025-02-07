@@ -284,10 +284,10 @@ public class RobotContainer {
         
         autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Opposing Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false));
-        autoChooser_.addOption("Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Center Coral (opposing side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false));
-        autoChooser_.addOption("Just Coral", AutoCommands.justCoralAuto(drivebase_, manipulator_));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_));
 
         autoChooser_.addOption(
             "testing driveto", 
