@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForAlgaeCmd;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CollectGroundAlgaeCmd extends SequentialCommandGroup {
@@ -23,10 +23,10 @@ public class CollectGroundAlgaeCmd extends SequentialCommandGroup {
         setName("PlaceCoralCmd") ;
 
         addCommands(
-            new ManipulatorGotoCmd(m, ElevatorCollectHeight, ArmAngleAngle),
+            new GoToCmd(m, ElevatorCollectHeight, ArmAngleAngle),
             new WaitForAlgaeCmd(g, false),
             new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_LOW),
-            new ManipulatorGotoCmd(m, ElevatorStowHeight, ArmStowAngle),
+            new GoToCmd(m, ElevatorStowHeight, ArmStowAngle),
             new RumbleGamepadCmd(Milliseconds.of(500))) ;
     }
 }

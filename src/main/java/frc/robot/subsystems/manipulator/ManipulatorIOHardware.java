@@ -1,205 +1,102 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Revolutions;
-import static edu.wpi.first.units.Units.RevolutionsPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.ctre.phoenix6.controls.Follower; 
 
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import frc.robot.Robot;
 
 public class ManipulatorIOHardware implements ManipulatorIO {
-
-    // Arm related members
-    private TalonFX arm_motor_;
-    private Voltage arm_volts_ ;
-    private StatusSignal<Angle> arm_position_ ;
-    private StatusSignal<AngularVelocity> arm_velocity_ ;
-    private StatusSignal<Current> arm_current_ ;
-    private StatusSignal<Voltage> arm_voltage_ ;
-    private DCMotorSim arm_sim_ ;
-
-    private DutyCycleEncoderSim arm_encoder_sim_ ;
-    private DutyCycleEncoder encoder_ ;
-    private boolean encoder_motor_synced_ = false ;
-    private EncoderMapper mapper_ ;
-
-    // Elevator related members
-    private TalonFX elevator_motor_1_; 
+    private TalonFX arm_motor_; 
+    private TalonFX elevator_motor_; 
     private TalonFX elevator_motor_2_;
-    private Voltage elevator_volts_ ;
-    private StatusSignal<Angle> elevator_position_ ;
-    private StatusSignal<AngularVelocity> elevator_velocity_ ;
-    private StatusSignal<Current> elevator_current_ ;
-    private StatusSignal<Voltage> elevator_voltage_ ;
-    private DCMotorSim elevator_sim_ ;
+    private DutyCycleEncoder encoder_; 
+    private EncoderMapper mapper_; 
 
-    public ManipulatorIOHardware() {
-        createArm();
-        createElevator();
+    private StatusSignal<Angle> arm_pos_sig_; 
+    private StatusSignal<AngularVelocity> arm_vel_sig_; 
+    private StatusSignal<Voltage> arm_vol_sig_; 
+    private StatusSignal<Current> arm_current_sig_; 
 
-        TalonFXFactory.checkError(-1, "manipulator-update-frequencies-50", () -> BaseStatusSignal.setUpdateFrequencyForAll(Hertz.of(50.0),
-                        arm_position_,
-                        arm_velocity_,
-                        arm_current_,
-                        arm_voltage_,
-                        elevator_position_,
-                        elevator_velocity_,
-                        elevator_current_,
-                        elevator_voltage_)) ;
+    private StatusSignal<Angle> elevator_pos_sig_; 
+    private StatusSignal<AngularVelocity> elevator_vel_sig_; 
+    private StatusSignal<Voltage> elevator_1_vol_sig_; 
+    private StatusSignal<Current> elevator_1_current_sig_;
 
+    private StatusSignal<Voltage> elevator_2_vol_sig_; 
+    private StatusSignal<Current> elevator_2_current_sig_;
 
-        arm_motor_.optimizeBusUtilization() ;
-        elevator_motor_1_.optimizeBusUtilization() ;
-    }
+    private Voltage arm_voltage_; 
+    private Voltage elevator_voltage_; 
 
-    public void updateInputs(ManipulatorIOInputs inputs) {
-        inputs.armPosition = arm_position_.refresh().getValue().div(ManipulatorConstants.Arm.kGearRatio) ;
-        inputs.armVelocity = arm_velocity_.refresh().getValue().div(ManipulatorConstants.Arm.kGearRatio) ;
-        inputs.armRawPosition = arm_position_.refresh().getValue() ;
-        inputs.armRawVelocity = arm_velocity_.refresh().getValue() ;
-        inputs.armCurrent = arm_current_.refresh().getValue() ;
-        inputs.armVoltage = arm_voltage_.refresh().getValue() ;
+    // private Angle arm_absolute_encoder_; 
+    // private double arm_raw_encoder_; 
 
-        if (Robot.isSimulation()) {
-            inputs.armRawEncoder = arm_encoder_sim_.get() ;
-            inputs.armEncoderValue = Degrees.of(mapper_.toRobot(inputs.armRawEncoder)) ;
-        }
-        else {
-            inputs.armRawEncoder = encoder_.get() ;
-            inputs.armEncoderValue = Degrees.of(mapper_.toRobot(inputs.armRawEncoder)) ;
-        }
+    private final Debouncer armErrorDebounce_ = new Debouncer(0.5);
+    private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
+    private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
-        inputs.elevatorPosition = Meters.of(elevator_position_.refresh().getValue().in(Revolutions) / ManipulatorConstants.Elevator.kMotorRevsPerMeters).plus(ManipulatorConstants.Elevator.kMinHeight) ;
-        inputs.elevatorRawPosition = elevator_position_.refresh().getValue() ;
-        inputs.elevatorRawVelocity = elevator_velocity_.refresh().getValue() ;
-        inputs.elevatorVelocity = MetersPerSecond.of(elevator_velocity_.refresh().getValue().in(RevolutionsPerSecond) / ManipulatorConstants.Elevator.kMotorRevsPerMeters) ;
-        inputs.elevatorCurrent = elevator_current_.refresh().getValue() ;
-        inputs.elevatorVoltage = elevator_voltage_.refresh().getValue() ;
+    public ManipulatorIOHardware() throws Exception {
 
-        if (Robot.isSimulation()) {
-            simulateArm() ;
-            simulateElevator() ;
-        }
-    }
+        arm_motor_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Arm.kMotorCANID,
+            ManipulatorConstants.Arm.kCANBusName,
+            ManipulatorConstants.Arm.kInverted,
+            ManipulatorConstants.Arm.kCurrentLimit,
+            ManipulatorConstants.Arm.kCurrentLimitTime
+        );
 
-    public void setArmMotorPosition(Angle pos) {
-        // Convert the target angle to motor rotations based on the gear ratio
-        Angle mtarget = pos.times(ManipulatorConstants.Arm.kGearRatio) ;
-        arm_motor_.setPosition(mtarget) ;
-        
-        encoder_motor_synced_ = true ;
-    }
+        elevator_motor_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Elevator.kMotorCANID,
+            ManipulatorConstants.Elevator.kCANBusName,
+            ManipulatorConstants.Elevator.kInverted,
+            ManipulatorConstants.Elevator.kCurrentLimit,
+            ManipulatorConstants.Elevator.kCurrentLimitTime
+        );
 
-    // arm related methods
-    public void setArmTarget(Angle target) {
-        // Convert the target angle to motor rotations based on the gear ratio
-        Angle mtarget = target.times(ManipulatorConstants.Arm.kGearRatio) ;
+        elevator_motor_2_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Elevator.kMotorCANID2,
+            ManipulatorConstants.Elevator.kCANBusName,
+            ManipulatorConstants.Elevator.kInverted,
+            ManipulatorConstants.Elevator.kCurrentLimit,
+            ManipulatorConstants.Elevator.kCurrentLimitTime
+        );
+        elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID2, true));
 
-        // Create the control request to go to the desired angle
-        ControlRequest ctrl = new MotionMagicVoltage(mtarget).withSlot(0).withEnableFOC(true) ;
+        // ENCODER + MAPPER
+        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderSource); 
 
-        // Tell the motor
-        arm_motor_.setControl(ctrl) ;
-    }
+        mapper_ = new EncoderMapper(
+            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMin,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMax,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMin
+        );
 
-    public void setArmMotorVoltage(double volts) {
-        Logger.recordOutput("Arm/charvolts", volts) ;
-        arm_volts_ = Volts.of(volts) ;
-        ControlRequest ctrl = new VoltageOut(arm_volts_) ;
-        arm_motor_.setControl(ctrl) ;
-    }
+        // ENCODER CONFIGS: 
+        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
+        ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);
+    
 
-    public void logArmMotor(SysIdRoutineLog log) {
-        Angle pos = arm_position_.refresh().getValue() ;
-        AngularVelocity vel = arm_velocity_.refresh().getValue() ;
-
-        log.motor("arm")
-            .voltage(arm_volts_)
-            .angularPosition(pos)
-            .angularVelocity(vel) ;
-    }
-
-    // elevator related methods
-    public void setElevatorTarget(Distance target) {
-        // Compute the distance above the bottom of the elevator travel
-        Distance habovezero = target.minus(ManipulatorConstants.Elevator.kMinHeight) ;
-
-        // Convert the distance above the bottom of the elevator travel to motor rotations
-        Angle pos = Revolutions.of(habovezero.in(Meters) * ManipulatorConstants.Elevator.kMotorRevsPerMeters) ;
-
-        // Create the control request to go to the desired height
-        ControlRequest ctrl = new MotionMagicVoltage(pos).withSlot(0).withEnableFOC(true) ;
-
-        // Tell the motor
-        elevator_motor_1_.setControl(ctrl) ;
-    }
-
-    public void setElevatorMotorVoltage(double volts) {
-        elevator_volts_ = Volts.of(volts) ;
-        ControlRequest ctrl = new VoltageOut(elevator_volts_) ;
-        elevator_motor_1_.setControl(ctrl) ;
-    }
-
-    public void logElevatorMotor(SysIdRoutineLog log) {
-        Angle pos = elevator_position_.refresh().getValue() ;
-        AngularVelocity vel = elevator_velocity_.refresh().getValue() ;
-
-        log.motor("arm")
-            .voltage(elevator_volts_)
-            .angularPosition(pos)
-            .angularVelocity(vel) ;
-    }
-
-    private void createArm() {
-        TalonFXFactory f = TalonFXFactory.getFactory() ;
-        arm_motor_ = f.createTalonFX(ManipulatorConstants.Arm.kMotorCANID, 
-                                     ManipulatorConstants.Arm.kInverted,
-                                     ManipulatorConstants.Arm.kCurrentLimit) ;
-
-        arm_position_ = arm_motor_.getPosition() ;
-        arm_velocity_ = arm_motor_.getVelocity() ;
-        arm_current_ = arm_motor_.getSupplyCurrent() ;
-        arm_voltage_ = arm_motor_.getMotorVoltage() ;
-
-        // ARM CONFIGS:     
+        // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
         arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
         arm_pids.kI = ManipulatorConstants.Arm.PID.kI; 
@@ -208,58 +105,24 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_pids.kA = ManipulatorConstants.Arm.PID.kA; 
         arm_pids.kG = ManipulatorConstants.Arm.PID.kG; 
         arm_pids.kS = ManipulatorConstants.Arm.PID.kS; 
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(arm_pids)) ;
-
+        arm_motor_.getConfigurator().apply(arm_pids);
+        
         MotionMagicConfigs armMotionMagicConfigs = new MotionMagicConfigs(); 
-        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
-        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
+        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity;
+        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration;
         armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "apply", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs)) ;
 
-        SoftwareLimitSwitchConfigs armLimitSwitchConfig = new SoftwareLimitSwitchConfigs();
-        armLimitSwitchConfig.ForwardSoftLimitEnable = true;
-        armLimitSwitchConfig.ForwardSoftLimitThreshold = ManipulatorConstants.Arm.kMaxArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
-        armLimitSwitchConfig.ReverseSoftLimitEnable = true;
-        armLimitSwitchConfig.ReverseSoftLimitThreshold = ManipulatorConstants.Arm.kMinArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> arm_motor_.getConfigurator().apply(armLimitSwitchConfig)) ;        
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-PID-values", () -> arm_motor_.getConfigurator().apply(arm_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-MM-values", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs));
 
-        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kDutyCyclePin) ; 
+        // syncs arm position to absolute encoder value
+        syncArmPosition();
 
-        mapper_ = new EncoderMapper(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
-                                    ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMin,
-                                    ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMax,
-                                    ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMin) ;
-
-        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
-                          ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue) ;
-
-        if (Robot.isSimulation()) {
-            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
-                                                                              ManipulatorConstants.Arm.kMOI.in(KilogramSquareMeters), 
-                                                                              ManipulatorConstants.Arm.kGearRatio) ;
-            arm_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(1)) ;
-
-            arm_encoder_sim_ = new DutyCycleEncoderSim(encoder_) ;
-            arm_encoder_sim_.set(mapper_.toEncoder(ManipulatorConstants.Arm.kStartAbsEncoderAngle.in(Degrees))) ;
-        }
-    }
-
-    private void createElevator() {
-        TalonFXFactory f = TalonFXFactory.getFactory() ;
-        elevator_motor_1_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID1, 
-                                            ManipulatorConstants.Elevator.kInverted,
-                                            ManipulatorConstants.Elevator.kCurrentLimit) ;
-        elevator_motor_1_.setPosition(Degrees.of(0.0)) ;
-
-        elevator_motor_2_ = f.createTalonFX(ManipulatorConstants.Elevator.kMotorCANID2, 
-                                            ManipulatorConstants.Elevator.kInverted,
-                                            ManipulatorConstants.Elevator.kCurrentLimit) ;
-        elevator_motor_2_.setControl(new Follower(elevator_motor_1_.getDeviceID(), true)) ;
-
-        elevator_position_ = elevator_motor_1_.getPosition() ;
-        elevator_velocity_ = elevator_motor_1_.getVelocity() ;
-        elevator_current_ = elevator_motor_1_.getSupplyCurrent() ;
-        elevator_voltage_ = elevator_motor_1_.getMotorVoltage() ;
+        arm_pos_sig_ = arm_motor_.getPosition();
+        arm_vel_sig_ = arm_motor_.getVelocity();
+        arm_vol_sig_ = arm_motor_.getSupplyVoltage();
+        arm_current_sig_ = arm_motor_.getSupplyCurrent();
+    
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
@@ -270,54 +133,124 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_pids.kA = ManipulatorConstants.Elevator.PID.kA;
         elevator_pids.kG = ManipulatorConstants.Elevator.PID.kG;
         elevator_pids.kS = ManipulatorConstants.Elevator.PID.kS;
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(elevator_pids)) ;
-
+        
         MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
-        elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
-        elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
-        elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk ;
+        elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity;
+        elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration;
+        elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk;
 
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
 
+        elevator_pos_sig_ = elevator_motor_.getPosition();
+        elevator_vel_sig_ = elevator_motor_.getVelocity();
+        elevator_1_vol_sig_ = elevator_motor_.getSupplyVoltage();
+        elevator_1_current_sig_ = elevator_motor_.getSupplyCurrent();
+        elevator_2_vol_sig_ = elevator_motor_2_.getSupplyVoltage();
+        elevator_2_current_sig_ = elevator_motor_2_.getSupplyCurrent();
 
-        SoftwareLimitSwitchConfigs elevatorLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
-        elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = true;
-        elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) * ManipulatorConstants.Elevator.kMotorRevsPerMeters;
-        elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
-        elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) * ManipulatorConstants.Elevator.kMotorRevsPerMeters;
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID1, "apply", () -> elevator_motor_1_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
-
-        if (Robot.isSimulation()) {
-            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(2), 
-                                                                            ManipulatorConstants.Elevator.kMOI.in(KilogramSquareMeters), 
-                                                                            ManipulatorConstants.Elevator.kGearRatio) ;
-            elevator_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(2)) ;
-        }
+        // setting signal update frequency: 
+        TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0,
+                arm_pos_sig_,
+                arm_vel_sig_,
+                arm_vol_sig_,
+                arm_current_sig_,
+                elevator_pos_sig_,
+                elevator_vel_sig_,
+                elevator_1_vol_sig_,
+                elevator_1_current_sig_,
+                elevator_2_vol_sig_,
+                elevator_2_current_sig_
+            )
+        );
     }
 
-    private void simulateArm() {
-        TalonFXSimState st = arm_motor_.getSimState() ;
-        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+    // updates all of the inputs from ManipulatorIO 
+    @Override
+    public void updateInputs(ManipulatorIOInputs inputs) {
 
-        Voltage mv = st.getMotorVoltageMeasure() ;
-        arm_sim_.setInputVoltage(mv.in(Volts)) ;
-        arm_sim_.update(0.02) ;
-        st.setRawRotorPosition(arm_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
-        st.setRotorVelocity(arm_sim_.getAngularVelocity().times(ManipulatorConstants.Arm.kGearRatio)) ;
+        StatusCode armStatus = BaseStatusSignal.refreshAll(
+            arm_pos_sig_,
+            arm_vel_sig_,
+            arm_vol_sig_,
+            arm_current_sig_
+        );
 
-        if (encoder_motor_synced_) {
-            arm_encoder_sim_.set(mapper_.toEncoder(arm_sim_.getAngularPosition().in(Degrees))) ;
-        }
+        StatusCode elevator1Status = BaseStatusSignal.refreshAll(
+            elevator_pos_sig_,
+            elevator_vel_sig_,
+            elevator_1_vol_sig_,
+            elevator_1_current_sig_
+        );
+
+        StatusCode elevator2Status = BaseStatusSignal.refreshAll(
+            elevator_2_vol_sig_,
+            elevator_2_current_sig_
+        );
+
+        inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
+        inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK());
+        inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
+
+        // arm inputs:
+        inputs.armPosition = arm_pos_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armVelocity = arm_vel_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armVoltage = arm_vol_sig_.getValue();
+        inputs.armCurrent = arm_current_sig_.getValue();
+
+        // arm encoder inputs: 
+        inputs.rawAbsoluteEncoder = encoder_.get();
+        inputs.absoluteEncoder = Degrees.of(mapper_.toRobot(inputs.rawAbsoluteEncoder)); 
+        
+        // elevator inputs:
+        double rev = elevator_pos_sig_.getValue().in(Revolution); 
+        inputs.elevatorPosition = Meters.of(rev * ManipulatorConstants.Elevator.kMetersPerRev);
+
+        double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
+        inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
+
+        inputs.elevator1Voltage = elevator_1_vol_sig_.getValue();
+        inputs.elevator1Current = elevator_1_current_sig_.getValue();
+
+        inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
+        inputs.elevator2Current = elevator_2_current_sig_.getValue();
     }
 
-    private void simulateElevator() {
-        TalonFXSimState st = elevator_motor_1_.getSimState() ;
-        st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
+    public void setArmMotorVoltage(Voltage vol) {
+        arm_voltage_ = vol;
+        arm_motor_.setControl(new VoltageOut(arm_voltage_));
+    }
 
-        Voltage mv = st.getMotorVoltageMeasure() ;
-        elevator_sim_.setInputVoltage(mv.in(Volts)) ;
-        elevator_sim_.update(0.02) ;
-        st.setRawRotorPosition(elevator_sim_.getAngularPosition().times(ManipulatorConstants.Elevator.kGearRatio)) ;
-        st.setRotorVelocity(elevator_sim_.getAngularVelocity().times(ManipulatorConstants.Elevator.kGearRatio)) ;
+    public void logArmMotor(SysIdRoutineLog log) {
+        log.motor("arm")
+            .voltage(arm_voltage_)
+            .angularPosition(Revolutions.of(arm_pos_sig_.refresh().getValueAsDouble()))
+            .angularVelocity(RevolutionsPerSecond.of(arm_vel_sig_.refresh().getValueAsDouble()));
+    }
+
+    public void setElevatorMotorVoltage(Voltage vol) {
+        elevator_voltage_ = vol;
+        elevator_motor_.setControl(new VoltageOut(elevator_voltage_));    
+    }
+
+    public void logElevatorMotor(SysIdRoutineLog log) {
+        log.motor("elevator")
+            .voltage(elevator_voltage_)
+            .linearVelocity(MetersPerSecond.of(elevator_vel_sig_.refresh().getValueAsDouble()));    
+    } 
+
+    public void setElevatorPosition(Distance dist) {
+        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
+    }
+
+    public void setArmTarget(Angle angle) {
+        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+    }
+
+    public void syncArmPosition(){
+        arm_motor_.setPosition(mapper_.toRobot(encoder_.get()) * ManipulatorConstants.Arm.kGearRatio); 
     }
 }

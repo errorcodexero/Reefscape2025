@@ -21,7 +21,7 @@ import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefUtil;
@@ -71,7 +71,7 @@ public class PlaceCoralAfterCmd extends Command {
                 if (!automode_) {
                     sequence_.addCommands(
                         new ReportStateCmd(getName(), "goto"),
-                        new ManipulatorGotoCmd(m_, CommandPositions.Place.ElevatorHeight[b_.coralLevel()], CommandPositions.Place.ArmAngle[b_.coralLevel()]),
+                        new GoToCmd(m_, CommandPositions.Place.ElevatorHeight[b_.coralLevel()], CommandPositions.Place.ArmAngle[b_.coralLevel()]),
                         new ReportStateCmd(getName(), "gp-disabled"),
                         new GamepadEnabled(false),
                         new ReportStateCmd(getName(), "driveto"),

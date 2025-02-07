@@ -15,8 +15,8 @@ public class ManipulatorGrabAlgaeReefCmd extends SequentialCommandGroup {
 
     public ManipulatorGrabAlgaeReefCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
         // addCommands(
-        //     new ManipulatorGotoCmd(m, elevHeight, Degrees.of(0.0)),
-        //     new ManipulatorGotoCmd(m, elevHeight, armAngle),
+        //     new GoToCmd(m, elevHeight, Degrees.of(0.0)),
+        //     new GoToCmd(m, elevHeight, armAngle),
         //     new SetGrabberVelocityCmd(g, Volts.of(-4.0))) ;
     }
 }

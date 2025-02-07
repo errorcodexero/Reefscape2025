@@ -49,7 +49,7 @@ public class ClimberIOHardware implements ClimberIO {
     private DigitalInput door_sensor_2_ ;
 
 
-    public ClimberIOHardware() {
+    public ClimberIOHardware() throws Exception {
         createClimber() ;
         initSensors() ;
     }
@@ -91,11 +91,11 @@ public class ClimberIOHardware implements ClimberIO {
             .angularVelocity(vel) ;        
     }
 
-    private void createClimber() {
-        TalonFXFactory f = TalonFXFactory.getFactory() ;
-        motor_ = f.createTalonFX(ClimberConstants.ClimberArm.kMotorCANID, 
+    private void createClimber() throws Exception {
+        motor_ = TalonFXFactory.createTalonFX(ClimberConstants.ClimberArm.kMotorCANID,
                                          ClimberConstants.ClimberArm.kInverted,
-                                         ClimberConstants.ClimberArm.kCurrentLimit) ;
+                                         ClimberConstants.ClimberArm.kCurrentLimit,
+                                         ClimberConstants.ClimberArm.kCurrentLimitTime) ;
 
         position_ = motor_.getPosition() ;
         velocity_ = motor_.getVelocity() ;

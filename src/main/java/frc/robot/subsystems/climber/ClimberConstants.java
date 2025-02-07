@@ -4,11 +4,13 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
@@ -29,6 +31,8 @@ public class ClimberConstants {
 
         // Current limit
         public static final Current kCurrentLimit = Amps.of(80.0) ;
+
+        public static final Time kCurrentLimitTime = Seconds.of(1.0) ;
 
         // Moment of inertia for the grabber
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.0005) ;             

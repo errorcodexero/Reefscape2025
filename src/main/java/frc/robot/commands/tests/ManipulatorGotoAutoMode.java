@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem ;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class ManipulatorGotoAutoMode extends Command {
@@ -81,11 +81,11 @@ public class ManipulatorGotoAutoMode extends Command {
         if (shouldApplyNewSettings()) {
             double elevator = elevator_.getEntry().getDouble(0.0);
             double arm = arm_.getEntry().getDouble(0.0);
-            ManipulatorGotoCmd cmd = new ManipulatorGotoCmd(m_, Meters.of(elevator), Radians.of(arm)) ;
+            GoToCmd cmd = new GoToCmd(m_, Meters.of(elevator), Radians.of(arm)) ;
             cmd.schedule() ;
         }
         
-        if (shouldEjectCoral() && m_.isArmAtTarget() && m_.isElevatorAtTarget()) {
+        if (shouldEjectCoral() && m_.isArmAtTarget() && m_.isElevAtTarget()) {
             DepositCoralCmd cmd = new DepositCoralCmd(g_) ;
             cmd.schedule();
         }
@@ -96,7 +96,7 @@ public class ManipulatorGotoAutoMode extends Command {
             arm_ready_.getEntry().setBoolean(false);
         }
 
-        if (m_.isElevatorAtTarget()) {
+        if (m_.isElevAtTarget()) {
             elevator_ready_.getEntry().setBoolean(true);
         } else {
             elevator_ready_.getEntry().setBoolean(false);

@@ -56,7 +56,7 @@ public class GrabberIOHardware implements GrabberIO {
     private DigitalInterrupt algae_sensor_low_ ;
     private DigitalInterrupt algae_sensor_high_ ;
 
-    public GrabberIOHardware() {
+    public GrabberIOHardware() throws Exception {
         createGrabber() ;
 
         TalonFXFactory.checkError(-1, "manipulator-update-frequencies-10", () -> BaseStatusSignal.setUpdateFrequencyForAll(Hertz.of(10.0),
@@ -150,11 +150,11 @@ public class GrabberIOHardware implements GrabberIO {
         algae_sensor_high_.enable() ;
     }
 
-    private void createGrabber() {
-        TalonFXFactory f = TalonFXFactory.getFactory() ;
-        grabber_motor_ = f.createTalonFX(GrabberConstants.Grabber.kMotorCANID, 
+    private void createGrabber() throws Exception {
+        grabber_motor_ = TalonFXFactory.createTalonFX(GrabberConstants.Grabber.kMotorCANID, 
                                          GrabberConstants.Grabber.kInverted,
-                                         GrabberConstants.Grabber.kCurrentLimit) ;
+                                         GrabberConstants.Grabber.kCurrentLimit,
+                                         GrabberConstants.Grabber.kCurrentLimitTime) ;
 
         grabber_position_ = grabber_motor_.getPosition() ;
         grabber_velocity_ = grabber_motor_.getVelocity() ;

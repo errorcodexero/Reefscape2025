@@ -31,7 +31,7 @@ import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForAlgaeCmd;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
@@ -69,7 +69,7 @@ public class CollectReefAlgaeCmd extends SequentialCommandGroup {
                 PathConstraints backup_constraints = new PathConstraints(BackupMaxVelocity, BackupMaxAcceleration, BackupMaxAngularVelocity, BackupMaxAngularAcceleration, nominal, false) ;
 
                 addCommands(
-                    new ManipulatorGotoCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
+                    new GoToCmd(m, ElevatorPlaceHeight, ArmPlaceAngle),
                     new GamepadEnabled(false),
                     AutoBuilder.pathfindToPose(place, place_constraints),
                     new WaitForAlgaeCmd(g, false),

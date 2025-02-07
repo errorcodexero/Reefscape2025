@@ -66,7 +66,6 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OICommandSupplier;
@@ -217,10 +216,17 @@ public class RobotContainer {
                             new Rotation3d(Degrees.zero(), Degrees.of(-30), Rotations.of(0.5))
                         ), drivebase_::getPose));
 
-                    manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
-                    grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
-                    climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
-                    funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
+                    }
+                    catch(Exception ex) {
+                        //
+                        // This will never happen in a simulation
+                        //
+                    }
 
                     break;
             }
@@ -271,7 +277,7 @@ public class RobotContainer {
             // gamepad_.leftTrigger().onTrue(new ManualPlaceReadyCmd(manipulator_, 3, true)) ;
             // gamepad_.leftTrigger().onTrue(new ManipulatorGrabAlgaeReefCmd(manipulator_, grabber_)) ;
             // gamepad_.rightTrigger().onTrue(new SetGrabberVelocityCmd(grabber_, Volts.of(6.0))) ;
-            // gamepad_.a().onTrue(new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
+            // gamepad_.a().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.kMinHeight.plus(Centimeters.of(0)), Degrees.of(0.0)));
             
             configureButtonBindings();
         }

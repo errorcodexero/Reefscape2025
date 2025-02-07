@@ -1,128 +1,83 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*; 
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
-    private final ManipulatorIOInputsAutoLogged inputs_;
-    private Angle target_arm_position_ ;
-    private Distance target_elevator_position_ ;
-    private boolean arm_angle_inited_ = false ;
+    private final ManipulatorIOInputsAutoLogged inputs_;  
+    private Angle target_angle_;
+    private Distance target_height_;
 
-    public ManipulatorSubsystem(ManipulatorIO io){
+    private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
+    private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);
+
+    public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
-        inputs_ = new ManipulatorIOInputsAutoLogged();
+        inputs_ = new ManipulatorIOInputsAutoLogged(); 
     }
 
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
-        Logger.recordOutput("Manipulator/elevrotspos", inputs_.elevatorRawPosition.in(Rotations)) ;
-        Logger.recordOutput("Manipulator/elevrotsvel", inputs_.elevatorRawVelocity.in(RotationsPerSecond)) ;
-        Logger.recordOutput("Manipulator/armrotspos", inputs_.armRawPosition.in(Rotations)) ;
-        Logger.recordOutput("Manipulator/armrotsvel", inputs_.armRawVelocity.in(RotationsPerSecond)) ;
+        Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
+        Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
 
-        if (target_arm_position_ != null) {
-            Logger.recordOutput("Manipulator/arm-target", target_arm_position_) ;
-            Logger.recordOutput("Manipulator/arm-done", isArmAtTarget()) ;
+        armDisconnected_.set(!inputs_.armReady);
+        elevator1Disconnected_.set(!inputs_.elevator1Ready);
+        elevator2Disconnected_.set(!inputs_.elevator2Ready);
+    }
+
+    public Angle getArmPosition() {
+        return inputs_.armPosition;
+    }
+
+    public void setArmPosition(Angle angle) {
+        target_angle_ = angle;  
+        io_.setArmTarget(angle); 
+    }
+
+    public Distance getElevatorPosition() {
+        return inputs_.elevatorPosition; 
+    }
+
+    public void setElevatorPosition(Distance dist) {
+        target_height_ = dist;
+        io_.setElevatorPosition(dist); 
+    }
+
+    public boolean doesCrossKZ(Angle current, Angle target) {
+        Angle keepout_min = ManipulatorConstants.Keepout.kKeepoutMinAngle; 
+        Angle keepout_max = ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
+
+        if(current.lt(keepout_min) && target.gt(keepout_max)) {
+            return true; 
+        } else if(current.gt(keepout_max) && target.lt(keepout_min)) {
+            return true; 
         }
+        return false;
+    }
 
-        if (target_elevator_position_ != null) {
-            Logger.recordOutput("Manipulator/elevator-target", target_elevator_position_) ;
-            Logger.recordOutput("Manipulator/elevator-done", isElevatorAtTarget()) ;
+    public boolean isElevAtTarget() {
+        if((inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) && (inputs_.elevatorVelocity == MetersPerSecond.of(0))) {
+            return true; 
         }
-
-        if (!arm_angle_inited_) {
-            io_.setArmMotorPosition(inputs_.armEncoderValue) ;
-            arm_angle_inited_ = true ;
-        }
-    }
-
-    public Angle getCurrentArmAngle() {
-        return inputs_.armPosition ;
-    }
-
-    public void setArmAngleTarget(Angle target) {
-        target_arm_position_ = target ;
-        io_.setArmTarget(target);
-    }
-
-    public Distance getCurrentElevatorHeight() {
-        return inputs_.elevatorPosition ;
-    }
-
-    public void setElevatorHeightTarget(Distance target) {
-        target_elevator_position_ = target ;
-        io_.setElevatorTarget(target);
+        return false; 
     }
 
     public boolean isArmAtTarget() {
-        if (target_arm_position_ == null) {
-            return false ;
-        }   
-        return inputs_.armPosition.isNear(target_arm_position_, ManipulatorConstants.Goto.kArmTolerance) ;
-    }
-
-    public boolean isElevatorAtTarget() {
-        if (target_elevator_position_ == null) {
-            return false ;
+        if((inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) && (inputs_.armVelocity == DegreesPerSecond.of(0))) {
+            return true; 
         }
-        return inputs_.elevatorPosition.isNear(target_elevator_position_, ManipulatorConstants.Goto.kElevatorTolerance) ;
-    }
-
-    public Command armSysIdQuasistatic(SysIdRoutine.Direction dir) {
-        return armIdRoutine().quasistatic(dir) ;
-    }
-
-    public Command armSysIdDynamic(SysIdRoutine.Direction dir) {
-        return armIdRoutine().dynamic(dir) ;
-    }
-
-    public Command elevatorSysIdQuasistatic(SysIdRoutine.Direction dir) {
-        return elevatorIdRoutine().quasistatic(dir) ;
-    }
-    
-    public Command elevatorSysIdDynamic(SysIdRoutine.Direction dir) {
-        return elevatorIdRoutine().dynamic(dir) ;
-    }
-
-    private SysIdRoutine armIdRoutine() {
-        Voltage step = Volts.of(7) ;
-        Time to = Seconds.of(10.0) ;
-        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
-
-        SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
-                                        (volts) -> io_.setArmMotorVoltage(volts.magnitude()),
-                                        (log) -> io_.logArmMotor(log),
-                                        this) ;
-
-        return  new SysIdRoutine(cfg, mfg) ;
-    }
-
-    private SysIdRoutine elevatorIdRoutine() {
-        Voltage step = Volts.of(7) ;
-        Time to = Seconds.of(20.0) ;
-        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
-
-        SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
-                                        (volts) -> io_.setElevatorMotorVoltage(volts.magnitude()),
-                                        (log) -> io_.logElevatorMotor(log),
-                                        this) ;
-
-        return  new SysIdRoutine(cfg, mfg) ;
+        return false; 
     }
 }

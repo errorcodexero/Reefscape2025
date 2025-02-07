@@ -21,7 +21,7 @@ import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForAlgaeCmd;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
@@ -75,7 +75,7 @@ public class CollectReefAlgaeAfterCmd extends Command {
 
                     sequence_.addCommands(
                         new ReportStateCmd(getName(), "goto"),
-                        new ManipulatorGotoCmd(m_, CommandPositions.ReefAlgaeCollect.ElevatorHeight[b_.coralLevel()], CommandPositions.ReefAlgaeCollect.ArmAngle[b_.coralLevel()]),
+                        new GoToCmd(m_, CommandPositions.ReefAlgaeCollect.ElevatorHeight[b_.coralLevel()], CommandPositions.ReefAlgaeCollect.ArmAngle[b_.coralLevel()]),
                         new ReportStateCmd(getName(), "parallel"),
                         parallel,
                         new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_HIGH),

@@ -42,7 +42,7 @@ public class FunnelIOHardware implements FunnelIO {
 
     private DCMotorSim funnel_sim_ ;
 
-    public FunnelIOHardware() {
+    public FunnelIOHardware() throws Exception {
         createFunnel();
     }
 
@@ -76,11 +76,11 @@ public class FunnelIOHardware implements FunnelIO {
             .angularVelocity(vel) ;        
     }
 
-    private void createFunnel() {
-        TalonFXFactory f = TalonFXFactory.getFactory() ;
-        motor_ = f.createTalonFX(FunnelConstants.Funnel.kMotorCANID, 
-                                         FunnelConstants.Funnel.kInverted,
-                                         FunnelConstants.Funnel.kCurrentLimit) ;
+    private void createFunnel() throws Exception  {
+        motor_ = TalonFXFactory.createTalonFX(FunnelConstants.Funnel.kMotorCANID, 
+                                              FunnelConstants.Funnel.kInverted,
+                                              FunnelConstants.Funnel.kCurrentLimit,
+                                              FunnelConstants.Funnel.kCurrentLimitTime) ;
 
         position_ = motor_.getPosition() ;
         velocity_ = motor_.getVelocity() ;

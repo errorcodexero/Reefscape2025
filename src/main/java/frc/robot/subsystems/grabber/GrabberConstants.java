@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -26,6 +27,8 @@ public class GrabberConstants {
 
         // Current limit for the grabber motor
         public static final Current kCurrentLimit = Amps.of(40.0) ;
+
+        public static final Time kCurrentLimitTime = Seconds.of(1.0) ;
 
         // Tolerance for the grabber position
         public static final Angle kTolerance = Degrees.of(5.0) ;

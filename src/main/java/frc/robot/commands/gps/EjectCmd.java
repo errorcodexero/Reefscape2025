@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class EjectCmd extends Command {
@@ -42,7 +42,7 @@ public class EjectCmd extends Command {
                 break ;
             default:
                 eject_gp_ = null ;
-                goto_ = new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
+                goto_ = new GoToCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
                 goto_.schedule();
                 break ;
         }
@@ -53,7 +53,7 @@ public class EjectCmd extends Command {
         if (eject_gp_ != null) {
             if (eject_gp_.isFinished()) {
                 eject_gp_ = null ;
-                goto_ = new ManipulatorGotoCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
+                goto_ = new GoToCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
                 goto_.schedule();
             }
         }

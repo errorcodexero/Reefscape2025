@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.WaitForCoralCmd;
-import frc.robot.subsystems.manipulator.ManipulatorGotoCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.RobotContainer;
 
@@ -27,7 +27,7 @@ public class CollectCoralCmd extends SequentialCommandGroup {
             new ReportStateCmd(getName(), "goto"),
             new ParallelDeadlineGroup(
                 new WaitForCoralCmd(g),
-                new ManipulatorGotoCmd(m, ElevatorCollectHeight, ArmCollectAngle)),
+                new GoToCmd(m, ElevatorCollectHeight, ArmCollectAngle)),
             new ReportStateCmd(getName(), "holding"),
             new SetHoldingCmd(RobotContainer.GamePiece.CORAL),
             new ReportStateCmd(getName(), "rumbling"),
