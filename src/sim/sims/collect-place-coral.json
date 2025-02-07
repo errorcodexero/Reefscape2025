@@ -76,21 +76,7 @@
                     }
                 }
             ]
-        },
-        {
-            "time" : 8.1,
-            "events" :
-            [
-                {
-                    "model" : "dio",
-                    "instance" : "1",
-                    "values" : 
-                    {
-                        "coral-sensor" : true
-                    }
-                }
-            ]
-        },          
+        },     
         {
             "time" : 8.2,
             "events" :
@@ -160,6 +146,20 @@
                     }
                 }
             ]
-        }        
+        },
+        {
+            "time" : 15,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : true
+                    }
+                }
+            ]
+        }
     ]
 }
