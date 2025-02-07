@@ -42,6 +42,19 @@ public class ManipulatorConstants {
             public static final double kMaxAcceleration = 0.0;
             public static final double kJerk = 0.0;
         }
+
+        public class ThruBoreEncoder {
+            // the encoder mapper needs double values, so these constants don't use the Units library
+            // robot min and max are in degrees
+            public static final double kRobotMax = 360; 
+            public static final double kRobotMin = 0; 
+            public static final double kEncoderMax = 1; 
+            public static final double kEncoderMin = 0; 
+            public static final double kRobotCalibrationValue = 0; 
+            public static final double kEncoderCalibrationValue = 0;
+
+            public static final int kEncoderSource = 0; 
+        }
     }
 
     public class Elevator {

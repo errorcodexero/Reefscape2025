@@ -37,6 +37,10 @@ public interface ManipulatorIO {
         public boolean elevator2Ready = false;
         public Voltage elevator2Voltage = Volts.of(0);
         public Current elevator2Current = Amps.of(0); 
+
+        // encoder
+        public Angle absoluteEncoder = Degrees.of(0); 
+        public double rawAbsoluteEncoder = 0;
     }
 
     // updating inputs
@@ -55,6 +59,6 @@ public interface ManipulatorIO {
     public default void setElevatorPosition(Distance dist) {}
 
     // ARM METHODS
-    public default void setArmPosition(Angle angle) {}
+    public default void setArmTarget(Angle angle) {}
 
 }

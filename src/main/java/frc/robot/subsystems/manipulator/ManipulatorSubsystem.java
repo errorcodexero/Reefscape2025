@@ -41,7 +41,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public void setArmPosition(Angle angle) {
         target_angle_ = angle;  
-        io_.setArmPosition(angle); 
+        io_.setArmTarget(angle); 
     }
 
     public Distance getElevatorPosition() {
