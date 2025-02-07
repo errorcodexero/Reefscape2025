@@ -35,7 +35,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.SIMBOT;
+    private static final RobotType robotType = RobotType.ALPHA;
 
     public static class DriveConstants {
         
