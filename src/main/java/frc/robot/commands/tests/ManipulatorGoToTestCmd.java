@@ -12,8 +12,16 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 public class ManipulatorGoToTestCmd extends SequentialCommandGroup {
     public ManipulatorGoToTestCmd(ManipulatorSubsystem m) {
         addCommands(
-            new GoToCmd(m, Centimeters.of(60), Degrees.of(90.0)),
+            new GoToCmd(m, Centimeters.of(60), Degrees.of(91.0)),
             new WaitCommand(Seconds.of(1.0)),
-            new GoToCmd(m, Centimeters.of(60), Degrees.of(0.0))) ;
+            new GoToCmd(m, Centimeters.of(60), Degrees.of(0.0)),
+            new WaitCommand(Seconds.of(1.0)),
+            new GoToCmd(m, Centimeters.of(60), Degrees.of(91.0)),
+            new WaitCommand(Seconds.of(1.0)),
+            new GoToCmd(m, Centimeters.of(0), Degrees.of(0.0)),
+            new WaitCommand(Seconds.of(1.0)),
+            new GoToCmd(m, Centimeters.of(0.0), Degrees.of(91.0)),
+            new WaitCommand(Seconds.of(1.0)),
+            new GoToCmd(m, Centimeters.of(0), Degrees.of(0.0))) ;
     }
 }

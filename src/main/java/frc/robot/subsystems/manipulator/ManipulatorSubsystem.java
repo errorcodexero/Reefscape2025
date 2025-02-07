@@ -31,6 +31,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
         Logger.processInputs("Manipulator", inputs_);
         Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
         Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
+        Logger.recordOutput("Manipulator/armReady", isArmAtTarget()) ;
+        Logger.recordOutput("Manipulator/elevatorReady", isElevAtTarget()) ;
 
         armDisconnected_.set(!inputs_.armReady);
         elevator1Disconnected_.set(!inputs_.elevator1Ready);
@@ -56,28 +58,23 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public boolean doesCrossKZ(Angle current, Angle target) {
-        Angle keepout_min = ManipulatorConstants.Keepout.kKeepoutMinAngle; 
-        Angle keepout_max = ManipulatorConstants.Keepout.kKeepoutMaxAngle; 
-
-        if(current.lt(keepout_min) && target.gt(keepout_max)) {
-            return true; 
-        } else if(current.gt(keepout_max) && target.lt(keepout_min)) {
-            return true; 
-        }
-        return false;
+        return (current.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle) && target.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle)) || 
+               (current.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle) && target.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle)) ;
     }
 
     public boolean isElevAtTarget() {
-        if((inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance)) && (inputs_.elevatorVelocity == MetersPerSecond.of(0))) {
-            return true; 
-        }
-        return false; 
+        if (target_height_ == null)
+            return false;
+
+        return inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance) && 
+               inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance);
     }
 
     public boolean isArmAtTarget() {
-        if((inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance)) && (inputs_.armVelocity == DegreesPerSecond.of(0))) {
-            return true; 
-        }
-        return false; 
+        if (target_angle_ == null)
+            return false;            
+
+        return inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance) && 
+               inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance);
     }
 }
