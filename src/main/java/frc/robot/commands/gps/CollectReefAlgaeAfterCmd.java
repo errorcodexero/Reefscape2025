@@ -20,7 +20,7 @@ import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.WaitForAlgaeCmd;
+import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
@@ -70,7 +70,7 @@ public class CollectReefAlgaeAfterCmd extends Command {
                 if (!automode_) {
                     ParallelCommandGroup parallel = new ParallelCommandGroup() ;
                     parallel.addCommands(
-                        new WaitForAlgaeCmd(g_, false),
+                        new CollectAlgaeCmd(g_),
                         AutoBuilder.pathfindToPose(place, driveto_constraints)) ;
 
                     sequence_.addCommands(
@@ -78,7 +78,7 @@ public class CollectReefAlgaeAfterCmd extends Command {
                         new GoToCmd(m_, CommandPositions.ReefAlgaeCollect.ElevatorHeight[b_.coralLevel()], CommandPositions.ReefAlgaeCollect.ArmAngle[b_.coralLevel()]),
                         new ReportStateCmd(getName(), "parallel"),
                         parallel,
-                        new SetHoldingCmd(RobotContainer.GamePiece.ALGAE_HIGH),
+                        new SetHoldingCmd(b_, RobotContainer.GamePiece.ALGAE_HIGH),
                         new ReportStateCmd(getName(), "drive-backup"),
                         AutoBuilder.pathfindToPose(backup, backup_constraints),
                         new ReportStateCmd(getName(), "rumble"),
@@ -86,7 +86,7 @@ public class CollectReefAlgaeAfterCmd extends Command {
                 }
                 else {
                     sequence_.addCommands(
-                        new WaitForAlgaeCmd(g_, false)) ;
+                        new CollectAlgaeCmd(g_)) ;
                 }
             }
         }

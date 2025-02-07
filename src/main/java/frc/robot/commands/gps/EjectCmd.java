@@ -2,6 +2,7 @@ package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -9,6 +10,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class EjectCmd extends Command {
 
+    private Brain brain_ ;
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
     private ManipulatorSubsystem manipulator_ ;
@@ -17,7 +19,8 @@ public class EjectCmd extends Command {
     private Command goto_ ;
     private Command eject_gp_ ;
 
-    public EjectCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
+    public EjectCmd(Brain b, ManipulatorSubsystem m, GrabberSubsystem g) {
+        brain_ = b ;
         manipulator_ = m;
         grabber_ = g;
     }
@@ -28,14 +31,14 @@ public class EjectCmd extends Command {
         RobotContainer.getRobotContainer().getExecutor().lock() ;
         RobotContainer.getRobotContainer().getExecutor().clearRobotActions();
 
-        switch(grabber_.gp()) {
-            case Coral:
+        switch(brain_.gp()) {
+            case CORAL:
                 eject_gp_ = new EjectCoralCmd(m_, g_) ;
                 goto_ = null ;
                 eject_gp_.schedule();
                 break ;
-            case AlgaeHigh:
-            case AlgaeLow:
+            case ALGAE_HIGH:
+            case ALGAE_LOW:
                 eject_gp_ = new EjectAlgaeCmd(m_, g_) ;
                 goto_ = null ;
                 eject_gp_.schedule();

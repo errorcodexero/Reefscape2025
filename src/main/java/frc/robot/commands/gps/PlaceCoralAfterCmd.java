@@ -19,8 +19,8 @@ import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.grabber.DepositCoralCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
@@ -81,7 +81,7 @@ public class PlaceCoralAfterCmd extends Command {
                 sequence_.addCommands(
                     new ReportStateCmd(getName(), "deposit-coral"),
                     new DepositCoralCmd(g_),
-                    new SetHoldingCmd(RobotContainer.GamePiece.NONE)) ;
+                    new SetHoldingCmd(b_, RobotContainer.GamePiece.NONE)) ;
 
                 if (!automode_) {
                     sequence_.addCommands(
@@ -90,7 +90,7 @@ public class PlaceCoralAfterCmd extends Command {
                         new ReportStateCmd(getName(), "gamepad-enabled"),
                         new GamepadEnabled(true),
                         new ReportStateCmd(getName(), "set-holding"),
-                        new SetHoldingCmd(RobotContainer.GamePiece.NONE),
+                        new SetHoldingCmd(b_, RobotContainer.GamePiece.NONE),
                         new ReportStateCmd(getName(), "rumble"),
                         new RumbleGamepadCmd(Milliseconds.of(500))) ;
                 }

@@ -6,9 +6,11 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer.GamePiece;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OISubsystem;
+import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.subsystems.oi.RobotAction;
 
 public class Brain extends SubsystemBase {
@@ -39,6 +41,9 @@ public class Brain extends SubsystemBase {
     // The side of the coral to place
     private CoralSide coral_side_ ;
 
+    // The game piece we are holding
+    private GamePiece gp_ ;
+
     //
     // This supplier provides a pair of commands that must be executed in order to perform a given
     // robot action.  The second command may be null indicating the robot action can complete with a 
@@ -52,9 +57,43 @@ public class Brain extends SubsystemBase {
         current_action_ = null ;
         next_action_ = null ;
         current_robot_action_command_ = null ;
+        gp_ = GamePiece.NONE ;
 
         CommandScheduler.getInstance().onCommandFinish(this::cmdFinished) ;
     }
+
+    public GamePiece gp() {
+        return gp_ ;
+    }
+
+    public void setGp(GamePiece gp) {
+        gp_ = gp ;
+        switch(gp) {
+            case NONE:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+
+            case CORAL:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.On) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+                
+            case ALGAE_HIGH:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.On) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                break ;
+
+            case ALGAE_LOW:
+                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
+                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.On) ;
+                break ;
+        }
+    }    
 
     private void cmdFinished(Command c) {
         if (current_cmd_ == c) {

@@ -6,9 +6,13 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
@@ -77,4 +81,46 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance) && 
                inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance);
     }
+
+    public Command armSysIdQuasistatic(SysIdRoutine.Direction dir) {
+        return armIdRoutine().quasistatic(dir) ;
+    }
+
+    public Command armSysIdDynamic(SysIdRoutine.Direction dir) {
+        return armIdRoutine().dynamic(dir) ;
+    }
+
+    public Command elevatorSysIdQuasistatic(SysIdRoutine.Direction dir) {
+        return elevatorIdRoutine().quasistatic(dir) ;
+    }
+    
+    public Command elevatorSysIdDynamic(SysIdRoutine.Direction dir) {
+        return elevatorIdRoutine().dynamic(dir) ;
+    }
+
+    private SysIdRoutine armIdRoutine() {
+        Voltage step = Volts.of(7) ;
+        Time to = Seconds.of(10.0) ;
+        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
+
+        SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
+                                        (volts) -> io_.setArmMotorVoltage(volts.magnitude()),
+                                        (log) -> io_.logArmMotor(log),
+                                        this) ;
+
+        return  new SysIdRoutine(cfg, mfg) ;
+    }
+
+    private SysIdRoutine elevatorIdRoutine() {
+        Voltage step = Volts.of(7) ;
+        Time to = Seconds.of(20.0) ;
+        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
+
+        SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
+                                        (volts) -> io_.setElevatorMotorVoltage(volts.magnitude()),
+                                        (log) -> io_.logElevatorMotor(log),
+                                        this) ;
+
+        return  new SysIdRoutine(cfg, mfg) ;
+    }    
 }

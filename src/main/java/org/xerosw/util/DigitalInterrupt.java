@@ -15,8 +15,16 @@ public class DigitalInterrupt {
     private AtomicInteger count_at_interrupt_ ;
     private Supplier<Integer> count_supplier_ ;
 
+    public DigitalInterrupt(int channel) {
+        this(new DigitalInput(channel), true, true) ;
+    }
+
     public DigitalInterrupt(int channel, boolean risingEdge, boolean fallingEdge) {
         this(new DigitalInput(channel), risingEdge, fallingEdge) ;
+    }
+
+    public DigitalInterrupt(DigitalInput input) {
+        this(input, true, true) ;
     }
     
     public DigitalInterrupt(DigitalInput input, boolean risingEdge, boolean fallingEdge) {
@@ -42,6 +50,10 @@ public class DigitalInterrupt {
 
     public void disable() {
         interrupt_.disable() ;
+    }
+    
+    public boolean value() {
+        return input_.get() ;
     }
 
     public boolean risingEdge() {

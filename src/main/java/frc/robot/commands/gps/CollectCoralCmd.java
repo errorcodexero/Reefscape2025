@@ -9,8 +9,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.misc.RumbleGamepadCmd;
+import frc.robot.subsystems.brain.Brain;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.WaitForCoralCmd;
+import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.RobotContainer;
@@ -20,7 +21,7 @@ public class CollectCoralCmd extends SequentialCommandGroup {
     private static final Angle ArmCollectAngle = Degrees.of(90.0) ;
     private static final Distance ElevatorCollectHeight = Meters.of(1.0) ;
 
-    public CollectCoralCmd(ManipulatorSubsystem m, GrabberSubsystem g) {
+    public CollectCoralCmd(Brain b, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("CollectCoralCmd") ;
 
         addCommands(
@@ -29,7 +30,7 @@ public class CollectCoralCmd extends SequentialCommandGroup {
                 new WaitForCoralCmd(g),
                 new GoToCmd(m, ElevatorCollectHeight, ArmCollectAngle)),
             new ReportStateCmd(getName(), "holding"),
-            new SetHoldingCmd(RobotContainer.GamePiece.CORAL),
+            new SetHoldingCmd(b, RobotContainer.GamePiece.CORAL),
             new ReportStateCmd(getName(), "rumbling"),
             new RumbleGamepadCmd(Milliseconds.of(500)),
             new ReportStateCmd(getName(), "done")) ;

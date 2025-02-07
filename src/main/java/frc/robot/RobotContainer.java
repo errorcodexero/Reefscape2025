@@ -73,7 +73,6 @@ import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.CoralSide;
-import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.subsystems.oi.RobotAction;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
@@ -307,42 +306,12 @@ public class RobotContainer {
         return brain_ ;
     }
 
-    public void holding(GamePiece gp) {
-
-        holding_ = gp ;
-        switch(gp) {
-            case NONE:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
-                break ;
-
-            case CORAL:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.On) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
-                break ;
-                
-            case ALGAE_HIGH:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.On) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
-                break ;
-
-            case ALGAE_LOW:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.On) ;
-                break ;
-        }
-    }
-
     public OICommandSupplier.Pair<Command, Command> getRobotActionCommand(RobotAction action, int level, CoralSide side) {
         OICommandSupplier.Pair<Command, Command> ret = null ;
 
         switch(action) {
             case CollectCoral:
-                ret = new OICommandSupplier.Pair<>(new CollectCoralCmd(manipulator_, grabber_), null) ;
+                ret = new OICommandSupplier.Pair<>(new CollectCoralCmd(brain_, manipulator_, grabber_), null) ;
                 break ;
 
             case PlaceCoral:
@@ -378,20 +347,30 @@ public class RobotContainer {
     }
 
     private void configureCharBindings() {
-        // gamepad_.a().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
+        gamepad_.a().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
 
-        // gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kReverse)) ;
+        gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(manipulator_.elevatorSysIdDynamic(Direction.kReverse)) ;
 
         gamepad_.a().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kForward)) ;
         gamepad_.b().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kReverse)) ;
         gamepad_.x().whileTrue(grabber_.grabberSysIdDynamic(Direction.kForward)) ;
         gamepad_.y().whileTrue(grabber_.grabberSysIdDynamic(Direction.kReverse)) ;
+
+        gamepad_.a().whileTrue(climber_.climberSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(climber_.climberSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(climber_.climberSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(climber_.climberSysIdDynamic(Direction.kReverse)) ;        
+
+        gamepad_.a().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(funnel_.funnelSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(funnel_.funnelSysIdDynamic(Direction.kReverse)) ;        
     }
     
     /**
@@ -403,7 +382,7 @@ public class RobotContainer {
 
         oi_.climbExecute().onTrue(new ClimbExecuteCmd(climber_)) ;
         oi_.abort().onTrue(new AbortCmd()) ;
-        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
+        oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
 
         oi_.coralPlace().onTrue(new QueueRobotAction(brain_, RobotAction.PlaceCoral)) ;
         oi_.coralCollect().onTrue(new QueueRobotAction(brain_, RobotAction.CollectCoral)) ;

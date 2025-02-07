@@ -1,111 +1,108 @@
 package frc.robot.subsystems.grabber;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class GrabberSubsystem extends SubsystemBase {
+    
+    private final GrabberIO io_;
+    private final GrabberIOInputsAutoLogged inputs_;
+    
+    private boolean has_coral_;
+    private boolean has_algae_;
 
-    private GamePieceLocation gp_ ;
-    private final GrabberIO io_; 
-    private final GrabberIOInputsAutoLogged inputs_; 
-    private Angle target_ ;
-
-    public GrabberSubsystem(GrabberIO io){
-        io_ = io; 
-        inputs_ = new GrabberIOInputsAutoLogged(); 
-        gp_ = GamePieceLocation.None ;
-    }
-
-    public void setGP(GamePieceLocation gp) {
-        gp_ = gp ;
-    }
-
-    public GamePieceLocation gp() {
-        return gp_ ;
+    private final Alert disconnectedAlert = new Alert("Grabber motor was not initialized correctly!", AlertType.kError);
+    
+    public GrabberSubsystem(GrabberIO io) {
+        io_ = io;
+        inputs_ = new GrabberIOInputsAutoLogged();
     }
 
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Grabber", inputs_);
-        Logger.recordOutput("Grabber/target", target_);
-        Logger.recordOutput("Grabber/ready", isAtTarget()) ;
+
+        disconnectedAlert.set(!inputs_.grabberReady);
+    
+        Logger.recordOutput("Grabber/HasCoral", has_coral_);
+        Logger.recordOutput("Grabber/HasAlgae", has_algae_);
     }
 
-    public Angle getPosition() {
-        return inputs_.grabberPosition ;
-    }
+    //////////////////
+    // Grabber Methods
+    //////////////////
 
-    public void setGrabberTargetVelocity(AngularVelocity vel) {
+    public void setGrabberTargetVelocity(double vel) {
         io_.setGrabberTargetVelocity(vel);
     }
 
-    public void setGrabberTargetPosition(Angle target) {
-        target_ = target ;
-        io_.setGrabberTargetPosition(target);
+    public void stopGrabber() {
+        io_.setGrabberTargetVelocity(0);
     }
 
-    public boolean isAtTarget() {
-        if (target_ == null) {
-            return false ;
-        }
-
-        Logger.recordOutput("Grabber/test-pos", inputs_.grabberPosition.in(Degrees)) ;
-        Logger.recordOutput("Grabber/test-target", target_.in(Degrees)) ;
-        return inputs_.grabberPosition.isNear(target_, GrabberConstants.Grabber.kTolerance) ;
+    public void setGrabberMotorVoltage(double vol) {
+        io_.setGrabberMotorVoltage(vol);
     }
 
-    public void setGrabberVoltage(Voltage v) {
-        io_.setGrabberMotorVoltage(v.in(Volts)) ;
+    ///////////////////
+    // Gamepiece States
+    ///////////////////
+
+    public boolean hasCoral() {
+        return has_coral_;
     }
 
-    public Angle getGrabberPositionAtCoralLowEdge() {
-        return inputs_.grabberPositionCoralSensorLowEdge ;
-    }
-    
-    public Angle getGrabberPositionAtCoralHighEdge() {
-        return inputs_.grabberPositionCoralSensorHighEdge ;
+    public void setHasCoral(boolean b) {
+        has_coral_ = b;
     }
 
-    public boolean coralHighSensorRisingEdge() {
-        return inputs_.coralHighRisingEdge ;
+    public boolean hasAlgae() {
+        return has_algae_;
     }
 
-    public boolean coralHighSensorFallingEdge() {
-        return inputs_.coralHighFallingEdge ;
-    }    
-
-    public boolean coralLowSensorRisingEdge() {
-        return inputs_.coralSensorLowRisingEdge ;
+    public void setHasAlgae(boolean b) {
+        has_algae_ = b;
     }
 
-    public boolean coralLowSensorFallingEdge() {
-        return inputs_.coralSensorLowFallingEdge ;
+    ///////////////////////////
+    // Coral Sensor State
+    ///////////////////////////
+
+    public boolean coralRising() {
+        return inputs_.coralRisingEdge;
     }
 
-    public boolean coralFunnelRisingEdge() {
-        return inputs_.coralFunnelRisingEdge ;
+    public boolean coralFalling() {
+        return inputs_.coralFallingEdge;
     }
 
-    public boolean algaeHighRisingEdge() {
-        return inputs_.algaeHighRisingEdge ;
+    ///////////////////////////
+    // Algae Sensor State
+    ///////////////////////////
+
+    public boolean AlgaeRising() {
+        return inputs_.algaeRisingEdge;
     }
 
-    public boolean algaeLowRisingEdge() {
-        return inputs_.algaeLowRisingEdge ;
+    public boolean AlgaeFalling() {
+        return inputs_.algaeFallingEdge;
     }
 
+    ///////////////////////////
+    // SysId Routines
+    ///////////////////////////
+    /// 
     public Command grabberSysIdQuasistatic(SysIdRoutine.Direction dir) {
         return grabberIdRoutine().quasistatic(dir) ;
     }
@@ -125,5 +122,5 @@ public class GrabberSubsystem extends SubsystemBase {
                                         this) ;
 
         return  new SysIdRoutine(cfg, mfg) ;
-    }    
+    }  
 }

@@ -6,6 +6,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public interface FunnelIO {
     @AutoLog
@@ -22,4 +23,6 @@ public interface FunnelIO {
 
     //Set Target Position
     public default void setTargetPosition(Angle pos) {}
+    public default void setFunnelMotorVoltage(double volts) {}
+    public default void logFunnelMotor(SysIdRoutineLog log) {} 
 }

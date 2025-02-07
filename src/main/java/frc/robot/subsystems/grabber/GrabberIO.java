@@ -10,43 +10,31 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public interface GrabberIO {
     @AutoLog
-    public static class GrabberIOInputs{
-        // grabber inputs
-        public Current grabberCurrent ;
-        public Voltage grabberVoltage ;
-        public Angle grabberPosition ;
-        public AngularVelocity grabberVelocity ;
-        public AngularVelocity grabberRawVelocity ;
+    public static class GrabberIOInputs {
 
-        public boolean coralSensorLow ;
-        public boolean coralSensorLowRisingEdge ;
-        public boolean coralSensorLowFallingEdge ;
-        public Angle grabberPositionCoralSensorLowEdge ;
+        // Grabber Inputs
+        public boolean grabberReady = false;
+        public Angle grabberPosition;
+        public Current grabberCurrent;
+        public Voltage grabberVoltage;
+        public AngularVelocity grabberVelocity;
 
-        public boolean coralHigh ;
-        public boolean coralHighRisingEdge ;
-        public boolean coralHighFallingEdge ;
-        public Angle grabberPositionCoralSensorHighEdge ;
+        // Sensor Inputs
+        public boolean coralSensor;
+        public boolean coralRisingEdge;
+        public boolean coralFallingEdge;
 
-        public boolean coralFunnel ;
-        public boolean coralFunnelRisingEdge ;
-        public boolean coralFunnelFallingEdge ;
-
-        public boolean algaeHigh ;
-        public boolean algaeHighRisingEdge ;
-        public boolean algaeHighFallingEdge;
-
-        public boolean algaeLow ;
-        public boolean algaeLowRisingEdge ;
-        public boolean algaeLowFallingEdge ;
+        public boolean algaeSensor;
+        public boolean algaeRisingEdge;
+        public boolean algaeFallingEdge;
     }
 
-    // update all inputs
     public default void updateInputs(GrabberIOInputs inputs) {}
 
-    // grabber related methods
-    public default void setGrabberTargetVelocity(AngularVelocity target) {}
-    public default void setGrabberTargetPosition(Angle target) {}
-    public default void setGrabberMotorVoltage(double volts) {}
-    public default void logGrabberMotor(SysIdRoutineLog log) {} 
+    public default void setGrabberMotorVoltage(double vol) {}
+
+    public default void logGrabberMotor(SysIdRoutineLog log) {}
+
+    public default void setGrabberTargetVelocity(double vel) {} 
+
 }

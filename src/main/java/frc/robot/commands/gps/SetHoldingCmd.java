@@ -1,21 +1,22 @@
 package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePiece;
+import frc.robot.subsystems.brain.Brain;
 
 public class SetHoldingCmd extends Command {
+    private Brain brain_ ;
     private GamePiece gp_ ;
 
-    public SetHoldingCmd(GamePiece gp) {
+    public SetHoldingCmd(Brain b, GamePiece gp) {
+        brain_ = b ;
         gp_ = gp ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        RobotContainer c = RobotContainer.getRobotContainer() ;
-        c.holding(gp_) ;
+        brain_.setGp(gp_) ;
     }
 
     // Called every time the scheduler runs while the command is scheduled.

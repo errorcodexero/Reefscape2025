@@ -6,6 +6,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public interface ClimberIO {
     @AutoLog
@@ -28,4 +29,6 @@ public interface ClimberIO {
     //Update Inputs
     public default void updateInputs(ClimberIOInputsAutoLogged inputs) {}
     public default void setClimberPosition(Angle target) { }
+    public default void setClimberMotorVoltage(double volts) {}
+    public default void logClimberMotor(SysIdRoutineLog log) {} 
 }
