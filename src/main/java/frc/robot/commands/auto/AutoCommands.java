@@ -14,6 +14,7 @@ public class AutoCommands {
 
     /**
      * TODO: put in numbers and other commands when they are available.
+     * NOTE: All comments are going to be replaced with their respective commands. 
      */
 
     public static Command sideCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
@@ -133,9 +134,9 @@ public class AutoCommands {
 
 
     public static Command centerCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, boolean mirroredX){
-        boolean mirroredY = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().equals(Alliance.Red) : false;
+        boolean mirroredY = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
         if(!mirroredY) {
-            mirroredX = !mirroredX; // Might not be needed
+            mirroredX = !mirroredX;
         }
         return Commands.sequence(
             Commands.parallel(

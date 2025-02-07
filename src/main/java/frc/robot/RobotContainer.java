@@ -28,6 +28,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -35,8 +38,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -87,11 +88,10 @@ public class RobotContainer {
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
 
+    private final LoggedDashboardChooser<Command> autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
-    
-    // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser_;
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer () {
@@ -260,13 +260,25 @@ public class RobotContainer {
         // Simulation setup
         this.addSubsystem(drivebase_) ;
 
+        // Configure the button bindings
+        configureDriveBindings();
+        configureButtonBindings();
+    }
+
+    public ISimulatedSubsystem get(String name) {
+        return this.subsystems_.get(name) ;
+    }
+
+    private void addSubsystem(SubsystemBase sub) {
+        if (sub instanceof ISimulatedSubsystem) {
+            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
+        }
+    }
+
+    public void setupAutos() {
+        // Setup auto chooser
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
-
-        // Set up auto chooser
-        autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-        // Add mirrored autos
         
         
         autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
@@ -299,20 +311,6 @@ public class RobotContainer {
 
         // Add choosers and widgets to tabs.
         autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
-        
-        // Configure the button bindings
-        configureDriveBindings();
-        configureButtonBindings();
-    }
-
-    public ISimulatedSubsystem get(String name) {
-        return this.subsystems_.get(name) ;
-    }
-
-    private void addSubsystem(SubsystemBase sub) {
-        if (sub instanceof ISimulatedSubsystem) {
-            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
-        }
     }
     
     /**
@@ -417,4 +415,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser_.get();
     }
+    
 }
