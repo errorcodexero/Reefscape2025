@@ -44,15 +44,10 @@
             "model" : "dio",
             "instance" : "1",
             "props" : {
-                "low-coral-sensor" : 1,
-                "low-coral-sensor-init" : true,
-                "high-coral-sensor" : 2,
-                "funnel-coral-sensor" : 3,
-                "high-algae-sensor" : 4,
-                "low-algae-sensor" : 5,
-                "cage-door-1" : 6,
-                "cage-door-2" : 7,
-                "cage-back" : 8
+                "coral-sensor" : 1,
+                "coral-sensor-init" : true,
+                "algae-sensor" : 2,
+                "algae-sensor-init" : true
             }
         }
     ]

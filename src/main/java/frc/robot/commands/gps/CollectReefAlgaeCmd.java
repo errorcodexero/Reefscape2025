@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
@@ -54,7 +54,7 @@ public class CollectReefAlgaeCmd extends SequentialCommandGroup {
     private static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     private static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public CollectReefAlgaeCmd(Brain b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public CollectReefAlgaeCmd(BrainSubsystem b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("PlaceCoralCmd") ;
 
         Optional<Alliance> a = DriverStation.getAlliance() ;

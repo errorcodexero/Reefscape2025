@@ -132,11 +132,17 @@ public class ManipulatorConstants {
     public class Positions {
         public static final Distance kStowedHeight = Meters.of(0.0);
         public static final Angle kStowedAngle = Degrees.of(0.0);
+
         public static final Distance kCollectHeight = Meters.of(0.0);
         public static final Angle kCollectAngle = Degrees.of(0.0);
+
         public static final Distance kLowScoreHeight = Meters.of(0.0);
         public static final Angle kLowScoreAngle = Degrees.of(0.0);
+
         public static final Distance kHighScoreHeight = Meters.of(0.0);
         public static final Angle kHighScoreAngle = Degrees.of(0.0);
+
+        public static final Distance kEjectAlgaeHeight = Meters.of(1.0);
+        public static final Angle kEjectAlgaeAngle = Degrees.of(-30.0);
     }
 }

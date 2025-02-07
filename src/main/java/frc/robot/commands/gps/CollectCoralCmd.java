@@ -9,7 +9,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -21,7 +21,7 @@ public class CollectCoralCmd extends SequentialCommandGroup {
     private static final Angle ArmCollectAngle = Degrees.of(90.0) ;
     private static final Distance ElevatorCollectHeight = Meters.of(1.0) ;
 
-    public CollectCoralCmd(Brain b, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public CollectCoralCmd(BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("CollectCoralCmd") ;
 
         addCommands(

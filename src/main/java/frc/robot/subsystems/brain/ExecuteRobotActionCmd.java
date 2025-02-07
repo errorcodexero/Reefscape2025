@@ -2,10 +2,10 @@ package frc.robot.subsystems.brain;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ExecuteRobotAction extends Command {
-    private Brain exec_ ;
+public class ExecuteRobotActionCmd extends Command {
+    private BrainSubsystem exec_ ;
 
-    public ExecuteRobotAction(Brain ex) {
+    public ExecuteRobotActionCmd(BrainSubsystem ex) {
         exec_ = ex ;
     }
 

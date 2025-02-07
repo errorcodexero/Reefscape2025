@@ -68,11 +68,11 @@
             "events" :
             [
                 {
-                    "model" : "grabber",
+                    "model" : "dio",
                     "instance" : "1",
                     "values" : 
                     {
-                        "low-coral-sensor" : true
+                        "coral-sensor" : false
                     }
                 }
             ]
@@ -86,7 +86,7 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "low-coral-sensor" : false
+                        "coral-sensor" : true
                     }
                 }
             ]

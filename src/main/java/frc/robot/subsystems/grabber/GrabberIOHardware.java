@@ -11,6 +11,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -45,6 +46,11 @@ public class GrabberIOHardware implements GrabberIO {
             Seconds.of(1)
         );
 
+        grabber_pos_sig_ = grabber_motor_.getPosition() ;
+        grabber_vel_sig_ = grabber_motor_.getVelocity() ;
+        grabber_curr_sig_ = grabber_motor_.getSupplyCurrent() ;
+        grabber_vol_sig_ = grabber_motor_.getMotorVoltage() ;
+
         Slot0Configs grabber_pids_ = new Slot0Configs();
         grabber_pids_.kP = GrabberConstants.Grabber.PID.kP;
         grabber_pids_.kI = GrabberConstants.Grabber.PID.kI;
@@ -65,7 +71,7 @@ public class GrabberIOHardware implements GrabberIO {
 
         TalonFXFactory.checkError(
             GrabberConstants.Grabber.kMotorCANID,
-            null,
+            "grabber-set-freq",
             () -> BaseStatusSignal.setUpdateFrequencyForAll(
                 1.0,
                 grabber_curr_sig_,
@@ -78,10 +84,13 @@ public class GrabberIOHardware implements GrabberIO {
         TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
     
         coral_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralSensor.kChannel);
+        coral_.enable() ;
+
         algae_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeSensor.kChannel);
+        algae_.enable();
     }
 
-     @Override
+    @Override
     public void updateInputs(GrabberIOInputs inputs) {
 
         StatusCode grabberStatus = BaseStatusSignal.refreshAll(
@@ -119,8 +128,13 @@ public class GrabberIOHardware implements GrabberIO {
         grabber_motor_.setVoltage(grabber_voltage_);
     }
 
-    public void setGrabberTargetVelocity(double vel) {
-        double cvel = vel / GrabberConstants.Grabber.kGearRatio;
-        grabber_motor_.setControl(new MotionMagicVelocityVoltage(cvel));
+    public void setGrabberTargetVelocity(AngularVelocity vel) {
+        AngularVelocity cvel = vel.div(GrabberConstants.Grabber.kGearRatio) ;
+        grabber_motor_.setControl(new MotionMagicVelocityVoltage(cvel)) ;
+    }
+
+    public void setGrabberTargetPosition(Angle pos) {
+        Angle cpos = pos.div(GrabberConstants.Grabber.kGearRatio) ;
+        grabber_motor_.setControl(new MotionMagicVoltage(cpos)) ;
     }
 }

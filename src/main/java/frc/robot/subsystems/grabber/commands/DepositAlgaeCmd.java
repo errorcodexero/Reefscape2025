@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber.commands;
 
+import org.xerosw.util.XeroTimer;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
@@ -8,46 +10,46 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 public class DepositAlgaeCmd extends Command {
 
     private GrabberSubsystem grabber_;
-    private State State_;
-    private Timer timer_;
+    private State state_;
+    private XeroTimer timer_;
 
     private enum State {
         WaitingForAlgaeEject,
-        RollersOff,
+        WaitForTimer,
         Finish
     }
 
     public DepositAlgaeCmd(GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
+        timer_ = new XeroTimer(GrabberConstants.Grabber.DepositAlgae.delay);
     }
+
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.waitForCoralVelocity);
-        State_ = State.WaitingForAlgaeEject;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositAlgae.velocity);
+        state_ = State.WaitingForAlgaeEject;
     }
 
     @Override
     public boolean isFinished() {
-        return State_ == State.Finish;
+        return state_ == State.Finish;
     }
 
     @Override
     public void execute() {
-        switch(State_) {
+        switch(state_) {
             case WaitingForAlgaeEject:
-                timer_.start();
-                if (grabber_.AlgaeFalling() && timer_.hasElapsed(GrabberConstants.Grabber.Positions.ejectAlgaeWait) && timer_.isRunning()) {
-                    grabber_.setHasAlgae(false);
-                    timer_.stop();
-                    timer_.reset();
-                    State_ = State.RollersOff;
+                if (grabber_.AlgaeFalling()) {
+                    state_ = State.WaitForTimer;
+                    timer_.start();
                 }
                 break;
-            case RollersOff:
+            case WaitForTimer:
                 grabber_.stopGrabber();
-                State_ = State.Finish;
+                state_ = State.Finish;
                 break;
+
             case Finish:
                 break;
         }
@@ -55,6 +57,6 @@ public class DepositAlgaeCmd extends Command {
 
     @Override
     public void end(boolean canceled) {
-        State_ = State.Finish;
+        state_ = State.Finish;
     }
 }

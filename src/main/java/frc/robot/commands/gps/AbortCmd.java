@@ -1,16 +1,19 @@
 package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.brain.BrainSubsystem;
 
 public class AbortCmd extends Command {
-    public AbortCmd() {
+    private BrainSubsystem brain_ ;
+
+    public AbortCmd(BrainSubsystem b) {
+        brain_ = b ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        RobotContainer.getRobotContainer().getExecutor().clearRobotActions() ;
+        brain_.clearRobotActions();
     }
 
     // Returns true when the command should end.

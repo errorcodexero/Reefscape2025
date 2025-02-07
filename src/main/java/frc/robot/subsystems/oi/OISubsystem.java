@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.brain.BrainSubsystem;
 
 public class OISubsystem extends SubsystemBase {
     
@@ -83,6 +83,8 @@ public class OISubsystem extends SubsystemBase {
     private Trigger algae_score_ ;
     private Trigger execute_trigger_ ;
 
+    private BrainSubsystem brain_ ;
+
     public OISubsystem(OIIO ios, CommandXboxController ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
@@ -107,6 +109,10 @@ public class OISubsystem extends SubsystemBase {
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
+    }
+
+    public void setBrain(BrainSubsystem b) {
+        brain_ = b ;
     }
 
     public Trigger abort() {
@@ -218,12 +224,12 @@ public class OISubsystem extends SubsystemBase {
         if (inputs_.coral_side) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralSide(CoralSide.Left) ;
+            brain_.setCoralSide(CoralSide.Left) ;
         }
         else {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralSide(CoralSide.Right) ;
+            brain_.setCoralSide(CoralSide.Right) ;
         }
 
         //
@@ -231,28 +237,28 @@ public class OISubsystem extends SubsystemBase {
         //
         if (inputs_.coral_l1) {
             setLEDState(OILed.CoralL1, LEDState.On) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralLevel(1) ;
+            brain_.setCoralLevel(1) ;
         } else {
             setLEDState(OILed.CoralL1, LEDState.Off) ;
         }
 
         if (inputs_.coral_l2) {
             setLEDState(OILed.CoralL2, LEDState.On) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralLevel(2) ;
+            brain_.setCoralLevel(2) ;
         } else {
             setLEDState(OILed.CoralL2, LEDState.Off) ;
         }
 
         if (inputs_.coral_l3) {
             setLEDState(OILed.CoralL3, LEDState.On) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralLevel(3) ;
+            brain_.setCoralLevel(3) ;
         } else {
             setLEDState(OILed.CoralL3, LEDState.Off) ;
         }
 
         if (inputs_.coral_l4) {
             setLEDState(OILed.CoralL4, LEDState.On) ;
-            RobotContainer.getRobotContainer().getExecutor().setCoralLevel(4) ;
+            brain_.setCoralLevel(4) ;
         } else {
             setLEDState(OILed.CoralL4, LEDState.Off) ;
         }

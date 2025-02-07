@@ -4,10 +4,19 @@ import frc.simulator.utils.SettingsValue;
 
 public class SimulationAssertEvent extends SimulationEvent {
 
+    @SuppressWarnings("unused")
     private String subsystem_;
+
+    @SuppressWarnings("unused")
     private String name_;
+
+    @SuppressWarnings("unused")
     private String setting_;
+
+    @SuppressWarnings("unused")
     private SettingsValue value_;
+
+    @SuppressWarnings("unused")
     private double tolerance_;
 
     public SimulationAssertEvent(double t, String subsystem, String name, SettingsValue v, double tol) {

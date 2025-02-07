@@ -1,5 +1,11 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Time;
+
 public class GrabberConstants {
 
     public class Grabber {
@@ -26,18 +32,34 @@ public class GrabberConstants {
 
         public class CoralSensor {
             public static final int kChannel = 1;
-            public static final boolean kInverted = false;
         }
 
         public class AlgaeSensor {
             public static final int kChannel = 2;
-            public static final boolean kInverted = false;
+        }
+
+        public class DepositCoral {
+            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+            public static final Time delay = Milliseconds.of(250.0) ;
+        }
+
+        public class CollectCoral {
+            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+        }
+
+        public class CollectAlgae {
+            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+        }
+
+        public class DepositAlgae {
+            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+            public static final Time delay = Milliseconds.of(250.0) ;
         }
 
         public class Positions {
-            public static final double waitForCoralVelocity = 0.0;
             public static final double CoralPositionVelocity = 0.0;
-            public static final double ejectCoralVelocty = 0.0;
+
+            public static final double ejectCoralVelocty = 1.0;
             public static final double ejectCoralWait = 0.0;
 
             public static final double collectAlgaeVelocity = 0.0;

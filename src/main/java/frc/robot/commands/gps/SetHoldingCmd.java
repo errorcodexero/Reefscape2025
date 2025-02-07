@@ -2,13 +2,13 @@ package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.GamePiece;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 
 public class SetHoldingCmd extends Command {
-    private Brain brain_ ;
+    private BrainSubsystem brain_ ;
     private GamePiece gp_ ;
 
-    public SetHoldingCmd(Brain b, GamePiece gp) {
+    public SetHoldingCmd(BrainSubsystem b, GamePiece gp) {
         brain_ = b ;
         gp_ = gp ;
     }

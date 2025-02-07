@@ -9,7 +9,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -19,7 +19,7 @@ public class ScoreGroundAlgaeCmd extends SequentialCommandGroup {
     private static final Angle ArmScoreAngle = Degrees.of(90.0) ;
     private static final Distance ElevatorScoreHeight = Meters.of(1.0) ;
 
-    public ScoreGroundAlgaeCmd(Brain b, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public ScoreGroundAlgaeCmd(BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("ScoreReefAlgaeCmd") ;
         addCommands(
             new GoToCmd(m, ElevatorScoreHeight, ArmScoreAngle),

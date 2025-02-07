@@ -3,11 +3,11 @@ package frc.robot.subsystems.brain;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.oi.RobotAction;
 
-public class QueueRobotAction extends Command {
-    private Brain exec_ ;
+public class QueueRobotActionCmd extends Command {
+    private BrainSubsystem exec_ ;
     private RobotAction action_;
 
-    public QueueRobotAction(Brain ex, RobotAction action) {
+    public QueueRobotActionCmd(BrainSubsystem ex, RobotAction action) {
         exec_ = ex ;
         action_ = action;
     }

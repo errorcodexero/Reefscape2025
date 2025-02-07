@@ -1,5 +1,7 @@
 package frc.robot.subsystems.brain;
 
+import java.util.List;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.RobotState;
@@ -8,12 +10,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer.GamePiece;
 import frc.robot.subsystems.oi.CoralSide;
-import frc.robot.subsystems.oi.OICommandSupplier;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.subsystems.oi.RobotAction;
 
-public class Brain extends SubsystemBase {
+public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
     private RobotAction current_action_ ;
 
@@ -21,16 +22,14 @@ public class Brain extends SubsystemBase {
     private RobotAction next_action_ ;
 
     // If true, we do not accept any robot actions
-    private boolean locked_ ;   
+    private boolean locked_ ;
 
     // The command associated with the current robot action
-    private OICommandSupplier.Pair<Command, Command> current_robot_action_command_ ;
+    private List<Command> current_robot_action_command_ ;
+    private int current_robot_action_command_index_ ;
 
     // The command we are running
     private Command current_cmd_ ;
-
-    // The last command we ran
-    private Command last_cmd_ ;
 
     // The OI subsystem, for LED control
     private OISubsystem oi_ ;
@@ -49,14 +48,15 @@ public class Brain extends SubsystemBase {
     // robot action.  The second command may be null indicating the robot action can complete with a 
     // single command.
     //
-    private OICommandSupplier robot_action_command_supplier_ ;
+    private RobotActionToCommandSupplier robot_action_command_supplier_ ;
 
-    public Brain(OISubsystem oi, OICommandSupplier robotActionCommandSupplier) {
+    public BrainSubsystem(OISubsystem oi, RobotActionToCommandSupplier robotActionCommandSupplier) {
         oi_ = oi ;
         robot_action_command_supplier_ = robotActionCommandSupplier ;
         current_action_ = null ;
         next_action_ = null ;
         current_robot_action_command_ = null ;
+        current_robot_action_command_index_ = 0 ;
         gp_ = GamePiece.NONE ;
 
         CommandScheduler.getInstance().onCommandFinish(this::cmdFinished) ;
@@ -97,8 +97,10 @@ public class Brain extends SubsystemBase {
 
     private void cmdFinished(Command c) {
         if (current_cmd_ == c) {
-            last_cmd_ = c ;
             current_cmd_ = null ;
+            if (current_action_ != null && current_robot_action_command_index_ >= current_robot_action_command_.size()) {
+                completedAction() ;
+            }
         }
     }
 
@@ -123,7 +125,7 @@ public class Brain extends SubsystemBase {
     }
 
     public void queueRobotAction(RobotAction action) {
-        if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
+        if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop() && next_action_ == null) {
             next_action_ = action ;
             if (current_action_ == null) {
                 periodic();
@@ -134,12 +136,13 @@ public class Brain extends SubsystemBase {
     //
     // This clears the state of the OI to a basic default, no actions 
     // scheduled state.
-    // 
+    //
     public void clearRobotActions() {
         if (current_cmd_ != null) {
             current_cmd_.cancel() ;
         }
 
+        current_cmd_ = null ;
         current_action_ = null ;
         next_action_ = null ;
 
@@ -154,12 +157,49 @@ public class Brain extends SubsystemBase {
         locked_ = false ;
     }
 
+    private void completedAction() {
+        current_action_ = null ;
+        current_robot_action_command_ = null ;
+        current_robot_action_command_index_ = 0 ;
+        current_cmd_ = null ;
+        if (next_action_ != null) {
+            startNewAction() ;
+        }
+    }
+
     public void execute() {
-        if (current_cmd_ == null && current_robot_action_command_ != null && current_robot_action_command_.two() != null) {
-            Logger.recordOutput("oi/execute", false) ;
-            current_cmd_ = current_robot_action_command_.two() ;
+        if (current_cmd_ == null && current_action_ != null && current_robot_action_command_ != null) {
+            current_cmd_ = current_robot_action_command_.get(current_robot_action_command_index_++) ;
             current_cmd_.schedule();
         }
+    }
+
+    private String startNewAction() {
+        String status ;
+
+        //
+        // We are executing nothing, see if there are things to run queued
+        //
+        if (next_action_ != null) {
+            current_robot_action_command_index_ = 0 ;
+            current_action_ = next_action_ ;
+            next_action_ = null ;
+            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, coral_side_) ;
+            if (current_robot_action_command_ == null) {
+                status = current_action_.toString() + ":no command" ;
+                current_action_ = null ;
+                current_cmd_ = null ;
+            }
+            else {
+                current_cmd_ = current_robot_action_command_.get(current_robot_action_command_index_++) ;
+                status = current_action_.toString() + ":" + current_cmd_.getName() ;
+                current_cmd_.schedule() ;
+            }
+        }
+        else {
+            status = "idle" ;
+        }
+        return status ;
     }
 
     @Override
@@ -167,50 +207,20 @@ public class Brain extends SubsystemBase {
         String status = "" ;
 
         if (current_action_ == null) {
-            //
-            // We are executing nothing, see if there are things to run queued
-            //
             if (next_action_ != null) {
-                current_action_ = next_action_ ;
-                next_action_ = null ;
-                current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, coral_side_) ;
-                if (current_robot_action_command_ == null) {
-                    status = current_action_.toString() + ":no command" ;
-                    current_action_ = null ;
-                    current_cmd_ = null ;
-                }
-                else {
-                    current_cmd_ = current_robot_action_command_.one() ;
-                    status = current_action_.toString() + ":" + current_cmd_.getName() ;
-                    current_cmd_.schedule() ;
-                }
+                status = startNewAction() ;
             }
             else {
                 status = "idle" ;
             }
         }
         else {
-            if (current_cmd_ == null && last_cmd_ == null) {
+            if (current_cmd_ == null) {
+                //
+                // The last command has finished and we are waiting for the execute button to schedule
+                // the next phase of this robot action.
+                //
                 status = current_action_.toString() + ":waiting" ;
-            } 
-            else if (current_cmd_ == null && last_cmd_ != null) {
-                if (last_cmd_ == current_robot_action_command_.two() || current_robot_action_command_.two() == null) {
-                    current_action_ = null ;
-                    last_cmd_ = null ;
-                    status = "idle" ;
-
-
-                    //
-                    // We are done with the current command.  We call recursively back into this code to be sure the next
-                    // command starts in the same robot loop
-                    //
-                    periodic();
-                }
-                else {
-                    current_cmd_ = null ;
-                    last_cmd_ = null ;
-                    status = "finished" ;
-                }
             }
             else {
                 status = current_action_.toString() + ":" + current_cmd_.getName() ;
@@ -222,5 +232,4 @@ public class Brain extends SubsystemBase {
         Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
     }
-
 } 

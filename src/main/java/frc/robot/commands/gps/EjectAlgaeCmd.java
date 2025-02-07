@@ -2,7 +2,9 @@ package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class EjectAlgaeCmd extends SequentialCommandGroup {
@@ -14,7 +16,7 @@ public class EjectAlgaeCmd extends SequentialCommandGroup {
         grabber_ = g;
 
         addCommands(
-            new GoToCmd(m, null, null)
-        );
+            new GoToCmd(manipulator_, ManipulatorConstants.Positions.kEjectAlgaeHeight, ManipulatorConstants.Positions.kEjectAlgaeAngle),
+            new DepositAlgaeCmd(grabber_)) ;
     }
 }

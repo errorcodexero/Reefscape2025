@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
@@ -43,36 +45,17 @@ public class GrabberSubsystem extends SubsystemBase {
     // Grabber Methods
     //////////////////
 
-    public void setGrabberTargetVelocity(double vel) {
+    public void setGrabberTargetVelocity(AngularVelocity vel) {
         io_.setGrabberTargetVelocity(vel);
     }
 
     public void stopGrabber() {
-        io_.setGrabberTargetVelocity(0);
+        Angle pos = inputs_.grabberPosition ;
+        io_.setGrabberTargetPosition(pos) ;
     }
 
     public void setGrabberMotorVoltage(double vol) {
         io_.setGrabberMotorVoltage(vol);
-    }
-
-    ///////////////////
-    // Gamepiece States
-    ///////////////////
-
-    public boolean hasCoral() {
-        return has_coral_;
-    }
-
-    public void setHasCoral(boolean b) {
-        has_coral_ = b;
-    }
-
-    public boolean hasAlgae() {
-        return has_algae_;
-    }
-
-    public void setHasAlgae(boolean b) {
-        has_algae_ = b;
     }
 
     ///////////////////////////

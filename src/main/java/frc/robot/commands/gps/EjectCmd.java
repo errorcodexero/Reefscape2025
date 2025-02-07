@@ -1,78 +1,81 @@
 package frc.robot.commands.gps;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.GoToCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class EjectCmd extends Command {
 
-    private Brain brain_ ;
+    private BrainSubsystem brain_ ;
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
-    private ManipulatorSubsystem manipulator_ ;
-    private GrabberSubsystem grabber_ ;
 
-    private Command goto_ ;
-    private Command eject_gp_ ;
+    private Command eject_cmd_ ;
+    private Command stow_cmd_ ;
 
-    public EjectCmd(Brain b, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public EjectCmd(BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
         brain_ = b ;
-        manipulator_ = m;
-        grabber_ = g;
+        m_ = m;
+        g_ = g ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        RobotContainer.getRobotContainer().getExecutor().lock() ;
-        RobotContainer.getRobotContainer().getExecutor().clearRobotActions();
+        brain_.lock() ;
+        brain_.clearRobotActions();
 
         switch(brain_.gp()) {
             case CORAL:
-                eject_gp_ = new EjectCoralCmd(m_, g_) ;
-                goto_ = null ;
-                eject_gp_.schedule();
+                eject_cmd_ = new EjectCoralCmd(m_, g_) ;
                 break ;
             case ALGAE_HIGH:
             case ALGAE_LOW:
-                eject_gp_ = new EjectAlgaeCmd(m_, g_) ;
-                goto_ = null ;
-                eject_gp_.schedule();
+                eject_cmd_ = new EjectAlgaeCmd(m_, g_) ;
                 break ;
             default:
-                eject_gp_ = null ;
-                goto_ = new GoToCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
-                goto_.schedule();
+                eject_cmd_ = null ;
                 break ;
+        }
+
+        if (eject_cmd_ != null) {
+            eject_cmd_.schedule();
+        }
+        else {
+            stow_cmd_ = new GoToCmd(m_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
+            stow_cmd_.schedule();
         }
     }
 
     @Override
     public void execute() {
-        if (eject_gp_ != null) {
-            if (eject_gp_.isFinished()) {
-                eject_gp_ = null ;
-                goto_ = new GoToCmd(manipulator_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
-                goto_.schedule();
-            }
-        }
-        else if (goto_ != null) {
-            if (goto_.isFinished()) {
-                goto_ = null ;
-            }
-        }
-        else {
-            RobotContainer.getRobotContainer().getExecutor().unlock() ;
+        if (eject_cmd_ != null && eject_cmd_.isFinished()) {
+            stow_cmd_ = new GoToCmd(m_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle) ;
+            stow_cmd_.schedule();
         }
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return eject_gp_ == null && goto_ == null ;
-    }    
+        return stow_cmd_ != null && stow_cmd_.isFinished() ;
+    } 
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            if (eject_cmd_ != null) {
+                eject_cmd_.cancel();
+            }
+
+            if (stow_cmd_ != null) {
+                stow_cmd_.cancel();
+            }
+        }
+
+        brain_.unlock() ;
+    }
 }

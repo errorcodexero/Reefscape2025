@@ -68,17 +68,29 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
     public ManipulatorIOHardware() throws Exception {
+        createArm() ;
+        createElevator() ;   
 
-        encoder_motor_synced_ = false ;
-
-        arm_motor_ = TalonFXFactory.createTalonFX(
-            ManipulatorConstants.Arm.kMotorCANID,
-            ManipulatorConstants.Arm.kCANBusName,
-            ManipulatorConstants.Arm.kInverted,
-            ManipulatorConstants.Arm.kCurrentLimit,
-            ManipulatorConstants.Arm.kCurrentLimitTime
+        // setting signal update frequency: 
+        TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0,
+                arm_pos_sig_,
+                arm_vel_sig_,
+                arm_vol_sig_,
+                arm_current_sig_,
+                elevator_pos_sig_,
+                elevator_vel_sig_,
+                elevator_1_vol_sig_,
+                elevator_1_current_sig_,
+                elevator_2_vol_sig_,
+                elevator_2_current_sig_
+            )
         );
 
+    }
+
+    private void createElevator() throws Exception {
         elevator_motor_ = TalonFXFactory.createTalonFX(
             ManipulatorConstants.Elevator.kMotorCANID,
             ManipulatorConstants.Elevator.kCANBusName,
@@ -95,56 +107,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             ManipulatorConstants.Elevator.kCurrentLimitTime
         );
         elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID, true));
-
-        // ENCODER + MAPPER
-        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderSource); 
-
-        mapper_ = new EncoderMapper(
-            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
-            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMin,
-            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMax,
-            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMin
-        );
-
-        // ENCODER CONFIGS: 
-        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
-        ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);
-    
-
-        // ARM CONFIGS: 
-        Slot0Configs arm_pids = new Slot0Configs();
-        arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
-        arm_pids.kI = ManipulatorConstants.Arm.PID.kI; 
-        arm_pids.kD = ManipulatorConstants.Arm.PID.kD; 
-        arm_pids.kV = ManipulatorConstants.Arm.PID.kV; 
-        arm_pids.kA = ManipulatorConstants.Arm.PID.kA; 
-        arm_pids.kG = ManipulatorConstants.Arm.PID.kG; 
-        arm_pids.kS = ManipulatorConstants.Arm.PID.kS; 
-        
-        MotionMagicConfigs armMotionMagicConfigs = new MotionMagicConfigs(); 
-        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
-        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
-        armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
-
-        SoftwareLimitSwitchConfigs armLimitSwitchConfig = new SoftwareLimitSwitchConfigs();
-        armLimitSwitchConfig.ForwardSoftLimitEnable = true;
-        armLimitSwitchConfig.ForwardSoftLimitThreshold = ManipulatorConstants.Arm.kMaxArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
-        armLimitSwitchConfig.ReverseSoftLimitEnable = true;
-        armLimitSwitchConfig.ReverseSoftLimitThreshold = ManipulatorConstants.Arm.kMinArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
-    
-
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-PID-values", () -> arm_motor_.getConfigurator().apply(arm_pids));
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-MM-values", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs));
-        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-limits", () -> arm_motor_.getConfigurator().apply(armLimitSwitchConfig)) ;
-
-        // syncs arm position to absolute encoder value
-        syncArmPosition();
-
-        arm_pos_sig_ = arm_motor_.getPosition();
-        arm_vel_sig_ = arm_motor_.getVelocity();
-        arm_vol_sig_ = arm_motor_.getSupplyVoltage();
-        arm_current_sig_ = arm_motor_.getSupplyCurrent();
-    
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
@@ -178,23 +140,79 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_1_current_sig_ = elevator_motor_.getSupplyCurrent();
         elevator_2_vol_sig_ = elevator_motor_2_.getSupplyVoltage();
         elevator_2_current_sig_ = elevator_motor_2_.getSupplyCurrent();
+        
+        if (Robot.isSimulation()) {
+            LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(2), 
+                                                     ManipulatorConstants.Elevator.kMOI.in(KilogramSquareMeters), 
+                                                     ManipulatorConstants.Elevator.kGearRatio) ;
 
-        // setting signal update frequency: 
-        TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
-            BaseStatusSignal.setUpdateFrequencyForAll(
-                50.0,
-                arm_pos_sig_,
-                arm_vel_sig_,
-                arm_vol_sig_,
-                arm_current_sig_,
-                elevator_pos_sig_,
-                elevator_vel_sig_,
-                elevator_1_vol_sig_,
-                elevator_1_current_sig_,
-                elevator_2_vol_sig_,
-                elevator_2_current_sig_
-            )
+            elevator_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(2)) ;
+        }
+
+    }
+
+    private void createArm() throws Exception {
+
+        encoder_motor_synced_ = false ;
+
+        arm_motor_ = TalonFXFactory.createTalonFX(
+            ManipulatorConstants.Arm.kMotorCANID,
+            ManipulatorConstants.Arm.kCANBusName,
+            ManipulatorConstants.Arm.kInverted,
+            ManipulatorConstants.Arm.kCurrentLimit,
+            ManipulatorConstants.Arm.kCurrentLimitTime
         );
+
+
+        // ENCODER + MAPPER
+        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderSource); 
+
+        mapper_ = new EncoderMapper(
+            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMin,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMax,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderMin
+        );
+
+        // ENCODER CONFIGS: 
+        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
+        ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);        
+
+
+        // ARM CONFIGS: 
+        Slot0Configs arm_pids = new Slot0Configs();
+        arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
+        arm_pids.kI = ManipulatorConstants.Arm.PID.kI; 
+        arm_pids.kD = ManipulatorConstants.Arm.PID.kD; 
+        arm_pids.kV = ManipulatorConstants.Arm.PID.kV; 
+        arm_pids.kA = ManipulatorConstants.Arm.PID.kA; 
+        arm_pids.kG = ManipulatorConstants.Arm.PID.kG; 
+        arm_pids.kS = ManipulatorConstants.Arm.PID.kS; 
+        
+        MotionMagicConfigs armMotionMagicConfigs = new MotionMagicConfigs(); 
+        armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
+        armMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Arm.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
+        armMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Arm.MotionMagic.kJerk;
+
+        SoftwareLimitSwitchConfigs armLimitSwitchConfig = new SoftwareLimitSwitchConfigs();
+        armLimitSwitchConfig.ForwardSoftLimitEnable = true;
+        armLimitSwitchConfig.ForwardSoftLimitThreshold = ManipulatorConstants.Arm.kMaxArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
+        armLimitSwitchConfig.ReverseSoftLimitEnable = true;
+        armLimitSwitchConfig.ReverseSoftLimitThreshold = ManipulatorConstants.Arm.kMinArmAngle.times(ManipulatorConstants.Arm.kGearRatio).in(Rotations);
+    
+
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-PID-values", () -> arm_motor_.getConfigurator().apply(arm_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-MM-values", () -> arm_motor_.getConfigurator().apply(armMotionMagicConfigs));
+        TalonFXFactory.checkError(ManipulatorConstants.Arm.kMotorCANID, "set-arm-limits", () -> arm_motor_.getConfigurator().apply(armLimitSwitchConfig)) ;
+
+        arm_pos_sig_ = arm_motor_.getPosition();
+        arm_vel_sig_ = arm_motor_.getVelocity();
+        arm_vol_sig_ = arm_motor_.getSupplyVoltage();
+        arm_current_sig_ = arm_motor_.getSupplyCurrent();
+
+        // syncs arm position to absolute encoder value
+        syncArmPosition();        
+
 
         if (Robot.isSimulation()) {
             LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
@@ -204,13 +222,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
             arm_encoder_sim_ = new DutyCycleEncoderSim(encoder_) ;
             arm_encoder_sim_.set(mapper_.toEncoder(ManipulatorConstants.Arm.kStartAbsEncoderAngle.in(Degrees))) ;
-
-            sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(2), 
-                                                     ManipulatorConstants.Elevator.kMOI.in(KilogramSquareMeters), 
-                                                     ManipulatorConstants.Elevator.kGearRatio) ;
-
-            elevator_sim_ = new DCMotorSim(sys, DCMotor.getKrakenX60Foc(2)) ;
-        }
+        }        
     }
 
     // updates all of the inputs from ManipulatorIO 

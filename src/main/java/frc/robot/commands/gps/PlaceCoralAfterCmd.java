@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.subsystems.brain.Brain;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
@@ -32,14 +32,14 @@ public class PlaceCoralAfterCmd extends Command {
     private static Voltage nominal = Volts.of(12.0) ;
 
     private SequentialCommandGroup sequence_ ;
-    private Brain b_ ;
+    private BrainSubsystem b_ ;
     private Drive db_ ;
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
     private boolean automode_ ;
 
-    public PlaceCoralAfterCmd(Brain brain, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, boolean automode) {
-        setName("PlaceCoralCmd") ;
+    public PlaceCoralAfterCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, boolean automode) {
+        setName("PlaceCoralAfterCmd") ;
         db_ = db ;
         b_ = brain ;
         m_ = m ;
