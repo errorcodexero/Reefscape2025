@@ -24,36 +24,25 @@ public class GrabberConstants {
             public static final double kJerk = 0.0 ;
         }
 
-        public class CoralFrontSensor {
+        public class CoralSensor {
             public static final int kChannel = 1;
             public static final boolean kInverted = false;
         }
 
-        public class CoralBackSensor {
+        public class AlgaeSensor {
             public static final int kChannel = 2;
-            public static final boolean kInverted = false;
-        }
-
-        public class CoralFunnelSensor {
-            public static final int kChannel = 3;
-            public static final boolean kInverted = false;
-        }
-
-        public class AlgaeUpperSensor {
-            public static final int kChannel = 4;
-            public static final boolean kInverted = false;
-        }
-
-        public class AlgaeLowerSensor {
-            public static final int kChannel = 5;
             public static final boolean kInverted = false;
         }
 
         public class Positions {
             public static final double waitForCoralVelocity = 0.0;
+            public static final double CoralPositionVelocity = 0.0;
             public static final double ejectCoralVelocty = 0.0;
+            public static final double ejectCoralWait = 0.0;
 
-            public static final double ejectCoralWait = 1.0;
+            public static final double collectAlgaeVelocity = 0.0;
+            public static final double ejectAlgaeVelocity = 0.0;
+            public static final double ejectAlgaeWait = 0.0;
         }
 
     }
