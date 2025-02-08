@@ -351,6 +351,24 @@ public class DriveCommands {
   }
 
   /**
+  * Creates a command to follow a path specified by a PathPlanner file, not setting the initial pose.
+  * If this is the initial path of an auto mode, call {@link #initialFollowPathCmd()} instead.
+  * 
+  * @param pathName The name of the PathPlanner file to load.
+  * @return A Command that, when executed, will follow the specified path.
+  * If the path has a problem being created, a Command that does nothing.
+  */
+  public static Command followPathCommand(String pathName) {
+    Optional<PathPlannerPath> path = findPath(pathName, false);
+
+    if (path.isPresent()) {
+      return AutoBuilder.followPath(path.get());
+    }
+    
+    return Commands.none();
+  }
+
+  /**
   * Creates a command to follow a path specified by a PathPlanner file, setting the initial pose.
   * 
   * @param pathName The name of the PathPlanner file to load.
@@ -360,8 +378,40 @@ public class DriveCommands {
   * If the path has a problem being created, or it is zero in length, returns
   * a Command that does nothing.
   */
-  public static Command initialFollowPathCommand(String pathName, boolean mirroredX, Drive drive) {
+  public static Command initialFollowPathCommand(Drive drive, String pathName, boolean mirroredX) {
     Optional<PathPlannerPath> path = findPath(pathName, mirroredX);
+
+    if (path.isPresent()) {
+      PathPlannerPath initPosePath = path.get();
+      Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+
+      if (alliance == Alliance.Red) {
+        initPosePath = path.get().flipPath();
+      }
+
+      return Commands.sequence(
+        setPoseCommand(
+          drive,
+          initPosePath.getStartingHolonomicPose().orElseThrow()
+        ),
+        AutoBuilder.followPath(path.get())
+      );
+    }
+
+    return Commands.none();
+  }
+
+  /**
+  * Creates a command to follow a path specified by a PathPlanner file, setting the initial pose.
+  * 
+  * @param pathName The name of the PathPlanner file to load.
+  * @param drive The drivebase to set the pose on.
+  * @return A Command that, when executed, will follow the specified path.
+  * If the path has a problem being created, or it is zero in length, returns
+  * a Command that does nothing.
+  */
+  public static Command initialFollowPathCommand(Drive drive, String pathName) {
+    Optional<PathPlannerPath> path = findPath(pathName, false);
 
     if (path.isPresent()) {
       PathPlannerPath initPosePath = path.get();
