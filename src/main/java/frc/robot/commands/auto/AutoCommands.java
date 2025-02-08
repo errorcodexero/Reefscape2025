@@ -25,7 +25,7 @@ public class AutoCommands {
 
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.initialFollowPathCommand("Side Coral 1", mirroredX, driveSub)//,
+                DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX)//,
                 // add has coral later
             ),
             //new GotoCmd(manipSub)// add positions later, L4 place
@@ -56,30 +56,31 @@ public class AutoCommands {
     public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub){
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.initialFollowPathCommand("Algae 1", true, driveSub)//,
+                DriveCommands.initialFollowPathCommand(driveSub, "Algae 1")//,
+                ////new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
             //new GotoCmd(manipSub)// add positions later, L4 place
             // Place Coral command here,
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1.5", true)//,
+                DriveCommands.followPathCommand("Algae 1.5")//,
                 //new GotoCmd(manipSub)// add positions later, Algae L2 collect from L4
             ),
             //Collect Algae L2 here,
             //new GotoCmd(manipSub)// add positions later, Scoring algae
-            DriveCommands.followPathCommand("Algae 2", true),
+            DriveCommands.followPathCommand("Algae 2"),
             // Score algae here
-            DriveCommands.followPathCommand("Algae 3", true),
+            DriveCommands.followPathCommand("Algae 3"),
             //new GotoCmd(manipSub)// add positions later, L3 algae collect
             // Collect algae L3 command here
             //new GotoCmd(manipSub)// add positions later, Score algae here
-            DriveCommands.followPathCommand("Algae 4", true),
+            DriveCommands.followPathCommand("Algae 4"),
             // Score algae
-            DriveCommands.followPathCommand("Algae 5", true),
+            DriveCommands.followPathCommand("Algae 5"),
             //new GotoCmd(manipSub)// add positions later, L3 collect algae
             // Algae L3 collect here
             //new GotoCmd(manipSub)// add positions later, Score algae here
-            DriveCommands.followPathCommand("Algae 6", true)//,
+            DriveCommands.followPathCommand("Algae 6")//,
             // Score algae here
         );
     }
@@ -92,7 +93,7 @@ public class AutoCommands {
         }
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.initialFollowPathCommand("Center Coral 1", mirroredX, driveSub)//,
+                DriveCommands.initialFollowPathCommand(driveSub, "Center Coral 1", mirroredX)//,
                 // add has coral later
             ),
             //new GotoCmd(manipSub)// add positions later, L4 place
@@ -122,13 +123,14 @@ public class AutoCommands {
     public static Command justCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub){
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.initialFollowPathCommand("Just Coral 1", true, driveSub)//,
+                DriveCommands.initialFollowPathCommand(driveSub, "Just Coral 1")//,
+                //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
             //new GotoCmd(manipSub)// add positions later, L4 place
             // Place Coral command here
             //new GotoCmd(manipSub)// add positions later, station collect
-            DriveCommands.followPathCommand("Just Coral 2", true)
+            DriveCommands.followPathCommand("Just Coral 2")
         );
     }
 

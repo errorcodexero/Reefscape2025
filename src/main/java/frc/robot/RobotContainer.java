@@ -113,24 +113,7 @@ public class RobotContainer {
                         AlphaTunerConstants.kSpeedAt12Volts
                     );
 
-                    vision_ = new AprilTagVision(
-                        drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
-                    );
-
-                    try {
-                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {}
-
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {}
-
-                    try {
-                        funnel_ = new Funnel(new FunnelIOHardware());
-                    } catch (Exception e) {}
+                    // Alpha Bot Does Not Have Any Other Subsystems
 
                     break;
 
@@ -243,15 +226,41 @@ public class RobotContainer {
          * Empty subsystem setup (required in replay)
          */
         if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem uninstantiated.
-            drivebase_ = new Drive(
-                new GyroIO() {},
-                ModuleIOReplay::new,
-                CompTunerConstants.FrontLeft,
-                CompTunerConstants.FrontRight,
-                CompTunerConstants.BackLeft,
-                CompTunerConstants.BackRight,
-                CompTunerConstants.kSpeedAt12Volts
-            );
+            switch (Constants.getRobot()) {
+                case ALPHA:
+                    drivebase_ = new Drive(
+                        new GyroIO() {},
+                        ModuleIOReplay::new,
+                        AlphaTunerConstants.FrontLeft,
+                        AlphaTunerConstants.FrontRight,
+                        AlphaTunerConstants.BackLeft,
+                        AlphaTunerConstants.BackRight,
+                        AlphaTunerConstants.kSpeedAt12Volts
+                    );
+                    break;
+                case PRACTICE:
+                    drivebase_ = new Drive(
+                        new GyroIO() {},
+                        ModuleIOReplay::new,
+                        PracticeTunerConstants.FrontLeft,
+                        PracticeTunerConstants.FrontRight,
+                        PracticeTunerConstants.BackLeft,
+                        PracticeTunerConstants.BackRight,
+                        PracticeTunerConstants.kSpeedAt12Volts
+                    );
+                    break;
+                default: // SimBot or Comp Bot
+                    drivebase_ = new Drive(
+                        new GyroIO() {},
+                        ModuleIOReplay::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
+                    break;
+            }
         }
         
         if (vision_ == null) {
