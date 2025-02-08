@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.834121621621622,
-        "y": 2.9083614864864864
+        "x": 1.6008445945945946,
+        "y": 0.7442567567567562
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5494597668009726,
-        "y": 3.0201615305938763
+        "x": 1.323466596338488,
+        "y": 0.218131656630008
       },
       "isLocked": false,
-      "linkedName": "3 alliance side"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.8676520270270272,
-        "y": 2.1771114864864867
+        "x": 3.175,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 1.7167224035696544,
-        "y": 1.9778120916981037
+        "x": 3.0025992381580044,
+        "y": 3.461202935313655
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.83086067209265
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 53.72
   },
   "useDefaultConstraints": false
 }

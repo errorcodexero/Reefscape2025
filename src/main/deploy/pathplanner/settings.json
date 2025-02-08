@@ -3,9 +3,10 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Side Algae",
+    "Algae",
     "Center Coral",
-    "Center Algae",
+    "Just Place",
+    "Side Algae (not used)",
     "Side Coral"
   ],
   "autoFolders": [],

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.053631756756758,
-        "y": 4.034881756756757
+        "x": 8.05,
+        "y": 3.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.9319100846110695,
-        "y": 4.026301466114415
+        "x": 7.01068622390031,
+        "y": 3.870256317883569
       },
       "isLocked": false,
       "linkedName": "Center Start"
     },
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 5.8134375,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 6.187007161184835,
-        "y": 4.030718732787787
+        "x": 6.129676203094226,
+        "y": 3.8459211545490146
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Side"
+      "linkedName": "Algae 1"
     }
   ],
   "rotationTargets": [],

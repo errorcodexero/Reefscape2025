@@ -13,21 +13,10 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-
 import java.util.HashMap;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,6 +26,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.AlphaTunerConstants;
 import frc.robot.generated.CompTunerConstants;
@@ -92,15 +89,13 @@ public class RobotContainer {
     private GrabberSubsystem grabber_;
     private Funnel funnel_;
 
+    private final LoggedDashboardChooser<Command> autoChooser_;
+
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
-    // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser_;
-    
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
-
+    public RobotContainer () {
         /**
          * Subsystem setup
          */
@@ -284,16 +279,36 @@ public class RobotContainer {
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
+    
+        // Widgets & Choosers
+        autoChooser_ = new LoggedDashboardChooser<>("Auto Choices");
 
-        // Set up auto chooser
-        autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        // Add choosers/widgets to tabs.
+        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
 
-        // Add mirrored autos
-        autoChooser_.addOption("Alliance Side Coral", new PathPlannerAuto("Side Coral", true));
-        autoChooser_.addOption("Opposing Side Coral", new PathPlannerAuto("Side Coral"));
-        autoChooser_.addOption("Center Coral (alliance side station)", new PathPlannerAuto("Center Coral", true));
-        autoChooser_.addOption("Center Coral (opposing side station)", new PathPlannerAuto("Center Coral"));
-        autoChooser_.addOption("Algae (center)", new PathPlannerAuto("Algae"));
+        // Configure the button bindings
+        configureDriveBindings();
+        configureButtonBindings();
+    }
+
+    public ISimulatedSubsystem get(String name) {
+        return this.subsystems_.get(name) ;
+    }
+
+    private void addSubsystem(SubsystemBase sub) {
+        if (sub instanceof ISimulatedSubsystem) {
+            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
+        }
+    }
+
+    public void setupAutos() {
+        
+        autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
+        autoChooser_.addOption("Opposing Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false));
+        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Center Coral (alliance side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true));
+        autoChooser_.addOption("Center Coral (opposing side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_));
 
         autoChooser_.addOption(
             "testing driveto", 
@@ -316,22 +331,6 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        // Add choosers and widgets to tabs.
-        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
-        
-        // Configure the button bindings
-        configureDriveBindings();
-        configureButtonBindings();
-    }
-
-    public ISimulatedSubsystem get(String name) {
-        return this.subsystems_.get(name) ;
-    }
-
-    private void addSubsystem(SubsystemBase sub) {
-        if (sub instanceof ISimulatedSubsystem) {
-            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
-        }
     }
     
     /**
@@ -436,4 +435,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser_.get();
     }
+    
 }
