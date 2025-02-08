@@ -18,8 +18,6 @@ import java.util.Optional;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -259,7 +257,7 @@ public class RobotContainer {
         // Simulation setup
         this.addSubsystem(drivebase_) ;
 
-        autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices", AutoBuilder.buildAutoChooser());
+        autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices");
 
         // Configure the button bindings
         configureDriveBindings();
