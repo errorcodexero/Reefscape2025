@@ -68,17 +68,17 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
     public ManipulatorIOHardware() throws Exception {
-        createArm() ;
+        // createArm() ;
         createElevator() ;   
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
                 50.0,
-                arm_pos_sig_,
-                arm_vel_sig_,
-                arm_vol_sig_,
-                arm_current_sig_,
+                // arm_pos_sig_,
+                // arm_vel_sig_,
+                // arm_vol_sig_,
+                // arm_current_sig_,
                 elevator_pos_sig_,
                 elevator_vel_sig_,
                 elevator_1_vol_sig_,
@@ -92,21 +92,22 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     private void createElevator() throws Exception {
         elevator_motor_ = TalonFXFactory.createTalonFX(
-            ManipulatorConstants.Elevator.kMotorCANID,
+            ManipulatorConstants.Elevator.kMotorFrontCANID,
             ManipulatorConstants.Elevator.kCANBusName,
             ManipulatorConstants.Elevator.kInverted,
             ManipulatorConstants.Elevator.kCurrentLimit,
             ManipulatorConstants.Elevator.kCurrentLimitTime
         );
+        elevator_motor_.setPosition(Degrees.of(0.0)) ;
 
         elevator_motor_2_ = TalonFXFactory.createTalonFX(
-            ManipulatorConstants.Elevator.kMotorCANID2,
+            ManipulatorConstants.Elevator.kMotorBackCANID,
             ManipulatorConstants.Elevator.kCANBusName,
             ManipulatorConstants.Elevator.kInverted,
             ManipulatorConstants.Elevator.kCurrentLimit,
             ManipulatorConstants.Elevator.kCurrentLimitTime
         );
-        elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorCANID, true));
+        elevator_motor_2_.setControl(new Follower(ManipulatorConstants.Elevator.kMotorFrontCANID, false));
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
@@ -130,9 +131,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
 
 
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
+        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();
@@ -229,12 +230,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        StatusCode armStatus = BaseStatusSignal.refreshAll(
-            arm_pos_sig_,
-            arm_vel_sig_,
-            arm_vol_sig_,
-            arm_current_sig_
-        );
+        // StatusCode armStatus = BaseStatusSignal.refreshAll(
+        //     arm_pos_sig_,
+        //     arm_vel_sig_,
+        //     arm_vol_sig_,
+        //     arm_current_sig_
+        // );
 
         StatusCode elevator1Status = BaseStatusSignal.refreshAll(
             elevator_pos_sig_,
@@ -248,19 +249,22 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             elevator_2_current_sig_
         );
 
-        inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
+
         inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK());
         inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
 
         // arm inputs:
-        inputs.armPosition = arm_pos_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
-        inputs.armVelocity = arm_vel_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
-        inputs.armVoltage = arm_vol_sig_.getValue();
-        inputs.armCurrent = arm_current_sig_.getValue();
+        // inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
+        // inputs.armPosition = arm_pos_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
+        // inputs.armVelocity = arm_vel_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
+        // inputs.armVoltage = arm_vol_sig_.getValue();
+        // inputs.armCurrent = arm_current_sig_.getValue();
         
         // elevator inputs:
         double rev = elevator_pos_sig_.getValue().in(Revolution); 
         inputs.elevatorPosition = Meters.of(rev * ManipulatorConstants.Elevator.kMetersPerRev);
+        inputs.elevatorRawMotorPosition = elevator_pos_sig_.getValue() ;
+        inputs.elevatorRawMotorVelocity = elevator_vel_sig_.getValue() ;
 
         double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
         inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
@@ -281,8 +285,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         }        
         else {
             // arm encoder inputs: 
-            inputs.rawAbsoluteEncoder = encoder_.get();
-            inputs.absoluteEncoder = Degrees.of(mapper_.toRobot(inputs.rawAbsoluteEncoder)); 
+            // inputs.rawAbsoluteEncoder = encoder_.get();
+            // inputs.absoluteEncoder = Degrees.of(mapper_.toRobot(inputs.rawAbsoluteEncoder)); 
         }
     }
 
@@ -298,15 +302,16 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             .angularVelocity(RevolutionsPerSecond.of(arm_vel_sig_.refresh().getValueAsDouble()));
     }
 
-    public void setElevatorMotorVoltage(Voltage vol) {
-        elevator_voltage_ = vol;
+    public void setElevatorMotorVoltage(double vol) {
+        elevator_voltage_ = Volts.of(vol) ;
         elevator_motor_.setControl(new VoltageOut(elevator_voltage_));    
     }
 
     public void logElevatorMotor(SysIdRoutineLog log) {
         log.motor("elevator")
             .voltage(elevator_voltage_)
-            .linearVelocity(MetersPerSecond.of(elevator_vel_sig_.refresh().getValueAsDouble()));    
+            .angularPosition(elevator_pos_sig_.refresh().getValue())
+            .angularVelocity(elevator_vel_sig_.refresh().getValue()) ;
     } 
 
     public void setElevatorPosition(Distance dist) {

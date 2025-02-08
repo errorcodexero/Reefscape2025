@@ -75,11 +75,11 @@ public class ManipulatorConstants {
     public class Elevator {
 
         // motor CAN ID
-        public static final int kMotorCANID = 3;
-        public static final int kMotorCANID2 = 4;
+        public static final int kMotorFrontCANID = 3;
+        public static final int kMotorBackCANID = 4;
 
         // if motor is inverted 
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
 
         // meters that elevator moves per revolution of motor
         public static final double kMetersPerRev = 1.0 / 42.375  ;
@@ -101,7 +101,7 @@ public class ManipulatorConstants {
         public static final Distance kMaxHeight = Centimeters.of(177.0) ;
 
         // The minimum height of the elevator
-        public static final Distance kMinHeight = Centimeters.of(59.0) ;
+        public static final Distance kMinHeight = Centimeters.of(0.0) ;
 
         // The MOI of the elevator, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.004) ;
@@ -112,14 +112,14 @@ public class ManipulatorConstants {
             public static final double kD = 0.0 ;
             public static final double kV = 0.15 ;
             public static final double kA = 0.0 ;
-            public static final double kG = 0.0 ;
-            public static final double kS = 0.5 ;
+            public static final double kG = 0.288 ;
+            public static final double kS = 0.0 ;
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(1000) ;
-            public static final double kJerk = 8000.0 ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(100) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(10000) ;
+            public static final double kJerk = 10000.0 ;
         }
     }
 

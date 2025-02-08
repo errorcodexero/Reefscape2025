@@ -27,7 +27,6 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.tests.ManipulatorGoToTestCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.simulator.engine.SimulationEngine;
@@ -166,8 +165,6 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         if (Robot.useXeroSimulator()) {
-            ManipulatorSubsystem mani = RobotContainer.getRobotContainer().manipulator() ;
-            autonomousCommand = new ManipulatorGoToTestCmd(mani) ;
         }
         else {
             autonomousCommand = robotContainer.getAutonomousCommand();

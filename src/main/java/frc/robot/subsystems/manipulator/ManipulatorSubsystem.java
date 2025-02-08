@@ -41,6 +41,10 @@ public class ManipulatorSubsystem extends SubsystemBase{
         armDisconnected_.set(!inputs_.armReady);
         elevator1Disconnected_.set(!inputs_.elevator1Ready);
         elevator2Disconnected_.set(!inputs_.elevator2Ready);
+
+        Logger.recordOutput("Manipulator/elevRawPos", inputs_.elevatorRawMotorPosition.in(Rotations)) ;
+        Logger.recordOutput("Manipulator/elevRawVel", inputs_.elevatorRawMotorVelocity.in(RotationsPerSecond)) ;
+        
     }
 
     public Angle getArmPosition() {

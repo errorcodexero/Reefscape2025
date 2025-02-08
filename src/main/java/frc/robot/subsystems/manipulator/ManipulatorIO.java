@@ -27,6 +27,8 @@ public interface ManipulatorIO {
         // elevator
         public Distance elevatorPosition = Meters.of(0); 
         public LinearVelocity elevatorVelocity = MetersPerSecond.of(0); 
+        public Angle elevatorRawMotorPosition = Degrees.of(0);
+        public AngularVelocity elevatorRawMotorVelocity = DegreesPerSecond.of(0.0) ;
 
         // elevator 1
         public boolean elevator1Ready = false;
