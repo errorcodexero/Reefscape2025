@@ -25,7 +25,7 @@ public class AutoCommands {
 
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Side Coral 1", mirroredX, driveSub)//,
+                DriveCommands.initialFollowPathCommand("Side Coral 1", mirroredX, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
                 
@@ -80,7 +80,7 @@ public class AutoCommands {
     public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub){
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Algae 1", true, driveSub)//,
+                DriveCommands.initialFollowPathCommand("Algae 1", true, driveSub)//,
                 ////new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
@@ -140,7 +140,7 @@ public class AutoCommands {
         }
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Center Coral 1", mirroredX, driveSub)//,
+                DriveCommands.initialFollowPathCommand("Center Coral 1", mirroredX, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
@@ -194,7 +194,7 @@ public class AutoCommands {
 
         return Commands.sequence(
             Commands.parallel(
-                DriveCommands.followPathCommand("Just Coral 1", true, driveSub)//,
+                DriveCommands.initialFollowPathCommand("Just Coral 1", true, driveSub)//,
                 //new GotoCmd(manipSub)// add positions later, L4 place
                 // add has coral later
             ),
