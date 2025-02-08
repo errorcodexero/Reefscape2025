@@ -277,7 +277,14 @@ public class RobotContainer {
         // Simulation setup
         this.addSubsystem(drivebase_) ;
 
-        autoChooser_ = new LoggedDashboardChooser<Command>("Auto Choices");
+        // Shuffleboard Tabs
+        ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
+    
+        // Widgets & Choosers
+        autoChooser_ = new LoggedDashboardChooser<>("Auto Choices");
+
+        // Add choosers/widgets to tabs.
+        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
 
         // Configure the button bindings
         configureDriveBindings();
@@ -295,10 +302,6 @@ public class RobotContainer {
     }
 
     public void setupAutos() {
-        // Setup auto chooser
-        // Shuffleboard Tabs
-        ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
-        
         
         autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Opposing Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false));
@@ -328,8 +331,6 @@ public class RobotContainer {
         autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        // Add choosers and widgets to tabs.
-        autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
     }
     
     /**
