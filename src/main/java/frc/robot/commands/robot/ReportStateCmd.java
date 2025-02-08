@@ -1,4 +1,4 @@
-package frc.robot.commands.gps;
+package frc.robot.commands.robot;
 
 import org.littletonrobotics.junction.Logger;
 

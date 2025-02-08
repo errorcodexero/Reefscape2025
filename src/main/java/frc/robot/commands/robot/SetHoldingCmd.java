@@ -1,4 +1,4 @@
-package frc.robot.commands.gps;
+package frc.robot.commands.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.GamePiece;

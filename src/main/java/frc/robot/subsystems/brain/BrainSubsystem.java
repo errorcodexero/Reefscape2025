@@ -1,6 +1,8 @@
 package frc.robot.subsystems.brain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -9,10 +11,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer.GamePiece;
+import frc.robot.commands.robot.CollectCoralCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepOne;
+import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepTwo;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
-import frc.robot.subsystems.oi.RobotAction;
+import frc.robot.util.ReefUtil;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -25,7 +33,7 @@ public class BrainSubsystem extends SubsystemBase {
     private boolean locked_ ;
 
     // The command associated with the current robot action
-    private List<Command> current_robot_action_command_ ;
+    private RobotActionCommandList current_robot_action_command_ ;
     private int current_robot_action_command_index_ ;
 
     // The command we are running
@@ -43,16 +51,18 @@ public class BrainSubsystem extends SubsystemBase {
     // The game piece we are holding
     private GamePiece gp_ ;
 
-    //
-    // This supplier provides a pair of commands that must be executed in order to perform a given
-    // robot action.  The second command may be null indicating the robot action can complete with a 
-    // single command.
-    //
-    private RobotActionToCommandSupplier robot_action_command_supplier_ ;
+    private Drive db_ ;
+    private ManipulatorSubsystem m_ ;
+    private GrabberSubsystem g_ ;
+    
 
-    public BrainSubsystem(OISubsystem oi, RobotActionToCommandSupplier robotActionCommandSupplier) {
+    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         oi_ = oi ;
-        robot_action_command_supplier_ = robotActionCommandSupplier ;
+        db_ = db ;
+        m_ = m ;
+        g_ = g ;
+        locked_ = false ;
+
         current_action_ = null ;
         next_action_ = null ;
         current_robot_action_command_ = null ;
@@ -168,8 +178,13 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     public void execute() {
-        if (current_cmd_ == null && current_action_ != null && current_robot_action_command_ != null) {
-            current_cmd_ = current_robot_action_command_.get(current_robot_action_command_index_++) ;
+        boolean cond = true ;
+        if (current_robot_action_command_.getCondition(current_robot_action_command_index_) != null) {
+            cond = current_robot_action_command_.getCondition(current_robot_action_command_index_).getAsBoolean() ;
+        }
+
+        if (cond && current_cmd_ == null && current_action_ != null && current_robot_action_command_ != null) {
+            current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
             current_cmd_.schedule();
         }
     }
@@ -184,14 +199,14 @@ public class BrainSubsystem extends SubsystemBase {
             current_robot_action_command_index_ = 0 ;
             current_action_ = next_action_ ;
             next_action_ = null ;
-            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, coral_side_) ;
+            current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
             if (current_robot_action_command_ == null) {
                 status = current_action_.toString() + ":no command" ;
                 current_action_ = null ;
                 current_cmd_ = null ;
             }
             else {
-                current_cmd_ = current_robot_action_command_.get(current_robot_action_command_index_++) ;
+                current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
                 status = current_action_.toString() + ":" + current_cmd_.getName() ;
                 current_cmd_.schedule() ;
             }
@@ -232,4 +247,47 @@ public class BrainSubsystem extends SubsystemBase {
         Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
     }
+
+    static final boolean PlaceCoralTwoStep = true ;
+
+    private RobotActionCommandList getRobotActionCommand(RobotAction action, int level, CoralSide side) {
+        List<Command> list = new ArrayList<Command>() ;
+        List<BooleanSupplier> conds = new ArrayList<BooleanSupplier>() ;
+
+        switch(action) {
+            case CollectCoral:
+                list.add(new CollectCoralCmd(this, m_, g_)) ;
+                break ;
+
+            case PlaceCoral:
+                if (PlaceCoralTwoStep) {
+                    list.add(new PlaceCoralTwoStepOne(m_, level)) ;
+                    conds.add(null) ;
+
+                    // We only execute this step if we are in a position that the target face is valid
+                    list.add(new PlaceCoralTwoStepTwo(this, db_, m_, g_)) ;
+                    conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
+                }
+
+                break ;
+
+            case PlaceAlgae:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeReefL2:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeReefL3:
+                // TODO: write me
+                break ;
+
+            case CollectAlgaeGround:
+                // TODO: write me
+                break ;
+        }
+
+        return new RobotActionCommandList(action, list, conds) ;
+    }    
 } 

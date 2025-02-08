@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
     

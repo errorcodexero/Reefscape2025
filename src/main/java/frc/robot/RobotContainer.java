@@ -21,13 +21,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -43,17 +38,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.gps.AbortCmd;
-import frc.robot.commands.gps.CollectCoralCmd;
-import frc.robot.commands.gps.CollectReefAlgaeAfterCmd;
-import frc.robot.commands.gps.CollectReefAlgaeBeforeCmd;
-import frc.robot.commands.gps.EjectCmd;
-import frc.robot.commands.gps.PlaceCoralAfterCmd;
-import frc.robot.commands.gps.PlaceCoralBeforeCmd;
+import frc.robot.commands.robot.AbortCmd;
+import frc.robot.commands.robot.EjectCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
 import frc.robot.subsystems.brain.QueueRobotActionCmd;
+import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.climber.ClimbExecuteCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -74,8 +65,6 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
-import frc.robot.subsystems.oi.CoralSide;
-import frc.robot.subsystems.oi.RobotAction;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
@@ -140,8 +129,7 @@ public class RobotContainer {
          */
         if (Constants.getMode() != Mode.REPLAY) {
             oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_) ;
-            brain_ = new BrainSubsystem(oi_, this::getRobotActionCommand) ;
-            oi_.setBrain(brain_) ;
+
 
             switch (Constants.getRobot()) {
                 case COMPETITION:
@@ -254,6 +242,9 @@ public class RobotContainer {
                 new CameraIO() {});
         }
 
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
+        oi_.setBrain(brain_) ;
+
         // Set up auto chooser
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -301,39 +292,7 @@ public class RobotContainer {
         return brain_ ;
     }
 
-    public List<Command> getRobotActionCommand(RobotAction action, int level, CoralSide side) {
-        List<Command> list = new ArrayList<Command>() ;
 
-        switch(action) {
-            case CollectCoral:
-                list.add(new CollectCoralCmd(brain_, manipulator_, grabber_)) ;
-                break ;
-
-            case PlaceCoral:
-                list.add(new PlaceCoralBeforeCmd (manipulator_, level)) ;
-                list.add(new PlaceCoralAfterCmd(brain_, drivebase_, manipulator_, grabber_, false)) ;
-                break ;
-
-            case PlaceAlgae:
-                // TODO: write me
-                break ;
-
-            case CollectAlgaeReefL2:
-                list.add(new CollectReefAlgaeBeforeCmd(manipulator_, level)) ;
-                list.add(new CollectReefAlgaeAfterCmd(brain_, drivebase_, manipulator_, grabber_, false)) ;
-                break ;
-
-            case CollectAlgaeReefL3:
-                // TODO: write me
-                break ;
-
-            case CollectAlgaeGround:
-                // TODO: write me
-                break ;
-        }
-
-        return list ;
-    }
 
     public void enableGamepad(boolean enabled) {
         this.driver_controller_enabled_ = enabled ;
@@ -346,25 +305,25 @@ public class RobotContainer {
         // are characterizing.
         //
 
-        // gamepad_.a().whileTrue(climber_.climberSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(climber_.climberSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(climber_.climberSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(climber_.climberSysIdDynamic(Direction.kReverse)) ; 
+        gamepad_.a().whileTrue(climber_.climberSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(climber_.climberSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(climber_.climberSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(climber_.climberSysIdDynamic(Direction.kReverse)) ; 
 
-        // gamepad_.a().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(funnel_.funnelSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(funnel_.funnelSysIdDynamic(Direction.kReverse)) ;  
+        gamepad_.a().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(funnel_.funnelSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(funnel_.funnelSysIdDynamic(Direction.kReverse)) ;  
 
-        // gamepad_.a().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(grabber_.grabberSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(grabber_.grabberSysIdDynamic(Direction.kReverse)) ; 
+        gamepad_.a().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(grabber_.grabberSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(grabber_.grabberSysIdDynamic(Direction.kReverse)) ; 
 
-        // gamepad_.a().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kForward)) ;
-        // gamepad_.b().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kReverse)) ;
-        // gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
-        // gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
+        gamepad_.a().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kForward)) ;
+        gamepad_.b().whileTrue(manipulator_.armSysIdQuasistatic(Direction.kReverse)) ;
+        gamepad_.x().whileTrue(manipulator_.armSysIdDynamic(Direction.kForward)) ;
+        gamepad_.y().whileTrue(manipulator_.armSysIdDynamic(Direction.kReverse)) ;
 
         gamepad_.a().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kForward)) ;
         gamepad_.b().whileTrue(manipulator_.elevatorSysIdQuasistatic(Direction.kReverse)) ;

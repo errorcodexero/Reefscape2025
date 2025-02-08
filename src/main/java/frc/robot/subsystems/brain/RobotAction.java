@@ -1,4 +1,4 @@
-package frc.robot.subsystems.oi;
+package frc.robot.subsystems.brain;
 
 public enum RobotAction {
     PlaceCoral,                 // Two parts

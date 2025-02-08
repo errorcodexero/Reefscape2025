@@ -1,4 +1,4 @@
-package frc.robot.commands.gps;
+package frc.robot.commands.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -34,7 +34,7 @@ public class CommandPositions {
             Degrees.of(90.0),
         } ;
 
-        protected static final Distance ElevatorHeight[] = {
+        public static final Distance ElevatorHeight[] = {
             Meters.of(1.0),
             Meters.of(1.0),
             Meters.of(1.0),

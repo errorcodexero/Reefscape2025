@@ -2,7 +2,6 @@ package frc.robot.subsystems.grabber.commands;
 
 import org.xerosw.util.XeroTimer;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;

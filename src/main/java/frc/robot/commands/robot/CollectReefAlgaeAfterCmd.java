@@ -1,4 +1,4 @@
-package frc.robot.commands.gps;
+package frc.robot.commands.robot;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Volts;
