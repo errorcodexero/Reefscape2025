@@ -54,6 +54,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.funnel.Funnel;
+import frc.robot.subsystems.funnel.FunnelIO;
+import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -84,6 +87,7 @@ public class RobotContainer {
     private AprilTagVision vision_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
+    private Funnel funnel_;
 
     private final LoggedDashboardChooser<Command> autoChooser_;
 
@@ -124,6 +128,10 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
                     } catch (Exception e) {}
 
+                    try {
+                        funnel_ = new Funnel(new FunnelIOHardware());
+                    } catch (Exception e) {}
+
                     break;
 
                 case COMPETITION:
@@ -154,6 +162,10 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
                     } catch (Exception e) {}
 
+                    try {
+                        funnel_ = new Funnel(new FunnelIOHardware());
+                    } catch (Exception e) {}
+
                     break;
                 
                 case PRACTICE:
@@ -182,6 +194,10 @@ public class RobotContainer {
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {}
+
+                    try {
+                        funnel_ = new Funnel(new FunnelIOHardware());
                     } catch (Exception e) {}
 
                     break;
@@ -252,6 +268,10 @@ public class RobotContainer {
 
         if (grabber_ == null) {
             grabber_ = new GrabberSubsystem(new GrabberIO() {});
+        }
+
+        if (funnel_ == null) {
+            funnel_ = new Funnel(new FunnelIO() {});
         }
 
         // Simulation setup

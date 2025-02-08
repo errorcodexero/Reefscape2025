@@ -1,21 +1,18 @@
 package frc.robot.subsystems.grabber.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
-/*
- * 
- * UNFINISHED COMMAND
- *
- */
 public class WaitForCoralCmd extends Command {
 
     private GrabberSubsystem grabber_;
-    private WaitForCoralCmdState WaitForCoralCmdState_;
+    private State State_;
 
-    private enum WaitForCoralCmdState {
+    private enum State {
         WaitingForCoral,
         RollersOff,
+        Position,
         Finish
     }
 
@@ -26,29 +23,34 @@ public class WaitForCoralCmd extends Command {
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(35);
-        WaitForCoralCmdState_ = WaitForCoralCmdState.WaitingForCoral;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.waitForCoralVelocity);
+        State_ = State.WaitingForCoral;
     }
 
     @Override
     public boolean isFinished() {
-        return WaitForCoralCmdState_ == WaitForCoralCmdState.Finish;
+        return State_ == State.Finish;
     }
 
     @Override
     public void execute() {
-        switch(WaitForCoralCmdState_) {
+        switch(State_) {
             case WaitingForCoral:
-                if (grabber_.coralFunnelRising()) {
+                if (grabber_.coralRising()) {
                     grabber_.setHasCoral(true);
+                    State_ = State.RollersOff;
                 }
-                
-                WaitForCoralCmdState_ = WaitForCoralCmdState.RollersOff;
                 break;
             case RollersOff:
-                
-                WaitForCoralCmdState_ = WaitForCoralCmdState.Finish;
+                grabber_.stopGrabber();
+                State_ = State.Position;
                 break;
+            case Position:
+                grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.CoralPositionVelocity);
+                if (grabber_.coralFalling()) {
+                    grabber_.stopGrabber();
+                    State_ = State.Finish;
+                }
             case Finish:
                 break;
         }
@@ -56,6 +58,6 @@ public class WaitForCoralCmd extends Command {
 
     @Override
     public void end(boolean canceled) {
-        WaitForCoralCmdState_ = WaitForCoralCmdState.Finish;
+        State_ = State.Finish;
     }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.*;
 
+
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -22,11 +23,8 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.util.DigitalInterrupt;
 
 public class GrabberIOHardware implements GrabberIO {
-    private DigitalInterrupt coral_front_;
-    private DigitalInterrupt coral_back_;
-    private DigitalInterrupt coral_funnel_;
-    private DigitalInterrupt algae_upper_;
-    private DigitalInterrupt algae_lower_;
+    private DigitalInterrupt coral_;
+    private DigitalInterrupt algae_;
 
     private TalonFX grabber_motor_;
 
@@ -80,11 +78,8 @@ public class GrabberIOHardware implements GrabberIO {
 
         TalonFXFactory.checkError(GrabberConstants.Grabber.kMotorCANID, "grabber-optimize-bus", () -> grabber_motor_.optimizeBusUtilization(), 5);
     
-        coral_front_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralFrontSensor.kChannel);
-        coral_back_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralBackSensor.kChannel);
-        coral_funnel_ = new DigitalInterrupt(GrabberConstants.Grabber.CoralFunnelSensor.kChannel);
-        algae_upper_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeUpperSensor.kChannel);
-        algae_lower_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeLowerSensor.kChannel);
+        coral_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralSensor.kChannel);
+        algae_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeSensor.kChannel);
     }
 
      @Override
@@ -104,46 +99,26 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.grabberPosition = grabber_pos_sig_.getValue();
         inputs.grabberVoltage = grabber_vol_sig_.getValue();
 
-        inputs.coralFrontSensor = coral_front_.getSensor();
-        inputs.coralFrontRisingEdge = coral_front_.getRising();
-        inputs.coralFrontFallingEdge = coral_front_.getFalling();
-        
-        inputs.coralBackSensor = coral_back_.getSensor();
-        inputs.coralBackRisingEdge = coral_back_.getRising();
-        inputs.coralBackFallingEdge = coral_back_.getFalling();
+        inputs.coralSensor = coral_.getSensor();
+        inputs.coralRisingEdge = coral_.getRising();
+        inputs.coralFallingEdge = coral_.getFalling();
 
-        inputs.coralFunnelSensor = coral_funnel_.getSensor();
-        inputs.coralFunnelRisingEdge = coral_funnel_.getRising();
-        inputs.coralFunnelFallingEdge = coral_funnel_.getFalling();
+        inputs.algaeSensor = algae_.getSensor();
+        inputs.algaeRisingEdge = algae_.getRising();
+        inputs.algaeFallingEdge = algae_.getFalling();
 
-        inputs.algaeUpperSensor = algae_upper_.getSensor();
-        inputs.algaeUpperRisingEdge = algae_upper_.getRising();
-        inputs.algaeUpperFallingEdge = algae_upper_.getFalling();
+        coral_.setRising(false);
+        coral_.setFalling(false);
 
-        inputs.algaeLowerSensor = algae_lower_.getSensor();
-        inputs.algaeLowerRisingEdge = algae_lower_.getRising();
-        inputs.algaeLowerFallingEdge = algae_lower_.getFalling();
-
-        coral_front_.setRising(false);
-        coral_back_.setFalling(false);
-
-        coral_back_.setRising(false);
-        coral_back_.setFalling(false);
-
-        coral_funnel_.setRising(false);
-        coral_funnel_.setFalling(false);
-
-        algae_upper_.setRising(false);
-        algae_upper_.setFalling(false);
-
-        algae_lower_.setRising(false);
-        algae_lower_.setFalling(false);
+        algae_.setRising(false);
+        algae_.setFalling(false);
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
-        // code goes here, look at documentation 
         log.motor("grabber")
-            .voltage(Units.Volts.of(grabber_voltage_));
+            .voltage(Units.Volts.of(grabber_voltage_))
+            .angularPosition(Revolutions.of(grabber_pos_sig_.refresh().getValueAsDouble()))
+            .angularVelocity(RevolutionsPerSecond.of(grabber_vel_sig_.refresh().getValueAsDouble()));
     }
 
     public void setGrabberMotorVoltage(double vol) {
@@ -155,6 +130,4 @@ public class GrabberIOHardware implements GrabberIO {
         double cvel = vel / GrabberConstants.Grabber.kGearRatio;
         grabber_motor_.setControl(new MotionMagicVelocityVoltage(cvel));
     }
-
-    
 }

@@ -28,8 +28,8 @@ public class GoToCmd extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Distance current_height = sub_.getElevatorPosition() ;
-    Angle current_angle = sub_.getArmPosition() ;
+    Distance current_height = sub_.getElevatorPosition();
+    Angle current_angle = sub_.getArmPosition();
 
     if((current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) && (target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight))) {
       sub_.setElevatorPosition(target_height_);

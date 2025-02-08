@@ -1,31 +1,28 @@
 package frc.robot.subsystems.grabber.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
-public class DepositCoralCmd extends Command {
+public class CollectAlgaeCmd extends Command {
 
     private GrabberSubsystem grabber_;
-    private Timer timer_ = new Timer();
     private State State_;
 
     private enum State {
-        WaitingForCoralEject,
+        WaitingForAlgae,
         RollersOff,
         Finish
     }
 
-    public DepositCoralCmd(GrabberSubsystem grabber) {
+    public CollectAlgaeCmd(GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
     }
-
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.ejectCoralVelocty);
-        State_ = State.WaitingForCoralEject;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.collectAlgaeVelocity);
+        State_ = State.WaitingForAlgae;
     }
 
     @Override
@@ -35,13 +32,10 @@ public class DepositCoralCmd extends Command {
 
     @Override
     public void execute() {
-        switch(State_){
-            case WaitingForCoralEject:
-                timer_.start();
-                if (timer_.hasElapsed(GrabberConstants.Grabber.Positions.ejectCoralWait) && timer_.isRunning() && grabber_.coralFalling()) {
-                    timer_.stop();
-                    timer_.reset();
-                    grabber_.setHasCoral(false);
+        switch(State_) {
+            case WaitingForAlgae:
+                if (grabber_.AlgaeRising()) {
+                    grabber_.setHasAlgae(true);
                     State_ = State.RollersOff;
                 }
                 break;
