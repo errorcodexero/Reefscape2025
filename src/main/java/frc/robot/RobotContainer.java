@@ -113,24 +113,7 @@ public class RobotContainer {
                         AlphaTunerConstants.kSpeedAt12Volts
                     );
 
-                    vision_ = new AprilTagVision(
-                        drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
-                    );
-
-                    // try {
-                    //     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    // } catch (Exception e) {}
-
-                    // try {
-                    //     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    // } catch (Exception e) {}
-
-                    // try {
-                    //     funnel_ = new Funnel(new FunnelIOHardware());
-                    // } catch (Exception e) {}
+                    // Alpha Bot Does Not Have Any Other Subsystems
 
                     break;
 
