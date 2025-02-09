@@ -352,7 +352,7 @@ public class RobotContainer {
                 Optional<ReefFace> face = ReefUtil.getTargetedReefFace(drivebase_.getPose());
 
                 if (face.isPresent()) {
-                    DriveCommands.swerveDriveToCommand(face.get().getAlgaeScoringPose()).schedule();
+                    DriveCommands.simplePathCommand(face.get().getAlgaeScoringPose()).schedule();
                 }
             }, drivebase_)
         );
