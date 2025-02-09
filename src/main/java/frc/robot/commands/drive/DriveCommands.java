@@ -492,16 +492,15 @@ public class DriveCommands {
    */
   private static Optional<PathPlannerPath> findPath(String pathName, boolean mirroredX) {
     try{
-      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-      
+      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
       if (mirroredX) {
         path = path.mirrorPath();
-        System.out.println("Mirroring path " + pathName);
       }
  
       return Optional.of(path);
+
     } catch (FileNotFoundException e) {
       System.err.println("Path file " + pathName + " not found!");
     } catch (IOException e) {
@@ -512,5 +511,4 @@ public class DriveCommands {
     
     return Optional.empty();
   }
-  
 }
