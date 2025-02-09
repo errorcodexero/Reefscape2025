@@ -11,8 +11,8 @@ public class GrabberConstants {
     public class Grabber {
 
         public static final int kMotorCANID = 1;
-        public static final double kGearRatio = 0.0;
-        public static final boolean kInverted = false; 
+        public static final double kGearRatio = 1.0;
+        public static final boolean kInverted = true; 
 
         public class PID {
             public static final double kP = 0.0; 

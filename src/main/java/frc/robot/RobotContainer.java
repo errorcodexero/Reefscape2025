@@ -163,11 +163,11 @@ public class RobotContainer {
                     catch(Exception e) {
                     }
 
-                    // try {
-                    //     grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
-                    // }
-                    // catch(Exception e) {
-                    // }
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
+                    }
+                    catch(Exception e) {
+                    }
 
                     // try {
                     //     climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
@@ -305,15 +305,15 @@ public class RobotContainer {
         // are characterizing.
         //
 
-        gamepad_.a().whileTrue(climber_.climberSysIdQuasistatic(Direction.kForward)) ;
-        gamepad_.b().whileTrue(climber_.climberSysIdQuasistatic(Direction.kReverse)) ;
-        gamepad_.x().whileTrue(climber_.climberSysIdDynamic(Direction.kForward)) ;
-        gamepad_.y().whileTrue(climber_.climberSysIdDynamic(Direction.kReverse)) ; 
+        // gamepad_.a().whileTrue(climber_.climberSysIdQuasistatic(Direction.kForward)) ;
+        // gamepad_.b().whileTrue(climber_.climberSysIdQuasistatic(Direction.kReverse)) ;
+        // gamepad_.x().whileTrue(climber_.climberSysIdDynamic(Direction.kForward)) ;
+        // gamepad_.y().whileTrue(climber_.climberSysIdDynamic(Direction.kReverse)) ; 
 
-        gamepad_.a().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kForward)) ;
-        gamepad_.b().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kReverse)) ;
-        gamepad_.x().whileTrue(funnel_.funnelSysIdDynamic(Direction.kForward)) ;
-        gamepad_.y().whileTrue(funnel_.funnelSysIdDynamic(Direction.kReverse)) ;  
+        // gamepad_.a().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kForward)) ;
+        // gamepad_.b().whileTrue(funnel_.funnelSysIdQuasistatic(Direction.kReverse)) ;
+        // gamepad_.x().whileTrue(funnel_.funnelSysIdDynamic(Direction.kForward)) ;
+        // gamepad_.y().whileTrue(funnel_.funnelSysIdDynamic(Direction.kReverse)) ;  
 
         gamepad_.a().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kForward)) ;
         gamepad_.b().whileTrue(grabber_.grabberSysIdQuasistatic(Direction.kReverse)) ;

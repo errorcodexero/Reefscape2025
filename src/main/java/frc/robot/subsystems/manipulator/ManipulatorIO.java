@@ -23,6 +23,8 @@ public interface ManipulatorIO {
         public Current armCurrent = Amps.of(0); 
         public Voltage armVoltage = Volts.of(0); 
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
+        public Angle armRawMotorPosition = Degrees.of(0);
+        public AngularVelocity armRawMotorVelocity = DegreesPerSecond.of(0.0) ;
       
         // elevator
         public Distance elevatorPosition = Meters.of(0); 

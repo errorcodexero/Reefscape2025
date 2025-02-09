@@ -44,7 +44,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
         Logger.recordOutput("Manipulator/elevRawPos", inputs_.elevatorRawMotorPosition.in(Rotations)) ;
         Logger.recordOutput("Manipulator/elevRawVel", inputs_.elevatorRawMotorVelocity.in(RotationsPerSecond)) ;
-        
+        Logger.recordOutput("Manipulator/armRawPos", inputs_.armRawMotorPosition.in(Rotations)) ;
+        Logger.recordOutput("Manipulator/armRawVel", inputs_.armRawMotorVelocity.in(RotationsPerSecond)) ;        
     }
 
     public Angle getArmPosition() {

@@ -19,7 +19,7 @@ public class ManipulatorConstants {
         public static final int kMotorCANID = 2; 
 
         // if motor is inverted 
-        public static final boolean kInverted = false; 
+        public static final boolean kInverted = true; 
 
         public static final double kGearRatio = 36.0 ;
 
@@ -33,8 +33,8 @@ public class ManipulatorConstants {
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         // The minimum and maximum arm angle, used to set the limits of travel
-        public static final Angle kMaxArmAngle = Degrees.of(90.0) ;
-        public static final Angle kMinArmAngle = Degrees.of(-180.0) ;
+        public static final Angle kMaxArmAngle = Degrees.of(179.0);
+        public static final Angle kMinArmAngle = Degrees.of(-90) ;
 
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
@@ -43,10 +43,10 @@ public class ManipulatorConstants {
         public static final Angle kStartAbsEncoderAngle = Degrees.of(-45.0) ;        
 
         public class PID {
-            public static final double kP = 8.0 ; 
+            public static final double kP = 4.0 ; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
-            public static final double kV = 0.45 ;
+            public static final double kV = 0.1 ;
             public static final double kA = 0.0 ;
             public static final double kG = 0.0 ;
             public static final double kS = 0.0 ;
@@ -54,21 +54,21 @@ public class ManipulatorConstants {
 
         public class MotionMagic {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32.0) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(1000.0) ;
-            public static final double kJerk = 8000.0 ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300.0) ;
+            public static final double kJerk = 3000.0 ;
         }
 
         public class ThruBoreEncoder {
             // the encoder mapper needs double values, so these constants don't use the Units library
             // robot min and max are in degrees
-            public static final double kRobotMax = 360; 
-            public static final double kRobotMin = 0; 
-            public static final double kEncoderMax = 1; 
-            public static final double kEncoderMin = 0; 
+            public static final double kRobotMax = 180; 
+            public static final double kRobotMin = -180; 
+            public static final double kEncoderMax = 0; 
+            public static final double kEncoderMin = 1; 
             public static final double kRobotCalibrationValue = 0; 
-            public static final double kEncoderCalibrationValue = 0;
+            public static final double kEncoderCalibrationValue = 0.515;
 
-            public static final int kEncoderSource = 0; 
+            public static final int kEncoderSource = 3; 
         }
     }
 
@@ -107,7 +107,7 @@ public class ManipulatorConstants {
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.004) ;
 
         public class PID {
-            public static final double kP = 8.0; 
+            public static final double kP = 20.0; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.15 ;
@@ -117,9 +117,9 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(100) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(10000) ;
-            public static final double kJerk = 10000.0 ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300) ;
+            public static final double kJerk = 0.0 ;
         }
     }
 

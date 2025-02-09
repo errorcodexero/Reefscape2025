@@ -50,7 +50,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
     private StatusSignal<Voltage> arm_vol_sig_; 
-    private StatusSignal<Current> arm_current_sig_; 
+    private StatusSignal<Current> arm_current_sig_;
 
     private StatusSignal<Angle> elevator_pos_sig_; 
     private StatusSignal<AngularVelocity> elevator_vel_sig_; 
@@ -68,17 +68,17 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
     public ManipulatorIOHardware() throws Exception {
-        // createArm() ;
+        createArm() ;
         createElevator() ;   
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
                 50.0,
-                // arm_pos_sig_,
-                // arm_vel_sig_,
-                // arm_vol_sig_,
-                // arm_current_sig_,
+                arm_pos_sig_,
+                arm_vel_sig_,
+                arm_vol_sig_,
+                arm_current_sig_,
                 elevator_pos_sig_,
                 elevator_vel_sig_,
                 elevator_1_vol_sig_,
@@ -137,9 +137,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();
-        elevator_1_vol_sig_ = elevator_motor_.getSupplyVoltage();
+        elevator_1_vol_sig_ = elevator_motor_.getMotorVoltage();
         elevator_1_current_sig_ = elevator_motor_.getSupplyCurrent();
-        elevator_2_vol_sig_ = elevator_motor_2_.getSupplyVoltage();
+        elevator_2_vol_sig_ = elevator_motor_2_.getMotorVoltage();
         elevator_2_current_sig_ = elevator_motor_2_.getSupplyCurrent();
         
         if (Robot.isSimulation()) {
@@ -179,7 +179,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
         ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);        
 
-
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
         arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
@@ -208,12 +207,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         arm_pos_sig_ = arm_motor_.getPosition();
         arm_vel_sig_ = arm_motor_.getVelocity();
-        arm_vol_sig_ = arm_motor_.getSupplyVoltage();
+        arm_vol_sig_ = arm_motor_.getMotorVoltage();
         arm_current_sig_ = arm_motor_.getSupplyCurrent();
-
-        // syncs arm position to absolute encoder value
-        syncArmPosition();        
-
 
         if (Robot.isSimulation()) {
             LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 
@@ -230,12 +225,17 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        // StatusCode armStatus = BaseStatusSignal.refreshAll(
-        //     arm_pos_sig_,
-        //     arm_vel_sig_,
-        //     arm_vol_sig_,
-        //     arm_current_sig_
-        // );
+        if (!encoder_motor_synced_) {
+            syncArmPosition() ;
+            encoder_motor_synced_ = true ;
+        }
+
+        StatusCode armStatus = BaseStatusSignal.refreshAll(
+            arm_pos_sig_,
+            arm_vel_sig_,
+            arm_vol_sig_,
+            arm_current_sig_
+        );
 
         StatusCode elevator1Status = BaseStatusSignal.refreshAll(
             elevator_pos_sig_,
@@ -254,11 +254,13 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());
 
         // arm inputs:
-        // inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
-        // inputs.armPosition = arm_pos_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
-        // inputs.armVelocity = arm_vel_sig_.getValue().div(ManipulatorConstants.Arm.kGearRatio);
-        // inputs.armVoltage = arm_vol_sig_.getValue();
-        // inputs.armCurrent = arm_current_sig_.getValue();
+        inputs.armReady = armErrorDebounce_.calculate(armStatus.isOK());
+        inputs.armRawMotorPosition = arm_pos_sig_.getValue() ;
+        inputs.armRawMotorVelocity = arm_vel_sig_.getValue() ;
+        inputs.armPosition = inputs.armRawMotorPosition.div(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armVelocity = inputs.armRawMotorVelocity.div(ManipulatorConstants.Arm.kGearRatio);
+        inputs.armVoltage = arm_vol_sig_.getValue();
+        inputs.armCurrent = arm_current_sig_.getValue();
         
         // elevator inputs:
         double rev = elevator_pos_sig_.getValue().in(Revolution); 
@@ -285,8 +287,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         }        
         else {
             // arm encoder inputs: 
-            // inputs.rawAbsoluteEncoder = encoder_.get();
-            // inputs.absoluteEncoder = Degrees.of(mapper_.toRobot(inputs.rawAbsoluteEncoder)); 
+            inputs.rawAbsoluteEncoder = encoder_.get();
+            inputs.absoluteEncoder = Degrees.of(mapper_.toRobot(inputs.rawAbsoluteEncoder)); 
         }
     }
 
@@ -323,8 +325,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
     }
 
-    public void syncArmPosition(){
-        arm_motor_.setPosition(mapper_.toRobot(encoder_.get()) * ManipulatorConstants.Arm.kGearRatio); 
+    public void syncArmPosition() {
+        double enc = encoder_.get() ;
+        double angle = mapper_.toRobot(enc) ;
+        Angle armAngle = Degrees.of(angle).times(ManipulatorConstants.Arm.kGearRatio) ;
+        System.out.println("Syncing arm: " + enc + " " + angle + " " + armAngle.in(Degrees)) ;
+        arm_motor_.setPosition(armAngle) ;
     }
 
     private void simulateArm() {
@@ -339,6 +345,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         if (encoder_motor_synced_) {
             arm_encoder_sim_.set(mapper_.toEncoder(arm_sim_.getAngularPosition().in(Degrees))) ;
+            encoder_motor_synced_ = true ;
         }
     }
 
