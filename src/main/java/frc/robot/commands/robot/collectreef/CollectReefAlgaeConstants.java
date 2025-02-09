@@ -1,4 +1,4 @@
-package frc.robot.commands.robot;
+package frc.robot.commands.robot.collectreef;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -14,8 +14,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 
-public class CommandPositions {
-    
+public class CollectReefAlgaeConstants {
     public static final LinearVelocity DriveToMaxVelocity = MetersPerSecond.of(1.0) ;
     public static final LinearAcceleration DriveToMaxAcceleration = MetersPerSecondPerSecond.of(1.0) ;
     public static final AngularVelocity DriveToMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
@@ -26,35 +25,24 @@ public class CommandPositions {
     public static final AngularVelocity BackupMaxAngularVelocity = DegreesPerSecond.of(60.0) ;
     public static final AngularAcceleration BackupMaxAngularAcceleration = DegreesPerSecondPerSecond.of(60.0) ;
 
-    public static class Place {
+    public static class Collect {
         public static final Angle ArmAngle[] = {
+            Degrees.of(90.0),       // 1 and 2 are the same
             Degrees.of(90.0),
-            Degrees.of(90.0),
-            Degrees.of(90.0),
+            Degrees.of(90.0),       // 3 and 4 are the same
             Degrees.of(90.0),
         } ;
 
-        public static final Distance ElevatorHeight[] = {
+        protected static final Distance ElevatorHeight[] = {
+            Meters.of(1.0),         // 1 and 2 are the same
             Meters.of(1.0),
-            Meters.of(1.0),
-            Meters.of(1.0),
+            Meters.of(1.0),         // 3 and 4 are the same
             Meters.of(1.0)
         } ;
     }
 
-    public static class ReefAlgaeCollect {
-        public static final Angle ArmAngle[] = {
-            null,
-            Degrees.of(90.0),
-            Degrees.of(90.0),
-            null,
-        } ;
-
-        protected static final Distance ElevatorHeight[] = {
-            null,
-            Meters.of(1.0),
-            Meters.of(1.0),
-            null
-        } ;        
+    public static class Store {
+        public static final Angle ArmAngle = Degrees.of(90.0) ;
+        public static final Distance ElevatorHeight = Meters.of(1.0) ;
     }
 }

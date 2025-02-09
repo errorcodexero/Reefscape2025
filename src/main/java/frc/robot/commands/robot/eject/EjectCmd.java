@@ -1,4 +1,4 @@
-package frc.robot.commands.robot;
+package frc.robot.commands.robot.eject;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.brain.BrainSubsystem;
@@ -20,9 +20,13 @@ public class EjectCmd extends Command {
         brain_ = b ;
         m_ = m;
         g_ = g ;
+        
+        withInterruptBehavior(InterruptionBehavior.kCancelIncoming) ;
     }
 
-    // Called when the command is initially scheduled.
+    //
+    // TODO: Figure out what is really needed.  We may not know what we are really holding.
+    //
     @Override
     public void initialize() {
         brain_.lock() ;

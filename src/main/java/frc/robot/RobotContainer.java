@@ -39,7 +39,7 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
-import frc.robot.commands.robot.EjectCmd;
+import frc.robot.commands.robot.eject.EjectCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;

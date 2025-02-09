@@ -1,4 +1,4 @@
-package frc.robot.commands.robot;
+package frc.robot.commands.robot.eject;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.grabber.GrabberSubsystem;

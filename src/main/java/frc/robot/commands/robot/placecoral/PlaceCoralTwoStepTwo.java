@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
 
+import org.xerosw.util.XeroSequence;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -13,7 +15,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
@@ -34,7 +35,7 @@ public class PlaceCoralTwoStepTwo extends Command {
 
     private static Voltage nominal = Volts.of(12.0) ;
 
-    private SequentialCommandGroup sequence_ ;
+    private XeroSequence sequence_ ;
     private BrainSubsystem b_ ;
     private Drive db_ ;
     private ManipulatorSubsystem m_ ;
@@ -46,7 +47,7 @@ public class PlaceCoralTwoStepTwo extends Command {
         b_ = brain ;
         m_ = m ;
         g_ = g ;
-        sequence_ = new SequentialCommandGroup() ;
+        sequence_ = new XeroSequence() ;
     }
 
     @Override
@@ -80,26 +81,26 @@ public class PlaceCoralTwoStepTwo extends Command {
 
             // Go to the elevator height
             new ReportStateCmd(getName(), "goto-elev"),
-            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.coralLevel()], ManipulatorConstants.Positions.kStowedAngle),
+            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.level()], ManipulatorConstants.Positions.kStowedAngle),
 
             // Go to the arm angle
             new ReportStateCmd(getName(), "goto-arm"),
-            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.coralLevel()], PlaceCoralConstants.Place.ArmAngle[b_.coralLevel()]),
+            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.level()], PlaceCoralConstants.Place.ArmAngle[b_.level()]),
 
             // Place the coral on the reef
             new ReportStateCmd(getName(), "deposit-coral"),
             new DepositCoralCmd(g_),
 
             // Signal we are no longer holding coral
+            new ReportStateCmd(getName(), "set-holding"),
             new SetHoldingCmd(b_, RobotContainer.GamePiece.NONE),
-            new ReportStateCmd(getName(), "backup"),
 
             // Bring the arm back into the robot
-            new ReportStateCmd(getName(), "goto-elev"),
-            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.coralLevel()], ManipulatorConstants.Positions.kStowedAngle),
+            new ReportStateCmd(getName(), "goto-arm"),
+            new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.level()], ManipulatorConstants.Positions.kStowedAngle),
             
             // Lower the elevator
-            new ReportStateCmd(getName(), "goto-arm"),
+            new ReportStateCmd(getName(), "goto-elev"),
             new GoToCmd(m_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle),
 
             // Turn the gamepad back on
@@ -115,7 +116,7 @@ public class PlaceCoralTwoStepTwo extends Command {
 
     @Override
     public boolean isFinished() {
-        return sequence_.isFinished() ;
+        return sequence_.isComplete() ;
     }
 
     @Override

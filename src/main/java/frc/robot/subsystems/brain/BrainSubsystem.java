@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer.GamePiece;
-import frc.robot.commands.robot.CollectCoralCmd;
+import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepOne;
 import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepTwo;
 import frc.robot.subsystems.drive.Drive;
@@ -118,7 +118,7 @@ public class BrainSubsystem extends SubsystemBase {
         coral_level_ = l ;
     }
 
-    public int coralLevel() {
+    public int level() {
         return coral_level_ ;
     }
 
@@ -261,7 +261,7 @@ public class BrainSubsystem extends SubsystemBase {
 
             case PlaceCoral:
                 if (PlaceCoralTwoStep) {
-                    list.add(new PlaceCoralTwoStepOne(m_, level)) ;
+                    list.add(new PlaceCoralTwoStepOne(m_)) ;
                     conds.add(null) ;
 
                     // We only execute this step if we are in a position that the target face is valid
