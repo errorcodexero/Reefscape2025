@@ -66,6 +66,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
+import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
@@ -132,9 +133,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                        new CameraIOLimelight(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -166,9 +167,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                        new CameraIOLimelight(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -214,7 +215,8 @@ public class RobotContainer {
                         new CameraIOPhotonSim("RightCamera", new Transform3d(
                             new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
-                        ), drivebase_::getPose, false));
+                        ), drivebase_::getPose, false)
+                    );
 
                     // Other subsystems should be added here once we have simulation support for them.
                         
@@ -266,6 +268,7 @@ public class RobotContainer {
         if (vision_ == null) {
             vision_ = new AprilTagVision(
                 drivebase_::addVisionMeasurement,
+                new CameraIO() {},
                 new CameraIO() {},
                 new CameraIO() {}
             );
