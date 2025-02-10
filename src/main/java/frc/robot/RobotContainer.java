@@ -330,6 +330,7 @@ public class RobotContainer {
         }
 
         brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
+        oi_.setBrain(brain_);
 
 
         // Shuffleboard Tabs
