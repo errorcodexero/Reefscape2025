@@ -406,8 +406,8 @@ public class RobotContainer {
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
-        oi_.climbLock().onFalse(new PrepClimbCmd()) ;
-        oi_.climbExecute().onTrue(new ExecuteClimbCmd()) ;
+        oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
+        oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
     }
 
     private double getLeftX() {

@@ -205,7 +205,8 @@ public class BrainSubsystem extends SubsystemBase {
             current_action_ = next_action_ ;
             next_action_ = null ;
             current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
-            if (current_robot_action_command_ == null) {
+
+            if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
                 status = current_action_.toString() + ":no command" ;
                 current_action_ = null ;
                 current_cmd_ = null ;

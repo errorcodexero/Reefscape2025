@@ -39,6 +39,7 @@ public abstract class OIBaseModel extends SimulationModel {
     private Map<String, Integer> button_map_ ;
     private Map<String, Integer> led_map_ ;
     private List<MultiButtonConfig> multi_buttons_ ;
+    private Map<String, Boolean> led_state_ ;
 
     private int index_ ;
     private int buttons_ ;
@@ -52,13 +53,13 @@ public abstract class OIBaseModel extends SimulationModel {
         button_map_ = new HashMap<String, Integer>() ;
         led_map_ = new HashMap<String, Integer>() ;
         multi_buttons_ = new ArrayList<>() ;
+        led_state_ = new HashMap<>() ;
     }
 
     public void setLED(int index, boolean state) {
         for(Entry<String, Integer> entry : led_map_.entrySet()) {
             if (entry.getValue() == index) {
-                Logger.recordOutput("OI/LEDs/" + entry.getKey(), state) ;
-                break ;
+                led_state_.put(entry.getKey(), state) ;
             }
         }
     }
@@ -69,6 +70,10 @@ public abstract class OIBaseModel extends SimulationModel {
 
     protected void setLedMap(Map<String, Integer> map) {
         led_map_ = map ;
+
+        for(Entry<String, Integer> entry : led_map_.entrySet()) {
+            led_state_.put(entry.getKey(), false) ;
+        }
     }
 
     protected boolean registerMultiButton(String name, int[] ios, String[] states) {
@@ -421,5 +426,9 @@ public abstract class OIBaseModel extends SimulationModel {
 
     @Override
     public void run(double dt) {
+        for(Entry<String, Boolean> entry : led_state_.entrySet()) {
+            String name = "oi/leds/" + entry.getKey() ;
+            Logger.recordOutput(name, entry.getValue()) ;
+        }
     }
 }
