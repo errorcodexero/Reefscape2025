@@ -39,7 +39,7 @@ import frc.simulator.engine.SimulationEngine;
 */
 public class Robot extends LoggedRobot {
     
-    private static boolean useXeroSimulator = true ;
+    private static boolean useXeroSimulator = false;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
