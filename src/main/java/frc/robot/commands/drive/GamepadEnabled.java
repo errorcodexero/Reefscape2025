@@ -12,7 +12,7 @@ public class GamepadEnabled extends Command {
 
     @Override
     public void initialize() {
-        RobotContainer c = RobotContainer.getRobotContainer() ;
+        RobotContainer c = RobotContainer.getInstance() ;
         c.enableGamepad(enabled_) ;
     }
 

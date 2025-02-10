@@ -83,21 +83,21 @@ import frc.simulator.engine.ISimulatedSubsystem;
 */
 public class RobotContainer {
 
-    private static RobotContainer container_ ;
+    private static RobotContainer instance_;
 
-    public static RobotContainer getRobotContainer() {
-        if (container_ == null) {
-            container_ = new RobotContainer() ;
+    public static RobotContainer getInstance() {
+        if (instance_ == null) {
+            instance_ = new RobotContainer();
         }
 
-        return container_ ;
+        return instance_;
     }
 
     // Mapping of subsystems name to subsystems, used by the simulator
-    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
+    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>();
 
     // Driver controller enabled flag
-    private boolean driver_controller_enabled_ = true ;
+    private boolean driver_controller_enabled_ = true;
 
     // Subsystems
     private Drive drivebase_;
@@ -109,18 +109,14 @@ public class RobotContainer {
     private FunnelSubsystem funnel_ ;
     private BrainSubsystem brain_ ;
 
+    // Choosers
     private final LoggedDashboardChooser<Command> autoChooser_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer () {
-        if (RobotContainer.container_ != null) {
-            throw new RuntimeException("Robot code tried to create multiple robot containers") ;
-        }
-
-        RobotContainer.container_ = this ;
+    private RobotContainer () {
 
         /**
          * Subsystem setup
@@ -193,17 +189,11 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
-                        
-                    }
+                    } catch (Exception e) {}
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-
-                    }
-
-                    oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
+                    } catch (Exception e) {}
 
                     // try {
                     //     funnel_ = new Funnel(new FunnelIOHardware());
@@ -248,12 +238,11 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                         climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
                         funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
-                        oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
                     }
                     catch(Exception ex) {
-                        //
-                        // This will never happen in a simulation
-                        //
+                        ex.printStackTrace();
+
+                        // This should never happen in a simulation. If it does, something is wrong in the codebase.
                     }
 
                     // Other subsystems should be added here once we have simulation support for them.
@@ -329,8 +318,11 @@ public class RobotContainer {
             funnel_ = new FunnelSubsystem(new FunnelIO() {});
         }
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
+        // OI Setup
+        oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_);
 
+        oi_.setBrain(brain_); // This must be called or else the program crashes
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");

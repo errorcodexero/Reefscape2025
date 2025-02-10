@@ -1,7 +1,9 @@
 package frc.robot.subsystems.oi;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.models.OIBaseModel;
@@ -103,7 +105,7 @@ public class OIIOHID implements OIIO {
             }
 
             if (desired != led_onoff_[i - 1]) {
-                if (Robot.isReal()) {
+                if (Constants.getMode() == Mode.REAL || !Robot.useXeroSimulator()) {
                     hid_.setOutput(i, desired);
                 }
                 else {
