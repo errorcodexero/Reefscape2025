@@ -4,7 +4,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DeployFunnelCmd extends Command {
-    private final Funnel funnel_;
+    private final FunnelSubsystem funnel_;
     private final Angle targetAngle_;
     private State state_;
 
@@ -14,7 +14,7 @@ public class DeployFunnelCmd extends Command {
         Done
     }
 
-    public DeployFunnelCmd(Funnel funnel, Angle targetAngle) {
+    public DeployFunnelCmd(FunnelSubsystem funnel, Angle targetAngle) {
         addRequirements(funnel);
         funnel_ = funnel;
         targetAngle_ = targetAngle;

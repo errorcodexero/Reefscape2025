@@ -10,5 +10,8 @@ public class BuiltInModels {
         factory.registerModel("fms", "frc.simulator.models.FMSModel");
         factory.registerModel("drivergamepad", "frc.simulator.models.DriverGamepadModel");
         factory.registerModel("swervedrive", "frc.simulator.models.SwerveDriveModel");
+        factory.registerModel("oi2025", "frc.simulator.models.OI2025");
+        factory.registerModel("dio", "frc.simulator.models.DigitalIOModel");
+        factory.registerModel("drivebase", "frc.simulator.models.DriveBaseModel");
     }
 }

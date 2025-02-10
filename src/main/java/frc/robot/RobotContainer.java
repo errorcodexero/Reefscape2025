@@ -22,8 +22,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.HashMap;
-import java.util.Optional;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.math.Matrix;
@@ -37,8 +35,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
@@ -48,13 +44,19 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.AlphaTunerConstants;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.generated.PracticeTunerConstants;
+import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
+import frc.robot.subsystems.brain.QueueRobotActionCmd;
+import frc.robot.subsystems.brain.RobotAction;
+import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.funnel.Funnel;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.funnel.FunnelIO;
 import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.grabber.GrabberIO;
@@ -63,14 +65,14 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.oi.OIIOHID;
+import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -81,15 +83,31 @@ import frc.simulator.engine.ISimulatedSubsystem;
 */
 public class RobotContainer {
 
+    private static RobotContainer container_ ;
+
+    public static RobotContainer getRobotContainer() {
+        if (container_ == null) {
+            container_ = new RobotContainer() ;
+        }
+
+        return container_ ;
+    }
+
     // Mapping of subsystems name to subsystems, used by the simulator
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
+
+    // Driver controller enabled flag
+    private boolean driver_controller_enabled_ = true ;
 
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
-    private ManipulatorSubsystem manipulator_;
-    private GrabberSubsystem grabber_;
-    private Funnel funnel_;
+    private OISubsystem oi_ ;
+    private ManipulatorSubsystem manipulator_ ;
+    private GrabberSubsystem grabber_ ;
+    private ClimberSubsystem climber_ ;
+    private FunnelSubsystem funnel_ ;
+    private BrainSubsystem brain_ ;
 
     private final LoggedDashboardChooser<Command> autoChooser_;
 
@@ -98,13 +116,18 @@ public class RobotContainer {
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer () {
+        if (RobotContainer.container_ != null) {
+            throw new RuntimeException("Robot code tried to create multiple robot containers") ;
+        }
+
+        RobotContainer.container_ = this ;
+
         /**
          * Subsystem setup
          */
         if (Constants.getMode() != Mode.REPLAY) {
             switch (Constants.getRobot()) {
                 case ALPHA:
-
                     drivebase_ = new Drive(
                         new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id),
                         ModuleIOTalonFX::new,
@@ -120,7 +143,6 @@ public class RobotContainer {
                     break;
 
                 case COMPETITION:
-
                     // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
                         new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
@@ -148,13 +170,12 @@ public class RobotContainer {
                     } catch (Exception e) {}
 
                     try {
-                        funnel_ = new Funnel(new FunnelIOHardware());
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
                     } catch (Exception e) {}
 
                     break;
                 
                 case PRACTICE:
-
                     drivebase_ = new Drive(
                         new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
                         ModuleIOTalonFX::new,
@@ -170,13 +191,19 @@ public class RobotContainer {
                         new CameraIOLimelight4(VisionConstants.practiceLimelightName, drivebase_::getRotation)
                     );
 
-                    // try {
-                    //     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    // } catch (Exception e) {}
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception e) {
+                        
+                    }
 
-                    // try {
-                    //     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    // } catch (Exception e) {}
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    } catch (Exception e) {
+
+                    }
+
+                    oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
 
                     // try {
                     //     funnel_ = new Funnel(new FunnelIOHardware());
@@ -215,6 +242,19 @@ public class RobotContainer {
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
                         ), drivebase_::getPose, false)
                     );
+
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware()) ;
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
+                        oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
+                    }
+                    catch(Exception ex) {
+                        //
+                        // This will never happen in a simulation
+                        //
+                    }
 
                     // Other subsystems should be added here once we have simulation support for them.
                         
@@ -286,11 +326,11 @@ public class RobotContainer {
         }
 
         if (funnel_ == null) {
-            funnel_ = new Funnel(new FunnelIO() {});
+            funnel_ = new FunnelSubsystem(new FunnelIO() {});
         }
 
-        // Simulation setup
-        this.addSubsystem(drivebase_) ;
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
+
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
@@ -306,14 +346,12 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
-    public ISimulatedSubsystem get(String name) {
-        return this.subsystems_.get(name) ;
+    public void enableGamepad(boolean enabled) {
+        driver_controller_enabled_ = enabled ;
     }
 
-    private void addSubsystem(SubsystemBase sub) {
-        if (sub instanceof ISimulatedSubsystem) {
-            this.subsystems_.put(sub.getName(),  (ISimulatedSubsystem)sub) ;
-        }
+    public Drive drivebase() {
+        return drivebase_ ;
     }
 
     public void setupAutos() {
@@ -352,16 +390,46 @@ public class RobotContainer {
     * Use this method to define your button -> command mappings for drivers.
     */
     private void configureButtonBindings() {
-        // Add subsystem button bindings here
-        gamepad_.rightBumper().onTrue(
-            Commands.runOnce(() -> {
-                Optional<ReefFace> face = ReefUtil.getTargetedReefFace(drivebase_.getPose());
+        //
+        // These are the bindings for the various operations of the robot
+        //
+        oi_.coralPlace().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceCoral)) ;
+        oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral)) ;
+        oi_.algaeCollectL2().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefL2)) ;
+        oi_.algaeCollectL3().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefL3)) ;
+        oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround)) ;
+        oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceAlgae)) ;
+        oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_)) ;
+    }
 
-                if (face.isPresent()) {
-                    DriveCommands.simplePathCommand(face.get().getAlgaeScoringPose()).schedule();
-                }
-            }, drivebase_)
-        );
+    private double getLeftX() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double y = -gamepad_.getLeftX() ;
+        y = Math.signum(y) * y * y ;
+        
+        return y ;
+    }
+
+    private double getLeftY() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double x = -gamepad_.getLeftY() ;
+        x = Math.signum(x) * x * x;
+
+        return x ;
+    }
+
+    private double getRightX() {
+        if (!driver_controller_enabled_)
+            return 0.0 ;
+
+        double x = -gamepad_.getRightX() ;
+        x = Math.signum(x) * x * x  ;
+
+        return x ;
     }
     
     /**
@@ -370,19 +438,19 @@ public class RobotContainer {
     private void configureDriveBindings() {
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drivebase_,
-            () -> -gamepad_.getLeftY(),
-            () -> -gamepad_.getLeftX(),
-            () -> -gamepad_.getRightX()));
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> getLeftY(),
+                () -> getLeftX(),
+                () -> getRightX())) ;
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                () -> getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());

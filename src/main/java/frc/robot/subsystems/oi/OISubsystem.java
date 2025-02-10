@@ -5,13 +5,13 @@ import static edu.wpi.first.units.Units.Seconds;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
     
@@ -55,44 +55,13 @@ public class OISubsystem extends SubsystemBase {
         Fast
     }
 
-    //
-    // The left or right side of the reef for a given
-    // reef face.
-    //
-    public enum CoralSide {
-        Left,
-        Right
-    }
-
-    //
-    // This names the actions a robot can perform.  This is for a current action and a
-    // next action.  Abort is on included in this as abort is immediate and interrupts any
-    // of these that are underway.
-    //
-    public enum RobotAction {
-        PlaceCoral,
-        CollectCoral,
-        CollectAlgaeGround,
-        CollectAlgaeReefL2,
-        CollectAlgaeReefL3,
-        PlaceAlgae,
-        ClimbDeploy,
-        ClimbExecute,
-        Eject,
-    }
-
     // The IO layer for the OI
     private OIIO ios_ ;
 
     // The inputs from the OI IO layer during the last robot loop
     private OIIosInputsAutoLogged inputs_ ;
 
-    // The currently executing action, can be null if nothing is being executed
-    private RobotAction current_action_ ;
-
-    // The next action to be executed, can be null if no action is pending
-    private RobotAction next_action_ ;
-    
+     
     // The gamepad controller attached for driving the robot
     private CommandXboxController gamepad_ ;
 
@@ -102,40 +71,93 @@ public class OISubsystem extends SubsystemBase {
     // The time when the rumbling will end
     private double end_time_ ;
 
-    // The current coral level
-    private int coral_level_ ;
-
-    // The trigger for the abort button
+    // Triggers
     private Trigger abort_trigger_ ;
-
-    // The trigger for the eject button, this interrupts anything that is going on and
-    // is immediate.  It also sets the eject as a command being executed.
     private Trigger eject_trigger_ ;
+    private Trigger climb_lock_trigger_ ;
+    private Trigger climb_exec_trigger_ ;
+    private Trigger coral_place_trigger_ ;
+    private Trigger coral_collect_trigger_ ;
+    private Trigger algae_ground_trigger_ ;
+    private Trigger algae_collect_l2_ ;
+    private Trigger algae_collect_l3_ ;
+    private Trigger algae_score_ ;
+    private Trigger execute_trigger_ ;
 
-    // The command associated with the current robot action
-    private Command current_robot_action_command_ ;
+    private BrainSubsystem brain_ ;
 
-    // The supplier for the robot action command based on the OI state
-    private OICommandSupplier robot_action_command_supplier_ ;
-
-    public OISubsystem(OIIO ios, CommandXboxController ctrl, OICommandSupplier robotActionCommandSupplier) {
+    public OISubsystem(OIIO ios, CommandXboxController ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
-        robot_action_command_supplier_ = robotActionCommandSupplier ;
 
-        current_action_ = null ;
-        next_action_ = null ;
-        current_robot_action_command_ = null ;
+
 
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
         eject_trigger_ = new Trigger(() -> inputs_.eject) ;
+        climb_lock_trigger_ = new Trigger(() -> inputs_.climb_lock) ;
+        climb_exec_trigger_ = new Trigger(()-> inputs_.climb_execute) ;
+        coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
+        coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
+        algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
+        algae_collect_l2_ = new Trigger(()-> inputs_.algae_collect_l2) ;
+        algae_collect_l3_ = new Trigger(()-> inputs_.algae_collect_l3) ;
+        algae_score_ = new Trigger(()-> inputs_.algae_score) ;
+        execute_trigger_ = new Trigger(()-> inputs_.execute) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
+    }
+
+    public void setBrain(BrainSubsystem b) {
+        brain_ = b ;
+    }
+
+    public Trigger abort() {
+        return abort_trigger_ ;
+    }
+
+    public Trigger eject() {
+        return eject_trigger_ ;
+    }    
+
+    public Trigger climbLock() {
+        return climb_lock_trigger_ ;
+    }
+
+    public Trigger climbExecute() {
+        return climb_exec_trigger_ ;
+    }
+
+    public Trigger coralPlace() {
+        return coral_place_trigger_ ;
+    }
+
+    public Trigger coralCollect() {
+        return coral_collect_trigger_ ;
+    }
+
+    public Trigger algaeGround() {
+        return algae_ground_trigger_ ;
+    }
+
+    public Trigger algaeCollectL2() {
+        return algae_collect_l2_ ;
+    }
+
+    public Trigger algaeCollectL3() {
+        return algae_collect_l3_ ;
+    }
+
+    public Trigger algaeScore() {
+        return algae_score_ ;
+    }
+
+    public Trigger execute() {
+        return execute_trigger_ ;
     }
 
     public void rumble(Time duration) {
@@ -147,10 +169,6 @@ public class OISubsystem extends SubsystemBase {
     public void setLEDState(OILed led, LEDState st) {
         ios_.setLED(led.value, st) ;
     }    
-
-    public int coralLevel() {
-        return coral_level_ ;
-    }
 
     public void clearAllActionLEDs() {
         setLEDState(OILed.CoralPlace, LEDState.Off) ;
@@ -165,10 +183,6 @@ public class OISubsystem extends SubsystemBase {
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
-            case Eject:
-                setLEDState(OILed.Eject, st) ;
-                break ;
-
             case PlaceCoral:
                 setLEDState(OILed.CoralPlace, st) ;
                 break ;
@@ -192,14 +206,6 @@ public class OISubsystem extends SubsystemBase {
             case PlaceAlgae:
                 setLEDState(OILed.AlgaeScore, st) ;
                 break ;
-
-            case ClimbDeploy:
-                setLEDState(OILed.ClimbDeploy, st) ;
-                break ;
-
-            case ClimbExecute:
-                setLEDState(OILed.ClimbExecute, st) ;
-                break ;
         }
     }
 
@@ -219,10 +225,12 @@ public class OISubsystem extends SubsystemBase {
         if (inputs_.coral_side) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
+            brain_.setCoralSide(CoralSide.Left) ;
         }
         else {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
+            brain_.setCoralSide(CoralSide.Right) ;
         }
 
         //
@@ -230,115 +238,33 @@ public class OISubsystem extends SubsystemBase {
         //
         if (inputs_.coral_l1) {
             setLEDState(OILed.CoralL1, LEDState.On) ;
-            coral_level_ = 1 ;
+            brain_.setCoralLevel(1) ;
         } else {
             setLEDState(OILed.CoralL1, LEDState.Off) ;
         }
 
         if (inputs_.coral_l2) {
             setLEDState(OILed.CoralL2, LEDState.On) ;
-            coral_level_ = 2 ;
+            brain_.setCoralLevel(2) ;
         } else {
             setLEDState(OILed.CoralL2, LEDState.Off) ;
         }
 
         if (inputs_.coral_l3) {
             setLEDState(OILed.CoralL3, LEDState.On) ;
-            coral_level_ = 3 ;
+            brain_.setCoralLevel(3) ;
         } else {
             setLEDState(OILed.CoralL3, LEDState.Off) ;
         }
 
         if (inputs_.coral_l4) {
             setLEDState(OILed.CoralL4, LEDState.On) ;
-            coral_level_ = 4 ;
+            brain_.setCoralLevel(4) ;
         } else {
             setLEDState(OILed.CoralL4, LEDState.Off) ;
         }
 
-        if (RobotState.isEnabled() && RobotState.isTeleop()) {
-            commandProcessing() ;
-        }
-
         Logger.recordOutput("oi/buttons", getPressedString()) ; 
-    }
-
-    private void commandProcessing() {
-        //
-        // Process the robot action buttons
-        //
-        if (inputs_.coral_collect) {
-            next_action_ = RobotAction.CollectCoral ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.coral_place) {
-            next_action_ = RobotAction.PlaceCoral ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_ground) {
-            next_action_ = RobotAction.CollectAlgaeGround ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_score) {
-            next_action_ = RobotAction.PlaceAlgae ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_collect_l2) {
-            next_action_ = RobotAction.CollectAlgaeReefL2 ;
-            setRobotActionLEDState(next_action_, null);
-        }
-        else if (inputs_.algae_collect_l3) {
-            next_action_ = RobotAction.CollectAlgaeReefL3 ;
-            setRobotActionLEDState(next_action_, null);
-        }
-
-        if (next_action_ != null) {
-            setRobotActionLEDState(next_action_, LEDState.On);
-        }
-
-        if (current_robot_action_command_ != null && current_robot_action_command_.isFinished()) {
-            //
-            // The currently executing command has finished, we need to clear the LED
-            // and mark the command as complete but setting it to null
-            //
-            setRobotActionLEDState(current_action_, LEDState.Off);
-            current_robot_action_command_ = null ;
-        }
-
-        if (next_action_ != null && current_robot_action_command_ == null) {
-            //
-            // We are ready to execute a new command, we schedule the command
-            //
-            current_action_ = next_action_ ;
-            next_action_ = null ;
-            current_robot_action_command_ = robot_action_command_supplier_.get(current_action_, coral_level_, getCoralSide()) ;
-            if (current_robot_action_command_ != null) {
-                current_robot_action_command_.schedule();
-            }
-        }
-
-        Logger.recordOutput("oi/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
-        Logger.recordOutput("oi/next_action", next_action_ != null ? next_action_.toString() : "none") ;
-    }
-
-    public RobotAction getCurrentAction() {
-        return current_action_ ;
-    }
-
-    public RobotAction getNextAction() {
-        return next_action_ ;
-    }
-
-    public CoralSide getCoralSide() {
-        return inputs_.coral_side ? CoralSide.Left : CoralSide.Right ;
-    }
-
-    public Trigger abort() {
-        return abort_trigger_ ;
-    }
-
-    public Trigger eject() {
-        return eject_trigger_ ;
     }
 
     public String getPressedString() {
@@ -510,6 +436,7 @@ public class OISubsystem extends SubsystemBase {
             str += "rb" ;
         }
         
+
         return str ;
     }
 }
