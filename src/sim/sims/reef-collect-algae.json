@@ -1,0 +1,67 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 1500.0,
+                        "fms" : false,
+                        "ds" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "events" :
+            [
+                {
+                    "model" : "drivebase",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "pose" : "3.167, 5.578, -35.0"
+                    }
+                }
+            ]
+        },        
+        {
+            "time" : 7.5,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "algae-collect-l2" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 7.7,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "algae-collect-l2" : true
+                    }
+                }
+            ]
+        }
+    ]
+}

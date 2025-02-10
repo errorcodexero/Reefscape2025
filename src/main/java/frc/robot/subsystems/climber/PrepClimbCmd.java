@@ -14,6 +14,5 @@ public class PrepClimbCmd extends SequentialCommandGroup {
             new ClimberPositionCmd(climberSubsystem, ClimberTarget.PrepareToClimb)
         );
     }
-
 }
 

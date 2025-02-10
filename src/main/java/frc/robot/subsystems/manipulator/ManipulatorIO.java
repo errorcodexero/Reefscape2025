@@ -23,10 +23,14 @@ public interface ManipulatorIO {
         public Current armCurrent = Amps.of(0); 
         public Voltage armVoltage = Volts.of(0); 
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
+        public Angle armRawMotorPosition = Degrees.of(0);
+        public AngularVelocity armRawMotorVelocity = DegreesPerSecond.of(0.0) ;
       
         // elevator
         public Distance elevatorPosition = Meters.of(0); 
         public LinearVelocity elevatorVelocity = MetersPerSecond.of(0); 
+        public Angle elevatorRawMotorPosition = Degrees.of(0);
+        public AngularVelocity elevatorRawMotorVelocity = DegreesPerSecond.of(0.0) ;
 
         // elevator 1
         public boolean elevator1Ready = false;
@@ -37,6 +41,10 @@ public interface ManipulatorIO {
         public boolean elevator2Ready = false;
         public Voltage elevator2Voltage = Volts.of(0);
         public Current elevator2Current = Amps.of(0); 
+
+        // encoder
+        public Angle absoluteEncoder = Degrees.of(0); 
+        public double rawAbsoluteEncoder = 0;
     }
 
     // updating inputs
@@ -55,6 +63,6 @@ public interface ManipulatorIO {
     public default void setElevatorPosition(Distance dist) {}
 
     // ARM METHODS
-    public default void setArmPosition(Angle angle) {}
+    public default void setArmTarget(Angle angle) {}
 
 }

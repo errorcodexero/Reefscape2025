@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 5.8134375,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 5.929972655528249,
-        "y": 2.8422040461839133
+        "x": 5.932937182555276,
+        "y": 2.657322289427156
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Side Algae",
+  "folder": "Side Algae (not used)",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

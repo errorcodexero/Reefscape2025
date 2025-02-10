@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Funnel extends SubsystemBase {
+public class FunnelSubsystem extends SubsystemBase {
 
     private final FunnelIO io_; 
     private final FunnelInputsAutoLogged inputs_;
@@ -16,7 +16,7 @@ public class Funnel extends SubsystemBase {
 
     private boolean hasSeenCoral_;
 
-    public Funnel(FunnelIO io) {
+    public FunnelSubsystem(FunnelIO io) {
         io_ = io; 
         inputs_ = new FunnelInputsAutoLogged();
     }
@@ -24,7 +24,7 @@ public class Funnel extends SubsystemBase {
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);
-        Logger.processInputs("Manipulator", inputs_);
+        Logger.processInputs("Funnel", inputs_);
 
         disconnectedAlert_.set(!inputs_.funnelReady);
 

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.810472972972973,
-        "y": 4.034881756756757
+        "x": 5.8134375,
+        "y": 3.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.985999461523401,
-        "y": 3.8568636345973646
+        "x": 5.988963988550428,
+        "y": 3.6719818778406075
       },
       "isLocked": false,
       "linkedName": "Algae 1"
@@ -45,7 +45,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Side Algae",
+  "folder": "Side Algae (not used)",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

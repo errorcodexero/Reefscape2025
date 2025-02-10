@@ -36,7 +36,7 @@ public class ClimberPositionCmd extends Command {
     public void initialize() {
         sub_.setClimberPosition(goalState_.getAngle());
     }
-    
+
     @Override
     public boolean isFinished() {
         return sub_.isClimberAtTarget();

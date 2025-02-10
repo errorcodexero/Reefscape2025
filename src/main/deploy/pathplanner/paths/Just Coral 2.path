@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.331960227272727,
-        "y": 0.519985795454545
+        "x": 5.8134375,
+        "y": 3.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.379712966176209,
-        "y": 0.27458881925635326
+        "x": 7.109951718822718,
+        "y": 3.8515419293275093
       },
       "isLocked": false,
-      "linkedName": "Collection station"
+      "linkedName": "Algae 1"
     },
     {
       "anchor": {
-        "x": 5.14839527027027,
-        "y": 2.888597972972972
+        "x": 8.05,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 5.115696846587547,
-        "y": 2.572859989872164
+        "x": 6.902214117697088,
+        "y": 3.8531904637818304
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "1 alliance side"
+      "linkedName": "Center Start"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.5,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.95360816780152
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Center Algae",
+  "folder": "Just Place",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }
