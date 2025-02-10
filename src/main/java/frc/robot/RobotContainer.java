@@ -532,7 +532,8 @@ public class RobotContainer {
     * @return the command to run in autonomous
     */
     public Command getAutonomousCommand() {
-        return autoChooser_.get() != null ? autoChooser_.get() : tuningChooser_.get();
+        Command autoChosen = autoChooser_.get();
+        return autoChosen != null ? autoChosen : tuningChooser_.get();
     }
     
 }
