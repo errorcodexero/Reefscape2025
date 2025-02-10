@@ -109,6 +109,7 @@ public class RobotContainer {
     private FunnelSubsystem funnel_ ;
     private BrainSubsystem brain_ ;
 
+    // Choosers
     private final LoggedDashboardChooser<Command> autoChooser_;
 
     // Controller
@@ -188,17 +189,11 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
-                        
-                    }
+                    } catch (Exception e) {}
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-
-                    }
-
-                    oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
+                    } catch (Exception e) {}
 
                     // try {
                     //     funnel_ = new Funnel(new FunnelIOHardware());
@@ -243,7 +238,6 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                         climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
                         funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
-                        oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
                     }
                     catch(Exception ex) {
                         ex.printStackTrace();
@@ -324,9 +318,11 @@ public class RobotContainer {
             funnel_ = new FunnelSubsystem(new FunnelIO() {});
         }
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
-        oi_.setBrain(brain_);
+        // OI Setup
+        oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_);
 
+        oi_.setBrain(brain_); // This must be called or else the program crashes
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
