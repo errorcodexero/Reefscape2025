@@ -410,7 +410,7 @@ public class DriveCommands {
   * If the path has a problem being created, or it is zero in length, returns
   * a Command that does nothing.
   */
-  public static Command initialFollowPathCommand(Drive drive, String pathName) {
+  public static Command initialFollowPathCommand(String pathName, boolean mirrored, Drive drive) {
     Optional<PathPlannerPath> path = findPath(pathName, false);
 
     if (path.isPresent()) {
