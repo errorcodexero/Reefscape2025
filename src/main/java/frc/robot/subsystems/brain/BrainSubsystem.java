@@ -48,12 +48,18 @@ public class BrainSubsystem extends SubsystemBase {
 
     //
     // Subsystems used to implement the robot actions that are
-    // managed by the brain subsystem
+    // managed by the brain subsystem.  Remove th suppress warnings when
+    // we get the code to generate the commands required for the various
+    // robot actions.
     //
+    @SuppressWarnings("unused")
     private Drive db_ ;
+
+    @SuppressWarnings("unused")
     private ManipulatorSubsystem m_ ;
-    private GrabberSubsystem g_ ;
-    
+
+    @SuppressWarnings("unused")
+    private GrabberSubsystem g_ ;   
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         oi_ = oi ;
@@ -134,8 +140,18 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     public void queueRobotAction(RobotAction action) {
-        if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop() && next_action_ == null) {
+        if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
+            //
+            // We can override the next action, until it becomes the current action
+            //
+            if (next_action_ != null) {
+                oi_.setRobotActionLEDState(next_action_, LEDState.Off) ;
+            }
             next_action_ = action ;
+            if (next_action_ != null) {
+                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+            }
+
             if (current_action_ == null) {
                 periodic();
             }
@@ -198,8 +214,10 @@ public class BrainSubsystem extends SubsystemBase {
             current_robot_action_command_index_ = 0 ;
             current_action_ = next_action_ ;
             next_action_ = null ;
+            oi_.setRobotActionLEDState(current_action_, LEDState.Fast) ;
             current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
-            if (current_robot_action_command_ == null) {
+
+            if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
                 status = current_action_.toString() + ":no command" ;
                 current_action_ = null ;
                 current_cmd_ = null ;
@@ -266,11 +284,7 @@ public class BrainSubsystem extends SubsystemBase {
                 // TODO: write me
                 break ;
 
-            case CollectAlgaeReefL2:
-                // TODO: write me
-                break ;
-
-            case CollectAlgaeReefL3:
+            case CollectAlgaeReef:
                 // TODO: write me
                 break ;
 

@@ -52,8 +52,12 @@ import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
 import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
+import frc.robot.subsystems.brain.SetCoralSideCmd;
+import frc.robot.subsystems.brain.SetLevelCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.climber.ExecuteClimbCmd;
+import frc.robot.subsystems.climber.PrepClimbCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -69,6 +73,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
@@ -87,14 +92,14 @@ import frc.simulator.engine.ISimulatedSubsystem;
 */
 public class RobotContainer {
 
-    private static RobotContainer container_ ;
+    private static RobotContainer instance_;
 
-    public static RobotContainer getRobotContainer() {
-        if (container_ == null) {
-            container_ = new RobotContainer() ;
+    public static RobotContainer getInstance() {
+        if (instance_ == null) {
+            instance_ = new RobotContainer();
         }
 
-        return container_ ;
+        return instance_;
     }
 
     // Mapping of subsystems name to subsystems, used by the simulator
@@ -110,18 +115,14 @@ public class RobotContainer {
     private FunnelSubsystem funnel_ ;
     private BrainSubsystem brain_ ;
 
+    // Choosers
     private final LoggedDashboardChooser<Command> autoChooser_;
 
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer () {
-        if (RobotContainer.container_ != null) {
-            throw new RuntimeException("Robot code tried to create multiple robot containers") ;
-        }
-
-        RobotContainer.container_ = this ;
+    private RobotContainer () {
 
         /**
          * Subsystem setup
@@ -194,17 +195,11 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
-                        
-                    }
+                    } catch (Exception e) {}
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
-
-                    }
-
-                    oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
+                    } catch (Exception e) {}
 
                     // try {
                     //     funnel_ = new Funnel(new FunnelIOHardware());
@@ -249,12 +244,11 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                         climber_ = new ClimberSubsystem(new ClimberIOHardware()) ;
                         funnel_ = new FunnelSubsystem(new FunnelIOHardware()) ;
-                        oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
                     }
                     catch(Exception ex) {
-                        //
-                        // This will never happen in a simulation
-                        //
+                        ex.printStackTrace();
+
+                        // This should never happen in a simulation. If it does, something is wrong in the codebase.
                     }
 
                     // Other subsystems should be added here once we have simulation support for them.
@@ -330,8 +324,10 @@ public class RobotContainer {
             funnel_ = new FunnelSubsystem(new FunnelIO() {});
         }
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_) ;
+        // OI Setup
+        oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
 
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_);
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
@@ -392,11 +388,23 @@ public class RobotContainer {
         //
         oi_.coralPlace().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceCoral)) ;
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral)) ;
-        oi_.algaeCollectL2().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefL2)) ;
-        oi_.algaeCollectL3().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefL3)) ;
+        oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReef)) ;
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround)) ;
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceAlgae)) ;
+
+        oi_.l1().onTrue(new SetLevelCmd(brain_, 1)) ;
+        oi_.l2().onTrue(new SetLevelCmd(brain_, 2)) ;
+        oi_.l3().onTrue(new SetLevelCmd(brain_, 3)) ;
+        oi_.l4().onTrue(new SetLevelCmd(brain_, 4)) ;
+
+        // TODO: make sure left vs right matches the labels on the OI
+        oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Left)) ;
+        oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Right)) ;
+
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_)) ;
+
+        oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
+        oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
     }
     
     /**

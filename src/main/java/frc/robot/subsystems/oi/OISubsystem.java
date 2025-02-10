@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
@@ -19,6 +18,7 @@ public class OISubsystem extends SubsystemBase {
     // The LEDs on the driver station
     //
     public enum OILed {
+        // TODO: update these based on the wiring of the OI
         Eject(0),
         CoralL1(1),
         CoralL2(2),
@@ -28,8 +28,7 @@ public class OISubsystem extends SubsystemBase {
         CoralPlace(6),
         AlgaeGround(7),
         AlgaeScore(8),
-        AlgaeCollectL2(9),
-        AlgaeCollectL3(10),
+        AlgaeReef(9),
         ClimbDeploy(11),
         ClimbExecute(12),
         CoralLeft(13),
@@ -79,12 +78,15 @@ public class OISubsystem extends SubsystemBase {
     private Trigger coral_place_trigger_ ;
     private Trigger coral_collect_trigger_ ;
     private Trigger algae_ground_trigger_ ;
-    private Trigger algae_collect_l2_ ;
-    private Trigger algae_collect_l3_ ;
+    private Trigger algae_reef_ ;
     private Trigger algae_score_ ;
     private Trigger execute_trigger_ ;
-
-    private BrainSubsystem brain_ ;
+    
+    private Trigger l1_ ;
+    private Trigger l2_ ;
+    private Trigger l3_ ;
+    private Trigger l4_ ;
+    private Trigger coral_left_right_ ;
 
     public OISubsystem(OIIO ios, XeroGamepad ctrl) {
         this.ios_ = ios ;
@@ -99,19 +101,20 @@ public class OISubsystem extends SubsystemBase {
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
         coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
         algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
-        algae_collect_l2_ = new Trigger(()-> inputs_.algae_collect_l2) ;
-        algae_collect_l3_ = new Trigger(()-> inputs_.algae_collect_l3) ;
+        algae_reef_ = new Trigger(()-> inputs_.algae_reef) ;
         algae_score_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
+
+        l1_ = new Trigger(()-> inputs_.coral_l1) ;
+        l2_ = new Trigger(()-> inputs_.coral_l2) ;
+        l3_ = new Trigger(()-> inputs_.coral_l3) ;
+        l4_ = new Trigger(()-> inputs_.coral_l4) ;
+        coral_left_right_ = new Trigger(()-> inputs_.coral_side) ;
 
         // Initialize the LEDs
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
-    }
-
-    public void setBrain(BrainSubsystem b) {
-        brain_ = b ;
     }
 
     public Trigger abort() {
@@ -142,12 +145,8 @@ public class OISubsystem extends SubsystemBase {
         return algae_ground_trigger_ ;
     }
 
-    public Trigger algaeCollectL2() {
-        return algae_collect_l2_ ;
-    }
-
-    public Trigger algaeCollectL3() {
-        return algae_collect_l3_ ;
+    public Trigger algaeReef() {
+        return algae_reef_ ;
     }
 
     public Trigger algaeScore() {
@@ -156,6 +155,26 @@ public class OISubsystem extends SubsystemBase {
 
     public Trigger execute() {
         return execute_trigger_ ;
+    }
+
+    public Trigger l1() {
+        return l1_ ;
+    }
+
+    public Trigger l2() {
+        return l2_ ;
+    }
+
+    public Trigger l3() {
+        return l3_ ;
+    }
+
+    public Trigger l4() {
+        return l4_ ;
+    }
+
+    public Trigger coralLeftRight() {
+        return coral_left_right_ ;
     }
 
     public void rumble(Time duration) {
@@ -172,8 +191,7 @@ public class OISubsystem extends SubsystemBase {
         setLEDState(OILed.CoralPlace, LEDState.Off) ;
         setLEDState(OILed.CoralCollect, LEDState.Off) ;
         setLEDState(OILed.AlgaeGround, LEDState.Off) ;
-        setLEDState(OILed.AlgaeCollectL2, LEDState.Off) ;
-        setLEDState(OILed.AlgaeCollectL3, LEDState.Off) ;
+        setLEDState(OILed.AlgaeReef, LEDState.Off) ;
         setLEDState(OILed.AlgaeScore, LEDState.Off) ;
         setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
         setLEDState(OILed.ClimbExecute, LEDState.Off) ;
@@ -193,12 +211,8 @@ public class OISubsystem extends SubsystemBase {
                 setLEDState(OILed.AlgaeGround, st) ;
                 break ;
 
-            case CollectAlgaeReefL2:
-                setLEDState(OILed.AlgaeCollectL2, st) ;
-                break ;
-
-            case CollectAlgaeReefL3:
-                setLEDState(OILed.AlgaeCollectL3, st) ;
+            case CollectAlgaeReef:
+                setLEDState(OILed.AlgaeReef, st) ;
                 break ;
 
             case PlaceAlgae:
@@ -223,12 +237,10 @@ public class OISubsystem extends SubsystemBase {
         if (inputs_.coral_side) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
-            brain_.setCoralSide(CoralSide.Left) ;
         }
         else {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
-            brain_.setCoralSide(CoralSide.Right) ;
         }
 
         //
@@ -236,28 +248,24 @@ public class OISubsystem extends SubsystemBase {
         //
         if (inputs_.coral_l1) {
             setLEDState(OILed.CoralL1, LEDState.On) ;
-            brain_.setCoralLevel(1) ;
         } else {
             setLEDState(OILed.CoralL1, LEDState.Off) ;
         }
 
         if (inputs_.coral_l2) {
             setLEDState(OILed.CoralL2, LEDState.On) ;
-            brain_.setCoralLevel(2) ;
         } else {
             setLEDState(OILed.CoralL2, LEDState.Off) ;
         }
 
         if (inputs_.coral_l3) {
             setLEDState(OILed.CoralL3, LEDState.On) ;
-            brain_.setCoralLevel(3) ;
         } else {
             setLEDState(OILed.CoralL3, LEDState.Off) ;
         }
 
         if (inputs_.coral_l4) {
             setLEDState(OILed.CoralL4, LEDState.On) ;
-            brain_.setCoralLevel(4) ;
         } else {
             setLEDState(OILed.CoralL4, LEDState.Off) ;
         }
@@ -334,16 +342,10 @@ public class OISubsystem extends SubsystemBase {
             str += "algae_score" ;
         }
 
-        if (inputs_.algae_collect_l2) {
+        if (inputs_.algae_reef) {
             if (str.length() > 0)
                 str += "," ;
-            str += "algae_collect_l2" ;
-        }
-
-        if (inputs_.algae_collect_l3) {
-            if (str.length() > 0)
-                str += "," ;
-            str += "algae_collect_l3" ;
+            str += "algae_reef" ;
         }
 
         if (inputs_.climb_deploy) {

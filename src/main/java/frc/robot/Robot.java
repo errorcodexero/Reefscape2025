@@ -39,7 +39,7 @@ import frc.simulator.engine.SimulationEngine;
 */
 public class Robot extends LoggedRobot {
     
-    private static boolean useXeroSimulator = false;
+    private static boolean useXeroSimulator = true ;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
@@ -109,14 +109,14 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "init" ;
+            String str = "button-test" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        
         
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
-        robotContainer = RobotContainer.getRobotContainer() ;
+        robotContainer = RobotContainer.getInstance() ;
     }
 
     public static boolean useXeroSimulator() {

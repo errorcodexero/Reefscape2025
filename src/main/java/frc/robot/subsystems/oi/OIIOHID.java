@@ -1,7 +1,9 @@
 package frc.robot.subsystems.oi;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.models.OIBaseModel;
@@ -50,8 +52,7 @@ public class OIIOHID implements OIIO {
             inputs.coral_place = hid_.getRawButton(OIConstants.Buttons.kCoralPlace) ;
             inputs.algae_ground = hid_.getRawButton(OIConstants.Buttons.kAlgaeGround) ;
             inputs.algae_score = hid_.getRawButton(OIConstants.Buttons.kAlgaeScore) ;
-            inputs.algae_collect_l2 = hid_.getRawButton(OIConstants.Buttons.kAlgaeCollectL2) ;
-            inputs.algae_collect_l3 = hid_.getRawButton(OIConstants.Buttons.kAlgaeCollectL3) ;
+            inputs.algae_reef = hid_.getRawButton(OIConstants.Buttons.kAlgaeReef) ;
             inputs.climb_deploy = hid_.getRawButton(OIConstants.Buttons.kClimbDeploy) ;
             inputs.climb_execute = hid_.getRawButton(OIConstants.Buttons.kClimbExecute) ;
             inputs.climb_lock = hid_.getRawButton(OIConstants.Buttons.kClimbLock) ;
@@ -103,7 +104,7 @@ public class OIIOHID implements OIIO {
             }
 
             if (desired != led_onoff_[i - 1]) {
-                if (Robot.isReal()) {
+                if (Constants.getMode() == Mode.REAL || !Robot.useXeroSimulator()) {
                     hid_.setOutput(i, desired);
                 }
                 else {
