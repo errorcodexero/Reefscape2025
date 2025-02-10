@@ -24,6 +24,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.xerosw.hid.XeroGamepad;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -121,7 +122,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> tuningChooser_;
 
     // Controller
-    private final CommandXboxController gamepad_ = new CommandXboxController(0);
+    private final XeroGamepad gamepad_ = new XeroGamepad(0);
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     private RobotContainer () {
@@ -348,10 +349,6 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
-    public void enableGamepad(boolean enabled) {
-        driver_controller_enabled_ = enabled ;
-    }
-
     public Drive drivebase() {
         return drivebase_ ;
     }
@@ -452,21 +449,22 @@ public class RobotContainer {
      * Sets up drivebase control mappings for drivers.
      */
     private void configureDriveBindings() {
+        
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> getLeftY(),
-                () -> getLeftX(),
-                () -> getRightX())) ;
+                () -> gamepad_.getLeftY(),
+                () -> gamepad_.getLeftX(),
+                () -> gamepad_.getRightY())) ;
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                () -> getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                () -> getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                () -> gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
@@ -486,23 +484,6 @@ public class RobotContainer {
         
         gamepad_.povRight().whileTrue(
             drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
-        );
-
-        // Robot relative diagonal
-        gamepad_.povUpLeft().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
-        );
-
-        gamepad_.povUpRight().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
-        );
-        
-        gamepad_.povDownLeft().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
-        );
-
-        gamepad_.povDownRight().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
 
         // Robot relative diagonal
