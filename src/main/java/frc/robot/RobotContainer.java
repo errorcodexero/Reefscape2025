@@ -153,7 +153,6 @@ public class RobotContainer {
                 
                 case PRACTICE:
 
-                    // TODO: Replace TunerConstants with new set of constants for practice bot.
                     drivebase_ = new Drive(
                         new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
                         ModuleIOTalonFX::new,
@@ -171,17 +170,17 @@ public class RobotContainer {
                         new CameraIOLimelight(VisionConstants.leftLimelightName)
                     );
 
-                    try {
-                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {}
+                    // try {
+                    //     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    // } catch (Exception e) {}
 
-                    try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {}
+                    // try {
+                    //     grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    // } catch (Exception e) {}
 
-                    try {
-                        funnel_ = new Funnel(new FunnelIOHardware());
-                    } catch (Exception e) {}
+                    // try {
+                    //     funnel_ = new Funnel(new FunnelIOHardware());
+                    // } catch (Exception e) {}
 
                     break;
                 
