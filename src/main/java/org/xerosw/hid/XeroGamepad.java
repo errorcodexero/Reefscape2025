@@ -1,5 +1,6 @@
 package org.xerosw.hid;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.hid.mapping.PlaystationMappedGamepad;
 import org.xerosw.hid.mapping.XboxMappedGamepad;
@@ -18,20 +19,23 @@ public class XeroGamepad implements IMappedGamepad {
     }
     
     private final IMappedGamepad gamepad_;
-    
+    private final int port_;
+
     private boolean locked_;
     
     public XeroGamepad(int port) {
         
+        port_ = port;
         locked_ = false;
         
-        GamepadType type = guessGamepadType(port);
+        GamepadType type = guessGamepadType(port_);
 
-        Logger.recordOutput("Gamepad/" + port + "/Type", type);
+        Logger.recordOutput("Gamepad/" + port_ + "/Type", type);
+        Logger.recordOutput("Gamepad/" + port_ + "/Locked", locked_);
         
         gamepad_ = switch(type) {
-            case PLAYSTATION -> new PlaystationMappedGamepad(port);
-            default -> new XboxMappedGamepad(port);
+            case PLAYSTATION -> new PlaystationMappedGamepad(port_);
+            default -> new XboxMappedGamepad(port_);
         };
         
     }
@@ -46,6 +50,7 @@ public class XeroGamepad implements IMappedGamepad {
     */
     public void lock(boolean locked) {
         locked_ = locked;
+        Logger.recordOutput("Gamepad/" + port_ + "/Locked", locked_);
     }
     
     /**
