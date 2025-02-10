@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.HashMap;
 
@@ -449,7 +450,15 @@ public class RobotContainer {
      * Sets up drivebase control mappings for drivers.
      */
     private void configureDriveBindings() {
-        
+
+        // Temporary locking test
+        RobotModeTriggers.teleop().whileTrue(Commands.sequence(
+            Commands.waitTime(Seconds.of(5)),
+            gamepad_.lockCommand(true),
+            Commands.waitTime(Seconds.of(5)),
+            gamepad_.lockCommand(false)
+        ));
+
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
