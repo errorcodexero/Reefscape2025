@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
@@ -43,7 +42,7 @@ public class AprilTagVision extends SubsystemBase {
 
             // Setup alerts for every camera
             alerts_[i] = new Alert(
-                getCameraName(i) + "\" is not connected!",
+                "Camera " + i + ", \"" + io_[i].getName() + "\" is not connected!",
                 AlertType.kWarning
             );
         }
@@ -66,13 +65,16 @@ public class AprilTagVision extends SubsystemBase {
         // Iterate cameras for logging and pose estimations.
         for (int cam = 0; cam < io_.length; cam++) {
 
+            // Activate disconnected alert.
+            alerts_[cam].set(!inputs_[cam].connected);
+
+            // Skip this camera if it is not connected.
+            if (!inputs_[cam].connected) continue;
+
             ArrayList<Pose3d> tagPoses = new ArrayList<>();
             ArrayList<Pose2d> estimatedPoses = new ArrayList<>();
             ArrayList<Pose2d> acceptedPoses = new ArrayList<>();
             ArrayList<Pose2d> declinedPoses = new ArrayList<>();
-
-            // Activate disconnected alert.
-            alerts_[cam].set(!inputs_[cam].connected);
 
             // Loop through visible tags.
             for (Fiducial fid : inputs_[cam].fiducials) {
@@ -201,7 +203,7 @@ public class AprilTagVision extends SubsystemBase {
     }
 
     /**
-     * Gets the name of the camera for logging
+     * Gets the name of the camera subtable for logging
      * @param index
      * @return
      */

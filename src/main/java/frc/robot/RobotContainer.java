@@ -13,6 +13,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -26,13 +34,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,7 +43,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.AlphaTunerConstants;
@@ -66,7 +66,9 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
+import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.ISimulatedSubsystem;
@@ -132,9 +134,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -165,9 +167,7 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight(VisionConstants.frontLimelightName),
-                        new CameraIOLimelight(VisionConstants.backLimelightName),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName)
+                        new CameraIOLimelight4(VisionConstants.practiceLimelightName, drivebase_::getRotation)
                     );
 
                     // try {
@@ -213,7 +213,8 @@ public class RobotContainer {
                         new CameraIOPhotonSim("RightCamera", new Transform3d(
                             new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
                             new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))
-                        ), drivebase_::getPose, false));
+                        ), drivebase_::getPose, false)
+                    );
 
                     // Other subsystems should be added here once we have simulation support for them.
                         
@@ -263,10 +264,16 @@ public class RobotContainer {
         }
         
         if (vision_ == null) {
+            int numCams = switch(Constants.getRobot()) {
+                case ALPHA -> 0;
+                case PRACTICE -> 1;
+                case COMPETITION -> 3;
+                case SIMBOT -> 4;
+            };
+
             vision_ = new AprilTagVision(
                 drivebase_::addVisionMeasurement,
-                new CameraIO() {},
-                new CameraIO() {}
+                new CameraIO[numCams]
             );
         }
 
