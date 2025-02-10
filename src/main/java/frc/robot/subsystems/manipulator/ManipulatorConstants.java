@@ -34,7 +34,8 @@ public class ManipulatorConstants {
 
         // The minimum and maximum arm angle, used to set the limits of travel
         public static final Angle kMaxArmAngle = Degrees.of(179.0);
-        public static final Angle kMinArmAngle = Degrees.of(-90) ;
+        public static final Angle kMinArmAngle = Degrees.of(-180) ;
+
 
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
@@ -53,6 +54,7 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
+            // public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32.0) ;
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32.0) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300.0) ;
             public static final double kJerk = 3000.0 ;
@@ -117,6 +119,7 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
+            // public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300) ;
             public static final double kJerk = 0.0 ;
@@ -142,7 +145,7 @@ public class ManipulatorConstants {
         public static final Distance kHighScoreHeight = Meters.of(0.0);
         public static final Angle kHighScoreAngle = Degrees.of(0.0);
 
-        public static final Distance kEjectAlgaeHeight = Meters.of(1.0);
-        public static final Angle kEjectAlgaeAngle = Degrees.of(-30.0);
+        public static final Distance kEjectAlgaeHeight = Centimeters.of(1.0);
+        public static final Angle kEjectAlgaeAngle = Degrees.of(10.0);
     }
 }

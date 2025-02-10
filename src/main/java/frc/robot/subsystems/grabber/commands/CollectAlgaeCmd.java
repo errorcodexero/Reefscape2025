@@ -5,7 +5,6 @@ import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class CollectAlgaeCmd extends Command {
-
     private GrabberSubsystem grabber_;
     private State state_;
 
@@ -18,6 +17,7 @@ public class CollectAlgaeCmd extends Command {
         addRequirements(grabber);
         grabber_ = grabber;
     }
+
     @Override
     public void initialize() {
         grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectAlgae.velocity);

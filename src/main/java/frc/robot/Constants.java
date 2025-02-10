@@ -163,6 +163,6 @@ public final class Constants {
     }
 
     public static final boolean isCharacterization() {
-        return true ;
+        return false ;
     }
 }

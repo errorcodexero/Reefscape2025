@@ -1,5 +1,6 @@
 package frc.robot.commands.robot.collectcoral;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -22,8 +23,8 @@ import frc.robot.RobotContainer;
 
 public class CollectCoralCmd extends Command {
 
-    private static final Angle ArmCollectAngle = Degrees.of(90.0) ;
-    private static final Distance ElevatorCollectHeight = Meters.of(1.0) ;
+    private static final Angle ArmCollectAngle = Degrees.of(10.0) ;
+    private static final Distance ElevatorCollectHeight = Centimeters.of(1.0) ;
 
     private XeroSequence sequence_ ;
     private BrainSubsystem brain_ ;
@@ -39,6 +40,7 @@ public class CollectCoralCmd extends Command {
 
     @Override
     public void initialize() {
+        sequence_ = new XeroSequence() ;
         sequence_.addCommands(
             new ReportStateCmd(getName(), "goto"),
             new ParallelDeadlineGroup(

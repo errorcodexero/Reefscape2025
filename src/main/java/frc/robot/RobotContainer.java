@@ -14,6 +14,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -31,6 +32,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -39,7 +42,11 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
+import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
+import frc.robot.commands.robot.collectground.CollectGroundAlgaeCmd;
+import frc.robot.commands.robot.eject.EjectAlgaeCmd;
 import frc.robot.commands.robot.eject.EjectCmd;
+import frc.robot.commands.robot.eject.EjectCoralCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
@@ -60,6 +67,10 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
+import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
+import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
+import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.OIConstants;
@@ -130,7 +141,6 @@ public class RobotContainer {
         if (Constants.getMode() != Mode.REPLAY) {
             oi_ = new OISubsystem(new OIIOHID(OIConstants.kOIPort), gamepad_) ;
 
-
             switch (Constants.getRobot()) {
                 case COMPETITION:
                     break;
@@ -167,6 +177,7 @@ public class RobotContainer {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware()) ;
                     }
                     catch(Exception e) {
+                        System.out.println("Grabber subsystem not created") ;
                     }
 
                     // try {
@@ -403,7 +414,7 @@ public class RobotContainer {
                 () -> getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
-        gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
+        // gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
         
         // Robot Relative
         gamepad_.povUp().whileTrue(
@@ -441,6 +452,58 @@ public class RobotContainer {
         
         // Reset gyro to 0° when Y & B button is pressed
         gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
+
+        //
+        // L4
+        //
+        // double h = 130.0 ;
+        // gamepad_.a().onTrue(new SequentialCommandGroup(
+        //     new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(20.0)),
+        //     new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(20.0)),
+        //     new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(75.0)),
+        //     new DepositCoralCmd(grabber_),
+        //     new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(10.0)),
+        //     new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(10.0)),
+        //     new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(0.0)))) ;
+
+        // L3
+        // double h = 67.0 ;
+        // gamepad_.a().onTrue(new SequentialCommandGroup(
+        //         new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(20.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(20.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(35.0)),
+        //         new DepositCoralCmd(grabber_),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(10.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(10.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(0.0)))) ;        
+        
+        // L2
+        // double h = 27.0 ;
+        // gamepad_.a().onTrue(new SequentialCommandGroup(
+        //         new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(35.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(35.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(35.0)),
+        //         new DepositCoralCmd(grabber_),
+        //         new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(10.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(10.0)),
+        //         new GoToCmd(manipulator_, Centimeters.of(0), Degrees.of(0.0)))) ;          
+
+        // L1
+        // gamepad_.x().onTrue(new SequentialCommandGroup(
+        //     new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(0.0)),
+        //     new DepositCoralCmd(grabber_, true))) ;
+
+        double h = 90 ;
+        gamepad_.a().onTrue(new SequentialCommandGroup(
+            new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(10.0)),
+            new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(10.0)),
+            new GoToCmd(manipulator_, Centimeters.of(h), Degrees.of(-135.0)),
+            new CollectAlgaeCmd(grabber_))) ;
+
+        gamepad_.x().onTrue(new SequentialCommandGroup(
+            new GoToCmd(manipulator_, Centimeters.of(67.0), Degrees.of(10.0)),
+            new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(10.0)),
+            new GoToCmd(manipulator_, Centimeters.of(0.0), Degrees.of(0.0))));
     }
     
     /**

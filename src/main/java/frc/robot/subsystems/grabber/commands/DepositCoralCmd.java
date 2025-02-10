@@ -10,23 +10,38 @@ public class DepositCoralCmd extends Command {
     private XeroTimer timer_ ;
     private GrabberSubsystem grabber_;
     private State state_;
+    private boolean l1_ ;
 
     private enum State {
-        WaitingForCoralEject,
         WaitingForTimer,
         Finish
     }
 
     public DepositCoralCmd(GrabberSubsystem grabber) {
+        this(grabber, false) ;
+    }
+
+    public DepositCoralCmd(GrabberSubsystem grabber, boolean l1) {
         addRequirements(grabber);
         grabber_ = grabber;
-        timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.delay);
+
+        l1_ = l1 ;
     }
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositCoral.velocity) ;
-        state_ = State.WaitingForCoralEject;
+        if (l1_) {
+            grabber_.setGrabberMotorVoltage(6.0) ;
+            timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.l1delay);
+            timer_.start() ;
+            state_ = State.WaitingForTimer ;
+        }
+        else {
+            grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositCoral.velocity) ;
+            timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.delay);
+            timer_.start() ;
+            state_ = State.WaitingForTimer ;
+        }
     }
 
     @Override
@@ -37,12 +52,6 @@ public class DepositCoralCmd extends Command {
     @Override
     public void execute() {
         switch(state_){
-            case WaitingForCoralEject:
-                if (grabber_.coralRising()) {
-                    timer_.start() ;
-                    state_ = State.WaitingForTimer ;
-                }
-                break;
             case WaitingForTimer:
                 if (timer_.isExpired()) {
                     grabber_.stopGrabber();

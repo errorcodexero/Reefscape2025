@@ -29,15 +29,22 @@ public class CollectGroundAlgaeCmd extends Command {
         g_ = g ;
     }
 
-
     @Override
     public void initialize() {
         sequence_ = new XeroSequence() ;
         sequence_.addCommands(
-            new GoToCmd(m_, CollectGroundConstants.kElevatorCollectHeight, CollectGroundConstants.kArmAngleAngle),
+            new GoToCmd(m_, CollectGroundConstants.kElevatorImmdHeight, CollectGroundConstants.kArmStowAngle),
+            new GoToCmd(m_, CollectGroundConstants.kElevatorImmdHeight, CollectGroundConstants.kArmCollectAngle),
+            new GoToCmd(m_, CollectGroundConstants.kElevatorCollectHeight, CollectGroundConstants.kArmCollectAngle),
             new CollectAlgaeCmd(g_),
             new SetHoldingCmd(b_, RobotContainer.GamePiece.ALGAE_LOW),
-            new GoToCmd(m_, CollectGroundConstants.kElevatorStoreHeight, CollectGroundConstants.kArmStreAngle),
+            new GoToCmd(m_, CollectGroundConstants.kElevatorStoreHeight, CollectGroundConstants.kArmStoreAngle),
             new RumbleGamepadCmd(Milliseconds.of(500))) ;
+        sequence_.schedule();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return sequence_.isComplete() ;
     }
 }

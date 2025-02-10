@@ -19,6 +19,7 @@ public class GrabberSubsystem extends SubsystemBase {
     
     private final GrabberIO io_;
     private final GrabberIOInputsAutoLogged inputs_;
+    private AngularVelocity target_velocity_;
     
     private boolean has_coral_;
     private boolean has_algae_;
@@ -39,6 +40,9 @@ public class GrabberSubsystem extends SubsystemBase {
     
         Logger.recordOutput("Grabber/HasCoral", has_coral_);
         Logger.recordOutput("Grabber/HasAlgae", has_algae_);
+        if (target_velocity_ != null) {
+            Logger.recordOutput("Grabber/target", target_velocity_) ;
+        }
     }
 
     //////////////////
@@ -46,12 +50,14 @@ public class GrabberSubsystem extends SubsystemBase {
     //////////////////
 
     public void setGrabberTargetVelocity(AngularVelocity vel) {
+        target_velocity_ = vel ;
         io_.setGrabberTargetVelocity(vel);
     }
 
     public void stopGrabber() {
         Angle pos = inputs_.grabberPosition ;
         io_.setGrabberTargetPosition(pos) ;
+        io_.setGrabberMotorVoltage(0.0) ;
     }
 
     public void setGrabberMotorVoltage(double vol) {

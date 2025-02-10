@@ -15,23 +15,23 @@ public class GrabberConstants {
         public static final boolean kInverted = true; 
 
         public class PID {
-            public static final double kP = 0.0; 
+            public static final double kP = 0.75; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
-            public static final double kV = 0.0 ;
+            public static final double kV = 0.14 ;
             public static final double kA = 0.0 ;
             public static final double kG = 0.0 ;
-            public static final double kS = 0.0 ;
+            public static final double kS = 0.36102 ;
         }
 
         public class MotionMagic {
-            public static final double kMaxVelocity = 0.0 ;
-            public static final double kMaxAcceleration = 0.0 ;
+            public static final double kMaxVelocity = 60.0 ;
+            public static final double kMaxAcceleration = 60.0 ;
             public static final double kJerk = 0.0 ;
         }
 
         public class CoralSensor {
-            public static final int kChannel = 1;
+            public static final int kChannel = 0;
         }
 
         public class AlgaeSensor {
@@ -39,20 +39,23 @@ public class GrabberConstants {
         }
 
         public class DepositCoral {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
-            public static final Time delay = Milliseconds.of(250.0) ;
+            public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(30.0) ;
+            public static final Time delay = Milliseconds.of(500.0) ;
+            public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 
         public class CollectCoral {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+            public static final AngularVelocity kVelocity = RotationsPerSecond.of(10.0) ;
+            public static final AngularVelocity kBackupVelocity = RotationsPerSecond.of(-5.0) ;
         }
 
         public class CollectAlgae {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(-15.0) ;
         }
 
         public class DepositAlgae {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(1.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(30.0) ;
             public static final Time delay = Milliseconds.of(250.0) ;
         }
 
