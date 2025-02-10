@@ -22,6 +22,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.HashMap;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.math.Matrix;
@@ -35,6 +36,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
@@ -60,9 +62,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.funnel.FunnelIO;
 import frc.robot.subsystems.funnel.FunnelIOHardware;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -116,6 +118,7 @@ public class RobotContainer {
 
     // Choosers
     private final LoggedDashboardChooser<Command> autoChooser_;
+    private final LoggedDashboardChooser<Command> tuningChooser_;
 
     // Controller
     private final CommandXboxController gamepad_ = new CommandXboxController(0);
@@ -330,12 +333,15 @@ public class RobotContainer {
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
+        ShuffleboardTab tuningTab = Shuffleboard.getTab("Tuning");
     
         // Widgets & Choosers
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices");
+        tuningChooser_ = new LoggedDashboardChooser<>("Tuning Choices");
 
         // Add choosers/widgets to tabs.
         autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
+        tuningTab.add("Tuning Modes", tuningChooser_.getSendableChooser()).withSize(2, 1);
 
         // Configure the button bindings
         configureDriveBindings();
@@ -352,14 +358,16 @@ public class RobotContainer {
 
     public void setupAutos() {
         
+        autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Opposing Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false));
         autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Center Coral (opposing side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false));
         autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_));
+        autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
-        autoChooser_.addOption(
+        tuningChooser_.addOption(
             "testing driveto", 
             DriveCommands.swerveDriveToCommand(
                 new Pose2d(
@@ -373,12 +381,12 @@ public class RobotContainer {
         );
         
         // Add SysId routines to the chooser
-        autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
-        autoChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drivebase_));
-        autoChooser_.addOption("Drive SysId (Quasistatic Forward)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        tuningChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
+        tuningChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drivebase_));
+        tuningChooser_.addOption("Drive SysId (Quasistatic Forward)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        tuningChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        tuningChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     }
     
@@ -524,7 +532,8 @@ public class RobotContainer {
     * @return the command to run in autonomous
     */
     public Command getAutonomousCommand() {
-        return autoChooser_.get();
+        Command autoChosen = autoChooser_.get();
+        return autoChosen != null ? autoChosen : tuningChooser_.get();
     }
     
 }
