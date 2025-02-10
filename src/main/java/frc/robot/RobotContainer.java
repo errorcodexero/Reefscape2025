@@ -168,7 +168,7 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
+                        new CameraIOLimelight4(VisionConstants.practiceLimelightName, drivebase_::getRotation)
                     );
 
                     try {

@@ -7,6 +7,8 @@ public class VisionConstants {
     public static final String backLimelightName = "backlimelight";
     public static final String leftLimelightName = "leftlimelight";
 
+    public static final String practiceLimelightName = "limelight";
+
     // Odometry Filtering Configuration
     
     public static final int minimumTagCount = 1;
