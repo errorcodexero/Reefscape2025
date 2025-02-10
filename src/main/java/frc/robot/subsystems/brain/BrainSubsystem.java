@@ -10,12 +10,16 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepOne;
+import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepTwo;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.util.ReefUtil;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -273,11 +277,17 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                // TODO: write me
+                list.add(new CollectCoralCmd(this, m_, g_)) ;
+                conds.add(null) ;
                 break ;
 
             case PlaceCoral:
-                // TODO: write me
+                    list.add(new PlaceCoralTwoStepOne(m_)) ;
+                    conds.add(null) ;
+
+                    // We only execute this step if we are in a position that the target face is valid
+                    list.add(new PlaceCoralTwoStepTwo(this, db_, m_, g_, true)) ;
+                    conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case PlaceAlgae:
