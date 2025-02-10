@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;

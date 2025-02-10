@@ -1,9 +1,11 @@
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -37,10 +39,14 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
         
         setMode(currentMode_);
 
-        // When enabled, set to use IMU, when disabled, seed IMU
-        enabled.onChange(Commands.runOnce(
-            () -> setMode(RobotState.isDisabled() ? IMUMode.SEEDING : IMUMode.USING)
-        ).ignoringDisable(true));
+        // When enabled, set to use IMU after slight offset.
+        enabled.onTrue(Commands.sequence(
+            Commands.waitTime(Milliseconds.of(100)),
+            setModeCommand(IMUMode.USING)
+        ));
+
+        // When disabled, use gryo to reset IMU.
+        enabled.onFalse(setModeCommand(IMUMode.SEEDING));
     }
 
     @Override
@@ -50,13 +56,13 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
         inputs.imuMode = currentMode_;
     }
 
-    /**
-     * Sets the mode of the IMU.
-     * @param mode The mode to set it to.
-     */
     private void setMode(IMUMode mode) {
         LimelightHelpers.SetIMUMode(name_, mode.id);
         currentMode_ = mode;
+    }
+
+    private Command setModeCommand(IMUMode mode) {
+        return Commands.runOnce(() -> setMode(mode)).ignoringDisable(true);
     }
 
 }
