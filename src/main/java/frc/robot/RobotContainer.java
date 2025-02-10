@@ -153,7 +153,6 @@ public class RobotContainer {
                 
                 case PRACTICE:
 
-                    // TODO: Replace TunerConstants with new set of constants for practice bot.
                     drivebase_ = new Drive(
                         new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
                         ModuleIOTalonFX::new,
