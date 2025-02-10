@@ -8,11 +8,11 @@ public class ClimberPositionCmd extends Command {
     private ClimberSubsystem sub_;
     private Angle target_angle_;
     private String position_;
-    
+
     public enum ClimberTarget {
         Stowed,
         PrepareToClimb,
-        Climb, 
+        Climb,
         Done
     }
 
@@ -26,7 +26,7 @@ public class ClimberPositionCmd extends Command {
 
     @Override
     public void initialize() {
-        //Everything else in here
+        // Everything else in here
         if (position_ == "Stowed") {
             target_angle_ = ClimberConstants.Climber.Position.kStowed;
             sub_.setClimberPosition(target_angle_);
@@ -46,22 +46,26 @@ public class ClimberPositionCmd extends Command {
 
     @Override
     public void execute() {
-        //Add switch and states in here
+        // Add switch and states in here
         switch (state_) {
             case Stowed:
-            if (sub_.isClimberAtTarget()) {
-                state_ = ClimberTarget.Done;
-            }
+                if (sub_.isClimberAtTarget()) {
+                    state_ = ClimberTarget.Done;
+                }
                 break;
             case PrepareToClimb:
-            if (sub_.isClimberAtTarget()) {
-                state_ = ClimberTarget.Done;
-            }
+                if (sub_.isClimberAtTarget()) {
+                    state_ = ClimberTarget.Done;
+                }
                 break;
             case Done:
-            if (sub_.isClimberAtTarget()) {
-                state_ = ClimberTarget.Done;
-            }
+                if (sub_.isClimberAtTarget()) {
+                    state_ = ClimberTarget.Done;
+                }
+                break;
+            case Climb:
+                break;
+            default:
                 break;
         }
     }
@@ -69,7 +73,7 @@ public class ClimberPositionCmd extends Command {
     @Override
     public void end(boolean interrupted) {
     }
-    
+
     @Override
     public boolean isFinished() {
         return state_ == ClimberTarget.Done;

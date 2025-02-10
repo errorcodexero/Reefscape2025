@@ -48,12 +48,18 @@ public class BrainSubsystem extends SubsystemBase {
 
     //
     // Subsystems used to implement the robot actions that are
-    // managed by the brain subsystem
+    // managed by the brain subsystem.  Remove th suppress warnings when
+    // we get the code to generate the commands required for the various
+    // robot actions.
     //
+    @SuppressWarnings("unused")
     private Drive db_ ;
+
+    @SuppressWarnings("unused")
     private ManipulatorSubsystem m_ ;
-    private GrabberSubsystem g_ ;
-    
+
+    @SuppressWarnings("unused")
+    private GrabberSubsystem g_ ;   
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         oi_ = oi ;
@@ -266,11 +272,7 @@ public class BrainSubsystem extends SubsystemBase {
                 // TODO: write me
                 break ;
 
-            case CollectAlgaeReefL2:
-                // TODO: write me
-                break ;
-
-            case CollectAlgaeReefL3:
+            case CollectAlgaeReef:
                 // TODO: write me
                 break ;
 

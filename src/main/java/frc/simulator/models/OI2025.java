@@ -30,8 +30,7 @@ public class OI2025 extends OIBaseModel {
         buttonMap.put("coral-place", Integer.valueOf(OIConstants.Buttons.kCoralPlace)) ;
         buttonMap.put("algae-ground", Integer.valueOf(OIConstants.Buttons.kAlgaeGround)) ;
         buttonMap.put("algae-score", Integer.valueOf(OIConstants.Buttons.kAlgaeScore)) ;
-        buttonMap.put("algae-collect-l2", Integer.valueOf(OIConstants.Buttons.kAlgaeCollectL2)) ;
-        buttonMap.put("algae-collect-l3", Integer.valueOf(OIConstants.Buttons.kAlgaeCollectL3)) ;
+        buttonMap.put("algae-reef", Integer.valueOf(OIConstants.Buttons.kAlgaeReef)) ;
         buttonMap.put("climb-deploy", Integer.valueOf(OIConstants.Buttons.kClimbDeploy)) ;
         buttonMap.put("climb-execute", Integer.valueOf(OIConstants.Buttons.kClimbExecute)) ;
         buttonMap.put("climb-lock", Integer.valueOf(OIConstants.Buttons.kClimbLock)) ;
@@ -50,8 +49,7 @@ public class OI2025 extends OIBaseModel {
         ledMap.put("coral-place", OISubsystem.OILed.CoralPlace.value) ;
         ledMap.put("algae-ground", OISubsystem.OILed.AlgaeGround.value) ;
         ledMap.put("algae-score", OISubsystem.OILed.AlgaeScore.value) ;
-        ledMap.put("algae-collect-l2", OISubsystem.OILed.AlgaeCollectL2.value) ;
-        ledMap.put("algae-collect-l3", OISubsystem.OILed.AlgaeCollectL3.value) ;
+        ledMap.put("algae-reef", OISubsystem.OILed.AlgaeReef.value) ;
         ledMap.put("climb-deploy", OISubsystem.OILed.ClimbDeploy.value) ;
         ledMap.put("climb-execute", OISubsystem.OILed.ClimbExecute.value) ;
         ledMap.put("coral-left", OISubsystem.OILed.CoralLeft.value) ;

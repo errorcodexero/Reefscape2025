@@ -7,10 +7,6 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
 package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOInputsAutoLogged;
-import frc.robot.subsystems.manipulator.ManipulatorConstants;
-
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;

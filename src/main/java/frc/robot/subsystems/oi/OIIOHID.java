@@ -52,8 +52,7 @@ public class OIIOHID implements OIIO {
             inputs.coral_place = hid_.getRawButton(OIConstants.Buttons.kCoralPlace) ;
             inputs.algae_ground = hid_.getRawButton(OIConstants.Buttons.kAlgaeGround) ;
             inputs.algae_score = hid_.getRawButton(OIConstants.Buttons.kAlgaeScore) ;
-            inputs.algae_collect_l2 = hid_.getRawButton(OIConstants.Buttons.kAlgaeCollectL2) ;
-            inputs.algae_collect_l3 = hid_.getRawButton(OIConstants.Buttons.kAlgaeCollectL3) ;
+            inputs.algae_reef = hid_.getRawButton(OIConstants.Buttons.kAlgaeReef) ;
             inputs.climb_deploy = hid_.getRawButton(OIConstants.Buttons.kClimbDeploy) ;
             inputs.climb_execute = hid_.getRawButton(OIConstants.Buttons.kClimbExecute) ;
             inputs.climb_lock = hid_.getRawButton(OIConstants.Buttons.kClimbLock) ;
