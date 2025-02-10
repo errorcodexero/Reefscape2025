@@ -251,9 +251,9 @@ public class RobotContainer {
                         oi_ = new OISubsystem(new OIIOHID(2), gamepad_) ;
                     }
                     catch(Exception ex) {
-                        //
-                        // This will never happen in a simulation
-                        //
+                        ex.printStackTrace();
+
+                        // This should never happen in a simulation. If it does, something is wrong in the codebase.
                     }
 
                     // Other subsystems should be added here once we have simulation support for them.
