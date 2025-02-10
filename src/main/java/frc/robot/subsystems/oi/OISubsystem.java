@@ -3,12 +3,12 @@ package frc.robot.subsystems.oi;
 import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.Logger;
+import org.xerosw.hid.XeroGamepad;
 
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.RobotAction;
@@ -63,7 +63,7 @@ public class OISubsystem extends SubsystemBase {
 
      
     // The gamepad controller attached for driving the robot
-    private CommandXboxController gamepad_ ;
+    private XeroGamepad gamepad_ ;
 
     // If true, we are rumbling the xbox controller
     private boolean rumbling_ ;
@@ -86,12 +86,10 @@ public class OISubsystem extends SubsystemBase {
 
     private BrainSubsystem brain_ ;
 
-    public OISubsystem(OIIO ios, CommandXboxController ctrl) {
+    public OISubsystem(OIIO ios, XeroGamepad ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
-
-
 
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
@@ -376,61 +374,61 @@ public class OISubsystem extends SubsystemBase {
             str += "coral_side_right" ;
         }
 
-        if (gamepad_.getHID().getAButton()) {
+        if (gamepad_.a().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "a" ;
         }
 
-        if (gamepad_.getHID().getBButton()) {
+        if (gamepad_.b().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "b" ;
         }
 
-        if (gamepad_.getHID().getXButton()) {
+        if (gamepad_.x().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "x" ;
         }
 
-        if (gamepad_.getHID().getYButton()) {
+        if (gamepad_.y().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "y" ;
         }
 
-        if (gamepad_.getHID().getStartButton()) {
+        if (gamepad_.start().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "start" ;
         }
 
-        if (gamepad_.getHID().getBackButton()) {
+        if (gamepad_.back().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "back" ;
         }
 
-        if (gamepad_.getHID().getLeftStickButton()) {
+        if (gamepad_.leftStick().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "ls" ;
         }
 
-        if (gamepad_.getHID().getRightStickButton()) {
+        if (gamepad_.rightStick().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "rs" ;
         }
 
-        if (gamepad_.getHID().getLeftBumperButton()) {
+        if (gamepad_.leftBumper().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "lb" ;
         }
 
-        if (gamepad_.getHID().getRightBumperButton()) {
+        if (gamepad_.rightBumper().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "rb" ;

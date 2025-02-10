@@ -22,7 +22,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.HashMap;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.xerosw.hid.XeroGamepad;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,7 +37,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -56,9 +57,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.funnel.FunnelIO;
 import frc.robot.subsystems.funnel.FunnelIOHardware;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -94,10 +95,7 @@ public class RobotContainer {
     }
 
     // Mapping of subsystems name to subsystems, used by the simulator
-    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>() ;
-
-    // Driver controller enabled flag
-    private boolean driver_controller_enabled_ = true ;
+    HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>();
 
     // Subsystems
     private Drive drivebase_;
@@ -112,7 +110,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser_;
 
     // Controller
-    private final CommandXboxController gamepad_ = new CommandXboxController(0);
+    private final XeroGamepad gamepad_ = new XeroGamepad(0);
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer () {
@@ -346,10 +344,6 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
-    public void enableGamepad(boolean enabled) {
-        driver_controller_enabled_ = enabled ;
-    }
-
     public Drive drivebase() {
         return drivebase_ ;
     }
@@ -401,56 +395,27 @@ public class RobotContainer {
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceAlgae)) ;
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_)) ;
     }
-
-    private double getLeftX() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double y = -gamepad_.getLeftX() ;
-        y = Math.signum(y) * y * y ;
-        
-        return y ;
-    }
-
-    private double getLeftY() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double x = -gamepad_.getLeftY() ;
-        x = Math.signum(x) * x * x;
-
-        return x ;
-    }
-
-    private double getRightX() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double x = -gamepad_.getRightX() ;
-        x = Math.signum(x) * x * x  ;
-
-        return x ;
-    }
     
     /**
      * Sets up drivebase control mappings for drivers.
      */
     private void configureDriveBindings() {
+        
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> getLeftY(),
-                () -> getLeftX(),
-                () -> getRightX())) ;
+                () -> gamepad_.getLeftY(),
+                () -> gamepad_.getLeftX(),
+                () -> gamepad_.getRightY())) ;
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                () -> getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                () -> getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                () -> gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
         
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
@@ -470,23 +435,6 @@ public class RobotContainer {
         
         gamepad_.povRight().whileTrue(
             drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(), RadiansPerSecond.zero())
-        );
-
-        // Robot relative diagonal
-        gamepad_.povUpLeft().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
-        );
-
-        gamepad_.povUpRight().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
-        );
-        
-        gamepad_.povDownLeft().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero())
-        );
-
-        gamepad_.povDownRight().whileTrue(
-            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero())
         );
 
         // Robot relative diagonal
