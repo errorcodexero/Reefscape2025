@@ -22,10 +22,10 @@ public class OI2025 extends OIBaseModel {
         buttonMap.put("eject", Integer.valueOf(OIConstants.Buttons.kEject)) ;
         buttonMap.put("abort", Integer.valueOf(OIConstants.Buttons.kAbort)) ;
         buttonMap.put("execute", Integer.valueOf(OIConstants.Buttons.kExecute)) ;
-        buttonMap.put("coral-l1", Integer.valueOf(OIConstants.Buttons.kCoralL1)) ;
-        buttonMap.put("coral-l2", Integer.valueOf(OIConstants.Buttons.kCoralL2)) ;
-        buttonMap.put("coral-l3", Integer.valueOf(OIConstants.Buttons.kCoralL3)) ;
-        buttonMap.put("coral-l4", Integer.valueOf(OIConstants.Buttons.kCoralL4)) ;
+        buttonMap.put("l1", Integer.valueOf(OIConstants.Buttons.kCoralL1)) ;
+        buttonMap.put("l2", Integer.valueOf(OIConstants.Buttons.kCoralL2)) ;
+        buttonMap.put("l3", Integer.valueOf(OIConstants.Buttons.kCoralL3)) ;
+        buttonMap.put("l4", Integer.valueOf(OIConstants.Buttons.kCoralL4)) ;
         buttonMap.put("coral-collect", Integer.valueOf(OIConstants.Buttons.kCoralCollect)) ;
         buttonMap.put("coral-place", Integer.valueOf(OIConstants.Buttons.kCoralPlace)) ;
         buttonMap.put("algae-ground", Integer.valueOf(OIConstants.Buttons.kAlgaeGround)) ;

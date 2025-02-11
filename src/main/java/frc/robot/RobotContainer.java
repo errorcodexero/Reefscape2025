@@ -142,7 +142,7 @@ public class RobotContainer {
                     // Alpha Bot Does Not Have Any Other Subsystems
 
                     try {
-                        funnel_ = new Funnel(new FunnelIOHardware());
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
                     } catch (Exception e) {}
 
                     break;
