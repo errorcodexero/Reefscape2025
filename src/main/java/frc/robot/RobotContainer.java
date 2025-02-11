@@ -141,6 +141,10 @@ public class RobotContainer {
 
                     // Alpha Bot Does Not Have Any Other Subsystems
 
+                    try {
+                        funnel_ = new Funnel(new FunnelIOHardware());
+                    } catch (Exception e) {}
+
                     break;
 
                 case COMPETITION:
@@ -199,10 +203,6 @@ public class RobotContainer {
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
                     } catch (Exception e) {}
-
-                    // try {
-                    //     funnel_ = new Funnel(new FunnelIOHardware());
-                    // } catch (Exception e) {}
 
                     break;
                 
