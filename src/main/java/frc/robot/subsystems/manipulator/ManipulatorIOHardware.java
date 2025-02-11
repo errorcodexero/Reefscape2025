@@ -54,7 +54,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
-    public ManipulatorIOHardware() throws Exception {
+    public ManipulatorIOHardware(double encoder_offset) throws Exception {
 
         arm_motor_ = TalonFXFactory.createTalonFX(
             ManipulatorConstants.Arm.kMotorCANID,
@@ -90,8 +90,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         );
 
         // ENCODER CONFIGS: 
-        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
-        ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);
+        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue, encoder_offset);
     
 
         // ARM CONFIGS: 
