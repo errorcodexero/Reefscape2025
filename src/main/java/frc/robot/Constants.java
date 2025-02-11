@@ -13,10 +13,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
@@ -130,6 +131,13 @@ public final class Constants {
 
         /** The Sim Bot */
         SIMBOT
+    }
+
+    public static enum Height {
+        L1,
+        L2, 
+        L3, 
+        L4
     }
 
     // This is only a fallback! This will not change the robot type.
