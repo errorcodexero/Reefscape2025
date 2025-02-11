@@ -10,45 +10,49 @@ import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CollectCoralCmd extends Command {
-  private XeroSequence sequence_;
-  private ManipulatorSubsystem manipulator_; 
-  private GrabberSubsystem grabber_; 
+    private XeroSequence sequence_;
+    private ManipulatorSubsystem manipulator_;
+    private GrabberSubsystem grabber_;
 
-  public CollectCoralCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
-    addRequirements(manipulator, grabber); 
+    public CollectCoralCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
+        addRequirements(manipulator, grabber);
 
-    manipulator_ = manipulator; 
-    grabber_ = grabber; 
-  }
-
-  // COMMANDS NEEDED: 
-  // GoToCmd
-  // WaitForCoral
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    GoToCmd goToCmd = new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow);
-    WaitForCoralCmd waitForCoralCmd = new WaitForCoralCmd(grabber_); 
-    sequence_.addCommands(goToCmd, waitForCoralCmd);
-    sequence_.schedule();
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    if(interrupted){
-      sequence_.cancel();
+        manipulator_ = manipulator;
+        grabber_ = grabber;
     }
-  }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return sequence_.isComplete(); 
-  }
+    // COMMANDS NEEDED:
+    // GoToCmd
+    // WaitForCoral
+
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        sequence_ = new XeroSequence();
+        GoToCmd goToCmd = new GoToCmd(manipulator_, 
+                                      ManipulatorConstants.Elevator.Positions.kStow,
+                                      ManipulatorConstants.Arm.Positions.kStow);
+        WaitForCoralCmd waitForCoralCmd = new WaitForCoralCmd(grabber_);
+        sequence_.addCommands(goToCmd, waitForCoralCmd);
+        sequence_.schedule();
+    }
+
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            sequence_.cancel();
+        }
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return sequence_.isComplete();
+    }
 }

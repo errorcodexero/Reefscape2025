@@ -33,13 +33,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -116,6 +109,7 @@ public class RobotContainer {
     private OISubsystem oi_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
+    @SuppressWarnings("unused")
     private ClimberSubsystem climber_;
     private FunnelSubsystem funnel_;
     private BrainSubsystem brain_;
@@ -413,7 +407,7 @@ public class RobotContainer {
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral));
         oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReef));
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
-        oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceAlgae));
+        oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
         oi_.l1().onTrue(new SetLevelCmd(brain_, 1));
         oi_.l2().onTrue(new SetLevelCmd(brain_, 2));

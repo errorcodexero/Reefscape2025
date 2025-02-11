@@ -27,8 +27,8 @@ public class ManipulatorConstants {
 
         public static final Current kCurrentLimit = Amps.of(40); 
 
-        public static final Angle kPosTolerance = Degrees.of(1);
-        public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(1);
+        public static final Angle kPosTolerance = Degrees.of(3);
+        public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(2);
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
@@ -99,8 +99,8 @@ public class ManipulatorConstants {
 
         public static final Current kCurrentLimit = Amps.of(40); 
 
-        public static final Distance kPosTolerance = Meters.of(0.01) ;
-        public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.1) ;
+        public static final Distance kPosTolerance = Centimeter.of(1) ;
+        public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
@@ -115,7 +115,7 @@ public class ManipulatorConstants {
         public static final Distance kMinHeight = Centimeters.of(0.0) ;
 
         // The MOI of the elevator, used only for simulation
-        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.004) ;
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.1) ;
 
         public class PID {
             public static final double kP = 20.0; 

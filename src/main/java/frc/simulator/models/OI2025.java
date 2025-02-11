@@ -40,16 +40,15 @@ public class OI2025 extends OIBaseModel {
     }
 
     private Map<String, Integer> getLedMap() {
-        ledMap.put("eject", OISubsystem.OILed.Eject.value) ;
         ledMap.put("coral-l1", OISubsystem.OILed.CoralL1.value) ;
         ledMap.put("coral-l2", OISubsystem.OILed.CoralL2.value) ;
         ledMap.put("coral-l3", OISubsystem.OILed.CoralL3.value) ;
         ledMap.put("coral-l4", OISubsystem.OILed.CoralL4.value) ;
-        ledMap.put("coral-collect", OISubsystem.OILed.CoralCollect.value) ;
-        ledMap.put("coral-place", OISubsystem.OILed.CoralPlace.value) ;
-        ledMap.put("algae-ground", OISubsystem.OILed.AlgaeGround.value) ;
-        ledMap.put("algae-score", OISubsystem.OILed.AlgaeScore.value) ;
-        ledMap.put("algae-reef", OISubsystem.OILed.AlgaeReef.value) ;
+        ledMap.put("coral-collect", OISubsystem.OILed.CollectCoral.value) ;
+        ledMap.put("coral-place", OISubsystem.OILed.PlaceCoral.value) ;
+        ledMap.put("algae-ground", OISubsystem.OILed.CollectAlgaeGround.value) ;
+        ledMap.put("algae-score", OISubsystem.OILed.ScoreAlgae.value) ;
+        ledMap.put("algae-reef", OISubsystem.OILed.CollectAlgaeReef.value) ;
         ledMap.put("climb-deploy", OISubsystem.OILed.ClimbDeploy.value) ;
         ledMap.put("climb-execute", OISubsystem.OILed.ClimbExecute.value) ;
         ledMap.put("coral-left", OISubsystem.OILed.CoralLeft.value) ;

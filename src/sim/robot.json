@@ -44,7 +44,7 @@
             "model" : "dio",
             "instance" : "1",
             "props" : {
-                "coral-sensor" : 1,
+                "coral-sensor" : 0,
                 "coral-sensor-init" : true,
                 "algae-sensor" : 2,
                 "algae-sensor-init" : true
