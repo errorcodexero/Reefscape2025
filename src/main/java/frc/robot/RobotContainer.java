@@ -424,7 +424,7 @@ public class RobotContainer {
                 drivebase_,
                 () -> gamepad_.getLeftY(),
                 () -> gamepad_.getLeftX(),
-                () -> gamepad_.getRightY())) ;
+                () -> gamepad_.getRightX())) ;
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
