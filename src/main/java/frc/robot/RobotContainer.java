@@ -56,8 +56,6 @@ import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.climber.ExecuteClimbCmd;
-import frc.robot.subsystems.climber.PrepClimbCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -409,8 +407,8 @@ public class RobotContainer {
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
-        oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
-        oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
+        //oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
+        //oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
     }
     
     /**
