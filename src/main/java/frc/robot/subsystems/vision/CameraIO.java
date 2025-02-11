@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 /**
  * An interface encapsulating a single camera in a vision system.
@@ -43,6 +44,8 @@ public interface CameraIO {
         public double simpleY = 0.0;
         public double simpleArea = 0.0;
         public boolean simpleValid = false;
+
+        public IMUMode imuMode = IMUMode.NONE;
         
         public Translation2d[] rawCorners = new Translation2d[] {};
 
@@ -56,6 +59,13 @@ public interface CameraIO {
      * @param inputs The inputs to update
      */
     public default void updateInputs(CameraIOInputsAutoLogged inputs) {};
+
+    /**
+     * Gets a human-readable name of the camera. Mostly for alerts.
+     * @return The human-readable name of this camera.
+     * @apiNote THIS SHOULD NEVER BE USED FOR ROBOT CONTROL FLOW! THIS IS ONLY FOR ALERT READABILITY!
+     */
+    public default String getName() { return "Camera"; }
 
     /**
      * Forces the indicator light on the limelight to be off.

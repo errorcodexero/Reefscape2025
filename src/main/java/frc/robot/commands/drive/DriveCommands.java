@@ -26,8 +26,10 @@ import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -39,7 +41,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -312,7 +320,58 @@ public class DriveCommands {
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
   }
+
+  /**
+   * Creates an on-the-fly path, and creates a command that follows that path.
+   * This is different to pathfinding because it is ignorant of field obstacles,
+   * and should not be used when doing any complex navigations.
+   * 
+   * Otherwise, when there are no obstacles between your current pose, and your target pose, (e.g. 2025 reef targeting),
+   * this is a marginal performance increase.
+   * 
+   * @param targetPose The pose to create an on-the-fly path to.
+   * @return A command that follows the created path.
+   */
+  public static Command simplePathCommand(Pose2d targetPose) {
+    PathConstraints constraints = new PathConstraints(
+      4.0,
+      4.0,
+      DegreesPerSecond.of(540).in(RadiansPerSecond),
+      DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond)
+    );
+
+    Pose2d curPose = AutoBuilder.getCurrentPose();
+    Transform2d curToTarget = targetPose.minus(curPose);
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle())),
+      targetPose
+    );
+
+    PathPlannerPath path = new PathPlannerPath(
+      waypoints,
+      constraints,
+      null,
+      new GoalEndState(0.0, targetPose.getRotation())
+    );
+
+    path.preventFlipping = true;
+
+    // If the pose is less than 1 centimeter away, dont do anything. (This is because of an error I am looking into)
+    if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
+      return Commands.none();
+    }
+
+    return AutoBuilder.followPath(path);
+  }
   
+  /**
+   * Creates a path based on Pathfinding.
+   * This will allow to avoid field elements, but at a performance cost.
+   * TANSTAAFL
+   * @param targetPose
+   * @return A command to follow that path.
+   */
   public static Command swerveDriveToCommand(Pose2d targetPose) {
     PathConstraints constraints = new PathConstraints(
       3.0,
@@ -359,13 +418,7 @@ public class DriveCommands {
   * If the path has a problem being created, a Command that does nothing.
   */
   public static Command followPathCommand(String pathName) {
-    Optional<PathPlannerPath> path = findPath(pathName, false);
-
-    if (path.isPresent()) {
-      return AutoBuilder.followPath(path.get());
-    }
-    
-    return Commands.none();
+    return followPathCommand(pathName, false);
   }
 
   /**
@@ -387,6 +440,10 @@ public class DriveCommands {
 
       if (alliance == Alliance.Red) {
         initPosePath = path.get().flipPath();
+      }
+
+      if (initPosePath.getStartingHolonomicPose().isEmpty()) {
+        return Commands.none();
       }
 
       return Commands.sequence(
@@ -411,28 +468,15 @@ public class DriveCommands {
   * a Command that does nothing.
   */
   public static Command initialFollowPathCommand(Drive drive, String pathName) {
-    Optional<PathPlannerPath> path = findPath(pathName, false);
-
-    if (path.isPresent()) {
-      PathPlannerPath initPosePath = path.get();
-      Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-
-      if (alliance == Alliance.Red) {
-        initPosePath = path.get().flipPath();
-      }
-
-      return Commands.sequence(
-        setPoseCommand(
-          drive,
-          initPosePath.getStartingHolonomicPose().orElseThrow()
-        ),
-        AutoBuilder.followPath(path.get())
-      );
-    }
-
-    return Commands.none();
+    return initialFollowPathCommand(drive, pathName, false);
   }
   
+  /**
+   * Sets the pose of the drivebase in a command.
+   * @param drive The drive subsystem.
+   * @param pose The pose to set it to.
+   * @return A command that sets the pose of the drivebase.
+   */
   public static Command setPoseCommand(Drive drive, Pose2d pose){
     return Commands.runOnce(() -> drive.setPose(pose));
   }
@@ -447,16 +491,15 @@ public class DriveCommands {
    */
   private static Optional<PathPlannerPath> findPath(String pathName, boolean mirroredX) {
     try{
-      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-      
+      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
       if (mirroredX) {
         path = path.mirrorPath();
-        System.out.println("Mirroring path " + pathName);
       }
  
       return Optional.of(path);
+
     } catch (FileNotFoundException e) {
       System.err.println("Path file " + pathName + " not found!");
     } catch (IOException e) {
@@ -467,5 +510,4 @@ public class DriveCommands {
     
     return Optional.empty();
   }
-  
 }
