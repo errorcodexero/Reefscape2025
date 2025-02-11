@@ -1,5 +1,7 @@
 package frc.robot.subsystems.manipulator;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,8 +30,8 @@ public class GoToCmd extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Distance current_height = sub_.getElevatorPosition() ;
-    Angle current_angle = sub_.getArmPosition() ;
+    Distance current_height = sub_.getElevatorPosition();
+    Angle current_angle = sub_.getArmPosition();
 
     if((current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) && (target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight))) {
       sub_.setElevatorPosition(target_height_);
@@ -59,6 +61,7 @@ public class GoToCmd extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     switch(state_) {
       case GoToFinalPos:
         if(sub_.isElevAtTarget() && sub_.isArmAtTarget()) {
@@ -94,6 +97,8 @@ public class GoToCmd extends Command {
       case Done: 
         break; 
     }
+
+    Logger.recordOutput("Manipulator/gotostate", state_.toString());    
   }
 
   // Called once the command ends or is interrupted.

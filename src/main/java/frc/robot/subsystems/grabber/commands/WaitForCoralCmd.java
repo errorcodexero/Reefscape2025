@@ -1,61 +1,78 @@
 package frc.robot.subsystems.grabber.commands;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
+import org.littletonrobotics.junction.Logger;
+import org.xerosw.util.XeroTimer;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
-/*
- * 
- * UNFINISHED COMMAND
- *
- */
 public class WaitForCoralCmd extends Command {
 
     private GrabberSubsystem grabber_;
-    private WaitForCoralCmdState WaitForCoralCmdState_;
+    private State state_;
+    private XeroTimer timer_ ;
 
-    private enum WaitForCoralCmdState {
+    private enum State {
         WaitingForCoral,
-        RollersOff,
+        Delay,
+        BackupCoral,
         Finish
     }
 
     public WaitForCoralCmd(GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
+        timer_ = new XeroTimer(Milliseconds.of(0)) ;
     }
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(35);
-        WaitForCoralCmdState_ = WaitForCoralCmdState.WaitingForCoral;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectCoral.kVelocity);
+        state_ = State.WaitingForCoral;
     }
 
     @Override
     public boolean isFinished() {
-        return WaitForCoralCmdState_ == WaitForCoralCmdState.Finish;
+        return state_ == State.Finish;
     }
 
     @Override
     public void execute() {
-        switch(WaitForCoralCmdState_) {
+        switch(state_) {
             case WaitingForCoral:
-                if (grabber_.coralFunnelRising()) {
-                    grabber_.setHasCoral(true);
+                if (grabber_.coralFalling()) {
+                    grabber_.setGrabberMotorVoltage(0.0) ;
+                    timer_.start();
+                    state_ = State.Delay;
                 }
-                
-                WaitForCoralCmdState_ = WaitForCoralCmdState.RollersOff;
                 break;
-            case RollersOff:
-                
-                WaitForCoralCmdState_ = WaitForCoralCmdState.Finish;
+
+            case Delay:
+                if (timer_.isExpired()) {
+                    grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectCoral.kBackupVelocity);
+                    state_ = State.BackupCoral;
+                }
+                break ;
+
+            case BackupCoral:
+                if (grabber_.coralRising()) {
+                    grabber_.setGrabberMotorVoltage(0.0) ;
+                    state_ = State.Finish;
+                }
                 break;
+
             case Finish:
                 break;
         }
+
+        Logger.recordOutput("Grabber/WaitForCoral", state_.toString()) ;
     }
 
     @Override
     public void end(boolean canceled) {
-        WaitForCoralCmdState_ = WaitForCoralCmdState.Finish;
+        state_ = State.Finish;
     }
 }

@@ -1,0 +1,137 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 2,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 100.0,
+                        "fms" : false,
+                        "ds" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : true
+                    }
+                }
+            ]
+        },  
+        {
+            "time" : 6.2,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-collect" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.4,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : true
+                    }
+                }
+            ]
+        },        
+        {
+            "time" : 6.6,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 6.8,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "l1" : true
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 7.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "l1" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 7.2,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "l2" : true
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 7.4,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "l2" : false
+                    }
+                }
+            ]
+        }
+    ]
+}
