@@ -117,6 +117,7 @@ public class RobotContainer {
 
     // Choosers
     private final LoggedDashboardChooser<Command> autoChooser_;
+    private final LoggedDashboardChooser<Command> tuningChooser_;
 
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
@@ -331,12 +332,15 @@ public class RobotContainer {
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
+        ShuffleboardTab tuningTab = Shuffleboard.getTab("Tuning");
     
         // Widgets & Choosers
         autoChooser_ = new LoggedDashboardChooser<>("Auto Choices");
+        tuningChooser_ = new LoggedDashboardChooser<>("Tuning Choices");
 
         // Add choosers/widgets to tabs.
         autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
+        tuningTab.add("Tuning Modes", tuningChooser_.getSendableChooser()).withSize(2, 1);
 
         // Configure the button bindings
         configureDriveBindings();
@@ -349,14 +353,16 @@ public class RobotContainer {
 
     public void setupAutos() {
         
+        autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Opposing Side Coral", AutoCommands.sideCoralAuto(drivebase_, manipulator_, false));
         autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, true));
         autoChooser_.addOption("Center Coral (opposing side station)", AutoCommands.centerCoralAuto(drivebase_, manipulator_, false));
         autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_));
+        autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
-        autoChooser_.addOption(
+        tuningChooser_.addOption(
             "testing driveto", 
             DriveCommands.swerveDriveToCommand(
                 new Pose2d(
@@ -370,12 +376,12 @@ public class RobotContainer {
         );
         
         // Add SysId routines to the chooser
-        autoChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
-        autoChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drivebase_));
-        autoChooser_.addOption("Drive SysId (Quasistatic Forward)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        tuningChooser_.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drivebase_));
+        tuningChooser_.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drivebase_));
+        tuningChooser_.addOption("Drive SysId (Quasistatic Forward)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)", drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        tuningChooser_.addOption("Drive SysId (Dynamic Forward)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        tuningChooser_.addOption("Drive SysId (Dynamic Reverse)", drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     }
     
@@ -483,7 +489,8 @@ public class RobotContainer {
     * @return the command to run in autonomous
     */
     public Command getAutonomousCommand() {
-        return autoChooser_.get();
+        Command autoChosen = autoChooser_.get();
+        return autoChosen != null ? autoChosen : tuningChooser_.get();
     }
     
 }
