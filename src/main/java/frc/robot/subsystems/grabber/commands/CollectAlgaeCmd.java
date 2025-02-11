@@ -5,13 +5,11 @@ import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class CollectAlgaeCmd extends Command {
-
     private GrabberSubsystem grabber_;
-    private State State_;
+    private State state_;
 
     private enum State {
         WaitingForAlgae,
-        RollersOff,
         Finish
     }
 
@@ -19,29 +17,26 @@ public class CollectAlgaeCmd extends Command {
         addRequirements(grabber);
         grabber_ = grabber;
     }
+
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.collectAlgaeVelocity);
-        State_ = State.WaitingForAlgae;
+        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectAlgae.velocity);
+        state_ = State.WaitingForAlgae;
     }
 
     @Override
     public boolean isFinished() {
-        return State_ == State.Finish;
+        return state_ == State.Finish;
     }
 
     @Override
     public void execute() {
-        switch(State_) {
+        switch(state_) {
             case WaitingForAlgae:
                 if (grabber_.AlgaeRising()) {
-                    grabber_.setHasAlgae(true);
-                    State_ = State.RollersOff;
+                    grabber_.stopGrabber();
+                    state_ = State.Finish;
                 }
-                break;
-            case RollersOff:
-                grabber_.stopGrabber();
-                State_ = State.Finish;
                 break;
             case Finish:
                 break;
@@ -50,6 +45,6 @@ public class CollectAlgaeCmd extends Command {
 
     @Override
     public void end(boolean canceled) {
-        State_ = State.Finish;
+        state_ = State.Finish;
     }
 }

@@ -1,7 +1,9 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightResults;
@@ -11,10 +13,12 @@ import frc.robot.subsystems.vision.LimelightHelpers.RawDetection;
 
 public class CameraIOLimelight implements CameraIO {
 
-    private String name_;
+    protected String name_;
+    protected Supplier<Rotation2d> rotationSupplier_;
 
-    public CameraIOLimelight(String name) {
+    public CameraIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
         name_ = name;
+        rotationSupplier_ = rotationSupplier;
     }
 
     @Override
@@ -25,6 +29,9 @@ public class CameraIOLimelight implements CameraIO {
 
         // Connected if not updated in one second
         inputs.connected = (Timer.getFPGATimestamp() - results.timestamp_RIOFPGA_capture) < 1;
+
+        // Update Robot Orientation
+        LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
 
         // Camera name
         inputs.name = name_;
@@ -83,6 +90,11 @@ public class CameraIOLimelight implements CameraIO {
 
         inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
 
+    }
+
+    @Override
+    public String getName() {
+        return name_;
     }
 
     @Override

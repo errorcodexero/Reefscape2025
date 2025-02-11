@@ -1,0 +1,145 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 0,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 32,
+                        "fms" : false,
+                        "ds" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Press the a button to start quasistatic forward SysID",
+                        "a" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 14.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Release the a button to end quasistatic forward SysID",
+                        "a" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 15.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Press the b button to start quasistatic reverse SysID",
+                        "b" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 21.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Release the b button to end quasistatis reverse SysID",
+                        "b" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 22.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Press the x button to start dynamic forward SysID",
+                        "x" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 28.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Release the b button to end dynamic forward SysID",
+                        "x" : false
+                    }
+                }
+            ]
+        },  
+        {
+            "time" : 29.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Press the y button to start dynamic reverse SysID",
+                        "y" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 35.0,
+            "events" :
+            [
+                {
+                    "model" : "drivergamepad",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Release the y button to end dynamic reverse SysID",
+                        "y" : false
+                    }
+                }
+            ]
+        }               
+    ]
+}

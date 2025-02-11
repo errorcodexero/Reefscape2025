@@ -1,53 +1,62 @@
 package frc.robot.subsystems.grabber.commands;
 
-import edu.wpi.first.wpilibj.Timer;
+import org.xerosw.util.XeroTimer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class DepositCoralCmd extends Command {
 
+    private XeroTimer timer_ ;
     private GrabberSubsystem grabber_;
-    private Timer timer_ = new Timer();
-    private State State_;
+    private State state_;
+    private boolean l1_ ;
 
     private enum State {
-        WaitingForCoralEject,
-        RollersOff,
+        WaitingForTimer,
         Finish
     }
 
     public DepositCoralCmd(GrabberSubsystem grabber) {
+        this(grabber, false) ;
+    }
+
+    public DepositCoralCmd(GrabberSubsystem grabber, boolean l1) {
         addRequirements(grabber);
         grabber_ = grabber;
+
+        l1_ = l1 ;
     }
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.Positions.ejectCoralVelocty);
-        State_ = State.WaitingForCoralEject;
+        if (l1_) {
+            grabber_.setGrabberMotorVoltage(6.0) ;
+            timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.l1delay);
+            timer_.start() ;
+            state_ = State.WaitingForTimer ;
+        }
+        else {
+            grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositCoral.velocity) ;
+            timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.delay);
+            timer_.start() ;
+            state_ = State.WaitingForTimer ;
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return State_ == State.Finish;
+        return state_ == State.Finish;
     }
 
     @Override
     public void execute() {
-        switch(State_){
-            case WaitingForCoralEject:
-                timer_.start();
-                if (timer_.hasElapsed(GrabberConstants.Grabber.Positions.ejectCoralWait) && timer_.isRunning() && grabber_.coralFalling()) {
-                    timer_.stop();
-                    timer_.reset();
-                    grabber_.setHasCoral(false);
-                    State_ = State.RollersOff;
+        switch(state_){
+            case WaitingForTimer:
+                if (timer_.isExpired()) {
+                    grabber_.stopGrabber();
+                    state_ = State.Finish;
                 }
-                break;
-            case RollersOff:
-                grabber_.stopGrabber();
-                State_ = State.Finish;
                 break;
             case Finish:
                 break;
@@ -56,6 +65,6 @@ public class DepositCoralCmd extends Command {
 
     @Override
     public void end(boolean canceled) {
-        State_ = State.Finish;
+        state_ = State.Finish;
     }
 }

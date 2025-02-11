@@ -35,6 +35,7 @@ public interface GrabberIO {
 
     public default void logGrabberMotor(SysIdRoutineLog log) {}
 
-    public default void setGrabberTargetVelocity(double vel) {} 
+    public default void setGrabberTargetVelocity(AngularVelocity vel) {} 
+    public default void setGrabberTargetPosition(Angle pos) {}
 
 }

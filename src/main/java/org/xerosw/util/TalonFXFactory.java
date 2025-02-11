@@ -31,7 +31,7 @@ public class TalonFXFactory {
      * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
      */
     public static TalonFX createTalonFX(int id, String bus, boolean invert, Current currentLimit, Time lowerTime) throws Exception {
-        TalonFX fx = new TalonFX(id, bus);
+        TalonFX fx = new TalonFX(id, (bus == null) ? "" : bus);
         
         TalonFXConfiguration config = new TalonFXConfiguration();       
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
