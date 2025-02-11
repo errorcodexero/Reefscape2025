@@ -65,10 +65,6 @@ public class FunnelSubsystem extends SubsystemBase {
 
         return false;
     }
-
-    public boolean coralFunnelRisingEdge() {
-        return inputs_.coralFunnelRisingEdge;
-    }
-
+    
 }
 
