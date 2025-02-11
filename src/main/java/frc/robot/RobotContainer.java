@@ -393,7 +393,7 @@ public class RobotContainer {
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral)) ;
         oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReef)) ;
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround)) ;
-        oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceAlgae)) ;
+        oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae)) ;
 
         oi_.l1().onTrue(new SetLevelCmd(brain_, 1)) ;
         oi_.l2().onTrue(new SetLevelCmd(brain_, 2)) ;

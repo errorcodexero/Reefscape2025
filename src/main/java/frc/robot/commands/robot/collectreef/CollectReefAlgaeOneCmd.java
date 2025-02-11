@@ -7,12 +7,12 @@ import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
-public class CollectReefAlgaeBeforeCmd extends Command {
+public class CollectReefAlgaeOneCmd extends Command {
     private XeroSequence sequence_ ;
     private BrainSubsystem b_ ;
     private ManipulatorSubsystem m_ ;
 
-    public CollectReefAlgaeBeforeCmd(BrainSubsystem b, ManipulatorSubsystem m) {
+    public CollectReefAlgaeOneCmd(BrainSubsystem b, ManipulatorSubsystem m) {
         setName("PlaceCoralCmd") ;
 
         b_ = b ;
@@ -22,6 +22,7 @@ public class CollectReefAlgaeBeforeCmd extends Command {
     @Override
     public void initialize() {
         sequence_.addCommands(
-            new GoToCmd(m_, CollectReefAlgaeConstants.Collect.ElevatorHeight[b_.level()], CollectReefAlgaeConstants.Collect.ArmAngle[b_.level()])) ;
+            new GoToCmd(m_, CollectReefAlgaeConstants.Collect.ElevatorHeight[b_.level()], 
+                            CollectReefAlgaeConstants.Collect.ArmAngle[b_.level()])) ;
     }
 }

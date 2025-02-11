@@ -11,8 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
+import frc.robot.commands.robot.collectreef.CollectReefAlgaeOneCmd;
+import frc.robot.commands.robot.collectreef.CollectReefAlgaeTwoCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepOne;
 import frc.robot.commands.robot.placecoral.PlaceCoralTwoStepTwo;
+import frc.robot.commands.robot.scorealgae.ScoreAlgaeOneCmd;
+import frc.robot.commands.robot.scorealgae.ScoreAlgaeTwoCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -56,13 +60,8 @@ public class BrainSubsystem extends SubsystemBase {
     // we get the code to generate the commands required for the various
     // robot actions.
     //
-    @SuppressWarnings("unused")
     private Drive db_ ;
-
-    @SuppressWarnings("unused")
     private ManipulatorSubsystem m_ ;
-
-    @SuppressWarnings("unused")
     private GrabberSubsystem g_ ;   
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
@@ -282,20 +281,28 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case PlaceCoral:
-                    list.add(new PlaceCoralTwoStepOne(m_)) ;
-                    conds.add(null) ;
+                list.add(new PlaceCoralTwoStepOne(m_)) ;
+                conds.add(null) ;
 
-                    // We only execute this step if we are in a position that the target face is valid
-                    list.add(new PlaceCoralTwoStepTwo(this, db_, m_, g_, true)) ;
-                    conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
+                // We only execute this step if we are in a position that the target face is valid
+                list.add(new PlaceCoralTwoStepTwo(this, db_, m_, g_, true)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
-            case PlaceAlgae:
-                // TODO: write me
+            case ScoreAlgae:
+                list.add(new ScoreAlgaeOneCmd(this, m_)) ;
+                conds.add(null) ;
+
+                list.add(new ScoreAlgaeTwoCmd(this, m_, g_)) ;
+                conds.add(null) ;
                 break ;
 
             case CollectAlgaeReef:
-                // TODO: write me
+                list.add(new CollectReefAlgaeOneCmd(this, m_)) ;
+                conds.add(null) ;
+
+                list.add(new CollectReefAlgaeTwoCmd(this, db_, m_, g_)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case CollectAlgaeGround:

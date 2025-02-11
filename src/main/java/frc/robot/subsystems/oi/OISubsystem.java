@@ -215,7 +215,7 @@ public class OISubsystem extends SubsystemBase {
                 setLEDState(OILed.AlgaeReef, st) ;
                 break ;
 
-            case PlaceAlgae:
+            case ScoreAlgae:
                 setLEDState(OILed.AlgaeScore, st) ;
                 break ;
         }

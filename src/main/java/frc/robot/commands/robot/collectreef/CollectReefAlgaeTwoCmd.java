@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.commands.robot.ReportStateCmd;
 import frc.robot.commands.robot.SetHoldingCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -29,7 +29,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
-public class CollectReefAlgaeAfterCmd extends Command {
+public class CollectReefAlgaeTwoCmd extends Command {
 
     private static Voltage nominal = Volts.of(12.0) ;
 
@@ -39,7 +39,7 @@ public class CollectReefAlgaeAfterCmd extends Command {
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
 
-    public CollectReefAlgaeAfterCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public CollectReefAlgaeTwoCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         setName("PlaceCoralCmd") ;
         db_ = db ;
         b_ = brain ;
@@ -81,14 +81,12 @@ public class CollectReefAlgaeAfterCmd extends Command {
             AutoBuilder.pathfindToPose(place, driveto_constraints)) ;
 
         sequence_.addCommands(
-            new ReportStateCmd(getName(), "goto"),
+            new GamepadEnabled(false),
             new GoToCmd(m_, CollectReefAlgaeConstants.Collect.ElevatorHeight[b_.level()], CollectReefAlgaeConstants.Collect.ArmAngle[b_.level()]),
-            new ReportStateCmd(getName(), "parallel"),
             parallel,
             new SetHoldingCmd(b_, GamePiece.ALGAE_HIGH),
-            new ReportStateCmd(getName(), "drive-backup"),
             AutoBuilder.pathfindToPose(backup, backup_constraints),
-            new ReportStateCmd(getName(), "rumble"),
+            new GamepadEnabled(true),
             new RumbleGamepadCmd(Milliseconds.of(500))) ;
 
         sequence_.schedule();

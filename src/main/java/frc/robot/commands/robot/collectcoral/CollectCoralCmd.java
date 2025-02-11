@@ -6,7 +6,6 @@ import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.commands.robot.ReportStateCmd;
 import frc.robot.commands.robot.SetHoldingCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -16,8 +15,6 @@ import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CollectCoralCmd extends Command {
-
-
     private XeroSequence sequence_ ;
     private BrainSubsystem brain_ ;
     private ManipulatorSubsystem manipulator_ ;
@@ -34,15 +31,11 @@ public class CollectCoralCmd extends Command {
     public void initialize() {
         sequence_ = new XeroSequence() ;
         sequence_.addCommands(
-            new ReportStateCmd(getName(), "goto"),
             new ParallelDeadlineGroup(
                 new WaitForCoralCmd(grabber_),
                 new GoToCmd(manipulator_, CollectCoralConstants.kElevatorCollectHeight, CollectCoralConstants.kArmCollectAngle)),
-            new ReportStateCmd(getName(), "holding"),
             new SetHoldingCmd(brain_, GamePiece.CORAL),
-            new ReportStateCmd(getName(), "rumbling"),
-            new RumbleGamepadCmd(Milliseconds.of(500)),
-            new ReportStateCmd(getName(), "done")) ;
+            new RumbleGamepadCmd(Milliseconds.of(500))) ;
 
         sequence_.schedule() ;
     }

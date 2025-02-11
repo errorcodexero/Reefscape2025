@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.drive.GamepadEnabled;
 import frc.robot.commands.misc.RumbleGamepadCmd;
-import frc.robot.commands.robot.ReportStateCmd;
 import frc.robot.commands.robot.SetHoldingCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -81,41 +80,32 @@ public class PlaceCoralTwoStepTwo extends Command {
             sequence_.addCommands(
 
                 // Turn off gamepad so driver cannot drive
-                new ReportStateCmd(getName(), "gp-disabled"),
                 new GamepadEnabled(false),
 
                 // Drive to the scoring pose
-                new ReportStateCmd(getName(), "driveto"),
                 AutoBuilder.pathfindToPose(place, driveto_constraints)) ;
         }
 
         sequence_.addCommands(
             // Go to the elevator height
-            new ReportStateCmd(getName(), "goto-elev"),
             new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.level()], PlaceCoralConstants.Place.ImmdAngle),
 
             // Go to the right arm angle
-            new ReportStateCmd(getName(), "goto-arm"),
             new GoToCmd(m_, PlaceCoralConstants.Place.ElevatorHeight[b_.level()], PlaceCoralConstants.Place.ArmAngle[b_.level()]),
 
             // Place the coral on the reef
-            new ReportStateCmd(getName(), "deposit-coral"),
             pg,
 
             // Signal we are no longer holding coral
-            new ReportStateCmd(getName(), "set-holding"),
             new SetHoldingCmd(b_, GamePiece.NONE),
 
             // Lower the elevator
-            new ReportStateCmd(getName(), "goto-elev"),
             new GoToCmd(m_, ManipulatorConstants.Positions.kStowedHeight, ManipulatorConstants.Positions.kStowedAngle),
 
             // Turn the gamepad back on
-            new ReportStateCmd(getName(), "gamepad-enabled"),
             new GamepadEnabled(true),
 
             // Signal we are done
-            new ReportStateCmd(getName(), "rumble"),
             new RumbleGamepadCmd(Milliseconds.of(500))) ;
 
         sequence_.schedule();
