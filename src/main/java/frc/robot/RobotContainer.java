@@ -13,6 +13,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -146,7 +153,6 @@ public class RobotContainer {
                         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
                     } catch (Exception e) {
                     }
-
                     break;
 
                 case COMPETITION:
