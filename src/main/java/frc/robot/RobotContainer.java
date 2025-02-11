@@ -20,7 +20,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.HashMap;
 
@@ -39,7 +38,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -140,10 +138,6 @@ public class RobotContainer {
                     );
 
                     // Alpha Bot Does Not Have Any Other Subsystems
-
-                    try {
-                        funnel_ = new Funnel(new FunnelIOHardware());
-                    } catch (Exception e) {}
 
                     break;
 
