@@ -415,9 +415,9 @@ public class RobotContainer {
         // Temporary locking test
         RobotModeTriggers.teleop().whileTrue(Commands.sequence(
             Commands.waitTime(Seconds.of(5)),
-            gamepad_.lockCommand(true),
+            gamepad_.setLockCommand(true),
             Commands.waitTime(Seconds.of(5)),
-            gamepad_.lockCommand(false)
+            gamepad_.setLockCommand(false)
         ));
 
         // Default command, normal field-relative drive
