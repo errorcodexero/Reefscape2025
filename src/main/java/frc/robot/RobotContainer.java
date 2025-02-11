@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -103,9 +103,6 @@ public class RobotContainer {
     // Mapping of subsystems name to subsystems, used by the simulator
     HashMap<String, ISimulatedSubsystem> subsystems_ = new HashMap<>();
 
-    // Driver controller enabled flag
-    private boolean driver_controller_enabled_ = true;
-
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
@@ -143,6 +140,10 @@ public class RobotContainer {
                     );
 
                     // Alpha Bot Does Not Have Any Other Subsystems
+
+                    try {
+                        funnel_ = new Funnel(new FunnelIOHardware());
+                    } catch (Exception e) {}
 
                     break;
 
@@ -202,10 +203,6 @@ public class RobotContainer {
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
                     } catch (Exception e) {}
-
-                    // try {
-                    //     funnel_ = new Funnel(new FunnelIOHardware());
-                    // } catch (Exception e) {}
 
                     break;
                 
@@ -412,36 +409,6 @@ public class RobotContainer {
 
         //oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         //oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
-    }
-
-    private double getLeftX() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double y = -gamepad_.getLeftX() ;
-        y = Math.signum(y) * y * y ;
-        
-        return y ;
-    }
-
-    private double getLeftY() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double x = -gamepad_.getLeftY() ;
-        x = Math.signum(x) * x * x;
-
-        return x ;
-    }
-
-    private double getRightX() {
-        if (!driver_controller_enabled_)
-            return 0.0 ;
-
-        double x = -gamepad_.getRightX() ;
-        x = Math.signum(x) * x * x  ;
-
-        return x ;
     }
     
     /**

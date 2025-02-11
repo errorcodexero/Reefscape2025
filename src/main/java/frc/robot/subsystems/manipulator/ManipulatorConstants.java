@@ -72,6 +72,15 @@ public class ManipulatorConstants {
 
             public static final int kEncoderSource = 3; 
         }
+
+        public class Positions {
+            public static final Angle kStow = Degrees.of(0);
+            public static final Angle kPlaceL1 = Degrees.of(0); 
+            public static final Angle kPlaceL2 = Degrees.of(0); 
+            public static final Angle kPlaceL3 = Degrees.of(0); 
+            public static final Angle kPlaceL4 = Degrees.of(0);
+            public static final Angle kKickbackAngle = Degrees.of(-10); 
+        }
     }
 
     public class Elevator {
@@ -123,6 +132,15 @@ public class ManipulatorConstants {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300) ;
             public static final double kJerk = 0.0 ;
+        }
+
+        public class Positions {
+            public static final Distance kStow = Meters.of(0);
+            public static final Distance kPlaceL1 = Meters.of(0); 
+            public static final Distance kPlaceL2 = Meters.of(0); 
+            public static final Distance kPlaceL3 = Meters.of(0); 
+            public static final Distance kPlaceL4 = Meters.of(0); 
+
         }
     }
 
