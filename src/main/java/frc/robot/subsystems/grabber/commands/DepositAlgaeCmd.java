@@ -38,8 +38,10 @@ public class DepositAlgaeCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitForTimer:
-                grabber_.stopGrabber();
-                state_ = State.Finish;
+                if (timer_.isExpired()) {
+                    grabber_.stopGrabber();
+                    state_ = State.Finish;
+                }
                 break;
 
             case Finish:
