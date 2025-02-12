@@ -2,44 +2,45 @@ package frc.robot.commands.robot;
 
 import org.xerosw.util.XeroSequence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.manipulator.GoToCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
-public class CollectAlgaeReefPt1Cmd extends SequentialCommandGroup {
-    static private List<CollectAlgaeReefPt1Cmd> commands ;
+public class CollectAlgaeReefPt1Cmd extends Command {
 
-    static private void commandFinished(Command cmd) {
-        if (commands.contains(cmd)) {
-            CollectAlgaeReefPt1Cmd seq = (CollectAlgaeReefPt1Cmd) cmd;
-            if (seq != null) {
-                seq.setComplete() ;
-                commands.remove(cmd);
-            }
-        }
-    }
+  private XeroSequence sequence_; 
+  private ManipulatorSubsystem manipulator_; 
 
-    static {
-        commands = new ArrayList<CollectAlgaeReefPt1Cmd>();
-        CommandScheduler.getInstance().onCommandFinish(CollectAlgaeReefPt1Cmd::commandFinished);
-    }
+  public CollectAlgaeReefPt1Cmd(ManipulatorSubsystem manipulator) {
+    addRequirements(manipulator); 
+    manipulator_ = manipulator; 
+  }
 
-    private boolean complete_ ;
+  // COMMANDS NEEDED: 
+  // GoToCmd
 
-    public CollectAlgaeReefPt1Cmd() {
-        super();
-        complete_ = false ;
-        commands.add(this);
-    }
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    GoToCmd goToCmd = new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow);
+    sequence_.addCommands(goToCmd);
+    sequence_.schedule();
+  }
 
-    public boolean isComplete() {
-        return complete_ ;
-    }
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
 
-    private void setComplete() {
-        complete_ = true ;
-    }
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    sequence_.cancel(); 
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return sequence_.isComplete(); 
+  }
 }
