@@ -18,22 +18,23 @@ public class OISubsystem extends SubsystemBase {
     // The LEDs on the driver station
     //
     public enum OILed {
-        CoralL1(2),
-        CoralL2(3),
-        CoralL3(4),
-        CoralL4(5),
-        CollectCoral(6),
-        PlaceCoral(7),
-        CollectAlgaeGround(8),
-        ScoreAlgae(9),
-        CollectAlgaeReef(10),
-        ClimbDeploy(11),
-        ClimbExecute(12),
-        CoralLeft(13),
-        CoralRight(14),
-        HoldingCoral(15),
-        HoldingAlgaeLow(16),
-        HoldingAlgaeHigh(1);
+
+        CoralL1(1),                         //
+        CoralL2(2),                         //
+        CoralL3(3),                         //
+        CoralL4(4),                         //
+        ScoreAlgae(5),                      //
+        CollectAlgaeGround(6),              //
+        Spare1(7) ,                         // 
+        HoldingAlgaeLow(8),                 //
+        HoldingAlgaeHigh(9),                // 
+        HoldingCoral(10),                   //
+        Execute(11),                        //
+        CoralLeft(12),                      //
+        CoralRight(13),                     //
+        CollectCoral(14),                   //
+        PlaceCoral(15),                     //
+        CollectAlgaeReef(16);               //
 
         public final Integer value ;
 
@@ -115,6 +116,10 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    public boolean sideSwitch() {
+        return inputs_.coral_side ;
+    }
+
     public Trigger abort() {
         return abort_trigger_ ;
     }
@@ -191,8 +196,6 @@ public class OISubsystem extends SubsystemBase {
         setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
         setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
         setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
-        setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
-        setLEDState(OILed.ClimbExecute, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
@@ -423,7 +426,6 @@ public class OISubsystem extends SubsystemBase {
                 str += "," ;
             str += "rb" ;
         }
-        
 
         return str ;
     }

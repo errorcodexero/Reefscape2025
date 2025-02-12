@@ -49,8 +49,6 @@ public class OI2025 extends OIBaseModel {
         ledMap.put("algae-ground", OISubsystem.OILed.CollectAlgaeGround.value) ;
         ledMap.put("algae-score", OISubsystem.OILed.ScoreAlgae.value) ;
         ledMap.put("algae-reef", OISubsystem.OILed.CollectAlgaeReef.value) ;
-        ledMap.put("climb-deploy", OISubsystem.OILed.ClimbDeploy.value) ;
-        ledMap.put("climb-execute", OISubsystem.OILed.ClimbExecute.value) ;
         ledMap.put("coral-left", OISubsystem.OILed.CoralLeft.value) ;
         ledMap.put("coral-right", OISubsystem.OILed.CoralRight.value) ;
         return ledMap ;

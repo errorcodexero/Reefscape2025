@@ -17,9 +17,12 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.commands.robot.NullCmd ;
-import frc.robot.commands.robot.placecoral.PlaceCoralCmd ;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralAutoCmd;
+import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
+import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
+import frc.robot.Constants.Height;
 import frc.robot.commands.robot.CollectCoralCmd ;
-import frc.robot.util.ReefUtil;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -50,6 +53,12 @@ public class BrainSubsystem extends SubsystemBase {
     // The game piece we are holding
     private GamePiece gp_ ;
 
+    // If true, the left/right side switch has been initialized
+    private boolean leds_inited_ ;
+
+    // The number of times periodic has been called
+    private int periodic_count_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -77,6 +86,8 @@ public class BrainSubsystem extends SubsystemBase {
         current_robot_action_command_ = null ;
         current_robot_action_command_index_ = 0 ;
         gp_ = GamePiece.NONE ;
+        leds_inited_ = false ;
+        periodic_count_ = 0 ;
 
         CommandScheduler.getInstance().onCommandFinish(this::cmdFinished) ;
     }
@@ -124,6 +135,7 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     public void setCoralLevel(int l) {
+
         coral_level_ = l ;
         oi_.setLevelLED(l);
     }
@@ -189,6 +201,7 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     private void completedAction() {
+        oi_.setRobotActionLEDState(current_action_, LEDState.Off) ;
         current_action_ = null ;
         current_robot_action_command_ = null ;
         current_robot_action_command_index_ = 0 ;
@@ -248,9 +261,28 @@ public class BrainSubsystem extends SubsystemBase {
         return status ;
     }
 
+    private void initLEDs() {
+        if (oi_.sideSwitch()) {
+            coral_side_ = CoralSide.Right ;
+        }
+        else {
+            coral_side_ = CoralSide.Left ;
+        }
+        coral_level_ = 4 ;
+
+        oi_.setLevelLED(coral_level_);
+        oi_.setSideLED(coral_side_);
+    }
+
     @Override
     public void periodic() {
         String status = "" ;
+
+        if (!leds_inited_ && periodic_count_ > 2) {
+            initLEDs() ;
+            leds_inited_ = true ;
+        }
+        periodic_count_++ ;
 
         if (current_action_ == null) {
             if (next_action_ != null) {
@@ -295,16 +327,24 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(db_, m_, g_, this)) ;
-                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
+                list.add(new PlaceCoralAutoCmd(m_, g_, Height.L3)) ;
+                conds.add(null) ;
+                // conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case ScoreAlgae:
-                // TODO: write me
+                list.add(new ScoreAlgaeBefore(m_, g_)) ;
+                conds.add(null) ;
+
+                list.add(new ScoreAlgaeAfter(m_, g_)) ;
+                conds.add(null) ;
                 break ;
 
             case CollectAlgaeReef:
-                // TODO: write me
+                list.add(new CollectAlgaeReefCmd(m_, g_)) ;
+                conds.add(null) ;
+
+
                 break ;
 
             case CollectAlgaeGround:
