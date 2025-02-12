@@ -1,12 +1,13 @@
 package frc.robot.subsystems.brain;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Height;
 
 public class SetLevelCmd extends Command {
     private BrainSubsystem brain_ ;
-    private int level_ ;
+    private Height level_ ;
 
-    public SetLevelCmd(BrainSubsystem brain, int level) {
+    public SetLevelCmd(BrainSubsystem brain, Height level) {
         level_ = level ;
         brain_ = brain ;
     }

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Height;
 import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
@@ -246,22 +247,37 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
-    public void setLevelLED(int level) {
+    public void setLevelLED(Height level) {
         setLEDState(OILed.CoralL1, LEDState.Off) ;
         setLEDState(OILed.CoralL2, LEDState.Off) ;
         setLEDState(OILed.CoralL3, LEDState.Off) ;
         setLEDState(OILed.CoralL4, LEDState.Off) ;        
-        if (level == 1)
-            setLEDState(OILed.CoralL1, LEDState.On) ;
 
-        if (level == 2)
-            setLEDState(OILed.CoralL2, LEDState.On) ;
+        switch(level) {
+            case L1:
+                setLEDState(OILed.CoralL1, LEDState.On) ;
+                break ;
 
-        if (level == 3)
-            setLEDState(OILed.CoralL3, LEDState.On) ;
+            case L2:
+                setLEDState(OILed.CoralL2, LEDState.On) ;
+                break ;
 
-        if (level == 4)
-            setLEDState(OILed.CoralL4, LEDState.On) ;
+            case L3:
+                setLEDState(OILed.CoralL3, LEDState.On) ;
+                break ;
+
+            case L4:
+                setLEDState(OILed.CoralL4, LEDState.On) ;
+                break ;
+
+            default:
+                // Should never happen
+                setLEDState(OILed.CoralL1, LEDState.Slow) ;
+                setLEDState(OILed.CoralL2, LEDState.Slow) ;
+                setLEDState(OILed.CoralL3, LEDState.Slow) ;
+                setLEDState(OILed.CoralL4, LEDState.Slow) ;   
+                break ;
+        }
     }
 
     public String getPressedString() {

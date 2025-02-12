@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.Height;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
@@ -409,7 +410,7 @@ public class RobotContainer {
                 AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Opposing Side Coral",
                 AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)",
                 AutoCommands.centerCoralAuto(drivebase_, manipulator_, grabber_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
@@ -467,10 +468,10 @@ public class RobotContainer {
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
-        oi_.l1().onTrue(new SetLevelCmd(brain_, 1).ignoringDisable(true));
-        oi_.l2().onTrue(new SetLevelCmd(brain_, 2).ignoringDisable(true));
-        oi_.l3().onTrue(new SetLevelCmd(brain_, 3).ignoringDisable(true));
-        oi_.l4().onTrue(new SetLevelCmd(brain_, 4).ignoringDisable(true));
+        oi_.l1().onTrue(new SetLevelCmd(brain_, Height.L1).ignoringDisable(true));
+        oi_.l2().onTrue(new SetLevelCmd(brain_, Height.L2).ignoringDisable(true));
+        oi_.l3().onTrue(new SetLevelCmd(brain_, Height.L3).ignoringDisable(true));
+        oi_.l4().onTrue(new SetLevelCmd(brain_, Height.L4).ignoringDisable(true));
 
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));

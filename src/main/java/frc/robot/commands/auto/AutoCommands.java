@@ -6,11 +6,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Height;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralAutoCmd;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.CollectAlgaeAutoCmd;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -18,11 +19,6 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 public class AutoCommands {
   private AutoCommands() {
   }
-
-  /**
-   * TODO: put in numbers and other commands when they are available.
-   * NOTE: All comments are going to be replaced with their respective commands.
-   */
 
   public static Command sideCoralAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub,
       FunnelSubsystem funnelSub, boolean mirroredX) {
@@ -53,22 +49,22 @@ public class AutoCommands {
     );
   }
 
-  public static Command algaeAuto(Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
+  public static Command algaeAuto(BrainSubsystem brain, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
     return Commands.sequence(
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
             grabberSub.setHasCoralCmd(true)),
         new PlaceCoralAutoCmd(manipSub, grabberSub, Height.L4),
         DriveCommands.followPathCommand("Algae 1.5"),
-        new CollectAlgaeAutoCmd(grabberSub, manipSub, Height.L2),
+        new CollectAlgaeReefCmd(brain, manipSub, grabberSub, Height.L2),
         DriveCommands.followPathCommand("Algae 2"),
         new DepositAlgaeCmd(grabberSub),
         DriveCommands.followPathCommand("Algae 3"),
-        new CollectAlgaeAutoCmd(grabberSub, manipSub, Height.L3),
+        new CollectAlgaeReefCmd(brain, manipSub, grabberSub, Height.L3),
         DriveCommands.followPathCommand("Algae 4"),
         new DepositAlgaeCmd(grabberSub),
         DriveCommands.followPathCommand("Algae 5"),
-        new CollectAlgaeAutoCmd(grabberSub, manipSub, Height.L3),
+        new CollectAlgaeReefCmd(brain, manipSub, grabberSub, Height.L3),
         DriveCommands.followPathCommand("Algae 6"),
         new DepositAlgaeCmd(grabberSub));
   }

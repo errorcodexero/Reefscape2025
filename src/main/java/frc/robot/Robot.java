@@ -145,12 +145,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    public void addRobotSimulationModels() {
-        //
-        // TODO: add any simulation models for this year's robot
-        //
-    }
-    
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {

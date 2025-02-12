@@ -2,7 +2,11 @@ package frc.robot.commands.robot.collectalgaereef;
 
 import org.xerosw.util.XeroSequence;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Height;
+import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -11,12 +15,16 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CollectAlgaeReefCmd extends Command {
     private XeroSequence sequence_;
+    private BrainSubsystem brain_ ;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
+    private Height height_ ;
 
-    public CollectAlgaeReefCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
+    public CollectAlgaeReefCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, Height height) {
+        brain_ = brain ;
         manipulator_ = manipulator;
         grabber_ = grabber;
+        height_ = height ;
     }
 
     // COMMANDS NEEDED:
@@ -26,10 +34,33 @@ public class CollectAlgaeReefCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        Angle angle ;
+        Distance height ;
+        
+        if (height_ == Height.AskBrain) {
+            height_ = brain_.algaeLevel() ;
+        }
+
+        if (height_ == Height.L2) {
+            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL2 ;
+            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL2 ;
+        } else if (height_ == Height.L3) {
+            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL3 ;
+            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3 ;
+        }
+        else {
+            //
+            // Bad height value, so we just return and have an empty sequence which
+            // does nothing.
+            //
+            return ;
+        }
+
         sequence_ = new XeroSequence();
         sequence_.addCommands(
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kReefCollect, ManipulatorConstants.Arm.Positions.kReefCollect),
-            new CollectAlgaeCmd(grabber_)) ;
+            new GoToCmd(manipulator_, height, angle),
+            new CollectAlgaeCmd(grabber_),
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
 
         sequence_.schedule();
     }

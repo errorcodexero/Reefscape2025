@@ -19,7 +19,6 @@ import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.util.ReefUtil;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
-import frc.robot.commands.robot.placecoral.PlaceCoralAutoCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
@@ -47,7 +46,7 @@ public class BrainSubsystem extends SubsystemBase {
     private OISubsystem oi_ ;
 
     // The level of coral to place
-    private int coral_level_ ;
+    private Height coral_level_ ;
 
     // The side of the coral to place
     private CoralSide coral_side_ ;
@@ -67,13 +66,8 @@ public class BrainSubsystem extends SubsystemBase {
     // we get the code to generate the commands required for the various
     // robot actions.
     //
-    @SuppressWarnings("unused")
     private Drive db_ ;
-
-    @SuppressWarnings("unused")
     private ManipulatorSubsystem m_ ;
-
-    @SuppressWarnings("unused")
     private GrabberSubsystem g_ ;   
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
@@ -136,14 +130,20 @@ public class BrainSubsystem extends SubsystemBase {
         }
     }
 
-    public void setCoralLevel(int l) {
-
-        coral_level_ = l ;
-        oi_.setLevelLED(l);
+    public void setCoralLevel(Height height) {
+        coral_level_ = height ;
+        oi_.setLevelLED(height);
     }
 
-    public int level() {
+    public Height coralLevel() {
         return coral_level_ ;
+    }
+
+    public Height algaeLevel() {
+        if (coral_level_ == Height.L1 || coral_level_ == Height.L2)
+            return Height.L2 ;
+
+        return Height.L3 ;
     }
 
     public void setCoralSide(CoralSide s) {
@@ -270,7 +270,7 @@ public class BrainSubsystem extends SubsystemBase {
         else {
             coral_side_ = CoralSide.Left ;
         }
-        coral_level_ = 4 ;
+        coral_level_ = Height.L4 ;
 
         oi_.setLevelLED(coral_level_);
         oi_.setSideLED(coral_side_);
@@ -315,7 +315,7 @@ public class BrainSubsystem extends SubsystemBase {
 
     static final boolean PlaceCoralTwoStep = true ;
 
-    private RobotActionCommandList getRobotActionCommand(RobotAction action, int level, CoralSide side) {
+    private RobotActionCommandList getRobotActionCommand(RobotAction action, Height level, CoralSide side) {
         List<Command> list = new ArrayList<Command>() ;
         List<BooleanSupplier> conds = new ArrayList<BooleanSupplier>() ;
 
@@ -329,7 +329,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(db_, m_, g_, this)) ;
+                list.add(new PlaceCoralCmd(db_, m_, g_, this, true, Height.AskBrain, CoralSide.AskBrain)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
@@ -342,12 +342,11 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case CollectAlgaeReef:
-                list.add(new CollectAlgaeReefCmd(m_, g_)) ;
+                list.add(new CollectAlgaeReefCmd(this, m_, g_, Height.AskBrain)) ;
                 conds.add(null) ;
                 break ;
 
             case CollectAlgaeGround:
-                // TODO: write me
                 break ;
         }
 

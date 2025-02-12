@@ -8,6 +8,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Height;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -31,10 +32,13 @@ public class PlaceCoralCmd extends Command {
     private final GrabberSubsystem grabber_; 
     private final BrainSubsystem brain_; 
 
+    private final CoralSide side_ ;
+    private final Height level_ ;
+
     private Distance target_elev_pos_; 
     private Angle target_arm_pos_; 
 
-    public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain) {
+    public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain, boolean driveto, Height h, CoralSide s) {
         addRequirements(drive, manipulator, grabber, brain);
 
         sequence_ = new XeroSequence();
@@ -44,6 +48,9 @@ public class PlaceCoralCmd extends Command {
         grabber_ = grabber;
         brain_ = brain; 
 
+        side_ = s ;
+        level_ = h ;
+
         target_elev_pos_ = Elevator.Positions.kStow; 
         target_arm_pos_ = Arm.Positions.kStow; 
     }
@@ -51,6 +58,23 @@ public class PlaceCoralCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        Height level ;
+        CoralSide side ;
+
+        if (level_ == Height.AskBrain) {
+            level = brain_.coralLevel() ;
+        }
+        else {
+            level = level_ ;
+        }
+
+        if (side_ == CoralSide.AskBrain) {
+            side = brain_.coralSide() ;
+        }
+        else {
+            side = side_ ;
+        }
+
         if (DriverStation.getAlliance().isEmpty())
             return ;
 
@@ -58,25 +82,41 @@ public class PlaceCoralCmd extends Command {
         if (reefFace.isEmpty())
             return ;
 
-        CoralSide coralSide = brain_.coralSide(); 
-        int coralLevel = brain_.level();
+        if (level == Height.AskBrain || side == CoralSide.AskBrain) {
+            //
+            // Should never happen, but if it does, we just return and do nothing
+            //
+            return ;
+        }
 
-        if(coralLevel == 1){
-            target_elev_pos_ = Elevator.Positions.kPlaceL1;
-            target_arm_pos_ = Arm.Positions.kPlaceL1;  
-        } else if(coralLevel == 2){
-            target_elev_pos_ = Elevator.Positions.kPlaceL2; 
-            target_arm_pos_ = Arm.Positions.kPlaceL2;  
-        } else if(coralLevel == 3){
-            target_elev_pos_ = Elevator.Positions.kPlaceL3; 
-            target_arm_pos_ = Arm.Positions.kPlaceL3;  
-        } else if(coralLevel == 4){
-            target_elev_pos_ = Elevator.Positions.kPlaceL4;
-            target_arm_pos_ = Arm.Positions.kPlaceL4;   
-        } 
+        switch(level) {
+            case L1:
+                target_elev_pos_ = Elevator.Positions.kPlaceL1;
+                target_arm_pos_ = Arm.Positions.kPlaceL1;  
+                break ;
+
+            case L2:
+                target_elev_pos_ = Elevator.Positions.kPlaceL2; 
+                target_arm_pos_ = Arm.Positions.kPlaceL2;  
+                break ;
+            
+            case L3:
+                target_elev_pos_ = Elevator.Positions.kPlaceL3; 
+                target_arm_pos_ = Arm.Positions.kPlaceL3;  
+                break ;
+
+            case L4:
+                target_elev_pos_ = Elevator.Positions.kPlaceL4;
+                target_arm_pos_ = Arm.Positions.kPlaceL4;
+                break ;
+
+            default:
+                // Just to keep the intellisense happy
+                break ;
+        }
 
         ReefFace face = reefFace.get();
-        Pose2d scoringPose = coralSide == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();
+        Pose2d scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();
 
         sequence_.addCommands(
             DriveCommands.simplePathCommand(scoringPose),
