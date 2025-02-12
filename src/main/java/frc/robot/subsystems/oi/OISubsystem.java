@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.hid.XeroGamepad;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -88,10 +89,17 @@ public class OISubsystem extends SubsystemBase {
     private Trigger l4_ ;
     private Trigger coral_left_right_ ;
 
+    private boolean flashing_ ;
+    private XeroTimer flashing_timer_ ;
+
     public OISubsystem(OIIO ios, XeroGamepad ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
+        rumbling_ = false ;
+
+        flashing_timer_ = new XeroTimer(Seconds.of(1.0)) ;
+        flashing_ = false ;
 
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
@@ -187,6 +195,12 @@ public class OISubsystem extends SubsystemBase {
         gamepad_.setRumble(RumbleType.kBothRumble, 1.0);
     }
 
+    public void flashDisplay() {
+        ios_.flashLEDs();
+        flashing_ = true ;
+        flashing_timer_.start() ;
+    }
+
     public void setLEDState(OILed led, LEDState st) {
         ios_.setLED(led.value, st) ;
     }    
@@ -227,6 +241,11 @@ public class OISubsystem extends SubsystemBase {
     public void periodic() {
         ios_.updateInputs(inputs_) ;
         Logger.processInputs("OI", inputs_) ;
+
+        if (flashing_ && flashing_timer_.isExpired()) {
+            ios_.restoreLEDState() ;
+            flashing_ = false ;
+        }
 
         if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);

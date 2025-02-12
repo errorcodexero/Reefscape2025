@@ -119,7 +119,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "collect-place-coral" ;
+            String str = "invalid-place" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        

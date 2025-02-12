@@ -233,6 +233,37 @@ public class BrainSubsystem extends SubsystemBase {
         }
     }
 
+    private boolean isCurrentActionLegal() {
+        boolean ret = true ;
+
+        switch(current_action_) {
+            case CollectCoral:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            case PlaceCoral:
+                ret = (gp_ == GamePiece.CORAL) ;
+                break ;
+
+            case ScoreAlgae:
+                ret = (gp_ == GamePiece.ALGAE_HIGH || gp_ == GamePiece.ALGAE_LOW) ;
+                break ;
+
+            case CollectAlgaeReef:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            case CollectAlgaeGround:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            default:
+                break ;
+        }
+
+        return ret;
+    }
+
     private String startNewAction() {
         String status ;
 
@@ -243,23 +274,33 @@ public class BrainSubsystem extends SubsystemBase {
             current_robot_action_command_index_ = 0 ;
             current_action_ = next_action_ ;
             next_action_ = null ;
-            oi_.setRobotActionLEDState(current_action_, LEDState.Fast) ;
-            current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
 
-            if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
-                status = current_action_.toString() + ":no command" ;
-                current_action_ = null ;
-                current_cmd_ = null ;
+            if (isCurrentActionLegal()) {
+                oi_.setRobotActionLEDState(current_action_, LEDState.Fast) ;
+                current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
+
+                if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
+                    status = current_action_.toString() + ":no command" ;
+                    current_action_ = null ;
+                    current_cmd_ = null ;
+                }
+                else {
+                    current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
+                    status = current_action_.toString() + ":" + current_cmd_.getName() ;
+                    current_cmd_.schedule() ;
+                }
             }
             else {
-                current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
-                status = current_action_.toString() + ":" + current_cmd_.getName() ;
-                current_cmd_.schedule() ;
+                current_action_ = null ;
+                next_action_ = null ;
+                status = "illegal action" ;
+                oi_.flashDisplay();
             }
         }
         else {
             status = "idle" ;
         }
+
         return status ;
     }
 

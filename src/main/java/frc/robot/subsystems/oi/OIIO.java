@@ -30,4 +30,10 @@ public interface OIIO {
 
     public default void setLED(int index, LEDState on) {
     }    
+
+    public default void flashLEDs() {
+    }
+
+    public default void restoreLEDState() {
+    }
 }
