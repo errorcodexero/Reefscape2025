@@ -46,6 +46,7 @@ public interface CameraIO {
         public boolean simpleValid = false;
 
         public IMUMode imuMode = IMUMode.NONE;
+        public double imuRobotYaw = 0.0;
         
         public Translation2d[] rawCorners = new Translation2d[] {};
 
