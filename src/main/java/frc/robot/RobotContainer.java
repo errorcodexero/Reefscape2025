@@ -67,7 +67,6 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -128,7 +127,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {
-
         /**
          * Subsystem setup
          */
@@ -171,19 +169,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
-                    try {
-                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                    } catch (Exception e) {
-                    }
+                //     try {
+                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                //     }
+                //     catch(Exception ex) {
+                //         subsystemCreateException(ex) ;
+                //     }
 
+                //     try {
+                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                //     } 
+                //     catch (Exception ex) {
+                //         subsystemCreateException(ex);
+                //     }
                     break;
 
                 case PRACTICE:
@@ -202,13 +212,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
                     }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                //     try {
+                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                //     }
+                //     catch(Exception ex) {
+                //         subsystemCreateException(ex) ;
+                //     }
+
+                //     try {
+                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                //     } 
+                //     catch (Exception ex) {
+                //         subsystemCreateException(ex);
+                //     }
 
                     break;
 
@@ -246,18 +274,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-
-                        // This should never happen in a simulation. If it does, something is wrong in
-                        // the codebase.
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
-                    // Other subsystems should be added here once we have simulation support for
-                    // them.
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                    try {
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                    } 
+                    catch (Exception ex) {
+                        subsystemCreateException(ex);
+                    }
 
                     break;
             }
@@ -397,6 +438,15 @@ public class RobotContainer {
         tuningChooser_.addOption("Drive SysId (Dynamic Reverse)",
                 drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    }
+
+    private void subsystemCreateException(Exception ex) {
+        System.out.println("Error creating subsystem: " + ex.getMessage());
+        ex.printStackTrace();
+
+        if (Constants.propogateExceptionOnSubsystemCreateFail) {
+            throw new RuntimeException("Error creating subsystem", ex);
+        }
     }
 
     /**

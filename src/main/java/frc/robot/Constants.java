@@ -31,12 +31,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 */
 public final class Constants {
 
+    public static final boolean propogateExceptionOnSubsystemCreateFail = true ;
+
     /**
      * CONFIGURATION
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.SIMBOT;
 
     public static class DriveConstants {
         

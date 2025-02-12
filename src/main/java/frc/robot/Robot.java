@@ -39,13 +39,13 @@ import frc.simulator.engine.SimulationEngine;
 */
 public class Robot extends LoggedRobot {
     
-    private static boolean useXeroSimulator = false;
+    private static boolean useXeroSimulator = true;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
     
-    public Robot() {
+    public Robot() throws RuntimeException {
         // Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);

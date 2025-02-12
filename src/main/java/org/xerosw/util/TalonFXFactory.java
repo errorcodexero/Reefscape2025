@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * This is a class that creates TalonFX motors in different modes, with error checking for configuration calls.
@@ -19,6 +20,7 @@ import edu.wpi.first.units.measure.Time;
 public class TalonFXFactory {
 
     private static final int kApplyTries = 5;
+    private static int numMotorsCreated = 0 ;
 
     /**
      * Creates a new TalonFX motor controller in brake mode.
@@ -31,8 +33,19 @@ public class TalonFXFactory {
      * @throws Exception Throws an exception if the motor failed to be configured more than a few times.
      */
     public static TalonFX createTalonFX(int id, String bus, boolean invert, Current currentLimit, Time lowerTime) throws Exception {
+
+        if (RobotBase.isSimulation()) {
+            numMotorsCreated++;
+            String simBrokenMotor = System.getenv("XERO_SIM_BROKEN_MOTOR");
+            if (simBrokenMotor != null) {
+                int brokenMotor = Integer.parseInt(simBrokenMotor);
+                if (brokenMotor == numMotorsCreated) {
+                    throw new Exception("Simulated motor is broken");
+                }
+            }
+        }
+
         TalonFX fx = new TalonFX(id, (bus == null) ? "" : bus);
-        
         TalonFXConfiguration config = new TalonFXConfiguration();       
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
