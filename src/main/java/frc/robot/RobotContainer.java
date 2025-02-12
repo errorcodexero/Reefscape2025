@@ -479,7 +479,7 @@ public class RobotContainer {
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
 
         oi_.abort().onTrue(new AbortCmd(brain_)) ;
-        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
+        oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;

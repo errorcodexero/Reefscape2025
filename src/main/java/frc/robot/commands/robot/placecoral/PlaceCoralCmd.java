@@ -25,7 +25,7 @@ import frc.robot.util.ReefUtil.ReefFace;
 
 public class PlaceCoralCmd extends Command {
 
-    private final XeroSequence sequence_;
+    private XeroSequence sequence_;
 
     private final Drive drive_;
     private final ManipulatorSubsystem manipulator_; 
@@ -41,8 +41,6 @@ public class PlaceCoralCmd extends Command {
 
     public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain, boolean driveto, ReefLevel h, CoralSide s) {
         addRequirements(drive, manipulator, grabber, brain);
-
-        sequence_ = new XeroSequence();
 
         drive_ = drive;
         manipulator_ = manipulator; 
@@ -63,6 +61,8 @@ public class PlaceCoralCmd extends Command {
     public void initialize() {
         ReefLevel level ;
         CoralSide side ;
+
+        sequence_ = new XeroSequence();
 
         if (level_ == ReefLevel.AskBrain) {
             level = brain_.coralLevel() ;
