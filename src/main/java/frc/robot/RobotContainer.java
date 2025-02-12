@@ -436,12 +436,12 @@ public class RobotContainer {
 
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
-                DriveCommands.joystickDrive(
-                        drivebase_,
-                        () -> gamepad_.getLeftY(),
-                        () -> gamepad_.getLeftX(),
-                        () -> gamepad_.getRightY()));
-
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> gamepad_.getLeftY(),
+                () -> gamepad_.getLeftX(),
+                () -> gamepad_.getRightX()));
+        
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
                 DriveCommands.joystickDrive(
