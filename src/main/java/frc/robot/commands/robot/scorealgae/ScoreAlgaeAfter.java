@@ -2,6 +2,7 @@ package frc.robot.commands.robot.scorealgae;
 
 import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -23,7 +24,9 @@ public class ScoreAlgaeAfter extends Command {
         sequence_ = new XeroSequence();
         sequence_.addCommands(
             new DepositAlgaeCmd(g_),
-            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+            new WaitCommand(2.0),
+            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kReefCollect, ManipulatorConstants.Arm.Positions.kScoreAlgaeReef),
+            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kReefCollect, ManipulatorConstants.Arm.Positions.kRaiseAngle),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         sequence_.schedule();
