@@ -1,20 +1,19 @@
 package frc.robot.subsystems.brain;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ReefLevel;
 
-public class SetLevelCmd extends Command {
+public class SetHoldingCmd extends Command {
     private BrainSubsystem brain_ ;
-    private ReefLevel level_ ;
+    private GamePiece gp_ ;
 
-    public SetLevelCmd(BrainSubsystem brain, ReefLevel level) {
-        level_ = level ;
+    public SetHoldingCmd(BrainSubsystem brain, GamePiece gp) {
         brain_ = brain ;
+        gp_ = gp ;
     }
 
     @Override
     public void initialize() {
-        brain_.setCoralLevel(level_) ;
+        brain_.setGp(gp_) ;
     }
 
     @Override

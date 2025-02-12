@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
@@ -407,15 +407,15 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral",
-                AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, true));
+                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Opposing Side Coral",
-                AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, false));
+                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
         autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)",
-                AutoCommands.centerCoralAuto(drivebase_, manipulator_, grabber_, true));
+                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
-                AutoCommands.centerCoralAuto(drivebase_, manipulator_, grabber_, false));
-        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_, grabber_));
+                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, false));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
         tuningChooser_.addOption(
@@ -468,10 +468,10 @@ public class RobotContainer {
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
-        oi_.l1().onTrue(new SetLevelCmd(brain_, Height.L1).ignoringDisable(true));
-        oi_.l2().onTrue(new SetLevelCmd(brain_, Height.L2).ignoringDisable(true));
-        oi_.l3().onTrue(new SetLevelCmd(brain_, Height.L3).ignoringDisable(true));
-        oi_.l4().onTrue(new SetLevelCmd(brain_, Height.L4).ignoringDisable(true));
+        oi_.l1().onTrue(new SetLevelCmd(brain_, ReefLevel.L1).ignoringDisable(true));
+        oi_.l2().onTrue(new SetLevelCmd(brain_, ReefLevel.L2).ignoringDisable(true));
+        oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
+        oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));

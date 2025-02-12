@@ -5,8 +5,10 @@ import org.xerosw.util.XeroSequence;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.GamePiece;
+import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -18,9 +20,9 @@ public class CollectAlgaeReefCmd extends Command {
     private BrainSubsystem brain_ ;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
-    private Height height_ ;
+    private ReefLevel height_ ;
 
-    public CollectAlgaeReefCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, Height height) {
+    public CollectAlgaeReefCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height) {
         brain_ = brain ;
         manipulator_ = manipulator;
         grabber_ = grabber;
@@ -37,14 +39,14 @@ public class CollectAlgaeReefCmd extends Command {
         Angle angle ;
         Distance height ;
         
-        if (height_ == Height.AskBrain) {
+        if (height_ == ReefLevel.AskBrain) {
             height_ = brain_.algaeLevel() ;
         }
 
-        if (height_ == Height.L2) {
+        if (height_ == ReefLevel.L2) {
             angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL2 ;
             height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL2 ;
-        } else if (height_ == Height.L3) {
+        } else if (height_ == ReefLevel.L3) {
             angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL3 ;
             height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3 ;
         }
@@ -60,6 +62,7 @@ public class CollectAlgaeReefCmd extends Command {
         sequence_.addCommands(
             new GoToCmd(manipulator_, height, angle),
             new CollectAlgaeCmd(grabber_),
+            new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
 
         sequence_.schedule();

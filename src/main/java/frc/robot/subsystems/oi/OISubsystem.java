@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
@@ -247,7 +247,7 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
-    public void setLevelLED(Height level) {
+    public void setLevelLED(ReefLevel level) {
         setLEDState(OILed.CoralL1, LEDState.Off) ;
         setLEDState(OILed.CoralL2, LEDState.Off) ;
         setLEDState(OILed.CoralL3, LEDState.Off) ;

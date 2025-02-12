@@ -22,7 +22,7 @@ import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.robot.CollectCoralCmd ;
 
 public class BrainSubsystem extends SubsystemBase {
@@ -46,7 +46,7 @@ public class BrainSubsystem extends SubsystemBase {
     private OISubsystem oi_ ;
 
     // The level of coral to place
-    private Height coral_level_ ;
+    private ReefLevel coral_level_ ;
 
     // The side of the coral to place
     private CoralSide coral_side_ ;
@@ -130,20 +130,20 @@ public class BrainSubsystem extends SubsystemBase {
         }
     }
 
-    public void setCoralLevel(Height height) {
+    public void setCoralLevel(ReefLevel height) {
         coral_level_ = height ;
         oi_.setLevelLED(height);
     }
 
-    public Height coralLevel() {
+    public ReefLevel coralLevel() {
         return coral_level_ ;
     }
 
-    public Height algaeLevel() {
-        if (coral_level_ == Height.L1 || coral_level_ == Height.L2)
-            return Height.L2 ;
+    public ReefLevel algaeLevel() {
+        if (coral_level_ == ReefLevel.L1 || coral_level_ == ReefLevel.L2)
+            return ReefLevel.L2 ;
 
-        return Height.L3 ;
+        return ReefLevel.L3 ;
     }
 
     public void setCoralSide(CoralSide s) {
@@ -270,7 +270,7 @@ public class BrainSubsystem extends SubsystemBase {
         else {
             coral_side_ = CoralSide.Left ;
         }
-        coral_level_ = Height.L4 ;
+        coral_level_ = ReefLevel.L4 ;
 
         oi_.setLevelLED(coral_level_);
         oi_.setSideLED(coral_side_);
@@ -315,7 +315,7 @@ public class BrainSubsystem extends SubsystemBase {
 
     static final boolean PlaceCoralTwoStep = true ;
 
-    private RobotActionCommandList getRobotActionCommand(RobotAction action, Height level, CoralSide side) {
+    private RobotActionCommandList getRobotActionCommand(RobotAction action, ReefLevel level, CoralSide side) {
         List<Command> list = new ArrayList<Command>() ;
         List<BooleanSupplier> conds = new ArrayList<BooleanSupplier>() ;
 
@@ -329,7 +329,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(db_, m_, g_, this, true, Height.AskBrain, CoralSide.AskBrain)) ;
+                list.add(new PlaceCoralCmd(db_, m_, g_, this, true, ReefLevel.AskBrain, CoralSide.AskBrain)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
@@ -342,7 +342,7 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case CollectAlgaeReef:
-                list.add(new CollectAlgaeReefCmd(this, m_, g_, Height.AskBrain)) ;
+                list.add(new CollectAlgaeReefCmd(this, m_, g_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 break ;
 

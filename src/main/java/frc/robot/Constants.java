@@ -125,7 +125,7 @@ public final class Constants {
         SIMBOT
     }
 
-    public enum Height {
+    public enum ReefLevel {
         L1(0),
         L2(1),
         L3(2),
@@ -134,7 +134,7 @@ public final class Constants {
 
         private final int index;
 
-        private Height(int index) {
+        private ReefLevel(int index) {
             this.index = index ;
         }
 

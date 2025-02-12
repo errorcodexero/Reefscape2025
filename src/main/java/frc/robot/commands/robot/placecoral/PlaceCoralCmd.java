@@ -8,7 +8,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -33,12 +33,13 @@ public class PlaceCoralCmd extends Command {
     private final BrainSubsystem brain_; 
 
     private final CoralSide side_ ;
-    private final Height level_ ;
+    private final ReefLevel level_ ;
 
     private Distance target_elev_pos_; 
     private Angle target_arm_pos_; 
+    private boolean driveto_ ;
 
-    public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain, boolean driveto, Height h, CoralSide s) {
+    public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain, boolean driveto, ReefLevel h, CoralSide s) {
         addRequirements(drive, manipulator, grabber, brain);
 
         sequence_ = new XeroSequence();
@@ -53,15 +54,17 @@ public class PlaceCoralCmd extends Command {
 
         target_elev_pos_ = Elevator.Positions.kStow; 
         target_arm_pos_ = Arm.Positions.kStow; 
+
+        driveto_ = driveto ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        Height level ;
+        ReefLevel level ;
         CoralSide side ;
 
-        if (level_ == Height.AskBrain) {
+        if (level_ == ReefLevel.AskBrain) {
             level = brain_.coralLevel() ;
         }
         else {
@@ -82,7 +85,7 @@ public class PlaceCoralCmd extends Command {
         if (reefFace.isEmpty())
             return ;
 
-        if (level == Height.AskBrain || side == CoralSide.AskBrain) {
+        if (level == ReefLevel.AskBrain || side == CoralSide.AskBrain) {
             //
             // Should never happen, but if it does, we just return and do nothing
             //
@@ -118,8 +121,12 @@ public class PlaceCoralCmd extends Command {
         ReefFace face = reefFace.get();
         Pose2d scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();
 
+        if (driveto_) {
+            sequence_.addCommands(
+                DriveCommands.simplePathCommand(scoringPose)) ;
+        }
+
         sequence_.addCommands(
-            DriveCommands.simplePathCommand(scoringPose),
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
             new DepositCoralCmd(grabber_),
             new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
