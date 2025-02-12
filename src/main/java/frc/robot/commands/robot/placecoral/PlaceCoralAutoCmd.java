@@ -60,12 +60,9 @@ public class PlaceCoralAutoCmd extends Command {
     }
 
     sequence_.addCommands(
-      new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kRaiseAngle),
-      new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle),
       new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
       new DepositCoralCmd(grabber_),
       new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
-      new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
       new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
     sequence_.schedule();

@@ -16,9 +16,11 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.util.ReefUtil;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralAutoCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
 import frc.robot.Constants.Height;
@@ -327,13 +329,12 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralAutoCmd(m_, g_, Height.L3)) ;
-                conds.add(null) ;
-                // conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
+                list.add(new PlaceCoralCmd(db_, m_, g_, this)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case ScoreAlgae:
-                list.add(new ScoreAlgaeBefore(m_, g_)) ;
+                list.add(new ScoreAlgaeBefore(m_)) ;
                 conds.add(null) ;
 
                 list.add(new ScoreAlgaeAfter(m_, g_)) ;
@@ -343,8 +344,6 @@ public class BrainSubsystem extends SubsystemBase {
             case CollectAlgaeReef:
                 list.add(new CollectAlgaeReefCmd(m_, g_)) ;
                 conds.add(null) ;
-
-
                 break ;
 
             case CollectAlgaeGround:

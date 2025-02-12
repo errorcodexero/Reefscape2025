@@ -1,113 +1,99 @@
 package frc.robot.subsystems.manipulator;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class GoToCmd extends Command {
-    private Distance target_height_; 
-    private Angle target_angle_;
-    private ManipulatorSubsystem sub_;
-    private State state_; 
 
     private enum State {
-      GoToFinalPos, 
-      WaitForArm,
-      WaitForElevator, 
-      Done
+        MoveArmToRaise,
+        MoveElevator,
+        MoveArm,
+        Direct,
+        Done
     }
 
-  public GoToCmd(ManipulatorSubsystem sub, Distance targetElevPos, Angle targetArmPos) {
-    addRequirements(sub); 
-      
-    sub_ = sub;
-    target_height_ = targetElevPos; 
-    target_angle_ = targetArmPos; 
-  }
-    
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    Distance current_height = sub_.getElevatorPosition();
-    Angle current_angle = sub_.getArmPosition();
+    private ManipulatorSubsystem m_ ;
+    private Distance targetElevPos_ ;
+    private Angle targetArmPos_ ;
+    private State state_ ;
+    private boolean direct_ ;
 
-    if((current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) && (target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight))) {
-      sub_.setElevatorPosition(target_height_);
-      sub_.setArmPosition(target_angle_);
-
-      state_ = State.GoToFinalPos;  
-
-    } else if(current_height.gt(ManipulatorConstants.Keepout.kKeepoutHeight) && target_height_.lte(ManipulatorConstants.Keepout.kKeepoutHeight)) {
-      sub_.setElevatorPosition(ManipulatorConstants.Keepout.kKeepoutHeight);
-      sub_.setArmPosition(target_angle_);
-
-      state_ = State.WaitForArm; 
-
-    } else if(current_height.lte(ManipulatorConstants.Keepout.kKeepoutHeight) && !sub_.doesCrossKZ(current_angle, target_angle_)) {
-      sub_.setElevatorPosition(target_height_);
-      sub_.setArmPosition(target_angle_);
-
-      state_ = State.GoToFinalPos; 
-
-    } else if(current_height.lte(ManipulatorConstants.Keepout.kKeepoutHeight) && sub_.doesCrossKZ(current_angle, target_angle_)) {
-      sub_.setElevatorPosition(ManipulatorConstants.Keepout.kKeepoutHeight); 
-      
-      state_ = State.WaitForElevator; 
-    }
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-
-    switch(state_) {
-      case GoToFinalPos:
-        if(sub_.isElevAtTarget() && sub_.isArmAtTarget()) {
-          state_ = State.Done; 
-        }
-        break;
-
-      case WaitForArm:
-        if(sub_.isArmAtTarget()) {
-          sub_.setElevatorPosition(target_height_);
-        }
-        
-        if(sub_.isElevAtTarget()) {
-          state_ = State.Done; 
-        }
-        break;
-
-      case WaitForElevator:
-        if(sub_.isElevAtTarget()) {
-          if(target_height_.gt(ManipulatorConstants.Keepout.kKeepoutHeight)) {
-            sub_.setElevatorPosition(target_height_);
-            sub_.setArmPosition(target_angle_);
-
-            state_ = State.GoToFinalPos; 
-          } else {
-            sub_.setArmPosition(target_angle_); 
-
-            state_ = State.WaitForArm; 
-          }
-        }
-        break;
-
-      case Done: 
-        break; 
+    public GoToCmd(ManipulatorSubsystem m, Distance targetElevPos, Angle targetArmPos, boolean direct) {
+        m_ = m ;
+        targetElevPos_ = targetElevPos ;
+        targetArmPos_ = targetArmPos ;
+        direct_ = direct ;
     }
 
-    Logger.recordOutput("Manipulator/gotostate", state_.toString());    
-  }
+    public GoToCmd(ManipulatorSubsystem m, Distance targetElevPos, Angle targetArmPos) {
+        this(m, targetElevPos, targetArmPos, false) ;
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    @Override
+    public void initialize() {
+        if (direct_) {
+            m_.setElevatorPosition(targetElevPos_);
+            m_.setArmPosition(targetArmPos_);
+            state_ = State.Direct ;
+        }
+        else {
+            if (m_.getArmPosition().isNear(ManipulatorConstants.Arm.Positions.kRaiseAngle, ManipulatorConstants.Arm.kPosTolerance)) {
+                m_.setElevatorPosition(targetElevPos_);
+                state_ = State.MoveElevator ;
+            }
+            else {
+                m_.setArmPosition(ManipulatorConstants.Arm.Positions.kRaiseAngle);
+                state_ = State.MoveArmToRaise ;
+            }
+        }
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return state_ == State.Done; 
-  }
+    @Override
+    public void execute() {
+        switch(state_) {
+            case MoveArmToRaise:
+                if (m_.isArmAtTarget()) {
+                    m_.setElevatorPosition(targetElevPos_);
+                    state_ = State.MoveElevator ;
+                }
+                break ;
+
+            case MoveElevator:
+                if (m_.isElevAtTarget()) {
+                    m_.setArmPosition(targetArmPos_);
+                    state_ = State.MoveArm ;
+                }
+                break ;
+
+            case MoveArm:
+                if (m_.isArmAtTarget()) {
+                    state_ = State.Done ;
+                }
+                break ;
+
+            case Direct:
+                if (m_.isArmAtTarget() && m_.isElevAtTarget()) {
+                    state_ = State.Done ;
+                }
+                break ;
+
+            case Done:
+                break ;
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return state_ == State.Done ;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            m_.setArmPosition(m_.getArmPosition()) ;
+            m_.setElevatorPosition(m_.getElevatorPosition()) ;
+        }
+    }
 }

@@ -28,9 +28,7 @@ public class EjectCmd extends Command {
     public void initialize() {
         sequence_ = new XeroSequence();
         sequence_.addCommands(
-//            new DepositAlgaeCmd(grabber_),
-            new GoToCmd(manipulator_, manipulator_.getElevatorPosition(), ManipulatorConstants.Arm.Positions.kRaiseAngle),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+            new DepositAlgaeCmd(grabber_),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
         sequence_.schedule();

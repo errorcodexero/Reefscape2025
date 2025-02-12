@@ -43,6 +43,8 @@ public class DigitalIOModel extends SimulationModel {
                 }
             }
         }
+        
+        setCreated();
         return true ;
     }
 

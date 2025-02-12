@@ -50,7 +50,6 @@ public class AutoCommands {
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Side Coral 7", mirroredX),
         new PlaceCoralAutoCmd(manipSub, grabberSub, Height.L4)
-
     );
   }
 

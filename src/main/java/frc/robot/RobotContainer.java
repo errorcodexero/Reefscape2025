@@ -80,6 +80,8 @@ import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
+import frc.simulator.utils.MessageLogger;
+import frc.simulator.utils.MessageType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -441,8 +443,11 @@ public class RobotContainer {
     }
 
     private void subsystemCreateException(Exception ex) {
-        System.out.println("Error creating subsystem: " + ex.getMessage());
-        ex.printStackTrace();
+        MessageLogger logger = MessageLogger.getTheMessageLogger() ;
+        logger.startMessage(MessageType.Error) ;
+        logger.add("Error creating subsystem", ex.getMessage());
+        logger.endMessage() ;
+        logger.logStackTrace(ex.getStackTrace()) ;
 
         if (Constants.propogateExceptionOnSubsystemCreateFail) {
             throw new RuntimeException("Error creating subsystem", ex);

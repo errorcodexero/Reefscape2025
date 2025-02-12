@@ -25,7 +25,7 @@ public class WaitForCoralCmd extends Command {
     public WaitForCoralCmd(GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
-        timer_ = new XeroTimer(Milliseconds.of(0)) ;
+        timer_ = new XeroTimer(Milliseconds.of(200)) ;
     }
 
     @Override

@@ -25,9 +25,6 @@ public class ScoreAlgaeAfter extends Command {
         sequence_.addCommands(
             new DepositAlgaeCmd(g_),
             new WaitCommand(2.0),
-            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kReefCollect, ManipulatorConstants.Arm.Positions.kScoreAlgaeReef),
-            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kReefCollect, ManipulatorConstants.Arm.Positions.kRaiseAngle),
-            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         sequence_.schedule();
     }

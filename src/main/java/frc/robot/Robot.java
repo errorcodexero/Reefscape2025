@@ -25,11 +25,17 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.CompTunerConstants;
 import frc.simulator.engine.SimulationEngine;
+import frc.simulator.utils.MessageDestination;
+import frc.simulator.utils.MessageDestinationThumbFile;
+import frc.simulator.utils.MessageLogger;
+import frc.simulator.utils.MessageType;
+import frc.simulator.utils.RobotTimeSource;
 
 /**
 * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -44,8 +50,12 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
-    
+
     public Robot() throws RuntimeException {
+        enableMessageLogger();
+
+        MessageLogger.getTheMessageLogger().startMessage(MessageType.Info).add("Robot code starting").endMessage() ;
+
         // Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -232,4 +242,21 @@ public class Robot extends LoggedRobot {
         }
     }
     
+    private void enableMessageLogger() {
+        MessageDestination dest ;
+
+        MessageLogger logger = MessageLogger.getTheMessageLogger() ;
+        logger.setTimeSource(new RobotTimeSource());
+
+        String logpath = null ;
+
+        if (Robot.isSimulation()) {
+            logpath = "logs" ;
+        } else {
+            logpath = "/u" ;
+        }   
+
+        dest = new MessageDestinationThumbFile(logpath, 250, RobotBase.isSimulation());
+        logger.addDestination(dest);
+    }
 }
