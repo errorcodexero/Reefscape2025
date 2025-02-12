@@ -5,5 +5,5 @@ public enum RobotAction {
     CollectCoral,               // One part
     CollectAlgaeGround,         // One part
     CollectAlgaeReef,         // Two parts
-    PlaceAlgae,                 // Two parts
+    ScoreAlgae,                 // Two parts
 }

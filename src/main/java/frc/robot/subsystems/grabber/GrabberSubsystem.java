@@ -12,20 +12,21 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class GrabberSubsystem extends SubsystemBase {
-    
+
     private final GrabberIO io_;
     private final GrabberIOInputsAutoLogged inputs_;
     private AngularVelocity target_velocity_;
-    
+
     private boolean has_coral_;
     private boolean has_algae_;
 
     private final Alert disconnectedAlert = new Alert("Grabber motor was not initialized correctly!", AlertType.kError);
-    
+
     public GrabberSubsystem(GrabberIO io) {
         io_ = io;
         inputs_ = new GrabberIOInputsAutoLogged();
@@ -37,11 +38,11 @@ public class GrabberSubsystem extends SubsystemBase {
         Logger.processInputs("Grabber", inputs_);
 
         disconnectedAlert.set(!inputs_.grabberReady);
-    
+
         Logger.recordOutput("Grabber/HasCoral", has_coral_);
         Logger.recordOutput("Grabber/HasAlgae", has_algae_);
         if (target_velocity_ != null) {
-            Logger.recordOutput("Grabber/target", target_velocity_) ;
+            Logger.recordOutput("Grabber/target", target_velocity_);
         }
     }
 
@@ -50,18 +51,44 @@ public class GrabberSubsystem extends SubsystemBase {
     //////////////////
 
     public void setGrabberTargetVelocity(AngularVelocity vel) {
-        target_velocity_ = vel ;
+        target_velocity_ = vel;
         io_.setGrabberTargetVelocity(vel);
     }
 
     public void stopGrabber() {
-        Angle pos = inputs_.grabberPosition ;
-        io_.setGrabberTargetPosition(pos) ;
-        io_.setGrabberMotorVoltage(0.0) ;
+        Angle pos = inputs_.grabberPosition;
+        io_.setGrabberTargetPosition(pos);
+        io_.setGrabberMotorVoltage(0.0);
     }
 
     public void setGrabberMotorVoltage(double vol) {
         io_.setGrabberMotorVoltage(vol);
+    }
+
+    ///////////////////
+    // Gamepiece States
+    ///////////////////
+
+    public boolean hasCoral() {
+        return has_coral_;
+    }
+
+    public void setHasCoral(boolean hasCoral) {
+        has_coral_ = hasCoral;
+    }
+
+    public Command setHasCoralCmd(boolean hasCoral) {
+        return Commands.runOnce(() -> {
+            has_coral_ = hasCoral;
+        }, this);
+    }
+
+    public boolean hasAlgae() {
+        return has_algae_;
+    }
+
+    public void setHasAlgae(boolean hasAlgae) {
+        has_algae_ = hasAlgae;
     }
 
     ///////////////////////////
@@ -91,25 +118,25 @@ public class GrabberSubsystem extends SubsystemBase {
     ///////////////////////////
     // SysId Routines
     ///////////////////////////
-    /// 
+    ///
     public Command grabberSysIdQuasistatic(SysIdRoutine.Direction dir) {
-        return grabberIdRoutine().quasistatic(dir) ;
+        return grabberIdRoutine().quasistatic(dir);
     }
 
     public Command grabberSysIdDynamic(SysIdRoutine.Direction dir) {
-        return grabberIdRoutine().dynamic(dir) ;
-    }    
+        return grabberIdRoutine().dynamic(dir);
+    }
 
     private SysIdRoutine grabberIdRoutine() {
-        Voltage step = Volts.of(7) ;
-        Time to = Seconds.of(10.0) ;
-        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
+        Voltage step = Volts.of(7);
+        Time to = Seconds.of(10.0);
+        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null);
 
         SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
-                                        (volts) -> io_.setGrabberMotorVoltage(volts.magnitude()),
-                                        (log) -> io_.logGrabberMotor(log),
-                                        this) ;
+                (volts) -> io_.setGrabberMotorVoltage(volts.magnitude()),
+                (log) -> io_.logGrabberMotor(log),
+                this);
 
-        return  new SysIdRoutine(cfg, mfg) ;
-    }  
+        return new SysIdRoutine(cfg, mfg);
+    }
 }
