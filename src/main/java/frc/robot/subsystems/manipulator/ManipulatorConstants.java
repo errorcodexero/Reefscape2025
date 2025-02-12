@@ -27,7 +27,7 @@ public class ManipulatorConstants {
 
         public static final Current kCurrentLimit = Amps.of(40); 
 
-        public static final Angle kPosTolerance = Degrees.of(3);
+        public static final Angle kPosTolerance = Degrees.of(1);
         public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(2);
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
@@ -76,10 +76,14 @@ public class ManipulatorConstants {
         public class Positions {
             public static final Angle kStow = Degrees.of(0);
             public static final Angle kPlaceL1 = Degrees.of(0); 
-            public static final Angle kPlaceL2 = Degrees.of(0); 
-            public static final Angle kPlaceL3 = Degrees.of(0); 
-            public static final Angle kPlaceL4 = Degrees.of(0);
+            public static final Angle kPlaceL2 = Degrees.of(35); 
+            public static final Angle kPlaceL3 = Degrees.of(35); 
+            public static final Angle kPlaceL4 = Degrees.of(75);
             public static final Angle kKickbackAngle = Degrees.of(-10); 
+            public static final Angle kCollect = Degrees.of(14.0) ;
+            public static final Angle kReefCollect = Degrees.of(-160.0) ;
+            public static final Angle kScoreAlgaeReef = Degrees.of(-160.0) ;
+            public static final Angle kRaiseAngle = Degrees.of(10.0) ;
         }
     }
 
@@ -99,7 +103,7 @@ public class ManipulatorConstants {
 
         public static final Current kCurrentLimit = Amps.of(40); 
 
-        public static final Distance kPosTolerance = Centimeter.of(1) ;
+        public static final Distance kPosTolerance = Centimeter.of(0.5) ;
         public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
@@ -128,7 +132,6 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            // public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300) ;
             public static final double kJerk = 0.0 ;
@@ -136,10 +139,13 @@ public class ManipulatorConstants {
 
         public class Positions {
             public static final Distance kStow = Meters.of(0);
-            public static final Distance kPlaceL1 = Meters.of(0); 
-            public static final Distance kPlaceL2 = Meters.of(0); 
-            public static final Distance kPlaceL3 = Meters.of(0); 
-            public static final Distance kPlaceL4 = Meters.of(0); 
+            public static final Distance kPlaceL1 = Centimeters.of(0); 
+            public static final Distance kPlaceL2 = Centimeters.of(27); 
+            public static final Distance kPlaceL3 = Centimeters.of(67); 
+            public static final Distance kPlaceL4 = Centimeters.of(130); 
+            public static final Distance kCollect = Centimeters.of(0.0) ;
+            public static final Distance kReefCollect = Centimeters.of(92.0) ;
+            public static final Distance kScoreAlgaeReef = Centimeters.of(52.0) ;
 
         }
     }

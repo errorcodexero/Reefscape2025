@@ -2,7 +2,6 @@ package frc.robot.commands.robot.placecoral;
 
 import org.xerosw.util.XeroSequence;
 
-import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,8 +26,6 @@ public class PlaceCoralAutoCmd extends Command {
   private Height coral_level_;
 
   public PlaceCoralAutoCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber, Height coralLevel) {
-    addRequirements(manipulator, grabber);
-
     sequence_ = new XeroSequence();
 
     manipulator_ = manipulator;
@@ -62,13 +59,15 @@ public class PlaceCoralAutoCmd extends Command {
         throw new AssertionError();
     }
 
-    GoToCmd goToPlaceElevator = new GoToCmd(manipulator_, target_elev_pos_, null);
-    GoToCmd goToPlaceArm = new GoToCmd(manipulator_, null, target_arm_pos_);
-    DepositCoralCmd depositCoral = new DepositCoralCmd(grabber_);
-    GoToCmd moveArmBack = new GoToCmd(manipulator_, null, ManipulatorConstants.Arm.Positions.kKickbackAngle);
-    GoToCmd stowElevator = new GoToCmd(manipulator_, Meters.of(0), null);
+    sequence_.addCommands(
+      new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+      new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+      new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+      new DepositCoralCmd(grabber_),
+      new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
+      new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+      new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
-    sequence_.addCommands(goToPlaceElevator, goToPlaceArm, depositCoral, moveArmBack, stowElevator);
     sequence_.schedule();
   }
 

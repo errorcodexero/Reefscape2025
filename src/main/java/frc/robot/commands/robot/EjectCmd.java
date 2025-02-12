@@ -4,17 +4,17 @@ import org.xerosw.util.XeroSequence;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
+import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
-public class CollectCoralCmd extends Command {
+public class EjectCmd extends Command {
     private XeroSequence sequence_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
 
-    public CollectCoralCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
+    public EjectCmd(ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
         manipulator_ = manipulator;
         grabber_ = grabber;
     }
@@ -28,8 +28,10 @@ public class CollectCoralCmd extends Command {
     public void initialize() {
         sequence_ = new XeroSequence();
         sequence_.addCommands(
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect),
-            new WaitForCoralCmd(grabber_)) ;
+//            new DepositAlgaeCmd(grabber_),
+            new GoToCmd(manipulator_, manipulator_.getElevatorPosition(), ManipulatorConstants.Arm.Positions.kRaiseAngle),
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
         sequence_.schedule();
     }

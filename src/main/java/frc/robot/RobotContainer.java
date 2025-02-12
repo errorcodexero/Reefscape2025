@@ -42,6 +42,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.robot.AbortCmd;
+import frc.robot.commands.robot.EjectCmd;
 import frc.robot.generated.AlphaTunerConstants;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.generated.PracticeTunerConstants;
@@ -65,6 +67,7 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -409,16 +412,18 @@ public class RobotContainer {
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
-        oi_.l1().onTrue(new SetLevelCmd(brain_, 1));
-        oi_.l2().onTrue(new SetLevelCmd(brain_, 2));
-        oi_.l3().onTrue(new SetLevelCmd(brain_, 3));
-        oi_.l4().onTrue(new SetLevelCmd(brain_, 4));
+        oi_.l1().onTrue(new SetLevelCmd(brain_, 1).ignoringDisable(true));
+        oi_.l2().onTrue(new SetLevelCmd(brain_, 2).ignoringDisable(true));
+        oi_.l3().onTrue(new SetLevelCmd(brain_, 3).ignoringDisable(true));
+        oi_.l4().onTrue(new SetLevelCmd(brain_, 4).ignoringDisable(true));
 
-        // TODO: make sure left vs right matches the labels on the OI
-        oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Left));
-        oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Right));
+        oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
+        oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
+
+        oi_.abort().onTrue(new AbortCmd(brain_)) ;
+        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
