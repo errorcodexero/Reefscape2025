@@ -1,4 +1,4 @@
-package frc.simulator.utils ;
+package org.xerosw.util ;
 
 import edu.wpi.first.wpilibj.Timer ;
 

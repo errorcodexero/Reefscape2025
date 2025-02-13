@@ -24,6 +24,8 @@ import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.xerosw.hid.XeroGamepad;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -81,8 +83,6 @@ import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

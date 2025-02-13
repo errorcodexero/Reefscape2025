@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 
 public class ManipulatorConstants {
 
@@ -110,6 +111,9 @@ public class ManipulatorConstants {
         public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
+
+        public static final int kHallEffectSensorChannel = 8 ;
+        public static final Voltage kCalibrateVoltage = Volts.of(-0.1) ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around       
         // Used for simulation

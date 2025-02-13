@@ -3,12 +3,13 @@ package frc.simulator.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
+
 import edu.wpi.first.hal.simulation.SimulatorJNI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.Robot;
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
 
 public class SimulationEngine {
     public static final String LoggerName = "simulator" ;

@@ -1,9 +1,9 @@
 package frc.simulator.engine;
 
-import frc.simulator.utils.BadParameterTypeException;
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
-import frc.simulator.utils.SettingsValue;
+import org.xerosw.util.BadParameterTypeException;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
+import org.xerosw.util.SettingsValue;
 
 public class SimulationModelEvent extends SimulationEvent {
     public SimulationModelEvent(double t, String model, String instance, String name, SettingsValue v) {
