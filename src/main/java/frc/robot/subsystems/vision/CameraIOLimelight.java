@@ -1,18 +1,15 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.subsystems.vision.LimelightHelpers.PoseEstimate;
-import frc.robot.subsystems.vision.LimelightHelpers.RawDetection;
 
 public class CameraIOLimelight implements CameraIO {
 
