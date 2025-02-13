@@ -460,10 +460,10 @@ public class Drive extends SubsystemBase {
     /** Returns an array of module translations. */
     public Translation2d[] getModuleTranslations() {
         return new Translation2d[] {
-            new Translation2d(flConfig_.LocationX, CompTunerConstants.FrontLeft.LocationY),
-            new Translation2d(frConfig_.LocationX, CompTunerConstants.FrontRight.LocationY),
-            new Translation2d(blConfig_.LocationX, CompTunerConstants.BackLeft.LocationY),
-            new Translation2d(brConfig_.LocationX, CompTunerConstants.BackRight.LocationY)
+            new Translation2d(flConfig_.LocationX, flConfig_.LocationY),
+            new Translation2d(frConfig_.LocationX, frConfig_.LocationY),
+            new Translation2d(blConfig_.LocationX, blConfig_.LocationY),
+            new Translation2d(brConfig_.LocationX, brConfig_.LocationY)
         };
     }
 }
