@@ -20,6 +20,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -357,9 +359,13 @@ public class RobotContainer {
                 case SIMBOT -> 4;
             };
 
+            CameraIO[] cams = new CameraIO[numCams];
+            Arrays.fill(cams, new CameraIO() {});
+
             vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
-                    new CameraIO[numCams]);
+                drivebase_::addVisionMeasurement,
+                cams
+            );
         }
 
         if (manipulator_ == null) {
