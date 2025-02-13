@@ -3,9 +3,9 @@ package frc.robot.subsystems.funnel;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class WaitForCoralCmd extends Command {
-    private final Funnel funnel_;
+    private final FunnelSubsystem funnel_;
 
-    public WaitForCoralCmd (Funnel funnel) {
+    public WaitForCoralCmd (FunnelSubsystem funnel) {
         addRequirements(funnel);
         funnel_ = funnel;
     }
