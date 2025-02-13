@@ -38,7 +38,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.SIMBOT;
 
     public static class DriveConstants {
         
@@ -144,7 +144,7 @@ public final class Constants {
     }
 
     // This is only a fallback! This will not change the robot type.
-    private static final RobotType defaultRobotType = RobotType.ALPHA;
+    private static final RobotType defaultRobotType = RobotType.COMPETITION;
 
     private static final Alert invalidRobotType = new Alert(
         "Invalid RobotType selected. Defaulting to " + defaultRobotType.toString(),
