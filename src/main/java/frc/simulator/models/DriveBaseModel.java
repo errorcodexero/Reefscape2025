@@ -1,13 +1,14 @@
 package frc.simulator.models;
 
+import org.xerosw.util.SettingsValue;
+import org.xerosw.util.SettingsValue.SettingsType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.engine.SimulationModel;
-import frc.simulator.utils.SettingsValue;
-import frc.simulator.utils.SettingsValue.SettingsType;
 
 public class DriveBaseModel extends SimulationModel {
     private Drive db_ ;

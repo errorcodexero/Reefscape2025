@@ -1,6 +1,6 @@
 package frc.simulator.engine;
 
-import frc.simulator.utils.SettingsValue;
+import org.xerosw.util.SettingsValue;
 
 public interface ISimulatedSubsystem {
     SettingsValue getProperty(String name) ;

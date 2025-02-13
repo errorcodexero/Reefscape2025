@@ -50,7 +50,11 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return inputs_.armPosition;
     }
 
-    public void setArmPosition(Angle angle) {
+    public Angle getArmTarget() {
+        return target_angle_;
+    }
+
+    public void setArmTarget(Angle angle) {
         target_angle_ = angle;  
         io_.setArmTarget(angle); 
     }
@@ -59,14 +63,30 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return inputs_.elevatorPosition; 
     }
 
-    public void setElevatorPosition(Distance dist) {
+    public Distance getElevatorTarget() {
+        return target_height_;
+    }
+
+    public void setElevatorTarget(Distance dist) {
         target_height_ = dist;
-        io_.setElevatorPosition(dist); 
+        io_.setElevatorTarget(dist); 
+    }
+
+    public void resetPosition() {
+        io_.resetPosition();
+    }
+
+    public void setElevatorVoltage(Voltage volts) {
+        io_.setElevatorMotorVoltage(volts.in(Volts)) ;
     }
 
     public boolean doesCrossKZ(Angle current, Angle target) {
         return (current.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle) && target.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle)) || 
                (current.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle) && target.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle)) ;
+    }
+
+    public boolean isElevAtBottom() {
+        return inputs_.hallEffectSensor ;
     }
 
     public boolean isElevAtTarget() {

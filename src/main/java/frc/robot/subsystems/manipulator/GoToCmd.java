@@ -34,17 +34,17 @@ public class GoToCmd extends Command {
     @Override
     public void initialize() {
         if (direct_) {
-            m_.setElevatorPosition(targetElevPos_);
-            m_.setArmPosition(targetArmPos_);
+            m_.setElevatorTarget(targetElevPos_);
+            m_.setArmTarget(targetArmPos_);
             state_ = State.Direct ;
         }
         else {
             if (m_.getArmPosition().isNear(ManipulatorConstants.Arm.Positions.kRaiseAngle, ManipulatorConstants.Arm.kPosTolerance)) {
-                m_.setElevatorPosition(targetElevPos_);
+                m_.setElevatorTarget(targetElevPos_);
                 state_ = State.MoveElevator ;
             }
             else {
-                m_.setArmPosition(ManipulatorConstants.Arm.Positions.kRaiseAngle);
+                m_.setArmTarget(ManipulatorConstants.Arm.Positions.kRaiseAngle);
                 state_ = State.MoveArmToRaise ;
             }
         }
@@ -55,14 +55,14 @@ public class GoToCmd extends Command {
         switch(state_) {
             case MoveArmToRaise:
                 if (m_.isArmAtTarget()) {
-                    m_.setElevatorPosition(targetElevPos_);
+                    m_.setElevatorTarget(targetElevPos_);
                     state_ = State.MoveElevator ;
                 }
                 break ;
 
             case MoveElevator:
                 if (m_.isElevAtTarget()) {
-                    m_.setArmPosition(targetArmPos_);
+                    m_.setArmTarget(targetArmPos_);
                     state_ = State.MoveArm ;
                 }
                 break ;
@@ -92,8 +92,8 @@ public class GoToCmd extends Command {
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            m_.setArmPosition(m_.getArmPosition()) ;
-            m_.setElevatorPosition(m_.getElevatorPosition()) ;
+            m_.setArmTarget(m_.getArmPosition()) ;
+            m_.setElevatorTarget(m_.getElevatorPosition()) ;
         }
     }
 }
