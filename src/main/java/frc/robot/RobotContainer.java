@@ -418,14 +418,8 @@ public class RobotContainer {
         autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
-        tuningChooser_.addOption(
-                "testing driveto",
-                DriveCommands.swerveDriveToCommand(
-                        new Pose2d(
-                                Meters.of(3.2),
-                                Meters.of(4.0),
-                                new Rotation2d(
-                                        Rotations.of(0.0)))));
+        tuningChooser_.addOption("Straight Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
+        tuningChooser_.addOption("Curved Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
 
         // Add SysId routines to the chooser
         tuningChooser_.addOption("Drive Wheel Radius Characterization",
