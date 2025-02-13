@@ -17,7 +17,7 @@ public class FunnelSubsystem extends SubsystemBase {
     private boolean hasSeenCoral_;
 
     public FunnelSubsystem(FunnelIO io) {
-        io_ = io; 
+        io_ = io;
         inputs_ = new FunnelInputsAutoLogged();
     }
 
@@ -65,5 +65,6 @@ public class FunnelSubsystem extends SubsystemBase {
 
         return false;
     }
-
+    
 }
+

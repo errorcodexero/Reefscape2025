@@ -18,24 +18,23 @@ public class OISubsystem extends SubsystemBase {
     // The LEDs on the driver station
     //
     public enum OILed {
-        // TODO: update these based on the wiring of the OI
-        Eject(0),
-        CoralL1(1),
-        CoralL2(2),
-        CoralL3(3),
-        CoralL4(4),
-        CoralCollect(5),
-        CoralPlace(6),
-        AlgaeGround(7),
-        AlgaeScore(8),
-        AlgaeReef(9),
-        ClimbDeploy(11),
-        ClimbExecute(12),
-        CoralLeft(13),
-        CoralRight(14),
-        HoldingCoral(15),
-        HoldingAlgaeLow(16),
-        HoldingAlgaeHigh(17);
+
+        CoralL1(1),                         //
+        CoralL2(2),                         //
+        CoralL3(3),                         //
+        CoralL4(4),                         //
+        ScoreAlgae(5),                      //
+        CollectAlgaeGround(6),              //
+        Spare1(7) ,                         // 
+        HoldingAlgaeLow(8),                 //
+        HoldingAlgaeHigh(9),                // 
+        HoldingCoral(10),                   //
+        Execute(11),                        //
+        CoralLeft(12),                      //
+        CoralRight(13),                     //
+        CollectCoral(14),                   //
+        PlaceCoral(15),                     //
+        CollectAlgaeReef(16);               //
 
         public final Integer value ;
 
@@ -117,6 +116,10 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    public boolean sideSwitch() {
+        return inputs_.coral_side ;
+    }
+
     public Trigger abort() {
         return abort_trigger_ ;
     }
@@ -188,35 +191,33 @@ public class OISubsystem extends SubsystemBase {
     }    
 
     public void clearAllActionLEDs() {
-        setLEDState(OILed.CoralPlace, LEDState.Off) ;
-        setLEDState(OILed.CoralCollect, LEDState.Off) ;
-        setLEDState(OILed.AlgaeGround, LEDState.Off) ;
-        setLEDState(OILed.AlgaeReef, LEDState.Off) ;
-        setLEDState(OILed.AlgaeScore, LEDState.Off) ;
-        setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
-        setLEDState(OILed.ClimbExecute, LEDState.Off) ;
+        setLEDState(OILed.PlaceCoral, LEDState.Off) ;
+        setLEDState(OILed.CollectCoral, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
+        setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
             case PlaceCoral:
-                setLEDState(OILed.CoralPlace, st) ;
+                setLEDState(OILed.PlaceCoral, st) ;
                 break ;
 
             case CollectCoral:
-                setLEDState(OILed.CoralCollect, st) ;
+                setLEDState(OILed.CollectCoral, st) ;
                 break ;
 
             case CollectAlgaeGround:
-                setLEDState(OILed.AlgaeGround, st) ;
+                setLEDState(OILed.CollectAlgaeGround, st) ;
                 break ;
 
             case CollectAlgaeReef:
-                setLEDState(OILed.AlgaeReef, st) ;
+                setLEDState(OILed.CollectAlgaeReef, st) ;
                 break ;
 
-            case PlaceAlgae:
-                setLEDState(OILed.AlgaeScore, st) ;
+            case ScoreAlgae:
+                setLEDState(OILed.ScoreAlgae, st) ;
                 break ;
         }
     }
@@ -231,10 +232,11 @@ public class OISubsystem extends SubsystemBase {
             rumbling_ = false ;
         }
 
-        //
-        // Process the left versus right status information
-        //
-        if (inputs_.coral_side) {
+        Logger.recordOutput("oi/buttons", getPressedString()) ; 
+    }
+
+    public void setSideLED(CoralSide side) {
+        if (side == CoralSide.Left) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
         }
@@ -242,35 +244,24 @@ public class OISubsystem extends SubsystemBase {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
         }
+    }
 
-        //
-        // Process the L1 through L4 coral location
-        //
-        if (inputs_.coral_l1) {
+    public void setLevelLED(int level) {
+        setLEDState(OILed.CoralL1, LEDState.Off) ;
+        setLEDState(OILed.CoralL2, LEDState.Off) ;
+        setLEDState(OILed.CoralL3, LEDState.Off) ;
+        setLEDState(OILed.CoralL4, LEDState.Off) ;        
+        if (level == 1)
             setLEDState(OILed.CoralL1, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL1, LEDState.Off) ;
-        }
 
-        if (inputs_.coral_l2) {
+        if (level == 2)
             setLEDState(OILed.CoralL2, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL2, LEDState.Off) ;
-        }
 
-        if (inputs_.coral_l3) {
+        if (level == 3)
             setLEDState(OILed.CoralL3, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL3, LEDState.Off) ;
-        }
 
-        if (inputs_.coral_l4) {
+        if (level == 4)
             setLEDState(OILed.CoralL4, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL4, LEDState.Off) ;
-        }
-
-        Logger.recordOutput("oi/buttons", getPressedString()) ; 
     }
 
     public String getPressedString() {
@@ -435,7 +426,6 @@ public class OISubsystem extends SubsystemBase {
                 str += "," ;
             str += "rb" ;
         }
-        
 
         return str ;
     }

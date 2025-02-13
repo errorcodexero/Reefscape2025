@@ -54,6 +54,8 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
         super.updateInputs(inputs);
 
         inputs.imuMode = currentMode_;
+        inputs.imuRobotYaw = Rotation2d.fromDegrees(LimelightHelpers.getIMUData(name_).robotYaw);
+        
     }
 
     private void setMode(IMUMode mode) {

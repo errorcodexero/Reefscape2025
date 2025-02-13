@@ -9,7 +9,7 @@ import frc.simulator.engine.SimulationEngine;
 import frc.simulator.models.OIBaseModel;
 
 public class OIIOHID implements OIIO {
-    private static final int kMaxLeds = 32 ;
+    private static final int kMaxLeds = 16 ;
     private static final int kFastLoopCount = 10 ;
     private static final int kSlowLoopCount = 25 ;
         
@@ -64,7 +64,7 @@ public class OIIOHID implements OIIO {
 
     @Override
     public void setLED(int index, LEDState st) {
-        led_state_[index] = st ;        
+        led_state_[index - 1] = st ;
     }
 
     private void setSimulatedLED(int index, boolean on) {
