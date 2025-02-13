@@ -70,14 +70,7 @@ import frc.robot.util.ReefUtil.ReefFace;
 public class Drive extends SubsystemBase {
     // These Constants should be the same for every drivebase, so just use the comp bot constants.
     static final double ODOMETRY_FREQUENCY = new CANBus(CompTunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
-    public static final double DRIVE_BASE_RADIUS =
-        Math.max(
-        Math.max(
-        Math.hypot(CompTunerConstants.FrontLeft.LocationX, CompTunerConstants.FrontLeft.LocationY),
-        Math.hypot(CompTunerConstants.FrontRight.LocationX, CompTunerConstants.FrontRight.LocationY)),
-        Math.max(
-        Math.hypot(CompTunerConstants.BackLeft.LocationX, CompTunerConstants.BackLeft.LocationY),
-        Math.hypot(CompTunerConstants.BackRight.LocationX, CompTunerConstants.BackRight.LocationY)));
+    public final double DRIVE_BASE_RADIUS;
 
     // These constants should change for every drivebase
     private final LinearVelocity SPEED_12_VOLTS;
@@ -96,17 +89,21 @@ public class Drive extends SubsystemBase {
     private final Alert gyroDisconnectedAlert =
     new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
     
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
+    private final SwerveDriveKinematics kinematics;
     private Rotation2d rawGyroRotation = new Rotation2d();
     private SwerveModulePosition[] lastModulePositions = // For delta tracking
-    new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
-    };
-    private SwerveDrivePoseEstimator poseEstimator =
-    new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition()
+        };
+    private SwerveDrivePoseEstimator poseEstimator;
+
+    private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> flConfig_;
+    private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> frConfig_;
+    private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> blConfig_;
+    private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> brConfig_;
     
     public Drive(
         GyroIO gyroIO,
@@ -117,25 +114,45 @@ public class Drive extends SubsystemBase {
         SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> brConfig,
         LinearVelocity kSpeed12Volts
     ) {
+        // Setup Module IOs
         this.gyroIO = gyroIO;
         modules[0] = new Module(moduleConstructor.apply(flConfig), 0, flConfig);
         modules[1] = new Module(moduleConstructor.apply(frConfig), 1, frConfig);
         modules[2] = new Module(moduleConstructor.apply(blConfig), 2, blConfig);
         modules[3] = new Module(moduleConstructor.apply(brConfig), 3, brConfig);
 
+        flConfig_ = flConfig;
+        frConfig_ = frConfig;
+        blConfig_ = blConfig;
+        brConfig_ = brConfig;
+
+        DRIVE_BASE_RADIUS = 
+            Math.max(
+            Math.max(
+            Math.hypot(flConfig.LocationX, flConfig.LocationY),
+            Math.hypot(frConfig.LocationX, frConfig.LocationY)),
+            Math.max(
+            Math.hypot(blConfig.LocationX, blConfig.LocationY),
+            Math.hypot(brConfig.LocationX, brConfig.LocationY)));
+
+        // Pose Estimators and Kinematics
+        kinematics = new SwerveDriveKinematics(getModuleTranslations());
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+        // PP Configurations
         SPEED_12_VOLTS = kSpeed12Volts;
 
         PP_CONFIG = new RobotConfig(
             ROBOT_MASS_KG,
             ROBOT_MOI,
             new ModuleConfig(
-            flConfig.WheelRadius,
-            SPEED_12_VOLTS.in(MetersPerSecond),
-            WHEEL_COF,
-            DCMotor.getKrakenX60Foc(1)
-            .withReduction(flConfig.DriveMotorGearRatio),
-            flConfig.SlipCurrent,
-            1),
+                flConfig.WheelRadius,
+                SPEED_12_VOLTS.in(MetersPerSecond),
+                WHEEL_COF,
+                DCMotor.getKrakenX60Foc(1).withReduction(flConfig.DriveMotorGearRatio),
+                flConfig.SlipCurrent,
+                1
+            ),
             getModuleTranslations()
         );
         
@@ -147,36 +164,42 @@ public class Drive extends SubsystemBase {
         
         // Configure AutoBuilder for PathPlanner
         AutoBuilder.configure(
-        this::getPose,
-        this::setPose,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-        new PIDConstants(9.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-        PP_CONFIG,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
+            this::getPose,
+            this::setPose,
+            this::getChassisSpeeds,
+            this::runVelocity,
+            new PPHolonomicDriveController(
+            new PIDConstants(9.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            PP_CONFIG,
+            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+            this
+        );
+
         Pathfinding.setPathfinder(new LocalADStarAK());
+
         PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-            Logger.recordOutput(
-            "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
+            (activePath) -> {
+                Logger.recordOutput(
+                "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+            }
+        );
+
         PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-            Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+            (targetPose) -> {
+                Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+            }
+        );
         
         // Configure SysId
-        sysId =
-        new SysIdRoutine(
-        new SysIdRoutine.Config(
-        null,
-        null,
-        null,
-        (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
-        new SysIdRoutine.Mechanism(
-        (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+        sysId = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())
+            ),
+            new SysIdRoutine.Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this)
+        );
     }
     
     @Override
@@ -435,12 +458,12 @@ public class Drive extends SubsystemBase {
     }
     
     /** Returns an array of module translations. */
-    public static Translation2d[] getModuleTranslations() {
+    public Translation2d[] getModuleTranslations() {
         return new Translation2d[] {
-            new Translation2d(CompTunerConstants.FrontLeft.LocationX, CompTunerConstants.FrontLeft.LocationY),
-            new Translation2d(CompTunerConstants.FrontRight.LocationX, CompTunerConstants.FrontRight.LocationY),
-            new Translation2d(CompTunerConstants.BackLeft.LocationX, CompTunerConstants.BackLeft.LocationY),
-            new Translation2d(CompTunerConstants.BackRight.LocationX, CompTunerConstants.BackRight.LocationY)
+            new Translation2d(flConfig_.LocationX, CompTunerConstants.FrontLeft.LocationY),
+            new Translation2d(frConfig_.LocationX, CompTunerConstants.FrontRight.LocationY),
+            new Translation2d(blConfig_.LocationX, CompTunerConstants.BackLeft.LocationY),
+            new Translation2d(brConfig_.LocationX, CompTunerConstants.BackRight.LocationY)
         };
     }
 }
