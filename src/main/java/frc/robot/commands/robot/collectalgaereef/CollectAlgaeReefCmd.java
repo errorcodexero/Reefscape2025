@@ -36,17 +36,19 @@ public class CollectAlgaeReefCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        ReefLevel level = height_ ;
+
         Angle angle ;
         Distance height ;
         
         if (height_ == ReefLevel.AskBrain) {
-            height_ = brain_.algaeLevel() ;
+            level = brain_.algaeLevel() ;
         }
 
-        if (height_ == ReefLevel.L2) {
+        if (level == ReefLevel.L2 || level == ReefLevel.L1) {
             angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL2 ;
             height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL2 ;
-        } else if (height_ == ReefLevel.L3) {
+        } else if (level == ReefLevel.L3 || level == ReefLevel.L4) {
             angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL3 ;
             height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3 ;
         }
@@ -63,7 +65,8 @@ public class CollectAlgaeReefCmd extends Command {
             new GoToCmd(manipulator_, height, angle),
             new CollectAlgaeCmd(grabber_),
             new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
+                                      ManipulatorConstants.Arm.Positions.kAlgaeReefHold, true)) ;
 
         sequence_.schedule();
     }

@@ -16,7 +16,7 @@ public class GrabberConstants {
         public static final double kHoldingVoltage = -3.0 ;
 
         public class PID {
-            public static final double kP = 0.75; 
+            public static final double kP = 0.6; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.14 ;

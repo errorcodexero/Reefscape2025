@@ -1,10 +1,10 @@
 Things to do
 ------------
 - Look at loop times
-- Look at grabber tuning to get rid of grinding sound
-- Hold algae more upright while transporting
-- Test new goto command, especially in stow after algae score
-- Look at what is happening when motors are not created and subsystem creation fails
+- Look at grabber tuning to get rid of grinding sound                                           Done
+- Hold algae more upright while transporting                                                    Needs Work
+- Test new goto command, especially in stow after algae score                                   Done
+- Look at what is happening when motors are not created and subsystem creation fails            Done
 - Tune drive base
 - Test complete place coral sequence
 - Test complete collect algae sequence

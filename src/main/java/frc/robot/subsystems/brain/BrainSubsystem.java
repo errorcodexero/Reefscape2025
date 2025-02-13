@@ -378,7 +378,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new ScoreAlgaeBefore(m_)) ;
                 conds.add(null) ;
 
-                list.add(new ScoreAlgaeAfter(m_, g_)) ;
+                list.add(new ScoreAlgaeAfter(this, m_, g_)) ;
                 conds.add(null) ;
                 break ;
 

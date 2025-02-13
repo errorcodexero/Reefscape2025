@@ -5,6 +5,7 @@ import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
+import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
@@ -43,6 +44,7 @@ public class EjectCmd extends Command {
                 new DepositCoralCmd(grabber_),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
         }
+        sequence_.addCommands(new SetHoldingCmd(brain_, GamePiece.NONE));
 
         sequence_.schedule();
     }

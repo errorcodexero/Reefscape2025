@@ -494,17 +494,17 @@ public class RobotContainer {
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> gamepad_.getLeftY(),
-                () -> gamepad_.getLeftX(),
-                () -> gamepad_.getRightX()));
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
                 DriveCommands.joystickDrive(
                         drivebase_,
-                        () -> gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                        () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                        () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                        () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());

@@ -41,7 +41,6 @@ public class WaitForCoralCmd extends Command {
 
     @Override
     public void execute() {
-        Logger.recordOutput("coralcollect-state", state_.toString()) ;
         switch(state_) {
             case WaitingForCoral:
                 if (grabber_.coralFalling()) {
