@@ -45,15 +45,18 @@ public interface CameraIO {
         public double simpleY = 0.0;
         public double simpleArea = 0.0;
         public boolean simpleValid = false;
-
-        public IMUMode imuMode = IMUMode.NONE;
-        public Rotation2d imuRobotYaw = Rotation2d.kZero;
         
         public Translation2d[] rawCorners = new Translation2d[] {};
-
+        
         public Fiducial[] fiducials = new Fiducial[] {};
         public PoseEstimation[] poseEstimates = new PoseEstimation[] {};
 
+        public IMUMode imuMode = IMUMode.NONE;
+        public Rotation2d imuRobotYaw = Rotation2d.kZero;
+
+        public double cpuTemp = 0.0;
+        public double fps = 0.0;
+        
     }
 
     /**

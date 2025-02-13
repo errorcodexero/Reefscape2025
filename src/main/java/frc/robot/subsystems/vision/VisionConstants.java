@@ -19,4 +19,7 @@ public class VisionConstants {
     public static final double baseAngularStdDev = 0.06;
     public static final double megatag2Factor = 0.5;
 
+    // Use LL4 IMU
+    public static final boolean runWithoutIMU = false;
+
 }
