@@ -16,13 +16,13 @@ public class OIConstants {
         public static final int kCoralPlace = 9 ;           // Action
         public static final int kAlgaeGround = 10 ;         // Action
         public static final int kAlgaeScore = 11 ;          // Action
-        public static final int kAlgaeCollectL2 = 12 ;      // Action
-        public static final int kAlgaeCollectL3 = 13 ;      // Action
+        public static final int kAlgaeReef = 12 ;           // Action
         public static final int kClimbDeploy = 14 ;         // Action
         public static final int kClimbExecute = 15 ;        // Action
         public static final int kClimbLock = 16 ;           // Status
         public static final int kCoralSide = 17 ;           // Status
 
+        public static final int kSpare0 = 13 ;              // Spare
         public static final int kSpare1 = 18 ;              // Spare
         public static final int kSpare2 = 19 ;              // Spare
     }

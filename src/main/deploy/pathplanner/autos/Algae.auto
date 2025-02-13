@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 1"
+                  "pathName": "Algae 1"
                 }
               },
               {
@@ -36,6 +36,25 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Algae 1.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep Algae Collect L2"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Algae Collect L2"
@@ -48,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 2"
+                  "pathName": "Algae 2"
                 }
               },
               {
@@ -73,7 +92,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 3"
+                  "pathName": "Algae 3"
                 }
               },
               {
@@ -98,7 +117,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 4"
+                  "pathName": "Algae 4"
                 }
               },
               {
@@ -123,7 +142,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 5"
+                  "pathName": "Algae 5"
                 }
               },
               {
@@ -148,7 +167,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Algae 6"
+                  "pathName": "Algae 6"
                 }
               },
               {

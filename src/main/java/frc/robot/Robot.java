@@ -24,11 +24,11 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.CompTunerConstants;
-import frc.simulator.engine.ISimulatedSubsystem;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -42,6 +42,8 @@ public class Robot extends LoggedRobot {
     private static boolean useXeroSimulator = false;
     private Command autonomousCommand;
     private RobotContainer robotContainer;
+    
+    private boolean hasSetupAutos = false;
     
     public Robot() {
         // Record metadata
@@ -107,15 +109,14 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "init" ;
+            String str = "button-test" ;
             SimulationEngine.initializeSimulator(this);
-            addRobotSimulationModels();
             SimulationEngine.getInstance().initAll(str);
         }        
         
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
-        robotContainer = new RobotContainer();
+        robotContainer = RobotContainer.getInstance() ;
     }
 
     public static boolean useXeroSimulator() {
@@ -155,13 +156,6 @@ public class Robot extends LoggedRobot {
         
         // Return to normal thread priority
         Threads.setCurrentThreadPriority(false, 10);
-
-        if (Robot.useXeroSimulator()) {
-            SimulationEngine engine = SimulationEngine.getInstance();
-            if (engine != null) {
-                engine.run(getPeriod());
-            }
-        }
     }
     
     /** This function is called once when the robot is disabled. */
@@ -170,13 +164,22 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically when disabled. */
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        if(!hasSetupAutos && DriverStation.getAlliance().isPresent()) {
+            robotContainer.setupAutos();
+            hasSetupAutos = true;
+        }
+    }
     
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {
-        autonomousCommand = robotContainer.getAutonomousCommand();
-        
+        if (Robot.useXeroSimulator()) {
+        }
+        else {
+            autonomousCommand = robotContainer.getAutonomousCommand();
+        }
+            
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
@@ -220,10 +223,13 @@ public class Robot extends LoggedRobot {
     
     /** This function is called periodically whilst in simulation. */
     @Override
-    public void simulationPeriodic() {}
-
-    public ISimulatedSubsystem getSubSystem(String name) {
-        return robotContainer.get(name) ;
+    public void simulationPeriodic() {
+        if (Robot.useXeroSimulator()) {
+            SimulationEngine engine = SimulationEngine.getInstance();
+            if (engine != null) {
+                engine.run(getPeriod());
+            }
+        }
     }
     
 }

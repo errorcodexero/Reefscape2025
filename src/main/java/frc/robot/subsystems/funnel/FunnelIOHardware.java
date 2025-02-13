@@ -3,6 +3,7 @@ package frc.robot.subsystems.funnel;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -17,8 +18,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
-import frc.robot.util.DigitalInterrupt;
+import edu.wpi.first.units.measure.Voltage ;
 
 public class FunnelIOHardware implements FunnelIO {
 
@@ -89,9 +89,9 @@ public class FunnelIOHardware implements FunnelIO {
         inputs.funnelVelocity = funnelVelocitySig.getValue();
         inputs.funnelVoltage = funnelVoltageSig.getValue();
 
-        inputs.coralFunnelSensor = funnelSensor_.getSensor();
-        inputs.coralFunnelFallingEdge = funnelSensor_.getFalling();
-        inputs.coralFunnelRisingEdge = funnelSensor_.getRising();
+        inputs.coralFunnelSensor = funnelSensor_.getInput().get();
+        inputs.coralFunnelFallingEdge = funnelSensor_.fallingEdge() ;
+        inputs.coralFunnelRisingEdge = funnelSensor_.risingEdge() ;
     }
 
     @Override

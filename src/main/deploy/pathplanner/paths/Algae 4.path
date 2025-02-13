@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.14839527027027,
-        "y": 2.888597972972972
+        "x": 5.145340909090908,
+        "y": 2.87328125
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.466058273873866,
-        "y": 1.4854771448274184
+        "x": 5.41855408436602,
+        "y": 1.4409865965580972
       },
       "isLocked": false,
-      "linkedName": "1 alliance side"
+      "linkedName": "Algae 3"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.519985795454545
       },
       "prevControl": {
-        "x": 4.870179667548882,
-        "y": 1.8617470640607325
+        "x": 4.903585984800751,
+        "y": 1.8281881344226378
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Center Algae",
+  "folder": "Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.95360816780152
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": false
 }

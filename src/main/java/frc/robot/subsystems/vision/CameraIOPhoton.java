@@ -121,6 +121,11 @@ public class CameraIOPhoton implements CameraIO {
             inputs.fiducials = fiducials.toArray(new Fiducial[0]);
         }
     }
+
+    @Override
+    public String getName() {
+        return camera_.getName();
+    }
     
     @Override
     public void forceBlink() {

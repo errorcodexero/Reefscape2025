@@ -11,6 +11,12 @@
             }            
         },
         {
+            "model" : "drivebase",
+            "instance" : "1",
+            "props" : {
+            }
+        },
+        {
             "model": "drivergamepad",
             "instance": "1",
             "props": {
@@ -19,6 +25,29 @@
                 "buttons": 10,
                 "povs": 1,
                 "create_early": true
+            }
+        },
+        {
+            "model" : "oi2025",
+            "instance" : "1",
+            "props" : {
+                "index" : 2,
+                "name" : "Reefscape 2025 OI",
+                "axes" : 0,
+                "buttons" : 19,
+                "povs" : 0,
+                "leds" : 32,
+                "create_early" : true
+            }
+        },
+        {
+            "model" : "dio",
+            "instance" : "1",
+            "props" : {
+                "coral-sensor" : 1,
+                "coral-sensor-init" : true,
+                "algae-sensor" : 2,
+                "algae-sensor-init" : true
             }
         }
     ]
