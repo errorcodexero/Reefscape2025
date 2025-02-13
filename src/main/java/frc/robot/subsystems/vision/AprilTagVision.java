@@ -131,9 +131,7 @@ public class AprilTagVision extends SubsystemBase {
     /**
      * Integrates a pose estimation with the PoseEstimator.
      * @param est
-     * @deprecated This method is not fully implemented, it has no effect, and is simply a placeholder.
      */
-    @Deprecated
     private void integratePoseEstimate(PoseEstimation est) {
         // TODO: Look into this calculation / into other calculations.
         double stdDevFactor =
