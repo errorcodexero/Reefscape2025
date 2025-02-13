@@ -33,8 +33,8 @@ public class CollectAlgaeCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForAlgae:
-                if (grabber_.AlgaeRising()) {
-                    grabber_.stopGrabber();
+                if (grabber_.AlgaeFalling()) {
+                    grabber_.setGrabberMotorVoltage(GrabberConstants.Grabber.kHoldingVoltage) ;
                     state_ = State.Finish;
                 }
                 break;

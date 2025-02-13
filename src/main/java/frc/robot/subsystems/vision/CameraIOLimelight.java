@@ -15,10 +15,13 @@ public class CameraIOLimelight implements CameraIO {
 
     protected String name_;
     protected Supplier<Rotation2d> rotationSupplier_;
+    private Supplier<Long> lastUpdateSupplier_;
 
     public CameraIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
         name_ = name;
         rotationSupplier_ = rotationSupplier;
+
+        lastUpdateSupplier_ = LimelightHelpers.getLimelightNTTableEntry(name_, "tl")::getLastChange;
     }
 
     @Override
@@ -28,7 +31,7 @@ public class CameraIOLimelight implements CameraIO {
         RawDetection[] detections = LimelightHelpers.getRawDetections(name_);
 
         // Connected if not updated in one second
-        inputs.connected = (Timer.getFPGATimestamp() - results.timestamp_RIOFPGA_capture) < 1;
+        inputs.connected = (Timer.getFPGATimestamp() - lastUpdateSupplier_.get()) < 1;
 
         // Update Robot Orientation
         LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
@@ -66,7 +69,7 @@ public class CameraIOLimelight implements CameraIO {
         PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);
 
-        if (estimateMegatag1 != null) {
+        if (estimateMegatag1 != null && estimateMegatag1.tagCount > 0) {
             poseEstimates.add(new PoseEstimation(
                 estimateMegatag1.pose,
                 estimateMegatag1.timestampSeconds,
@@ -77,7 +80,7 @@ public class CameraIOLimelight implements CameraIO {
             ));
         }
         
-        if (estimateMegatag2 != null) {
+        if (estimateMegatag2 != null && estimateMegatag2.tagCount > 0) {
             poseEstimates.add(new PoseEstimation(
                 estimateMegatag2.pose,
                 estimateMegatag2.timestampSeconds,

@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 /**
@@ -46,6 +47,7 @@ public interface CameraIO {
         public boolean simpleValid = false;
 
         public IMUMode imuMode = IMUMode.NONE;
+        public Rotation2d imuRobotYaw = Rotation2d.kZero;
         
         public Translation2d[] rawCorners = new Translation2d[] {};
 
