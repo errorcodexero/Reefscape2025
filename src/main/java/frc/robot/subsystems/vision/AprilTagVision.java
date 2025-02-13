@@ -164,6 +164,8 @@ public class AprilTagVision extends SubsystemBase {
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
+        if (estimation.type() == PoseEstimationType.MEGATAG1) return false; // If it is using Megatag1.
+
         if (estimation.tagCount() < VisionConstants.minimumTagCount) return false; // If there are less than the configured minimum.
 
         if (estimation.pose().getTranslation().getNorm() == 0) return false; // If the estimate is at the origin exactly (unrealistic).
