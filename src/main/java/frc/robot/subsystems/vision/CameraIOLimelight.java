@@ -35,7 +35,7 @@ public class CameraIOLimelight implements CameraIO {
         LimelightResults results = LimelightHelpers.getLatestResults(name_);
         
         double[] rawCorners = rawCornersNT_.get(new double[] {});
-        double[] hardwareStatus = hardwareStatusNT_.get(new double[] {0.0, 0.0, 0.0, 0.0});
+        double[] hardwareStatus = hardwareStatusNT_.get(new double[] {-1.0, -1.0, -1.0, -1.0});
 
         // Connected if not updated in one second
         inputs.connected = (Timer.getFPGATimestamp() - lastUpdateSupplier_.get()) < 1;
