@@ -4,12 +4,14 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.hid.XeroGamepad;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
@@ -87,10 +89,17 @@ public class OISubsystem extends SubsystemBase {
     private Trigger l4_ ;
     private Trigger coral_left_right_ ;
 
+    private boolean flashing_ ;
+    private XeroTimer flashing_timer_ ;
+
     public OISubsystem(OIIO ios, XeroGamepad ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
+        rumbling_ = false ;
+
+        flashing_timer_ = new XeroTimer(Seconds.of(1.0)) ;
+        flashing_ = false ;
 
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
@@ -186,6 +195,12 @@ public class OISubsystem extends SubsystemBase {
         gamepad_.setRumble(RumbleType.kBothRumble, 1.0);
     }
 
+    public void flashDisplay() {
+        ios_.flashLEDs();
+        flashing_ = true ;
+        flashing_timer_.start() ;
+    }
+
     public void setLEDState(OILed led, LEDState st) {
         ios_.setLED(led.value, st) ;
     }    
@@ -227,6 +242,11 @@ public class OISubsystem extends SubsystemBase {
         ios_.updateInputs(inputs_) ;
         Logger.processInputs("OI", inputs_) ;
 
+        if (flashing_ && flashing_timer_.isExpired()) {
+            ios_.restoreLEDState() ;
+            flashing_ = false ;
+        }
+
         if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);
             rumbling_ = false ;
@@ -246,22 +266,37 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
-    public void setLevelLED(int level) {
+    public void setLevelLED(ReefLevel level) {
         setLEDState(OILed.CoralL1, LEDState.Off) ;
         setLEDState(OILed.CoralL2, LEDState.Off) ;
         setLEDState(OILed.CoralL3, LEDState.Off) ;
         setLEDState(OILed.CoralL4, LEDState.Off) ;        
-        if (level == 1)
-            setLEDState(OILed.CoralL1, LEDState.On) ;
 
-        if (level == 2)
-            setLEDState(OILed.CoralL2, LEDState.On) ;
+        switch(level) {
+            case L1:
+                setLEDState(OILed.CoralL1, LEDState.On) ;
+                break ;
 
-        if (level == 3)
-            setLEDState(OILed.CoralL3, LEDState.On) ;
+            case L2:
+                setLEDState(OILed.CoralL2, LEDState.On) ;
+                break ;
 
-        if (level == 4)
-            setLEDState(OILed.CoralL4, LEDState.On) ;
+            case L3:
+                setLEDState(OILed.CoralL3, LEDState.On) ;
+                break ;
+
+            case L4:
+                setLEDState(OILed.CoralL4, LEDState.On) ;
+                break ;
+
+            default:
+                // Should never happen
+                setLEDState(OILed.CoralL1, LEDState.Slow) ;
+                setLEDState(OILed.CoralL2, LEDState.Slow) ;
+                setLEDState(OILed.CoralL3, LEDState.Slow) ;
+                setLEDState(OILed.CoralL4, LEDState.Slow) ;   
+                break ;
+        }
     }
 
     public String getPressedString() {

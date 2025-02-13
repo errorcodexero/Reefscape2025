@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 */
 public final class Constants {
 
+    public static final boolean propogateExceptionOnSubsystemCreateFail = true ;
+
     /**
      * CONFIGURATION
      */
@@ -94,16 +96,6 @@ public final class Constants {
         public static final Distance robotToArm = Inches.of(0.125);
     }
 
-    public static class CanConstants {
-
-        public static final int grabber = 1;
-        public static final int armFront = 2;
-        public static final int armBack = 3;
-        public static final int elevatorFront = 4;
-        public static final int elevatorBack = 5;
-
-    }
-
     /**
      * ROBOT STATE
      */
@@ -133,11 +125,22 @@ public final class Constants {
         SIMBOT
     }
 
-    public static enum Height {
-        L1,
-        L2, 
-        L3, 
-        L4
+    public enum ReefLevel {
+        L1(0),
+        L2(1),
+        L3(2),
+        L4(3),
+        AskBrain(4) ;
+
+        private final int index;
+
+        private ReefLevel(int index) {
+            this.index = index ;
+        }
+
+        public int getindex() {
+            return index;
+        }
     }
 
     // This is only a fallback! This will not change the robot type.
@@ -163,5 +166,4 @@ public final class Constants {
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }
-    
 }

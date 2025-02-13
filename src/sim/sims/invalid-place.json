@@ -1,0 +1,53 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 20.0,
+                        "fms" : false,
+                        "ds" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.5,
+            "events" :
+            [
+                {
+                    "model" : "oi2025",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-place" : false
+                    }
+                }
+            ]
+        }
+    ]
+}

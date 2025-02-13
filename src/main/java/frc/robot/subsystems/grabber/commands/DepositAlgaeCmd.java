@@ -25,7 +25,7 @@ public class DepositAlgaeCmd extends Command {
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositAlgae.velocity);
+        grabber_.setGrabberMotorVoltage(-10);
         state_ = State.WaitForTimer;
     }
 

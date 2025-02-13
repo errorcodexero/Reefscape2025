@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.Robot;
 import frc.simulator.utils.MessageLogger;
 import frc.simulator.utils.MessageType;
-import frc.simulator.utils.MessageDestinationThumbFile;
 
 public class SimulationEngine {
     public static final String LoggerName = "simulator" ;
@@ -30,9 +29,10 @@ public class SimulationEngine {
         robot_ = robot ;
 
         MessageLogger logger = MessageLogger.getTheMessageLogger() ;
-        logger.addDestination(new MessageDestinationThumbFile("logs", 10000, true)) ;
         logger_id_ = logger.registerSubsystem(LoggerName) ;
         logger.startMessage(MessageType.Info).add("Starting the simulation engine").endMessage();
+
+        logger.enableSubsystem(LoggerName) ;
 
         models_ = new ModelManager(this);
         events_ = new EventsManager(this);

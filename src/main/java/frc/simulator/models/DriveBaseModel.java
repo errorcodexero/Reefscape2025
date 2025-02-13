@@ -19,6 +19,9 @@ public class DriveBaseModel extends SimulationModel {
     @Override
     public boolean create(SimulationEngine engine) {
         db_ = RobotContainer.getInstance().drivebase() ;
+        if (db_ != null) {
+            setCreated();
+        }
         return db_ != null ;
     }
 

@@ -24,8 +24,7 @@ public class StowArmElevatorCmd extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    GoToCmd goToCmd = new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow);
-    sequence_.addCommands(goToCmd);
+    sequence_.addCommands(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow));
     sequence_.schedule();
   }
 
