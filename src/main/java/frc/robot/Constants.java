@@ -38,7 +38,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.SIMBOT;
+    private static final RobotType robotType = RobotType.PRACTICE;
 
     public static class DriveConstants {
         
@@ -48,7 +48,7 @@ public final class Constants {
     
     public static class FieldConstants {
         
-        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
         
     }
 
