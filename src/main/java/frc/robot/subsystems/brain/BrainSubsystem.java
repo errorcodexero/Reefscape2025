@@ -60,6 +60,9 @@ public class BrainSubsystem extends SubsystemBase {
     // The number of times periodic has been called
     private int periodic_count_ ;
 
+    // If true, we are clearing state
+    private boolean clearing_state_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -122,9 +125,13 @@ public class BrainSubsystem extends SubsystemBase {
     }    
 
     private void cmdFinished(Command c) {
-        if (current_cmd_ == c) {
+        if (current_cmd_ == c && !clearing_state_) {
             current_cmd_ = null ;
             if (current_action_ != null && current_robot_action_command_index_ >= current_robot_action_command_.size()) {
+                //
+                // This was the last command in the current action, we are done so complete this action and move to
+                // the next action if there is one
+                //
                 completedAction() ;
             }
         }
@@ -155,25 +162,34 @@ public class BrainSubsystem extends SubsystemBase {
         return coral_side_ ;
     }
 
-    public boolean readyForAction() {
-        return current_action_ == null || next_action_ == null ;
-    }
-
     public void queueRobotAction(RobotAction action) {
         if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
             //
             // We can override the next action, until it becomes the current action
             //
             if (next_action_ != null) {
+                //
+                // Turn off the button for the current next action
+                //
                 oi_.setRobotActionLEDState(next_action_, LEDState.Off) ;
             }
+
+            //
+            // Assign (or reassign) the next action
+            //
             next_action_ = action ;
             if (next_action_ != null) {
+                //
+                // Light the button for the new next action
+                //
                 oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
             }
 
+            //
+            // If the current action is null, start the next action now
+            //
             if (current_action_ == null) {
-                periodic();
+                startNewAction() ;
             }
         }
     }    
@@ -183,7 +199,12 @@ public class BrainSubsystem extends SubsystemBase {
     // scheduled state.
     //
     public void clearRobotActions() {
+        clearing_state_ = true ;
+
         if (current_cmd_ != null) {
+            //
+            // If a current command is running, cancel it
+            //
             current_cmd_.cancel() ;
         }
 
@@ -192,6 +213,8 @@ public class BrainSubsystem extends SubsystemBase {
         next_action_ = null ;
 
         oi_.clearAllActionLEDs() ;
+
+        clearing_state_ = false ;
     }
 
     public void lock() {

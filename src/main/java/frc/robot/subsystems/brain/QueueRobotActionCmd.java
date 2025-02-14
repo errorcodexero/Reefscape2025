@@ -13,9 +13,7 @@ public class QueueRobotActionCmd extends Command {
 
     @Override
     public void initialize() {
-        if (exec_.readyForAction()) {
-            exec_.queueRobotAction(action_);
-        }
+        exec_.queueRobotAction(action_);
     }
 
     @Override

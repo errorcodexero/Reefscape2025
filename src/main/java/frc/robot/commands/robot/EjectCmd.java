@@ -32,6 +32,7 @@ public class EjectCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        brain_.lock() ;
         sequence_ = new XeroSequence();
 
         if (brain_.gp() == GamePiece.ALGAE_HIGH) {
@@ -60,6 +61,13 @@ public class EjectCmd extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return sequence_.isComplete();
+        boolean ret = false ;
+
+        if (sequence_.isComplete()) {
+            brain_.unlock() ;
+            ret = true ;
+        }
+
+        return ret;
     }
 }

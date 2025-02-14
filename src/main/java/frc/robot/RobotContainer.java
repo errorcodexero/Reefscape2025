@@ -156,7 +156,6 @@ public class RobotContainer {
                     break;
 
                 case COMPETITION:
-                    // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
                             new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
                             ModuleIOTalonFX::new,
