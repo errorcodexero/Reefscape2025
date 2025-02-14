@@ -2,7 +2,6 @@ package frc.robot.commands.robot.scorealgae;
 
 import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -28,11 +27,6 @@ public class ScoreAlgaeAfter extends Command {
     @Override
     public void initialize() {
         sequence_ = new XeroSequence();
-        Command parallel = new ParallelCommandGroup(
-            new DepositAlgaeCmd(g_),
-            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef2, 
-            ManipulatorConstants.Arm.Positions.kScoreAlgaeReef2, true)
-        ) ;
         sequence_.addCommands(
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef, 
                             ManipulatorConstants.Arm.Positions.kScoreAlgaeReef, true),
