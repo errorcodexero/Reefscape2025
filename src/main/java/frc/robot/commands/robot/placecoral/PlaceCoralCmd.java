@@ -1,6 +1,9 @@
 package frc.robot.commands.robot.placecoral;
 
 import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
+import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.XeroSequence;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,10 +12,13 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.GamePiece;
+import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
@@ -41,9 +47,7 @@ public class PlaceCoralCmd extends Command {
     private Angle target_arm_pos_; 
     private boolean driveto_ ;
 
-    public PlaceCoralCmd(Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, BrainSubsystem brain, boolean driveto, ReefLevel h, CoralSide s) {
-        addRequirements(drive, manipulator, grabber, brain);
-
+    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, boolean driveto, ReefLevel h, CoralSide s) {
         drive_ = drive;
         manipulator_ = manipulator; 
         grabber_ = grabber;
@@ -125,22 +129,30 @@ public class PlaceCoralCmd extends Command {
 
         if (driveto_) {
             sequence_.addCommands(
+                RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
                     new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
                     DriveCommands.simplePathCommand(scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
         }
 
         sequence_.addCommands(
-            new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+            new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_, true),
             new DepositCoralCmd(grabber_),
+            new SetHoldingCmd(brain_, GamePiece.NONE),
             new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
+
+        if (driveto_) {
+            sequence_.addCommands(
+                RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
+        }
         sequence_.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+    }
 
     // Called once the command ends or is interrupted.
     @Override

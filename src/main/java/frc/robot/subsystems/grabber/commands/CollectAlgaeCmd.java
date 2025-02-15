@@ -36,7 +36,7 @@ public class CollectAlgaeCmd extends Command {
         Logger.recordOutput("Grabber/CollectAlgae", state_.toString()) ;
         switch(state_) {
             case WaitingForAlgae:
-                if (grabber_.AlgaeFalling()) {
+                if (!grabber_.algaeSensor() || grabber_.algaeFalling()) {
                     grabber_.setGrabberMotorVoltage(GrabberConstants.Grabber.kHoldingVoltage) ;
                     state_ = State.Finish;
                 }

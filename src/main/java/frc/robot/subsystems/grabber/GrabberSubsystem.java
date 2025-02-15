@@ -75,12 +75,16 @@ public class GrabberSubsystem extends SubsystemBase {
     // Algae Sensor State
     ///////////////////////////
 
-    public boolean AlgaeRising() {
+    public boolean algaeRising() {
         return inputs_.algaeRisingEdge;
     }
 
-    public boolean AlgaeFalling() {
+    public boolean algaeFalling() {
         return inputs_.algaeFallingEdge;
+    }
+
+    public boolean algaeSensor() {
+        return inputs_.algaeSensor;
     }
 
     ///////////////////////////

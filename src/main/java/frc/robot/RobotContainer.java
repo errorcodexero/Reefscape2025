@@ -407,6 +407,10 @@ public class RobotContainer {
         return drivebase_;
     }
 
+    public XeroGamepad gamepad() {
+        return gamepad_;
+    }
+
     public void setupAutos() {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());

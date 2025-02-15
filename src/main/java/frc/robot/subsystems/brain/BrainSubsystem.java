@@ -17,6 +17,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.subsystems.oi.OISubsystem.OILed;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
@@ -241,6 +242,8 @@ public class BrainSubsystem extends SubsystemBase {
     public void execute() {
         boolean cond = true ;
 
+        oi_.setLEDState(OILed.Execute, LEDState.Off) ;
+
         if (current_robot_action_command_ == null || current_robot_action_command_index_ >= current_robot_action_command_.size()) {
             //
             // Gunner hit the execute button with nothing to execute
@@ -346,6 +349,11 @@ public class BrainSubsystem extends SubsystemBase {
     public void periodic() {
         String status = "" ;
 
+        if (!RobotState.isEnabled() || !RobotState.isTeleop()) {
+            clearRobotActions() ;
+            return ;
+        }
+
         if (!leds_inited_ && periodic_count_ > 2) {
             initLEDs() ;
             leds_inited_ = true ;
@@ -366,6 +374,7 @@ public class BrainSubsystem extends SubsystemBase {
                 // The last command has finished and we are waiting for the execute button to schedule
                 // the next phase of this robot action.
                 //
+                oi_.setLEDState(OILed.Execute, LEDState.Fast) ;
                 status = current_action_.toString() + ":waiting" ;
             }
             else {
@@ -403,7 +412,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(db_, m_, g_, this, true, ReefLevel.AskBrain, CoralSide.AskBrain)) ;
+                list.add(new PlaceCoralCmd(this, db_, m_, g_, true, ReefLevel.AskBrain, CoralSide.AskBrain)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
@@ -416,8 +425,11 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case CollectAlgaeReef:
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
+                list.add(new NullCmd()) ;
                 conds.add(null) ;
+                
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case CollectAlgaeGround:

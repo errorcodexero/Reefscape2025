@@ -38,6 +38,7 @@ public class EjectCmd extends Command {
         if (brain_.gp() == GamePiece.ALGAE_HIGH) {
             sequence_.addCommands(
                 new DepositAlgaeCmd(grabber_),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition(), true),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         }
         else {
