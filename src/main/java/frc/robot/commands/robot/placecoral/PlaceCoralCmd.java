@@ -8,8 +8,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -123,7 +125,9 @@ public class PlaceCoralCmd extends Command {
 
         if (driveto_) {
             sequence_.addCommands(
-                DriveCommands.simplePathCommand(scoringPose)) ;
+                Commands.parallel(
+                    new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+                    DriveCommands.simplePathCommand(scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
         }
 
         sequence_.addCommands(
@@ -131,7 +135,6 @@ public class PlaceCoralCmd extends Command {
             new DepositCoralCmd(grabber_),
             new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
-
         sequence_.schedule();
     }
 

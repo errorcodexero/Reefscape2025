@@ -265,7 +265,7 @@ public class Drive extends SubsystemBase {
             Optional<ReefFace> face = ReefUtil.getTargetedReefFace(getPose());
 
             if (face.isPresent()) {
-                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeScoringPose()});
+                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});
             } else {
                 Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {});
             }
