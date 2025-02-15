@@ -321,8 +321,8 @@ public class DriveCommands {
    */
   public static Command simplePathCommand(Pose2d targetPose) {
     PathConstraints constraints = new PathConstraints(
-        4.0,
-        4.0,
+        2.5,
+        2.5,
         DegreesPerSecond.of(540).in(RadiansPerSecond),
         DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
 

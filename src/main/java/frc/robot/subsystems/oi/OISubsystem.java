@@ -76,6 +76,7 @@ public class OISubsystem extends SubsystemBase {
     private Trigger eject_trigger_ ;
     private Trigger climb_lock_trigger_ ;
     private Trigger climb_exec_trigger_ ;
+    private Trigger climb_deploy_trigger_ ;
     private Trigger coral_place_trigger_ ;
     private Trigger coral_collect_trigger_ ;
     private Trigger algae_ground_trigger_ ;
@@ -106,6 +107,7 @@ public class OISubsystem extends SubsystemBase {
         eject_trigger_ = new Trigger(() -> inputs_.eject) ;
         climb_lock_trigger_ = new Trigger(() -> inputs_.climb_lock) ;
         climb_exec_trigger_ = new Trigger(()-> inputs_.climb_execute) ;
+        climb_deploy_trigger_ = new Trigger(()-> inputs_.climb_deploy) ;
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
         coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
         algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
@@ -143,6 +145,10 @@ public class OISubsystem extends SubsystemBase {
 
     public Trigger climbExecute() {
         return climb_exec_trigger_ ;
+    }
+
+    public Trigger climbDeploy() {
+        return climb_deploy_trigger_ ;
     }
 
     public Trigger coralPlace() {

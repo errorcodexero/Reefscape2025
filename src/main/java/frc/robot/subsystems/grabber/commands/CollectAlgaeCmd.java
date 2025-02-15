@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -31,6 +33,7 @@ public class CollectAlgaeCmd extends Command {
 
     @Override
     public void execute() {
+        Logger.recordOutput("Grabber/CollectAlgae", state_.toString()) ;
         switch(state_) {
             case WaitingForAlgae:
                 if (grabber_.AlgaeFalling()) {
