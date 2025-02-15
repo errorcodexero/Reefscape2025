@@ -543,7 +543,10 @@ public class RobotContainer {
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(Commands.sequence(
+            drivebase_.resetGyroCmd(),
+            vision_.resetHeadingCommand()
+        ));
     }
 
     /**
