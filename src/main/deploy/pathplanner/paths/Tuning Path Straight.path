@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.1796039533211484,
+        "y": 7.546254678853475
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.057459295281656,
+        "y": 7.5543082578634495
+      },
+      "isLocked": false,
+      "linkedName": "Tuning Start"
+    },
+    {
+      "anchor": {
+        "x": 7.09820596194621,
+        "y": 7.546254678853475
+      },
+      "prevControl": {
+        "x": 2.3034259447341396,
+        "y": 7.543284205435554
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

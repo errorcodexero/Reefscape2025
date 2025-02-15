@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 */
 public final class Constants {
 
+    public static final boolean propogateExceptionOnSubsystemCreateFail = true ;
+
     /**
      * CONFIGURATION
      */
@@ -46,7 +48,7 @@ public final class Constants {
     
     public static class FieldConstants {
         
-        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
         
     }
 
@@ -64,7 +66,7 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(20);
+        public static final Distance distanceFromTagCoral = Inches.of(16);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
@@ -92,16 +94,6 @@ public final class Constants {
          * (LEFT of the robot is POSITIVE)
          */
         public static final Distance robotToArm = Inches.of(0.125);
-    }
-
-    public static class CanConstants {
-
-        public static final int grabber = 1;
-        public static final int armFront = 2;
-        public static final int armBack = 3;
-        public static final int elevatorFront = 4;
-        public static final int elevatorBack = 5;
-
     }
 
     /**
@@ -133,15 +125,26 @@ public final class Constants {
         SIMBOT
     }
 
-    public static enum Height {
-        L1,
-        L2, 
-        L3, 
-        L4
+    public enum ReefLevel {
+        L1(0),
+        L2(1),
+        L3(2),
+        L4(3),
+        AskBrain(4) ;
+
+        private final int index;
+
+        private ReefLevel(int index) {
+            this.index = index ;
+        }
+
+        public int getindex() {
+            return index;
+        }
     }
 
     // This is only a fallback! This will not change the robot type.
-    private static final RobotType defaultRobotType = RobotType.ALPHA;
+    private static final RobotType defaultRobotType = RobotType.COMPETITION;
 
     private static final Alert invalidRobotType = new Alert(
         "Invalid RobotType selected. Defaulting to " + defaultRobotType.toString(),
@@ -163,5 +166,4 @@ public final class Constants {
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }
-    
 }

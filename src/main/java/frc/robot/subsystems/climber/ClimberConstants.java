@@ -1,8 +1,12 @@
 package frc.robot.subsystems.climber;
 
-import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
@@ -17,9 +21,15 @@ public class ClimberConstants {
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
-
+        public static final Current kcurrentLimit = Amps.of(40);
+        public static final Time kCurrentLimitTime = Seconds.of(1); 
         public static final Angle kPosTolerance = null;
+
+        public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0);
         
+        //TODO: Add the correct values
+        public static final Angle kMaxClimberAngle = Degrees.of(0);
+        public static final Angle kMinClimberAngle = Degrees.of(0) ;
 
         public class PID {
             public static final double kP = 0.0; 
@@ -43,7 +53,5 @@ public class ClimberConstants {
             public static final Angle kPrepped = Degrees.of(0);
             public static final Angle kClimbed = Degrees.of(0);
         }
-    }
-
-    
+    }   
 }

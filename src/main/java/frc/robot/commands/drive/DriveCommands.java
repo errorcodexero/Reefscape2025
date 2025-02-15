@@ -41,9 +41,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -283,7 +287,7 @@ public class DriveCommands {
                       for (int i = 0; i < 4; i++) {
                         wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
                       }
-                      double wheelRadius = (state.gyroDelta * Drive.DRIVE_BASE_RADIUS) / wheelDelta;
+                      double wheelRadius = (state.gyroDelta * drive.DRIVE_BASE_RADIUS) / wheelDelta;
 
                       NumberFormat formatter = new DecimalFormat("#0.000");
                       System.out.println(
@@ -319,10 +323,10 @@ public class DriveCommands {
    * @param targetPose The pose to create an on-the-fly path to.
    * @return A command that follows the created path.
    */
-  public static Command simplePathCommand(Pose2d targetPose) {
+  public static Command simplePathCommand(Pose2d targetPose, LinearVelocity v, LinearAcceleration a) {
     PathConstraints constraints = new PathConstraints(
-        4.0,
-        4.0,
+        v.in(MetersPerSecond),
+        a.in(MetersPerSecondPerSecond),
         DegreesPerSecond.of(540).in(RadiansPerSecond),
         DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
 

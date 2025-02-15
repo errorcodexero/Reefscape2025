@@ -7,10 +7,10 @@ import frc.simulator.engine.SimulationModel;
 import frc.simulator.engine.SimulationEngine;
 import java.util.Map;
 
-import frc.simulator.utils.BadParameterTypeException;
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
-import frc.simulator.utils.SettingsValue;
+import org.xerosw.util.BadParameterTypeException;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
+import org.xerosw.util.SettingsValue;
 
 public class DriverGamepadModel extends SimulationModel {
     private static final String buttonEvent = "button";

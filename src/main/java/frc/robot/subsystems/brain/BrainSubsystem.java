@@ -2,6 +2,7 @@ package frc.robot.subsystems.brain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -16,12 +17,14 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.util.ReefUtil;
+import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
-import frc.robot.commands.robot.placecoral.PlaceCoralAutoCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
-import frc.robot.Constants.Height;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.robot.CollectCoralCmd ;
 
 public class BrainSubsystem extends SubsystemBase {
@@ -45,7 +48,7 @@ public class BrainSubsystem extends SubsystemBase {
     private OISubsystem oi_ ;
 
     // The level of coral to place
-    private int coral_level_ ;
+    private ReefLevel coral_level_ ;
 
     // The side of the coral to place
     private CoralSide coral_side_ ;
@@ -59,19 +62,17 @@ public class BrainSubsystem extends SubsystemBase {
     // The number of times periodic has been called
     private int periodic_count_ ;
 
+    // If true, we are clearing state
+    private boolean clearing_state_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
     // we get the code to generate the commands required for the various
     // robot actions.
     //
-    @SuppressWarnings("unused")
     private Drive db_ ;
-
-    @SuppressWarnings("unused")
     private ManipulatorSubsystem m_ ;
-
-    @SuppressWarnings("unused")
     private GrabberSubsystem g_ ;   
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
@@ -126,22 +127,32 @@ public class BrainSubsystem extends SubsystemBase {
     }    
 
     private void cmdFinished(Command c) {
-        if (current_cmd_ == c) {
+        if (current_cmd_ == c && !clearing_state_) {
             current_cmd_ = null ;
             if (current_action_ != null && current_robot_action_command_index_ >= current_robot_action_command_.size()) {
+                //
+                // This was the last command in the current action, we are done so complete this action and move to
+                // the next action if there is one
+                //
                 completedAction() ;
             }
         }
     }
 
-    public void setCoralLevel(int l) {
-
-        coral_level_ = l ;
-        oi_.setLevelLED(l);
+    public void setCoralLevel(ReefLevel height) {
+        coral_level_ = height ;
+        oi_.setLevelLED(height);
     }
 
-    public int level() {
+    public ReefLevel coralLevel() {
         return coral_level_ ;
+    }
+
+    public ReefLevel algaeLevel() {
+        if (coral_level_ == ReefLevel.L1 || coral_level_ == ReefLevel.L2)
+            return ReefLevel.L2 ;
+
+        return ReefLevel.L3 ;
     }
 
     public void setCoralSide(CoralSide s) {
@@ -153,25 +164,34 @@ public class BrainSubsystem extends SubsystemBase {
         return coral_side_ ;
     }
 
-    public boolean readyForAction() {
-        return current_action_ == null || next_action_ == null ;
-    }
-
     public void queueRobotAction(RobotAction action) {
         if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
             //
             // We can override the next action, until it becomes the current action
             //
             if (next_action_ != null) {
+                //
+                // Turn off the button for the current next action
+                //
                 oi_.setRobotActionLEDState(next_action_, LEDState.Off) ;
             }
+
+            //
+            // Assign (or reassign) the next action
+            //
             next_action_ = action ;
             if (next_action_ != null) {
+                //
+                // Light the button for the new next action
+                //
                 oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
             }
 
+            //
+            // If the current action is null, start the next action now
+            //
             if (current_action_ == null) {
-                periodic();
+                startNewAction() ;
             }
         }
     }    
@@ -181,7 +201,12 @@ public class BrainSubsystem extends SubsystemBase {
     // scheduled state.
     //
     public void clearRobotActions() {
+        clearing_state_ = true ;
+
         if (current_cmd_ != null) {
+            //
+            // If a current command is running, cancel it
+            //
             current_cmd_.cancel() ;
         }
 
@@ -190,6 +215,8 @@ public class BrainSubsystem extends SubsystemBase {
         next_action_ = null ;
 
         oi_.clearAllActionLEDs() ;
+
+        clearing_state_ = false ;
     }
 
     public void lock() {
@@ -231,6 +258,37 @@ public class BrainSubsystem extends SubsystemBase {
         }
     }
 
+    private boolean isCurrentActionLegal() {
+        boolean ret = true ;
+
+        switch(current_action_) {
+            case CollectCoral:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            case PlaceCoral:
+                ret = (gp_ == GamePiece.CORAL) ;
+                break ;
+
+            case ScoreAlgae:
+                ret = (gp_ == GamePiece.ALGAE_HIGH || gp_ == GamePiece.ALGAE_LOW) ;
+                break ;
+
+            case CollectAlgaeReef:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            case CollectAlgaeGround:
+                ret = (gp_ == GamePiece.NONE) ;
+                break ;
+
+            default:
+                break ;
+        }
+
+        return ret;
+    }
+
     private String startNewAction() {
         String status ;
 
@@ -241,23 +299,33 @@ public class BrainSubsystem extends SubsystemBase {
             current_robot_action_command_index_ = 0 ;
             current_action_ = next_action_ ;
             next_action_ = null ;
-            oi_.setRobotActionLEDState(current_action_, LEDState.Fast) ;
-            current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
 
-            if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
-                status = current_action_.toString() + ":no command" ;
-                current_action_ = null ;
-                current_cmd_ = null ;
+            if (isCurrentActionLegal()) {
+                oi_.setRobotActionLEDState(current_action_, LEDState.Fast) ;
+                current_robot_action_command_ = this.getRobotActionCommand(current_action_, coral_level_, coral_side_) ;
+
+                if (current_robot_action_command_ == null || current_robot_action_command_.size() == 0) {
+                    status = current_action_.toString() + ":no command" ;
+                    current_action_ = null ;
+                    current_cmd_ = null ;
+                }
+                else {
+                    current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
+                    status = current_action_.toString() + ":" + current_cmd_.getName() ;
+                    current_cmd_.schedule() ;
+                }
             }
             else {
-                current_cmd_ = current_robot_action_command_.getCommand(current_robot_action_command_index_++) ;
-                status = current_action_.toString() + ":" + current_cmd_.getName() ;
-                current_cmd_.schedule() ;
+                current_action_ = null ;
+                next_action_ = null ;
+                status = "illegal action" ;
+                oi_.flashDisplay();
             }
         }
         else {
             status = "idle" ;
         }
+
         return status ;
     }
 
@@ -268,7 +336,7 @@ public class BrainSubsystem extends SubsystemBase {
         else {
             coral_side_ = CoralSide.Left ;
         }
-        coral_level_ = 4 ;
+        coral_level_ = ReefLevel.L4 ;
 
         oi_.setLevelLED(coral_level_);
         oi_.setSideLED(coral_side_);
@@ -305,21 +373,29 @@ public class BrainSubsystem extends SubsystemBase {
             }
         }
 
+        trackReefPlace() ;
+
         Logger.recordOutput("brain/status", status) ;
         Logger.recordOutput("brain/locked", locked_) ;
         Logger.recordOutput("brain/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("brain/next_action", next_action_ != null ? next_action_.toString() : "none") ;
+        Logger.recordOutput("brain/holding", gp_.toString()) ;
     }
 
-    static final boolean PlaceCoralTwoStep = true ;
+    private void trackReefPlace() {
+        Optional<ReefFace> info = ReefUtil.getTargetedReefFace(db_.getPose()) ;
+        if (info.isPresent()) {
+            Logger.recordOutput("brain/reefplace", info.get().getLeftScoringPose()) ;
+        }
+    }
 
-    private RobotActionCommandList getRobotActionCommand(RobotAction action, int level, CoralSide side) {
+    private RobotActionCommandList getRobotActionCommand(RobotAction action, ReefLevel level, CoralSide side) {
         List<Command> list = new ArrayList<Command>() ;
         List<BooleanSupplier> conds = new ArrayList<BooleanSupplier>() ;
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(m_, g_)) ;
+                list.add(new CollectCoralCmd(this, m_, g_)) ;
                 conds.add(null) ;
                 break ;
 
@@ -327,28 +403,24 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralAutoCmd(m_, g_, Height.L3)) ;
-                conds.add(null) ;
-                // conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
+                list.add(new PlaceCoralCmd(db_, m_, g_, this, true, ReefLevel.AskBrain, CoralSide.AskBrain)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
             case ScoreAlgae:
-                list.add(new ScoreAlgaeBefore(m_, g_)) ;
+                list.add(new ScoreAlgaeBefore(m_)) ;
                 conds.add(null) ;
 
-                list.add(new ScoreAlgaeAfter(m_, g_)) ;
+                list.add(new ScoreAlgaeAfter(db_, this, m_, g_)) ;
                 conds.add(null) ;
                 break ;
 
             case CollectAlgaeReef:
-                list.add(new CollectAlgaeReefCmd(m_, g_)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
-
-
                 break ;
 
             case CollectAlgaeGround:
-                // TODO: write me
                 break ;
         }
 

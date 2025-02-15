@@ -12,7 +12,9 @@ public class AbortCmd extends Command {
 
     @Override
     public void initialize() {
+        b_.lock() ;
         b_.clearRobotActions() ;
+        b_.unlock() ;
     }
 
     @Override

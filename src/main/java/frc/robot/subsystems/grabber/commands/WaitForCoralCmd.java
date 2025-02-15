@@ -25,7 +25,7 @@ public class WaitForCoralCmd extends Command {
     public WaitForCoralCmd(GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
-        timer_ = new XeroTimer(Milliseconds.of(0)) ;
+        timer_ = new XeroTimer(Milliseconds.of(200)) ;
     }
 
     @Override
@@ -41,7 +41,6 @@ public class WaitForCoralCmd extends Command {
 
     @Override
     public void execute() {
-        Logger.recordOutput("coralcollect-state", state_.toString()) ;
         switch(state_) {
             case WaitingForCoral:
                 if (grabber_.coralFalling()) {

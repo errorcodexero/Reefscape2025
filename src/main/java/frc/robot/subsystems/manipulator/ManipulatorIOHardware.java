@@ -28,6 +28,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -41,6 +42,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private TalonFX elevator_motor_2_;
     private DutyCycleEncoder encoder_; 
     private EncoderMapper mapper_; 
+    private DigitalInput hall_effect_sensor_ ;
 
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
@@ -130,7 +132,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
         elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
 
-
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
@@ -141,6 +142,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_1_current_sig_ = elevator_motor_.getSupplyCurrent();
         elevator_2_vol_sig_ = elevator_motor_2_.getMotorVoltage();
         elevator_2_current_sig_ = elevator_motor_2_.getSupplyCurrent();
+
+        hall_effect_sensor_ = new DigitalInput(ManipulatorConstants.Elevator.kHallEffectSensorChannel);
         
         if (Robot.isSimulation()) {
             LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(2), 
@@ -277,6 +280,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
         inputs.elevator2Current = elevator_2_current_sig_.getValue();
 
+        inputs.hallEffectSensor = hall_effect_sensor_.get() ;
+
         if (Robot.isSimulation()) {
             simulateArm() ;
             simulateElevator() ;
@@ -316,9 +321,13 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             .angularVelocity(elevator_vel_sig_.refresh().getValue()) ;
     } 
 
-    public void setElevatorPosition(Distance dist) {
+    public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
         elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
+    }
+
+    public void resetPosition() {
+        elevator_motor_.setPosition(Degrees.of(0.0));
     }
 
     public void setArmTarget(Angle angle) {

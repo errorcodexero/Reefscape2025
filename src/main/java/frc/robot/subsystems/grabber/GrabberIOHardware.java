@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -125,7 +126,7 @@ public class GrabberIOHardware implements GrabberIO {
 
     public void setGrabberMotorVoltage(double vol) {
         grabber_voltage_ = vol;
-        grabber_motor_.setVoltage(grabber_voltage_);
+        grabber_motor_.setControl(new VoltageOut(vol)) ;
     }
 
     public void setGrabberTargetVelocity(AngularVelocity vel) {

@@ -13,22 +13,32 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.xerosw.util.MessageDestination;
+import org.xerosw.util.MessageDestinationThumbFile;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
+import org.xerosw.util.RobotTimeSource;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.CompTunerConstants;
+import frc.robot.util.ReefUtil;
+import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -44,8 +54,12 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
-    
-    public Robot() {
+
+    public Robot() throws RuntimeException {
+        enableMessageLogger();
+
+        MessageLogger.getTheMessageLogger().startMessage(MessageType.Info).add("Robot code starting").endMessage() ;
+
         // Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -109,7 +123,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "collect-place-coral" ;
+            String str = "invalid-place" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        
@@ -135,12 +149,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    public void addRobotSimulationModels() {
-        //
-        // TODO: add any simulation models for this year's robot
-        //
-    }
-    
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {
@@ -232,4 +240,21 @@ public class Robot extends LoggedRobot {
         }
     }
     
+    private void enableMessageLogger() {
+        MessageDestination dest ;
+
+        MessageLogger logger = MessageLogger.getTheMessageLogger() ;
+        logger.setTimeSource(new RobotTimeSource());
+
+        String logpath = null ;
+
+        if (Robot.isSimulation()) {
+            logpath = "logs" ;
+        } else {
+            logpath = "/u" ;
+        }   
+
+        dest = new MessageDestinationThumbFile(logpath, 250, RobotBase.isSimulation());
+        logger.addDestination(dest);
+    }
 }

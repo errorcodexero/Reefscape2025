@@ -5,8 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
 
 public class ModelFactory {
     public ModelFactory(SimulationEngine engine) {

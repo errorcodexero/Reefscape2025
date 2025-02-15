@@ -20,14 +20,17 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.xerosw.hid.XeroGamepad;
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -40,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
@@ -67,7 +71,6 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -128,7 +131,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {
-
         /**
          * Subsystem setup
          */
@@ -153,7 +155,6 @@ public class RobotContainer {
                     break;
 
                 case COMPETITION:
-                    // TODO: Replace TunerConstants with new set of constants for comp bot.
                     drivebase_ = new Drive(
                             new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
                             ModuleIOTalonFX::new,
@@ -171,19 +172,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
-                    try {
-                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                    } catch (Exception e) {
-                    }
+                //     try {
+                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                //     }
+                //     catch(Exception ex) {
+                //         subsystemCreateException(ex) ;
+                //     }
 
+                //     try {
+                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                //     } 
+                //     catch (Exception ex) {
+                //         subsystemCreateException(ex);
+                //     }
                     break;
 
                 case PRACTICE:
@@ -202,13 +215,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception e) {
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                    } catch (Exception e) {
                     }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                //     try {
+                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                //     }
+                //     catch(Exception ex) {
+                //         subsystemCreateException(ex) ;
+                //     }
+
+                //     try {
+                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                //     } 
+                //     catch (Exception ex) {
+                //         subsystemCreateException(ex);
+                //     }
 
                     break;
 
@@ -246,18 +277,31 @@ public class RobotContainer {
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-
-                        // This should never happen in a simulation. If it does, something is wrong in
-                        // the codebase.
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
                     }
 
-                    // Other subsystems should be added here once we have simulation support for
-                    // them.
+                    try {
+                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
+
+                    try {
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                    } 
+                    catch (Exception ex) {
+                        subsystemCreateException(ex);
+                    }
 
                     break;
             }
@@ -313,9 +357,13 @@ public class RobotContainer {
                 case SIMBOT -> 4;
             };
 
+            CameraIO[] cams = new CameraIO[numCams];
+            Arrays.fill(cams, new CameraIO() {});
+
             vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
-                    new CameraIO[numCams]);
+                drivebase_::addVisionMeasurement,
+                cams
+            );
         }
 
         if (manipulator_ == null) {
@@ -363,25 +411,19 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral",
-                AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, true));
+                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Opposing Side Coral",
-                AutoCommands.sideCoralAuto(drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(drivebase_, manipulator_, grabber_));
+                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)",
-                AutoCommands.centerCoralAuto(drivebase_, manipulator_, grabber_, true));
+                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
-                AutoCommands.centerCoralAuto(drivebase_, manipulator_, grabber_, false));
-        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(drivebase_, manipulator_, grabber_));
+                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, false));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
-        tuningChooser_.addOption(
-                "testing driveto",
-                DriveCommands.swerveDriveToCommand(
-                        new Pose2d(
-                                Meters.of(3.2),
-                                Meters.of(4.0),
-                                new Rotation2d(
-                                        Rotations.of(0.0)))));
+        tuningChooser_.addOption("Straight Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
+        tuningChooser_.addOption("Curved Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
 
         // Add SysId routines to the chooser
         tuningChooser_.addOption("Drive Wheel Radius Characterization",
@@ -399,6 +441,18 @@ public class RobotContainer {
 
     }
 
+    private void subsystemCreateException(Exception ex) {
+        MessageLogger logger = MessageLogger.getTheMessageLogger() ;
+        logger.startMessage(MessageType.Error) ;
+        logger.add("Error creating subsystem", ex.getMessage());
+        logger.endMessage() ;
+        logger.logStackTrace(ex.getStackTrace()) ;
+
+        if (Constants.propogateExceptionOnSubsystemCreateFail) {
+            throw new RuntimeException("Error creating subsystem", ex);
+        }
+    }
+
     /**
      * Use this method to define your button -> command mappings for drivers.
      */
@@ -412,10 +466,10 @@ public class RobotContainer {
         oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
-        oi_.l1().onTrue(new SetLevelCmd(brain_, 1).ignoringDisable(true));
-        oi_.l2().onTrue(new SetLevelCmd(brain_, 2).ignoringDisable(true));
-        oi_.l3().onTrue(new SetLevelCmd(brain_, 3).ignoringDisable(true));
-        oi_.l4().onTrue(new SetLevelCmd(brain_, 4).ignoringDisable(true));
+        oi_.l1().onTrue(new SetLevelCmd(brain_, ReefLevel.L1).ignoringDisable(true));
+        oi_.l2().onTrue(new SetLevelCmd(brain_, ReefLevel.L2).ignoringDisable(true));
+        oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
+        oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
@@ -423,10 +477,13 @@ public class RobotContainer {
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
 
         oi_.abort().onTrue(new AbortCmd(brain_)) ;
-        oi_.eject().onTrue(new EjectCmd(manipulator_, grabber_)) ;
+        oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
+
+        oi_.climbExecute().onTrue(vision_.setEnabledCommand(true).ignoringDisable(true)) ;
+        oi_.climbDeploy().onTrue(vision_.setEnabledCommand(false).ignoringDisable(true)) ;
     }
 
     /**
@@ -438,17 +495,17 @@ public class RobotContainer {
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                () -> gamepad_.getLeftY(),
-                () -> gamepad_.getLeftX(),
-                () -> gamepad_.getRightX()));
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()));
         
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
                 DriveCommands.joystickDrive(
                         drivebase_,
-                        () -> gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+                        () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                        () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                        () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
