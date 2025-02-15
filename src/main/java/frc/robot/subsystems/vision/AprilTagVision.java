@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Matrix;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
@@ -28,13 +30,14 @@ public class AprilTagVision extends SubsystemBase {
 
     private final Alert[] alerts_;
 
-    private boolean enabled_ ;
+    @AutoLogOutput(key = "Vision/PoseEstimatesEnabled")
+    private boolean enabled_;
 
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
 
         io_ = io;
-        enabled_ = true ;
+        enabled_ = true;
 
         inputs_ = new CameraIOInputsAutoLogged[io.length];
         alerts_ = new Alert[io.length];
@@ -51,12 +54,12 @@ public class AprilTagVision extends SubsystemBase {
         }
     }
 
-    public void enable() {
-        enabled_ = true;
+    public void setEnabled(boolean enabled) {
+        enabled_ = enabled;
     }
 
-    public void disable() {
-        enabled_ = false;
+    public Command setEnabledCommand(boolean enabled) {
+        return runOnce(() -> setEnabled(enabled));
     }
 
     @Override
@@ -65,11 +68,8 @@ public class AprilTagVision extends SubsystemBase {
         // Update inputs for each camera
         for (int index = 0; index < io_.length; index++) {
             io_[index].updateInputs(inputs_[index]);
-            inputs_[index].enabled = enabled_;
             Logger.processInputs("Vision/Camera" + index, inputs_[index]);
         }
-
-        if (!enabled_) return;
 
         ArrayList<Pose3d> summaryTagPoses = new ArrayList<>();
         ArrayList<Pose2d> summaryPoses = new ArrayList<>();
@@ -175,6 +175,8 @@ public class AprilTagVision extends SubsystemBase {
      */
     private boolean isEstimationAcceptable(PoseEstimation estimation) {
         // Decline for any of the following reasons:
+
+        if (!enabled_) return false; // If vision pose estimation is disabled.
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
