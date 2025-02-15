@@ -1,5 +1,10 @@
 package frc.robot.subsystems.grabber;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Angle;
@@ -14,19 +19,19 @@ public interface GrabberIO {
 
         // Grabber Inputs
         public boolean grabberReady = false;
-        public Angle grabberPosition;
-        public Current grabberCurrent;
-        public Voltage grabberVoltage;
-        public AngularVelocity grabberVelocity;
+        public Angle grabberPosition = Degrees.zero();
+        public Current grabberCurrent = Amps.zero();
+        public Voltage grabberVoltage = Volts.zero();
+        public AngularVelocity grabberVelocity = RadiansPerSecond.zero();
 
         // Sensor Inputs
-        public boolean coralSensor;
-        public boolean coralRisingEdge;
-        public boolean coralFallingEdge;
+        public boolean coralSensor = false;
+        public boolean coralRisingEdge = false;
+        public boolean coralFallingEdge = false;
 
-        public boolean algaeSensor;
-        public boolean algaeRisingEdge;
-        public boolean algaeFallingEdge;
+        public boolean algaeSensor = false;
+        public boolean algaeRisingEdge = false;
+        public boolean algaeFallingEdge = false;
     }
 
     public default void updateInputs(GrabberIOInputs inputs) {}
