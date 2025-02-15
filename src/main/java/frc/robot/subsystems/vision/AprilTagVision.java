@@ -14,6 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.vision.CameraIO.Fiducial;
@@ -53,12 +54,12 @@ public class AprilTagVision extends SubsystemBase {
         }
     }
 
-    public void enable() {
-        enabled_ = true;
+    public void setEnabled(boolean enabled) {
+        enabled_ = enabled;
     }
 
-    public void disable() {
-        enabled_ = false;
+    public Command setEnabledCommand(boolean enabled) {
+        return runOnce(() -> setEnabled(enabled));
     }
 
     @Override
