@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
@@ -33,32 +34,27 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void periodic() {
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
+
         Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
         Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
+
         Logger.recordOutput("Manipulator/armReady", isArmAtTarget()) ;
         Logger.recordOutput("Manipulator/elevatorReady", isElevAtTarget()) ;
 
         armDisconnected_.set(!inputs_.armReady);
         elevator1Disconnected_.set(!inputs_.elevator1Ready);
         elevator2Disconnected_.set(!inputs_.elevator2Ready);
-
-        Logger.recordOutput("Manipulator/elevRawPos", inputs_.elevatorRawMotorPosition.in(Rotations)) ;
-        Logger.recordOutput("Manipulator/elevRawVel", inputs_.elevatorRawMotorVelocity.in(RotationsPerSecond)) ;
-        if (target_height_ != null)
-           Logger.recordOutput("Manipulator/elevatorTarget", target_height_.in(Centimeters)) ;
-
-        Logger.recordOutput("Manipulator/armRawPos", inputs_.armRawMotorPosition.in(Rotations)) ;
-        Logger.recordOutput("Manipulator/armRawVel", inputs_.armRawMotorVelocity.in(RotationsPerSecond)) ;        
-
-        if (target_angle_ != null)
-            Logger.recordOutput("Manipulator/armTarget", target_angle_.in(Degrees)) ;
     }
 
     public Angle getArmPosition() {
         return inputs_.armPosition;
     }
 
-    public void setArmPosition(Angle angle) {
+    public Angle getArmTarget() {
+        return target_angle_;
+    }
+
+    public void setArmTarget(Angle angle) {
         target_angle_ = angle;  
         io_.setArmTarget(angle); 
     }
@@ -67,9 +63,21 @@ public class ManipulatorSubsystem extends SubsystemBase{
         return inputs_.elevatorPosition; 
     }
 
-    public void setElevatorPosition(Distance dist) {
+    public Distance getElevatorTarget() {
+        return target_height_;
+    }
+
+    public void setElevatorTarget(Distance dist) {
         target_height_ = dist;
-        io_.setElevatorPosition(dist); 
+        io_.setElevatorTarget(dist); 
+    }
+
+    public void resetPosition() {
+        io_.resetPosition();
+    }
+
+    public void setElevatorVoltage(Voltage volts) {
+        io_.setElevatorMotorVoltage(volts.in(Volts)) ;
     }
 
     public boolean doesCrossKZ(Angle current, Angle target) {
@@ -77,20 +85,34 @@ public class ManipulatorSubsystem extends SubsystemBase{
                (current.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle) && target.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle)) ;
     }
 
+    public boolean isElevAtBottom() {
+        return inputs_.hallEffectSensor ;
+    }
+
     public boolean isElevAtTarget() {
         if (target_height_ == null)
             return false;
 
-        return inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance) && 
-               inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance);
+        if (!inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance))
+            return false ;
+
+        if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance))
+            return false ;
+
+        return true ;
     }
 
     public boolean isArmAtTarget() {
         if (target_angle_ == null)
             return false;            
 
-        return inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance) && 
-               inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance);
+        if (!inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance))
+            return false ;
+
+        if (Robot.isReal() && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance))
+            return false ;
+
+        return true ;
     }
 
     public Command armSysIdQuasistatic(SysIdRoutine.Direction dir) {

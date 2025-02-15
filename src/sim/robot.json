@@ -8,12 +8,54 @@
                 "alliance" : "red1",
                 "fms" : false,
                 "create_early" : true
-            }            
+            },
+            "events" : {
+                "autonomous" : {
+                    "type" : "double",
+                    "min" : 0.0,
+                    "max" : 86400.0
+                },
+                "start" : {
+                    "type" : "double",
+                    "min" : 0.0,
+                    "max" : 86400.0
+                },
+                "between" : {
+                    "type" : "double",
+                    "min" : 0.0,
+                    "max" : 86400.0
+                },
+                "teleop" : {
+                    "type" : "double",
+                    "min" : 0.0,
+                    "max" : 86400.0
+                },
+                "test" : {
+                    "type" : "double",
+                    "min" : 0.0,
+                    "max" : 86400.0
+                },
+                "fms" : {
+                    "type" : "boolean"
+                },
+                "ds" : { 
+                    "type" : "boolean"
+                },
+                "alliance" : {
+                    "type" : "choice",
+                    "choices" : ["red1", "red2", "red3", "blue1", "blue2", "blue3"]
+                }
+            }
         },
         {
             "model" : "drivebase",
             "instance" : "1",
             "props" : {
+            },
+            "events" : {
+                "pose" : {
+                    "type" : "pose"
+                }
             }
         },
         {
@@ -25,6 +67,64 @@
                 "buttons": 10,
                 "povs": 1,
                 "create_early": true
+            },
+            "events" : {
+                "a" : {
+                    "type" : "boolean"
+                },
+                "b" : {
+                    "type" : "boolean"
+                },
+                "x" : {
+                    "type" : "boolean"
+                },
+                "y" : {
+                    "type" : "boolean"
+                },
+                "start" : {
+                    "type" : "boolean"
+                },
+                "back" : {
+                    "type" : "boolean"
+                },
+                "lb" : {
+                    "type" : "boolean"
+                },
+                "rb" : {
+                    "type" : "boolean"
+                },
+                "lstick" : {
+                    "type" : "boolean"
+                },
+                "button-#" : {
+                    "type" : "boolean",
+                    "num_min" : 1,
+                    "num_max" : 32
+                },
+                "ltrigger" : {
+                    "type" : "double",
+                    "min" : -1.0,
+                    "max" : 1.0
+                },
+                "rtrigger" : {
+                    "type" : "double",
+                    "min" : -1.0,
+                    "max" : 1.0
+                },
+                "axis-#" : {
+                    "type" : "double",
+                    "num_min" : 1,
+                    "num_max" : 32,
+                    "min" : -1.0,
+                    "max" : 1.0
+                },
+                "pov-#" : {
+                    "type" : "integer",
+                    "num_min" : 1,
+                    "num_max" : 32,
+                    "min" : 0,
+                    "max" : 270
+                }
             }
         },
         {
@@ -38,16 +138,74 @@
                 "povs" : 0,
                 "leds" : 32,
                 "create_early" : true
-            }
+            },
+            "events" : {
+                "eject" : {
+                    "type" : "boolean"
+                },
+                "abort" : {
+                    "type" : "boolean"
+                },
+                "execute" : {
+                    "type" : "boolean"
+                },
+                "l1" : {
+                    "type" : "boolean"
+                },
+                "l2" : {
+                    "type" : "boolean"
+                },
+                "l3" : {
+                    "type" : "boolean"
+                },
+                "r1" : {
+                    "type" : "boolean"
+                },
+                "coral-collect" : {
+                    "type" : "boolean"
+                },
+                "coral-place" : {
+                    "type" : "boolean"
+                },
+                "algae-ground" : {
+                    "type" : "boolean"
+                },
+                "algae-score" : {
+                    "type" : "boolean"
+                },
+                "algae-reef" : {
+                    "type" : "boolean"
+                },
+                "climb-deply" : {
+                    "type" : "boolean"
+                },
+                "climb-retract" : {
+                    "type" : "boolean"
+                },
+                "climb-lock" : {
+                    "type" : "boolean"
+                },
+                "coral-side" : {
+                    "type" : "boolean"
+                }
+           }
         },
         {
             "model" : "dio",
             "instance" : "1",
             "props" : {
-                "coral-sensor" : 1,
+                "coral-sensor" : 0,
                 "coral-sensor-init" : true,
                 "algae-sensor" : 2,
                 "algae-sensor-init" : true
+            },
+            "events" : {
+                "coral-sensor" : {
+                    "type" : "boolean"
+                },
+                "algae-sensor" : {
+                    "type" : "boolean"
+                }
             }
         }
     ]

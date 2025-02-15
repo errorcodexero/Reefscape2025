@@ -131,9 +131,7 @@ public class AprilTagVision extends SubsystemBase {
     /**
      * Integrates a pose estimation with the PoseEstimator.
      * @param est
-     * @deprecated This method is not fully implemented, it has no effect, and is simply a placeholder.
      */
-    @Deprecated
     private void integratePoseEstimate(PoseEstimation est) {
         // TODO: Look into this calculation / into other calculations.
         double stdDevFactor =
@@ -165,6 +163,8 @@ public class AprilTagVision extends SubsystemBase {
         // Decline for any of the following reasons:
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
+
+        if (estimation.type() == PoseEstimationType.MEGATAG1) return false; // If it is using Megatag1.
 
         if (estimation.tagCount() < VisionConstants.minimumTagCount) return false; // If there are less than the configured minimum.
 

@@ -5,30 +5,44 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.subsystems.vision.LimelightHelpers.PoseEstimate;
-import frc.robot.subsystems.vision.LimelightHelpers.RawDetection;
 
 public class CameraIOLimelight implements CameraIO {
 
     protected String name_;
     protected Supplier<Rotation2d> rotationSupplier_;
 
+    private Supplier<Long> lastUpdateSupplier_;
+    private DoubleArrayEntry rawCornersNT_;
+    private DoubleArrayEntry hardwareStatusNT_;
+
     public CameraIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
         name_ = name;
         rotationSupplier_ = rotationSupplier;
+
+        lastUpdateSupplier_ = LimelightHelpers.getLimelightNTTableEntry(name_, "tl")::getLastChange;
+        rawCornersNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "tcornxy");
+        hardwareStatusNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "hw");
     }
 
     @Override
     public void updateInputs(CameraIOInputsAutoLogged inputs) {
 
         LimelightResults results = LimelightHelpers.getLatestResults(name_);
-        RawDetection[] detections = LimelightHelpers.getRawDetections(name_);
+        
+        double[] rawCorners = rawCornersNT_.get(new double[] {});
+        double[] hardwareStatus = hardwareStatusNT_.get(new double[] {-1.0, -1.0, -1.0, -1.0});
 
         // Connected if not updated in one second
-        inputs.connected = (Timer.getFPGATimestamp() - results.timestamp_RIOFPGA_capture) < 1;
+        inputs.connected = (Timer.getFPGATimestamp() - lastUpdateSupplier_.get()) < 1;
+
+        // Status information
+        inputs.fps = hardwareStatus[0];
+        inputs.cpuTemp = hardwareStatus[1];
 
         // Update Robot Orientation
         LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
@@ -48,11 +62,10 @@ public class CameraIOLimelight implements CameraIO {
         ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
         // Fetch Raw Corners
-        for (RawDetection detection : detections) {
-            corners.add(new Translation2d(detection.corner0_X, detection.corner0_Y));
-            corners.add(new Translation2d(detection.corner1_X, detection.corner1_Y));
-            corners.add(new Translation2d(detection.corner2_X, detection.corner2_Y));
-            corners.add(new Translation2d(detection.corner3_X, detection.corner3_Y));
+        if (rawCorners.length % 2 == 0) {
+            for (int i = 0; i + 1 < rawCorners.length; i += 2) {
+                corners.add(new Translation2d(rawCorners[i], rawCorners[i + 1]));
+            }
         }
 
         // Fetch Fiducials
@@ -66,7 +79,7 @@ public class CameraIOLimelight implements CameraIO {
         PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);
 
-        if (estimateMegatag1 != null) {
+        if (estimateMegatag1 != null && estimateMegatag1.tagCount > 0) {
             poseEstimates.add(new PoseEstimation(
                 estimateMegatag1.pose,
                 estimateMegatag1.timestampSeconds,
@@ -77,7 +90,7 @@ public class CameraIOLimelight implements CameraIO {
             ));
         }
         
-        if (estimateMegatag2 != null) {
+        if (estimateMegatag2 != null && estimateMegatag2.tagCount > 0) {
             poseEstimates.add(new PoseEstimation(
                 estimateMegatag2.pose,
                 estimateMegatag2.timestampSeconds,

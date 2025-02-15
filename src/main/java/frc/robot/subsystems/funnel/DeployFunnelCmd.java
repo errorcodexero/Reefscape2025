@@ -61,5 +61,3 @@ public class DeployFunnelCmd extends Command {
         return true; // Replace with actual condition
     }
 }
-
-

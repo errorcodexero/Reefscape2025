@@ -1,4 +1,4 @@
-package frc.simulator.utils;
+package org.xerosw.util;
 
 import java.io.IOException;
 import java.nio.file.Files;

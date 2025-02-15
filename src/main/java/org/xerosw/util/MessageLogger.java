@@ -1,5 +1,5 @@
 
-package frc.simulator.utils;
+package org.xerosw.util;
 
 import java.util.HashMap;
 import java.util.Map;

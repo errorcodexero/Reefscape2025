@@ -32,12 +32,15 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
     private static final Trigger enabled = RobotModeTriggers.disabled().negate();
 
     // The current mode of the IMU, assuming this is not set anywhere else
-    private IMUMode currentMode_ = IMUMode.SEEDING;
+    private IMUMode currentMode_ = VisionConstants.runWithoutIMU ? IMUMode.IGNORING : IMUMode.SEEDING;
     
     public CameraIOLimelight4(String name, Supplier<Rotation2d> rotationSupplier) {
         super(name, rotationSupplier);
         
         setMode(currentMode_);
+
+        // If running without IMU, skip binding these commands.
+        if (VisionConstants.runWithoutIMU) return;
 
         // When enabled, set to use IMU after slight offset.
         enabled.onTrue(Commands.sequence(
@@ -54,6 +57,7 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
         super.updateInputs(inputs);
 
         inputs.imuMode = currentMode_;
+        inputs.imuRobotYaw = Rotation2d.fromDegrees(LimelightHelpers.getIMUData(name_).robotYaw);
     }
 
     private void setMode(IMUMode mode) {

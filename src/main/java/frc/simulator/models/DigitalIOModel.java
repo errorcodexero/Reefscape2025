@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.xerosw.util.MessageLogger;
+import org.xerosw.util.MessageType;
+import org.xerosw.util.SettingsValue;
+
 import edu.wpi.first.hal.simulation.DIODataJNI;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.engine.SimulationModel;
-import frc.simulator.utils.MessageLogger;
-import frc.simulator.utils.MessageType;
-import frc.simulator.utils.SettingsValue;
 
 public class DigitalIOModel extends SimulationModel {
     private Map<String, Integer> diomap_ ;
@@ -43,6 +44,8 @@ public class DigitalIOModel extends SimulationModel {
                 }
             }
         }
+        
+        setCreated();
         return true ;
     }
 

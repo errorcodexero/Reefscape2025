@@ -53,7 +53,5 @@ public class ClimberConstants {
             public static final Angle kPrepped = Degrees.of(0);
             public static final Angle kClimbed = Degrees.of(0);
         }
-    }
-
-    
+    }   
 }

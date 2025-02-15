@@ -13,10 +13,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
@@ -30,12 +31,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 */
 public final class Constants {
 
+    public static final boolean propogateExceptionOnSubsystemCreateFail = true ;
+
     /**
      * CONFIGURATION
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.SIMBOT;
+    private static final RobotType robotType = RobotType.PRACTICE;
 
     public static class DriveConstants {
         
@@ -45,7 +48,7 @@ public final class Constants {
     
     public static class FieldConstants {
         
-        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
         
     }
 
@@ -93,16 +96,6 @@ public final class Constants {
         public static final Distance robotToArm = Inches.of(0.125);
     }
 
-    public static class CanConstants {
-
-        public static final int grabber = 1;
-        public static final int armFront = 2;
-        public static final int armBack = 3;
-        public static final int elevatorFront = 4;
-        public static final int elevatorBack = 5;
-
-    }
-
     /**
      * ROBOT STATE
      */
@@ -132,8 +125,26 @@ public final class Constants {
         SIMBOT
     }
 
+    public enum ReefLevel {
+        L1(0),
+        L2(1),
+        L3(2),
+        L4(3),
+        AskBrain(4) ;
+
+        private final int index;
+
+        private ReefLevel(int index) {
+            this.index = index ;
+        }
+
+        public int getindex() {
+            return index;
+        }
+    }
+
     // This is only a fallback! This will not change the robot type.
-    private static final RobotType defaultRobotType = RobotType.ALPHA;
+    private static final RobotType defaultRobotType = RobotType.COMPETITION;
 
     private static final Alert invalidRobotType = new Alert(
         "Invalid RobotType selected. Defaulting to " + defaultRobotType.toString(),
@@ -155,5 +166,4 @@ public final class Constants {
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }
-    
 }

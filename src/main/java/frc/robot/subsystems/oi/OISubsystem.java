@@ -3,13 +3,15 @@ package frc.robot.subsystems.oi;
 import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.Logger;
+import org.xerosw.hid.XeroGamepad;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.brain.RobotAction;
 
 public class OISubsystem extends SubsystemBase {
@@ -18,24 +20,23 @@ public class OISubsystem extends SubsystemBase {
     // The LEDs on the driver station
     //
     public enum OILed {
-        // TODO: update these based on the wiring of the OI
-        Eject(0),
-        CoralL1(1),
-        CoralL2(2),
-        CoralL3(3),
-        CoralL4(4),
-        CoralCollect(5),
-        CoralPlace(6),
-        AlgaeGround(7),
-        AlgaeScore(8),
-        AlgaeReef(9),
-        ClimbDeploy(11),
-        ClimbExecute(12),
-        CoralLeft(13),
-        CoralRight(14),
-        HoldingCoral(15),
-        HoldingAlgaeLow(16),
-        HoldingAlgaeHigh(17);
+
+        CoralL1(1),                         //
+        CoralL2(2),                         //
+        CoralL3(3),                         //
+        CoralL4(4),                         //
+        ScoreAlgae(5),                      //
+        CollectAlgaeGround(6),              //
+        Spare1(7) ,                         // 
+        HoldingAlgaeLow(8),                 //
+        HoldingAlgaeHigh(9),                // 
+        HoldingCoral(10),                   //
+        Execute(11),                        //
+        CoralLeft(12),                      //
+        CoralRight(13),                     //
+        CollectCoral(14),                   //
+        PlaceCoral(15),                     //
+        CollectAlgaeReef(16);               //
 
         public final Integer value ;
 
@@ -62,7 +63,7 @@ public class OISubsystem extends SubsystemBase {
 
      
     // The gamepad controller attached for driving the robot
-    private CommandXboxController gamepad_ ;
+    private XeroGamepad gamepad_ ;
 
     // If true, we are rumbling the xbox controller
     private boolean rumbling_ ;
@@ -88,10 +89,17 @@ public class OISubsystem extends SubsystemBase {
     private Trigger l4_ ;
     private Trigger coral_left_right_ ;
 
-    public OISubsystem(OIIO ios, CommandXboxController ctrl) {
+    private boolean flashing_ ;
+    private XeroTimer flashing_timer_ ;
+
+    public OISubsystem(OIIO ios, XeroGamepad ctrl) {
         this.ios_ = ios ;
         this.inputs_ = new OIIosInputsAutoLogged() ;
         gamepad_ = ctrl ;
+        rumbling_ = false ;
+
+        flashing_timer_ = new XeroTimer(Seconds.of(1.0)) ;
+        flashing_ = false ;
 
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
@@ -115,6 +123,10 @@ public class OISubsystem extends SubsystemBase {
         for (OILed led : OILed.values()) {
             ios_.setLED(led.value, LEDState.Off) ;
         }
+    }
+
+    public boolean sideSwitch() {
+        return inputs_.coral_side ;
     }
 
     public Trigger abort() {
@@ -183,40 +195,44 @@ public class OISubsystem extends SubsystemBase {
         gamepad_.setRumble(RumbleType.kBothRumble, 1.0);
     }
 
+    public void flashDisplay() {
+        ios_.flashLEDs();
+        flashing_ = true ;
+        flashing_timer_.start() ;
+    }
+
     public void setLEDState(OILed led, LEDState st) {
         ios_.setLED(led.value, st) ;
     }    
 
     public void clearAllActionLEDs() {
-        setLEDState(OILed.CoralPlace, LEDState.Off) ;
-        setLEDState(OILed.CoralCollect, LEDState.Off) ;
-        setLEDState(OILed.AlgaeGround, LEDState.Off) ;
-        setLEDState(OILed.AlgaeReef, LEDState.Off) ;
-        setLEDState(OILed.AlgaeScore, LEDState.Off) ;
-        setLEDState(OILed.ClimbDeploy, LEDState.Off) ;
-        setLEDState(OILed.ClimbExecute, LEDState.Off) ;
+        setLEDState(OILed.PlaceCoral, LEDState.Off) ;
+        setLEDState(OILed.CollectCoral, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
+        setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {
         switch(a) {
             case PlaceCoral:
-                setLEDState(OILed.CoralPlace, st) ;
+                setLEDState(OILed.PlaceCoral, st) ;
                 break ;
 
             case CollectCoral:
-                setLEDState(OILed.CoralCollect, st) ;
+                setLEDState(OILed.CollectCoral, st) ;
                 break ;
 
             case CollectAlgaeGround:
-                setLEDState(OILed.AlgaeGround, st) ;
+                setLEDState(OILed.CollectAlgaeGround, st) ;
                 break ;
 
             case CollectAlgaeReef:
-                setLEDState(OILed.AlgaeReef, st) ;
+                setLEDState(OILed.CollectAlgaeReef, st) ;
                 break ;
 
-            case PlaceAlgae:
-                setLEDState(OILed.AlgaeScore, st) ;
+            case ScoreAlgae:
+                setLEDState(OILed.ScoreAlgae, st) ;
                 break ;
         }
     }
@@ -226,15 +242,21 @@ public class OISubsystem extends SubsystemBase {
         ios_.updateInputs(inputs_) ;
         Logger.processInputs("OI", inputs_) ;
 
+        if (flashing_ && flashing_timer_.isExpired()) {
+            ios_.restoreLEDState() ;
+            flashing_ = false ;
+        }
+
         if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);
             rumbling_ = false ;
         }
 
-        //
-        // Process the left versus right status information
-        //
-        if (inputs_.coral_side) {
+        Logger.recordOutput("oi/buttons", getPressedString()) ; 
+    }
+
+    public void setSideLED(CoralSide side) {
+        if (side == CoralSide.Left) {
             setLEDState(OILed.CoralLeft, LEDState.On) ;
             setLEDState(OILed.CoralRight, LEDState.Off) ;
         }
@@ -242,35 +264,39 @@ public class OISubsystem extends SubsystemBase {
             setLEDState(OILed.CoralLeft, LEDState.Off) ;
             setLEDState(OILed.CoralRight, LEDState.On) ;
         }
+    }
 
-        //
-        // Process the L1 through L4 coral location
-        //
-        if (inputs_.coral_l1) {
-            setLEDState(OILed.CoralL1, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL1, LEDState.Off) ;
+    public void setLevelLED(ReefLevel level) {
+        setLEDState(OILed.CoralL1, LEDState.Off) ;
+        setLEDState(OILed.CoralL2, LEDState.Off) ;
+        setLEDState(OILed.CoralL3, LEDState.Off) ;
+        setLEDState(OILed.CoralL4, LEDState.Off) ;        
+
+        switch(level) {
+            case L1:
+                setLEDState(OILed.CoralL1, LEDState.On) ;
+                break ;
+
+            case L2:
+                setLEDState(OILed.CoralL2, LEDState.On) ;
+                break ;
+
+            case L3:
+                setLEDState(OILed.CoralL3, LEDState.On) ;
+                break ;
+
+            case L4:
+                setLEDState(OILed.CoralL4, LEDState.On) ;
+                break ;
+
+            default:
+                // Should never happen
+                setLEDState(OILed.CoralL1, LEDState.Slow) ;
+                setLEDState(OILed.CoralL2, LEDState.Slow) ;
+                setLEDState(OILed.CoralL3, LEDState.Slow) ;
+                setLEDState(OILed.CoralL4, LEDState.Slow) ;   
+                break ;
         }
-
-        if (inputs_.coral_l2) {
-            setLEDState(OILed.CoralL2, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL2, LEDState.Off) ;
-        }
-
-        if (inputs_.coral_l3) {
-            setLEDState(OILed.CoralL3, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL3, LEDState.Off) ;
-        }
-
-        if (inputs_.coral_l4) {
-            setLEDState(OILed.CoralL4, LEDState.On) ;
-        } else {
-            setLEDState(OILed.CoralL4, LEDState.Off) ;
-        }
-
-        Logger.recordOutput("oi/buttons", getPressedString()) ; 
     }
 
     public String getPressedString() {
@@ -376,66 +402,65 @@ public class OISubsystem extends SubsystemBase {
             str += "coral_side_right" ;
         }
 
-        if (gamepad_.getHID().getAButton()) {
+        if (gamepad_.a().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "a" ;
         }
 
-        if (gamepad_.getHID().getBButton()) {
+        if (gamepad_.b().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "b" ;
         }
 
-        if (gamepad_.getHID().getXButton()) {
+        if (gamepad_.x().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "x" ;
         }
 
-        if (gamepad_.getHID().getYButton()) {
+        if (gamepad_.y().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "y" ;
         }
 
-        if (gamepad_.getHID().getStartButton()) {
+        if (gamepad_.start().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "start" ;
         }
 
-        if (gamepad_.getHID().getBackButton()) {
+        if (gamepad_.back().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "back" ;
         }
 
-        if (gamepad_.getHID().getLeftStickButton()) {
+        if (gamepad_.leftStick().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "ls" ;
         }
 
-        if (gamepad_.getHID().getRightStickButton()) {
+        if (gamepad_.rightStick().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "rs" ;
         }
 
-        if (gamepad_.getHID().getLeftBumperButton()) {
+        if (gamepad_.leftBumper().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "lb" ;
         }
 
-        if (gamepad_.getHID().getRightBumperButton()) {
+        if (gamepad_.rightBumper().getAsBoolean()) {
             if (str.length() > 0)
                 str += "," ;
             str += "rb" ;
         }
-        
 
         return str ;
     }

@@ -13,9 +13,10 @@ public class GrabberConstants {
         public static final int kMotorCANID = 1;
         public static final double kGearRatio = 1.0;
         public static final boolean kInverted = true; 
+        public static final double kHoldingVoltage = -3.0 ;
 
         public class PID {
-            public static final double kP = 0.75; 
+            public static final double kP = 0.6; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.14 ;
@@ -51,12 +52,12 @@ public class GrabberConstants {
         }
 
         public class CollectAlgae {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(-15.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(-20.0) ;
         }
 
         public class DepositAlgae {
-            public static final AngularVelocity velocity = RotationsPerSecond.of(30.0) ;
-            public static final Time delay = Milliseconds.of(250.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(-120.0) ;
+            public static final Time delay = Milliseconds.of(2000.0) ;
         }
 
         public class Positions {

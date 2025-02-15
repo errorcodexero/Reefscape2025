@@ -9,7 +9,7 @@ import frc.simulator.engine.SimulationEngine;
 import frc.simulator.models.OIBaseModel;
 
 public class OIIOHID implements OIIO {
-    private static final int kMaxLeds = 32 ;
+    private static final int kMaxLeds = 16 ;
     private static final int kFastLoopCount = 10 ;
     private static final int kSlowLoopCount = 25 ;
         
@@ -17,6 +17,7 @@ public class OIIOHID implements OIIO {
 
     private boolean led_onoff_[];
     private OISubsystem.LEDState led_state_[] ;
+    private OISubsystem.LEDState led_save_state_[] ;
 
     private boolean fast_on_off_ ;
     private int fast_on_off_loops_ ;
@@ -28,6 +29,7 @@ public class OIIOHID implements OIIO {
 
         led_onoff_ = new boolean[kMaxLeds] ;
         led_state_ = new OISubsystem.LEDState[kMaxLeds] ;
+        led_save_state_ = new OISubsystem.LEDState[kMaxLeds] ;
         for(int i = 0 ; i < kMaxLeds ; i++) {
             led_state_[i] = LEDState.Off ;
         }
@@ -64,7 +66,23 @@ public class OIIOHID implements OIIO {
 
     @Override
     public void setLED(int index, LEDState st) {
-        led_state_[index] = st ;        
+        led_state_[index - 1] = st ;
+        led_save_state_[index - 1] = st ;
+    }
+
+    @Override
+    public void flashLEDs() {
+        for(int i = 0 ; i < kMaxLeds ; i++) {
+            led_save_state_[i] = led_state_[i] ;
+            led_state_[i] = LEDState.On ;
+        }
+    }
+
+    @Override
+    public void restoreLEDState() {
+        for(int i = 0 ; i < kMaxLeds ; i++) {
+            led_state_[i] = led_save_state_[i] ;
+        }
     }
 
     private void setSimulatedLED(int index, boolean on) {

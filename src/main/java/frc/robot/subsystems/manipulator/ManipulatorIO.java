@@ -45,6 +45,9 @@ public interface ManipulatorIO {
         // encoder
         public Angle absoluteEncoder = Degrees.of(0); 
         public double rawAbsoluteEncoder = 0;
+
+        // hall effect sensor
+        public boolean hallEffectSensor = false;
     }
 
     // updating inputs
@@ -60,7 +63,8 @@ public interface ManipulatorIO {
     public default void logElevatorMotor(SysIdRoutineLog log) {}
 
     // ELEVATOR METHODS
-    public default void setElevatorPosition(Distance dist) {}
+    public default void setElevatorTarget(Distance dist) {}
+    public default void resetPosition() {}
 
     // ARM METHODS
     public default void setArmTarget(Angle angle) {}

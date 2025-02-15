@@ -13,7 +13,6 @@ public class DepositAlgaeCmd extends Command {
     private XeroTimer timer_;
 
     private enum State {
-        WaitingForAlgaeEject,
         WaitForTimer,
         Finish
     }
@@ -26,8 +25,8 @@ public class DepositAlgaeCmd extends Command {
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositAlgae.velocity);
-        state_ = State.WaitingForAlgaeEject;
+        grabber_.setGrabberMotorVoltage(-10);
+        state_ = State.WaitForTimer;
     }
 
     @Override
@@ -38,15 +37,11 @@ public class DepositAlgaeCmd extends Command {
     @Override
     public void execute() {
         switch(state_) {
-            case WaitingForAlgaeEject:
-                if (grabber_.AlgaeFalling()) {
-                    state_ = State.WaitForTimer;
-                    timer_.start();
-                }
-                break;
             case WaitForTimer:
-                grabber_.stopGrabber();
-                state_ = State.Finish;
+                if (timer_.isExpired()) {
+                    grabber_.stopGrabber();
+                    state_ = State.Finish;
+                }
                 break;
 
             case Finish:
