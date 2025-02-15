@@ -54,6 +54,23 @@ public class AprilTagVision extends SubsystemBase {
         }
     }
 
+    /**
+     * Resets the heading of all the cameras.
+     */
+    public void resetHeading() {
+        for (int i = 0; i < io_.length; i++) {
+            io_[i].resetHeading();
+        }
+    }
+
+    /**
+     * A command that resets the heading of all cameras.
+     * @return The aforementioned command.
+     */
+    public Command resetHeadingCommand() {
+        return runOnce(this::resetHeading);
+    }
+
     public void setEnabled(boolean enabled) {
         enabled_ = enabled;
     }

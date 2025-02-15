@@ -66,6 +66,11 @@ public interface CameraIO {
     public default void updateInputs(CameraIOInputsAutoLogged inputs) {};
 
     /**
+     * Resets the heading of the Camera, especially useful for Limelight 4.
+     */
+    public default void resetHeading() {}
+
+    /**
      * Gets a human-readable name of the camera. Mostly for alerts.
      * @return The human-readable name of this camera.
      * @apiNote THIS SHOULD NEVER BE USED FOR ROBOT CONTROL FLOW! THIS IS ONLY FOR ALERT READABILITY!
