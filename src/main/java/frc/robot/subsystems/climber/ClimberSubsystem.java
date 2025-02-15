@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Velocity;
 
  
 public class ClimberSubsystem extends SubsystemBase{
@@ -32,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase{
    }
 
    public boolean isClimberAtTarget() {
-        if((inputs_.climberPosition.isNear(target_angle_, ClimberConstants.Climber.kPosTolerance)) && (inputs_.climberVelocity == DegreesPerSecond.of(0))) {
+        if((inputs_.climberPosition.isNear(target_angle_, ClimberConstants.Climber.kPosTolerance)) && (inputs_.climberVelocity.isNear(DegreesPerSecond.of(0), ClimberConstants.Climber.kVelTolerance))) {
             return true; 
         }
         return false; 
