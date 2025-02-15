@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -326,15 +327,20 @@ public class DriveCommands {
    * @param targetPose The pose to create an on-the-fly path to.
    * @return A command that follows the created path.
    */
-  public static Command simplePathCommand(Pose2d targetPose, LinearVelocity v, LinearAcceleration a) {
+  public static Command simplePathCommand(Drive drive, Pose2d targetPose, LinearVelocity v, LinearAcceleration a) {
+    
+    // Create Constraints
     PathConstraints constraints = new PathConstraints(
-        v.in(MetersPerSecond),
-        a.in(MetersPerSecondPerSecond),
-        DegreesPerSecond.of(540).in(RadiansPerSecond),
-        DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
+      v.in(MetersPerSecond),
+      a.in(MetersPerSecondPerSecond),
+      DegreesPerSecond.of(540).in(RadiansPerSecond),
+      DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond)
+    );
 
-    return Commands.runOnce(() -> {
-      Pose2d curPose = AutoBuilder.getCurrentPose();
+    // Create Command Only When It Is Starting
+    return Commands.defer(() -> {
+
+      Pose2d curPose = drive.getPose();
       Transform2d curToTarget = targetPose.minus(curPose);
 
       Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
@@ -358,11 +364,11 @@ public class DriveCommands {
       // If the pose is less than 1 centimeter away, dont do anything. (This is
       // because of an error I am looking into)
       if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
-        return;
+        return Commands.none();
       }
 
-      AutoBuilder.followPath(path).schedule();
-    });
+      return AutoBuilder.followPath(path);
+    }, Set.of(drive));
 
   }
 
