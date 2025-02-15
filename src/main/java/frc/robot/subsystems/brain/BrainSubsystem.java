@@ -2,6 +2,7 @@ package frc.robot.subsystems.brain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -17,6 +18,7 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.robot.util.ReefUtil;
+import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -371,13 +373,21 @@ public class BrainSubsystem extends SubsystemBase {
             }
         }
 
+        trackReefPlace() ;
+
         Logger.recordOutput("brain/status", status) ;
         Logger.recordOutput("brain/locked", locked_) ;
         Logger.recordOutput("brain/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("brain/next_action", next_action_ != null ? next_action_.toString() : "none") ;
+        Logger.recordOutput("brain/holding", gp_.toString()) ;
     }
 
-    static final boolean PlaceCoralTwoStep = true ;
+    private void trackReefPlace() {
+        Optional<ReefFace> info = ReefUtil.getTargetedReefFace(db_.getPose()) ;
+        if (info.isPresent()) {
+            Logger.recordOutput("brain/reefplace", info.get().getLeftScoringPose()) ;
+        }
+    }
 
     private RobotActionCommandList getRobotActionCommand(RobotAction action, ReefLevel level, CoralSide side) {
         List<Command> list = new ArrayList<Command>() ;
@@ -385,7 +395,7 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(m_, g_)) ;
+                list.add(new CollectCoralCmd(this, m_, g_)) ;
                 conds.add(null) ;
                 break ;
 
@@ -401,12 +411,12 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new ScoreAlgaeBefore(m_)) ;
                 conds.add(null) ;
 
-                list.add(new ScoreAlgaeAfter(this, m_, g_)) ;
+                list.add(new ScoreAlgaeAfter(db_, this, m_, g_)) ;
                 conds.add(null) ;
                 break ;
 
             case CollectAlgaeReef:
-                list.add(new CollectAlgaeReefCmd(this, m_, g_, ReefLevel.AskBrain)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 break ;
 

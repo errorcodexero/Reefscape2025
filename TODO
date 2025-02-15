@@ -2,10 +2,12 @@ Things to do
 ------------
 - Look at loop times
 - Look at grabber tuning to get rid of grinding sound                                           Done
-- Hold algae more upright while transporting                                                    Needs Work
+- Hold algae more upright while transporting                                                    Done
 - Test new goto command, especially in stow after algae score                                   Done
 - Look at what is happening when motors are not created and subsystem creation fails            Done
-- Tune drive base
+- Tune drive base                                                                               Done
+- Why is DB disabled with current Algae Reef Collect
+- Write vision driven algae reef collect
 - Test complete place coral sequence
 - Test complete collect algae sequence
 - Test climb sequence

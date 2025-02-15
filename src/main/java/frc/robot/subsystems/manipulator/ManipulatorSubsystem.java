@@ -80,11 +80,6 @@ public class ManipulatorSubsystem extends SubsystemBase{
         io_.setElevatorMotorVoltage(volts.in(Volts)) ;
     }
 
-    public boolean doesCrossKZ(Angle current, Angle target) {
-        return (current.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle) && target.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle)) || 
-               (current.gt(ManipulatorConstants.Keepout.kKeepoutMaxAngle) && target.lt(ManipulatorConstants.Keepout.kKeepoutMinAngle)) ;
-    }
-
     public boolean isElevAtBottom() {
         return inputs_.hallEffectSensor ;
     }

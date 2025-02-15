@@ -53,22 +53,23 @@ public class AutoCommands {
 
   public static Command algaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
     return Commands.sequence(
-        Commands.parallel(
-            DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
-            new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
-        DriveCommands.followPathCommand("Algae 1.5"),
-        new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L2),
-        DriveCommands.followPathCommand("Algae 2"),
-        new DepositAlgaeCmd(grabberSub),
-        DriveCommands.followPathCommand("Algae 3"),
-        new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L3),
-        DriveCommands.followPathCommand("Algae 4"),
-        new DepositAlgaeCmd(grabberSub),
-        DriveCommands.followPathCommand("Algae 5"),
-        new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L3),
-        DriveCommands.followPathCommand("Algae 6"),
-        new DepositAlgaeCmd(grabberSub));
+        // Commands.parallel(
+        //     DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
+        //     new SetHoldingCmd(brainSub, GamePiece.CORAL)),
+        // new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        // DriveCommands.followPathCommand("Algae 1.5"),
+        // new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L2),
+        // DriveCommands.followPathCommand("Algae 2"),
+        // new DepositAlgaeCmd(grabberSub),
+        // DriveCommands.followPathCommand("Algae 3"),
+        // new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L3),
+        // DriveCommands.followPathCommand("Algae 4"),
+        // new DepositAlgaeCmd(grabberSub),
+        // DriveCommands.followPathCommand("Algae 5"),
+        // new CollectAlgaeReefCmd(brainSub, manipSub, grabberSub, ReefLevel.L3),
+        // DriveCommands.followPathCommand("Algae 6"),
+        // new DepositAlgaeCmd(grabberSub)
+      );
   }
 
   public static Command centerCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub,

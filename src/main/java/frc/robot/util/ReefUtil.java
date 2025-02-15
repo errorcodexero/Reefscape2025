@@ -123,7 +123,7 @@ public class ReefUtil {
             return tagPose_;
         }
 
-        public Pose2d getAlgaeScoringPose() {
+        public Pose2d getAlgaeCollectPose() {
             return algaeScoringPose_;
         }
 
@@ -165,14 +165,14 @@ public class ReefUtil {
 
                 Logger.recordOutput(path + "TagId", face.getTagID());
                 Logger.recordOutput(path + "TagPose", face.getTagPose());
-                Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeScoringPose());
+                Logger.recordOutput(path + "ScoringPoseAlgae", face.getAlgaeCollectPose());
                 Logger.recordOutput(path + "BackupPoseAlgae", face.getAlgaeBackupPose());
                 Logger.recordOutput(path + "ScoringPoseLeft", face.getLeftScoringPose());
                 Logger.recordOutput(path + "BackupPoseLeft", face.getLeftBackupPose());
                 Logger.recordOutput(path + "ScoringPoseRight", face.getRightScoringPose());
                 Logger.recordOutput(path + "BackupPoseRight", face.getRightBackupPose());
                 
-                algaeScoringPoses.add(face.getAlgaeScoringPose());
+                algaeScoringPoses.add(face.getAlgaeCollectPose());
                 algaeBackupPoses.add(face.getAlgaeBackupPose());
                 leftScoringPoses.add(face.getLeftScoringPose());
                 leftBackupPoses.add(face.getLeftBackupPose());

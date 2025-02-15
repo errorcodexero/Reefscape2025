@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -31,7 +32,6 @@ import org.xerosw.util.MessageType;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ReefLevel;
@@ -72,6 +73,8 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.GoToCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -83,6 +86,7 @@ import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.subsystems.vision.EnableDisableCmd;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
 
@@ -482,6 +486,9 @@ public class RobotContainer {
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
+
+        oi_.climbExecute().onTrue(new EnableDisableCmd(vision_, true).ignoringDisable(true)) ;
+        oi_.climbDeploy().onTrue(new EnableDisableCmd(vision_, false).ignoringDisable(true)) ;
     }
 
     /**

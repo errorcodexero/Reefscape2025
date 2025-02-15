@@ -75,19 +75,19 @@ public class ManipulatorConstants {
         }
 
         public class Positions {
-            public static final Angle kStow = Degrees.of(0);
+            public static final Angle kStow = Degrees.of(20);
             public static final Angle kPlaceL1 = Degrees.of(0); 
             public static final Angle kPlaceL2 = Degrees.of(35); 
             public static final Angle kPlaceL3 = Degrees.of(35); 
             public static final Angle kPlaceL4 = Degrees.of(75);
             public static final Angle kKickbackAngle = Degrees.of(-10); 
-            public static final Angle kCollect = Degrees.of(14.0) ;
+            public static final Angle kCollect = Degrees.of(15.5) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(-160.0) ;
             public static final Angle kAlgaeReefCollectL3 = Degrees.of(-160.0) ;
-            public static final Angle kAlgaeReefHold = Degrees.of(-127.0) ;
-            public static final Angle kScoreAlgaeReef = Degrees.of(-127.0) ;
-            public static final Angle kScoreAlgaeReef2 = Degrees.of(-127.0) ;
-            public static final Angle kRaiseAngle = Degrees.of(10.0) ;
+            public static final Angle kAlgaeReefHold = Degrees.of(-140.0) ;
+            public static final Angle kScoreAlgaeReef = Degrees.of(-140.0) ;
+            public static final Angle kScoreAlgaeReef2 = Degrees.of(-140.0) ;
+            public static final Angle kRaiseAngle = Degrees.of(20.0) ;
         }
     }
 
@@ -157,28 +157,5 @@ public class ManipulatorConstants {
             public static final Distance kScoreAlgaeReef = Centimeters.of(12.0) ;
             public static final Distance kScoreAlgaeReef2 = Centimeters.of(12.0) ;
         }
-    }
-
-    public class Keepout {
-        public static final Distance kKeepoutHeight = Meters.of(0.4); 
-        public static final Angle kKeepoutMinAngle = Degrees.of(15.0) ;
-        public static final Angle kKeepoutMaxAngle = Degrees.of(90.0) ;
-    }
-
-    public class Positions {
-        public static final Distance kStowedHeight = Meters.of(0.0);
-        public static final Angle kStowedAngle = Degrees.of(0.0);
-
-        public static final Distance kCollectHeight = Meters.of(0.0);
-        public static final Angle kCollectAngle = Degrees.of(0.0);
-
-        public static final Distance kLowScoreHeight = Meters.of(0.0);
-        public static final Angle kLowScoreAngle = Degrees.of(0.0);
-
-        public static final Distance kHighScoreHeight = Meters.of(0.0);
-        public static final Angle kHighScoreAngle = Degrees.of(0.0);
-
-        public static final Distance kEjectAlgaeHeight = Centimeters.of(1.0);
-        public static final Angle kEjectAlgaeAngle = Degrees.of(10.0);
     }
 }

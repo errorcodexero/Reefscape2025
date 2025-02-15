@@ -1,11 +1,16 @@
 package frc.robot.commands.robot.scorealgae;
 
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
@@ -17,11 +22,13 @@ public class ScoreAlgaeAfter extends Command {
     private GrabberSubsystem g_ ;
     private BrainSubsystem brain_ ;
     private XeroSequence sequence_ ;
+    private Drive db_ ;
 
-    public ScoreAlgaeAfter(BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public ScoreAlgaeAfter(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
         m_ = m ;
         g_ = g ;
         brain_ = b ;
+        db_ = db ;
     }
 
     @Override
@@ -31,8 +38,13 @@ public class ScoreAlgaeAfter extends Command {
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef, 
                             ManipulatorConstants.Arm.Positions.kScoreAlgaeReef, true),
             new DepositAlgaeCmd(g_),
+            db_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0), RadiansPerSecond.zero()),
             new WaitCommand(2.0),
             new SetHoldingCmd(brain_, GamePiece.NONE),
+            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
+                            m_.getArmPosition(), true),
+            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
+                            ManipulatorConstants.Arm.Positions.kRaiseAngle, true),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         sequence_.schedule();
     }
