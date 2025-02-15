@@ -24,6 +24,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -55,6 +56,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.Drive;
 
 public class DriveCommands {
@@ -330,28 +333,37 @@ public class DriveCommands {
         DegreesPerSecond.of(540).in(RadiansPerSecond),
         DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
 
-    Pose2d curPose = AutoBuilder.getCurrentPose();
-    Transform2d curToTarget = targetPose.minus(curPose);
+    return Commands.runOnce(() -> {
+      Pose2d curPose = AutoBuilder.getCurrentPose();
+      Transform2d curToTarget = targetPose.minus(curPose);
 
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle())),
-        targetPose);
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d endWaypoint = targetPose;
 
-    PathPlannerPath path = new PathPlannerPath(
-        waypoints,
-        constraints,
-        null,
-        new GoalEndState(0.0, targetPose.getRotation()));
+      if (Constants.getMode() != Mode.REAL) {
+        Logger.recordOutput("SimplePathing/StartWaypoint", startWaypoint);
+        Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);  
+      }
 
-    path.preventFlipping = true;
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
 
-    // If the pose is less than 1 centimeter away, dont do anything. (This is
-    // because of an error I am looking into)
-    if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
-      return Commands.none();
-    }
+      PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          constraints,
+          null,
+          new GoalEndState(0.0, targetPose.getRotation()));
 
-    return AutoBuilder.followPath(path);
+      path.preventFlipping = true;
+
+      // If the pose is less than 1 centimeter away, dont do anything. (This is
+      // because of an error I am looking into)
+      if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
+        return;
+      }
+
+      AutoBuilder.followPath(path).schedule();
+    });
+
   }
 
   /**

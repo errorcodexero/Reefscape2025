@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.RobotType;
  
 public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIO io_; 
@@ -91,7 +93,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         if (!inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance))
             return false ;
 
-        if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance))
+        if (Constants.getRobot() != RobotType.SIMBOT && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance))
             return false ;
 
         return true ;
@@ -104,7 +106,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         if (!inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance))
             return false ;
 
-        if (Robot.isReal() && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance))
+        if (Constants.getRobot() != RobotType.SIMBOT && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance))
             return false ;
 
         return true ;
