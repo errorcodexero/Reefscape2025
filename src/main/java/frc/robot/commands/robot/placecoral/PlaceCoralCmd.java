@@ -132,14 +132,18 @@ public class PlaceCoralCmd extends Command {
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
                     new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                    DriveCommands.simplePathCommand(scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
+                    DriveCommands.simplePathCommand(drive_, scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
+        }
+        else {
+            sequence_.addCommands(
+                new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ; 
         }
 
         sequence_.addCommands(
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_, true),
             new DepositCoralCmd(grabber_),
             new SetHoldingCmd(brain_, GamePiece.NONE),
-            new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle),
+            new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
         if (driveto_) {

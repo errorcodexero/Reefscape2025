@@ -97,7 +97,7 @@ public class CollectAlgaeReefCmd extends Command {
             sequence_.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
-                    DriveCommands.simplePathCommand(reefFace.get().getAlgaeCollectPose(), 
+                    DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), 
                                                     MetersPerSecond.of(1.0), 
                                                     CommandConstants.ReefDrive.kMaxDriveAcceleration),
                     new CollectAlgaeCmd(grabber_))) ;
@@ -108,9 +108,9 @@ public class CollectAlgaeReefCmd extends Command {
         }
         sequence_.addCommands(
             new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
-            DriveCommands.simplePathCommand(reefFace.get().getAlgaeBackupPose(), 
-                                            MetersPerSecond.of(0.1), 
-                                            MetersPerSecondPerSecond.of(0.1)),
+            DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeBackupPose(), 
+                                            MetersPerSecond.of(1.0), 
+                                            MetersPerSecondPerSecond.of(1.0)),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
                                       ManipulatorConstants.Arm.Positions.kAlgaeReefHold, true)) ;

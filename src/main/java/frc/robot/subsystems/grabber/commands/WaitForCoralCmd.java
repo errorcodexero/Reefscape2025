@@ -43,7 +43,7 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForCoral:
-                if (grabber_.coralFalling()) {
+                if (grabber_.coralFalling()  && !grabber_.coralSensor()) {
                     grabber_.setGrabberMotorVoltage(0.0) ;
                     timer_.start();
                     state_ = State.Delay;
