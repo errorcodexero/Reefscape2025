@@ -58,6 +58,7 @@ public class OIIOHID implements OIIO {
             inputs.climb_execute = hid_.getRawButton(OIConstants.Buttons.kClimbExecute) ;
             inputs.climb_lock = hid_.getRawButton(OIConstants.Buttons.kClimbLock) ;
             inputs.coral_side = hid_.getRawButton(OIConstants.Buttons.kCoralSide) ;
+            inputs.algae_on_reef = hid_.getRawButton(OIConstants.Buttons.kAlgaeOnReef) ;
         }
 
         updateLEDs() ;

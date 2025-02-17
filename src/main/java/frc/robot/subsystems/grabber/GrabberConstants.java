@@ -43,13 +43,13 @@ public class GrabberConstants {
         public class DepositCoral {
             public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
             public static final AngularVelocity velocity = RotationsPerSecond.of(30.0) ;
-            public static final Time delay = Milliseconds.of(750.0) ;
+            public static final Time delay = Milliseconds.of(1250.0) ;
             public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 
         public class CollectCoral {
-            public static final AngularVelocity kVelocity = RotationsPerSecond.of(10.0) ;
-            public static final AngularVelocity kBackupVelocity = RotationsPerSecond.of(-5.0) ;
+            public static final AngularVelocity kVelocity = RotationsPerSecond.of(30.0) ;
+            public static final AngularVelocity kBackupVelocity = RotationsPerSecond.of(-20.0) ;
         }
 
         public class CollectAlgae {

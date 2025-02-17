@@ -22,9 +22,11 @@ public class OIConstants {
         public static final int kClimbLock =  16 ;           // Status
         public static final int kCoralSide = 17 ;           // Status
 
+        public static final int kAlgaeOnReef = 6 ;          // Toggle, if lit, algae is on reef
+
         public static final int kSpare0 = 13 ;              // Spare
         public static final int kSpare1 = 12 ;              // Spare
         public static final int kSpare2 = 7 ;              // Spare
-        public static final int kSpare3 = 6 ;              // Spare
+
     }
 }

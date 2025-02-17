@@ -513,6 +513,7 @@ public class RobotContainer {
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
+        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
         // Robot Relative
         gamepad_.povUp().whileTrue(

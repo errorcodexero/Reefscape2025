@@ -1,17 +1,21 @@
 package frc.robot.commands.robot.placecoral;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
+import java.lang.System.Logger.Level;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.XeroSequence;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
@@ -98,6 +102,9 @@ public class PlaceCoralCmd extends Command {
             return ;
         }
 
+        LinearVelocity maxvel = CommandConstants.ReefDrive.kMaxDriveVelocity ;
+        LinearAcceleration maxaccel = CommandConstants.ReefDrive.kMaxDriveAcceleration ;
+
         switch(level) {
             case L1:
                 target_elev_pos_ = Elevator.Positions.kPlaceL1;
@@ -117,6 +124,8 @@ public class PlaceCoralCmd extends Command {
             case L4:
                 target_elev_pos_ = Elevator.Positions.kPlaceL4;
                 target_arm_pos_ = Arm.Positions.kPlaceL4;
+                // maxvel = CommandConstants.ReefDrive.kMaxDriveVelocityL4 ;
+                // maxaccel = CommandConstants.ReefDrive.kMaxDriveAccelerationL4 ;
                 break ;
 
             default:
@@ -132,18 +141,25 @@ public class PlaceCoralCmd extends Command {
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
                     new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                    DriveCommands.simplePathCommand(drive_, scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
+                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel))) ;
         }
         else {
             sequence_.addCommands(
                 new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ; 
         }
 
+
         sequence_.addCommands(
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_, true),
-            new DepositCoralCmd(grabber_),
             new SetHoldingCmd(brain_, GamePiece.NONE),
-            new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true),
+
+            Commands.parallel(
+                new DepositCoralCmd(grabber_),
+                Commands.sequence(
+                    new WaitCommand(Milliseconds.of(750)),
+                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true)
+                )
+            ),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
         if (driveto_) {

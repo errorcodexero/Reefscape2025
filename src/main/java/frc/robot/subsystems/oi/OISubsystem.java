@@ -26,7 +26,7 @@ public class OISubsystem extends SubsystemBase {
         CoralL4(4),                         //
         ScoreAlgae(5),                      //
         CollectAlgaeGround(6),              //
-        Spare1(7) ,                         // 
+        AlgaeOnReef(7) ,                    // 
         HoldingAlgaeLow(8),                 //
         HoldingAlgaeHigh(9),                // 
         HoldingCoral(10),                   //
