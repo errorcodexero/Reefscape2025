@@ -475,6 +475,8 @@ public class RobotContainer {
         oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
         oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
+        oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()-> brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
+
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
@@ -482,6 +484,7 @@ public class RobotContainer {
 
         oi_.abort().onTrue(new AbortCmd(brain_)) ;
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
+        
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;

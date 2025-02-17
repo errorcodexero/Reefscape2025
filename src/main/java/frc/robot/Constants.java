@@ -81,6 +81,12 @@ public final class Constants {
         public static final Distance leftRightOffset = Inches.of(13.0 / 2.0);
 
         /**
+         * The offset from the center of the TAG to where we want the ARM to be positioned.
+         * (Half the distance between pipes on the REEF)
+         */
+        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 0.75);
+
+        /**
          * How far to back up from the CORAL scoring pose.
          */
         public static final Distance backupDistanceCoral = Inches.of(28);

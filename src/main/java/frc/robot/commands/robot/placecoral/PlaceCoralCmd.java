@@ -134,7 +134,13 @@ public class PlaceCoralCmd extends Command {
         }
 
         ReefFace face = reefFace.get();
-        Pose2d scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();
+        Pose2d scoringPose ;
+        if (brain_.doesReefHaveAlgae()) {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringWithAlgaePose() : face.getRightScoringWithAlgaePose();
+        }
+        else {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
+        }
 
         if (driveto_) {
             sequence_.addCommands(

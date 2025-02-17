@@ -79,9 +79,10 @@ public class OISubsystem extends SubsystemBase {
     private Trigger coral_place_trigger_ ;
     private Trigger coral_collect_trigger_ ;
     private Trigger algae_ground_trigger_ ;
-    private Trigger algae_reef_ ;
-    private Trigger algae_score_ ;
+    private Trigger algae_reef_trigger_ ;
+    private Trigger algae_score_trigger_ ;
     private Trigger execute_trigger_ ;
+    private Trigger algae_on_reef_trigger_ ;
     
     private Trigger l1_ ;
     private Trigger l2_ ;
@@ -110,9 +111,10 @@ public class OISubsystem extends SubsystemBase {
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
         coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
         algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
-        algae_reef_ = new Trigger(()-> inputs_.algae_reef) ;
-        algae_score_ = new Trigger(()-> inputs_.algae_score) ;
+        algae_reef_trigger_ = new Trigger(()-> inputs_.algae_reef) ;
+        algae_score_trigger_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
+        algae_on_reef_trigger_ = new Trigger(()-> inputs_.algae_on_reef) ;
 
         l1_ = new Trigger(()-> inputs_.coral_l1) ;
         l2_ = new Trigger(()-> inputs_.coral_l2) ;
@@ -158,16 +160,20 @@ public class OISubsystem extends SubsystemBase {
         return coral_collect_trigger_ ;
     }
 
+    public Trigger algaeOnReefTrigger() {
+        return algae_on_reef_trigger_ ;
+    }
+
     public Trigger algaeGround() {
         return algae_ground_trigger_ ;
     }
 
     public Trigger algaeReef() {
-        return algae_reef_ ;
+        return algae_reef_trigger_ ;
     }
 
     public Trigger algaeScore() {
-        return algae_score_ ;
+        return algae_score_trigger_ ;
     }
 
     public Trigger execute() {
@@ -406,6 +412,12 @@ public class OISubsystem extends SubsystemBase {
             if (str.length() > 0)
                 str += "," ;
             str += "coral_side_right" ;
+        }
+
+        if (inputs_.algae_on_reef) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "algae_on_reef" ;
         }
 
         if (gamepad_.a().getAsBoolean()) {
