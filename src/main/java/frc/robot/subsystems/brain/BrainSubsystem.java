@@ -54,6 +54,9 @@ public class BrainSubsystem extends SubsystemBase {
     // The side of the coral to place
     private CoralSide coral_side_ ;
 
+    // If true, there is algae on the reef where placing
+    private boolean algae_on_reef_ ;
+
     // The game piece we are holding
     private GamePiece gp_ ;
 
@@ -126,6 +129,20 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
         }
     }    
+
+    public boolean doesReefHaveAlgae() {
+        return algae_on_reef_ ;
+    }
+
+    public void toggleAlgaeOnReef() {
+        algae_on_reef_ = !algae_on_reef_ ;
+        oi_.setLEDState(OISubsystem.OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
+    }
+
+    public void clearAlgaeOnReef() {
+        algae_on_reef_ = false ;
+        oi_.setLEDState(OISubsystem.OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
+    }
 
     private void cmdFinished(Command c) {
         if (current_cmd_ == c && !clearing_state_) {
@@ -323,6 +340,7 @@ public class BrainSubsystem extends SubsystemBase {
                 next_action_ = null ;
                 status = "illegal action" ;
                 oi_.flashDisplay();
+                oi_.clearAllActionLEDs();
             }
         }
         else {

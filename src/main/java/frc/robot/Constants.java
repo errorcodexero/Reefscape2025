@@ -66,19 +66,25 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(16);
+        public static final Distance distanceFromTagCoral = Inches.of(17);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
-        public static final Distance distanceFromTagAlgae = Inches.of(16
-        );
+        public static final Distance distanceFromTagAlgae = Inches.of(16);
+
 
         /**
          * The offset from the center of the TAG to where we want the ARM to be positioned.
          * (Half the distance between pipes on the REEF)
          */
-        public static final Distance leftRightOffset = Inches.of(13 / 2);
+        public static final Distance leftRightOffset = Inches.of(13.0 / 2.0);
+
+        /**
+         * The offset from the center of the TAG to where we want the ARM to be positioned.
+         * (Half the distance between pipes on the REEF)
+         */
+        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 0.75);
 
         /**
          * How far to back up from the CORAL scoring pose.
