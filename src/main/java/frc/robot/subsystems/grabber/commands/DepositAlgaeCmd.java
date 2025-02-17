@@ -1,57 +1,20 @@
 package frc.robot.subsystems.grabber.commands;
 
-import org.xerosw.util.XeroTimer;
+import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
-public class DepositAlgaeCmd extends Command {
-
-    private GrabberSubsystem grabber_;
-    private State state_;
-    private XeroTimer timer_;
-
-    private enum State {
-        WaitForTimer,
-        Finish
-    }
+public class DepositAlgaeCmd extends SequentialCommandGroup {
 
     public DepositAlgaeCmd(GrabberSubsystem grabber) {
-        addRequirements(grabber);
-        grabber_ = grabber;
-        timer_ = new XeroTimer(GrabberConstants.Grabber.DepositAlgae.delay);
+        addCommands(
+            grabber.setVoltageCommand(Volts.of(GrabberConstants.Grabber.kDepositVoltage)),
+            Commands.waitTime(GrabberConstants.Grabber.DepositAlgae.delay),
+            grabber.stopGrabberCommand()
+        );
     }
 
-    @Override
-    public void initialize() {
-        grabber_.setGrabberMotorVoltage(GrabberConstants.Grabber.kDepositVoltage);
-        timer_.start() ;
-        state_ = State.WaitForTimer;
-    }
-
-    @Override
-    public boolean isFinished() {
-        return state_ == State.Finish;
-    }
-
-    @Override
-    public void execute() {
-        switch(state_) {
-            case WaitForTimer:
-                if (timer_.isExpired()) {
-                    grabber_.stopGrabber();
-                    state_ = State.Finish;
-                }
-                break;
-
-            case Finish:
-                break;
-        }
-    }
-
-    @Override
-    public void end(boolean canceled) {
-        state_ = State.Finish;
-    }
 }
