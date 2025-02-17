@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import java.util.Queue;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -25,7 +26,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import frc.robot.generated.CompTunerConstants;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
@@ -35,10 +35,10 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<Angle> yaw;
   private final StatusSignal<AngularVelocity> yawVelocity;
 
-  public GyroIOPigeon2(int Pigeon2Id) {
+  public GyroIOPigeon2(int Pigeon2Id, CANBus bus) {
 
     // Init Pigeon and Statuses
-    pigeon = new Pigeon2(Pigeon2Id, CompTunerConstants.kCANBus.getName());
+    pigeon = new Pigeon2(Pigeon2Id, bus);
     yaw = pigeon.getYaw();
     yawVelocity = pigeon.getAngularVelocityZWorld();
 

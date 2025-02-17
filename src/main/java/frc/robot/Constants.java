@@ -42,6 +42,7 @@ public final class Constants {
 
     public static class DriveConstants {
         
+
         public static final double slowModeJoystickMultiplier = 0.4;
         
     }
@@ -66,7 +67,7 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(17);
+        public static final Distance distanceFromTagCoral = Inches.of(18);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
@@ -84,7 +85,7 @@ public final class Constants {
          * The offset from the center of the TAG to where we want the ARM to be positioned.
          * (Half the distance between pipes on the REEF)
          */
-        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 0.75);
+        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.25);
 
         /**
          * How far to back up from the CORAL scoring pose.

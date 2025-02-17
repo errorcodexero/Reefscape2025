@@ -138,7 +138,7 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case ALPHA:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, AlphaTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             AlphaTunerConstants.FrontLeft,
                             AlphaTunerConstants.FrontRight,
@@ -156,7 +156,7 @@ public class RobotContainer {
 
                 case COMPETITION:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             CompTunerConstants.FrontLeft,
                             CompTunerConstants.FrontRight,
@@ -201,7 +201,7 @@ public class RobotContainer {
 
                 case PRACTICE:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id, PracticeTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             PracticeTunerConstants.FrontLeft,
                             PracticeTunerConstants.FrontRight,

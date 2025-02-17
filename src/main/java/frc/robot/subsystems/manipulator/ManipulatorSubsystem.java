@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
  
 public class ManipulatorSubsystem extends SubsystemBase{
@@ -20,6 +23,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final ManipulatorIOInputsAutoLogged inputs_;  
     private Angle target_angle_;
     private Distance target_height_;
+    private boolean elevator_reset_ ;
+    private Trigger needs_reset_trigger_ ;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
@@ -28,10 +33,18 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
         inputs_ = new ManipulatorIOInputsAutoLogged(); 
+        elevator_reset_ = false ;
+
+        needs_reset_trigger_ = new Trigger(() -> !elevator_reset_) ;
+    }
+
+    public Trigger needsElevatorReset() { 
+        return new Trigger(()-> !elevator_reset_) ;
     }
 
     @Override
     public void periodic() {
+
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
 
@@ -57,6 +70,15 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void setArmTarget(Angle angle) {
         target_angle_ = angle;  
         io_.setArmTarget(angle); 
+    }
+
+    public LinearVelocity getElevatorVelocity() {
+        return inputs_.elevatorVelocity ;
+    }
+
+    public void resetElevator() {
+        elevator_reset_ = true ;
+        io_.resetPosition() ;
     }
 
     public Distance getElevatorPosition() {

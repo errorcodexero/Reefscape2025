@@ -2,7 +2,6 @@ package frc.robot.commands.robot.placecoral;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 
-import java.lang.System.Logger.Level;
 import java.util.Optional;
 
 import org.xerosw.util.XeroSequence;
