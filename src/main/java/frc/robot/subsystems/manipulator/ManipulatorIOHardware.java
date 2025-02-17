@@ -31,6 +31,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -228,7 +229,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (!encoder_motor_synced_) {
+        if (RobotState.isDisabled()) {
             syncArmPosition() ;
             encoder_motor_synced_ = true ;
         }
@@ -338,7 +339,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         double enc = encoder_.get() ;
         double angle = mapper_.toRobot(enc) ;
         Angle armAngle = Degrees.of(angle).times(ManipulatorConstants.Arm.kGearRatio) ;
-        System.out.println("Syncing arm: " + enc + " " + angle + " " + armAngle.in(Degrees)) ;
         arm_motor_.setPosition(armAngle) ;
     }
 

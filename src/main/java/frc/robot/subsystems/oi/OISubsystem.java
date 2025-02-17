@@ -20,7 +20,6 @@ public class OISubsystem extends SubsystemBase {
     // The LEDs on the driver station
     //
     public enum OILed {
-
         CoralL1(1),                         //
         CoralL2(2),                         //
         CoralL3(3),                         //
@@ -217,6 +216,7 @@ public class OISubsystem extends SubsystemBase {
         setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
         setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
         setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
+        setLEDState(OILed.Execute, LEDState.Off) ;
     }
 
     public void setRobotActionLEDState(RobotAction a, LEDState st) {

@@ -1,11 +1,13 @@
 package frc.robot.commands.robot.scorealgae;
 
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import org.xerosw.util.XeroSequence;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -38,8 +40,12 @@ public class ScoreAlgaeAfter extends Command {
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef, 
                             ManipulatorConstants.Arm.Positions.kScoreAlgaeReef, true),
             new DepositAlgaeCmd(g_),
-            db_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0), RadiansPerSecond.zero()),
-            new WaitCommand(2.0),
+            Commands.deadline(
+                new WaitCommand(1.0),
+                db_.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
+            Commands.deadline(
+                    new WaitCommand(0.1),
+                    db_.runVelocityCmd(MetersPerSecond.of(0.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),                
             new SetHoldingCmd(brain_, GamePiece.NONE),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
                             m_.getArmPosition(), true),
