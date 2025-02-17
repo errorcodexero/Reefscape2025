@@ -13,8 +13,6 @@
 
 package frc.robot;
 
-import java.util.Optional;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -37,8 +35,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.CompTunerConstants;
-import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 import frc.simulator.engine.SimulationEngine;
 
 /**
