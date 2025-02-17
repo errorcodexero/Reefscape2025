@@ -23,12 +23,12 @@ public class AutoCommands {
 
   public static Command sideCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub,
       FunnelSubsystem funnelSub, boolean mirroredX) {
-    boolean mirroredY = DriverStation.getAlliance().isPresent()
-        ? DriverStation.getAlliance().get().equals(Alliance.Red)
-        : false;
-    if (!mirroredY) {
-      mirroredX = !mirroredX;
-    }
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    boolean mirroredY = alliance == Alliance.Red;
+
+    // if (!mirroredY) {
+    //   mirroredX = !mirroredX;
+    // }
 
     return Commands.sequence(
         Commands.parallel(
