@@ -499,9 +499,9 @@ public class RobotContainer {
         drivebase_.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drivebase_,
-                gamepad_::getLeftY,
-                gamepad_::getLeftX,
-                gamepad_::getRightX
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()
             )
         );
         
