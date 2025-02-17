@@ -2,8 +2,6 @@ package frc.robot.commands.robot.placecoral;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.XeroSequence;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,8 +10,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
@@ -24,9 +22,9 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
-import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
+import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
