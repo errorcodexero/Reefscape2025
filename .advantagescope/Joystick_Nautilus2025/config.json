@@ -1,0 +1,93 @@
+{
+    "name": "Nautilus OI",
+    "components": [
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [794, 223],
+            "sizePx": [75, 75],
+            "sourceIndex": 18
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [794, 402],
+            "sizePx": [75, 75],
+            "sourceIndex": 19
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [794, 570],
+            "sizePx": [75, 75],
+            "sourceIndex": 11
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [508, 387],
+            "sizePx": [75, 75],
+            "sourceIndex": 8
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [508, 579],
+            "sizePx": [75, 75],
+            "sourceIndex": 9
+        },
+        {
+            "type": "button",
+            "isYellow": true,
+            "isEllipse": true,
+            "centerPx": [1270, 385],
+            "sizePx": [75, 75],
+            "sourceIndex": 14
+        },
+        {
+            "type": "button",
+            "isYellow": true,
+            "isEllipse": true,
+            "centerPx": [1270, 575],
+            "sizePx": [75, 75],
+            "sourceIndex": 15
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1053, 370],
+            "sizePx": [40, 40],
+            "sourceIndex": 4
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1053, 450],
+            "sizePx": [40, 40],
+            "sourceIndex": 3
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1053, 530],
+            "sizePx": [40, 40],
+            "sourceIndex": 2
+        },
+        {
+            "type": "button",
+            "isYellow": false,
+            "isEllipse": true,
+            "centerPx": [1053, 602],
+            "sizePx": [40, 40],
+            "sourceIndex": 1
+        }
+    ]
+}

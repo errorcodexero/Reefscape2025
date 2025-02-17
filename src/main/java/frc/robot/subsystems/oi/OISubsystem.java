@@ -195,7 +195,7 @@ public class OISubsystem extends SubsystemBase {
     }
 
     public void rumble(Time duration) {
-        end_time_ = Timer.getFPGATimestamp() + duration.in(Seconds) ;
+        end_time_ = Timer.getTimestamp() + duration.in(Seconds) ;
         rumbling_ = true ;
         gamepad_.setRumble(RumbleType.kBothRumble, 1.0);
     }
@@ -253,7 +253,7 @@ public class OISubsystem extends SubsystemBase {
             flashing_ = false ;
         }
 
-        if (rumbling_ && Timer.getFPGATimestamp() > end_time_) {
+        if (rumbling_ && Timer.getTimestamp() > end_time_) {
             gamepad_.setRumble(RumbleType.kBothRumble, 0);
             rumbling_ = false ;
         }

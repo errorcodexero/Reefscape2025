@@ -6,13 +6,10 @@ States(enum) - IDLE, DeployClimber, WaitToHook, Climb
 
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
  
 public class ClimberSubsystem extends SubsystemBase{
    private ClimberIO io_; 
