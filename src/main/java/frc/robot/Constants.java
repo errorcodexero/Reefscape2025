@@ -71,7 +71,8 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
-        public static final Distance distanceFromTagAlgae = Inches.of(20);
+        public static final Distance distanceFromTagAlgae = Inches.of(16
+        );
 
         /**
          * The offset from the center of the TAG to where we want the ARM to be positioned.

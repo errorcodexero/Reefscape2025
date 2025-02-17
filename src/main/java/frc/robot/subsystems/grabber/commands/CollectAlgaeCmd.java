@@ -27,7 +27,7 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
     }
 
     private boolean hasAlgae() {
-        return grabber_.AlgaeRising(); // TODO: figure out what this should be
+        return grabber_.algaeSensor(); // TODO: figure out what this should be
     }
 
     private Command logState(String state) {
