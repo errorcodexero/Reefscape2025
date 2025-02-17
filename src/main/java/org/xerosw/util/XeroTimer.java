@@ -26,12 +26,12 @@ public class XeroTimer {
     }
 
     public double elapsed() {
-        return Timer.getFPGATimestamp() - start_ ;
+        return Timer.getTimestamp() - start_ ;
     }
 
     public void start() {
         running_ = true ;
-        start_ = Timer.getFPGATimestamp() ;
+        start_ = Timer.getTimestamp() ;
         endtime_ = start_ + duration_ ;
     }
 
@@ -45,7 +45,7 @@ public class XeroTimer {
         if (running_ == false)
             return true ;
 
-        if (running_ && Timer.getFPGATimestamp() > endtime_) {
+        if (running_ && Timer.getTimestamp() > endtime_) {
             running_ = false ;
             ret = true ;
         }
