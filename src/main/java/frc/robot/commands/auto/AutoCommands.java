@@ -34,19 +34,19 @@ public class AutoCommands {
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Side Coral 2", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Side Coral 3", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Side Coral 4", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Side Coral 5", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Side Coral 6", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Side Coral 7", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left));
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left));
   }
 
   public static Command algaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
@@ -80,19 +80,19 @@ public class AutoCommands {
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Center Coral 1", mirroredX),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-            new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+            new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Center Coral 2", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Center Coral 3", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Center Coral 4", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Center Coral 5", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Center Coral 6", mirroredX),
         new WaitForCoralCmd(grabberSub),
         DriveCommands.followPathCommand("Center Coral 7", mirroredX),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left)) ;
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left)) ;
   }
 
   public static Command justCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
@@ -100,7 +100,7 @@ public class AutoCommands {
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Just Coral 1"),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(driveSub, manipSub, grabberSub, brainSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Just Coral 2"));
   }
 }

@@ -3,6 +3,7 @@ package frc.robot.commands.robot;
 import org.xerosw.util.XeroSequence;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -38,6 +39,7 @@ public class EjectCmd extends Command {
         if (brain_.gp() == GamePiece.ALGAE_HIGH) {
             sequence_.addCommands(
                 new DepositAlgaeCmd(grabber_),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition(), true),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         }
         else {
@@ -45,6 +47,7 @@ public class EjectCmd extends Command {
                 new DepositCoralCmd(grabber_),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
         }
+        sequence_.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false));
         sequence_.addCommands(new SetHoldingCmd(brain_, GamePiece.NONE));
 
         sequence_.schedule();
