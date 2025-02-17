@@ -15,7 +15,6 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
     private final GrabberSubsystem grabber_;
 
     public CollectAlgaeCmd(GrabberSubsystem grabber) {
-        addRequirements(grabber);
         grabber_ = grabber;
 
         addCommands(
@@ -28,7 +27,7 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
     }
 
     private boolean hasAlgae() {
-        return grabber_.AlgaeRising();
+        return grabber_.AlgaeRising(); // TODO: figure out what this should be
     }
 
     private Command logState(String state) {
