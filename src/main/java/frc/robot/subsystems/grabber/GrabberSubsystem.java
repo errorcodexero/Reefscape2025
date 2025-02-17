@@ -49,14 +49,26 @@ public class GrabberSubsystem extends SubsystemBase {
         io_.setGrabberTargetVelocity(vel);
     }
 
+    public Command setVelocityCommand(AngularVelocity vel) {
+        return runOnce(() -> setGrabberTargetVelocity(vel));
+    }
+
     public void stopGrabber() {
         Angle pos = inputs_.grabberPosition;
         io_.setGrabberTargetPosition(pos);
         io_.setGrabberMotorVoltage(0.0);
     }
 
+    public Command stopGrabberCommand() {
+        return runOnce(this::stopGrabber);
+    }
+
     public void setGrabberMotorVoltage(double vol) {
         io_.setGrabberMotorVoltage(vol);
+    }
+
+    public Command setVoltageCommand(Voltage vol) {
+        return runOnce(() -> setGrabberMotorVoltage(vol.in(Volts)));
     }
 
     ///////////////////////////

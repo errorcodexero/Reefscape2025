@@ -1,53 +1,39 @@
 package frc.robot.subsystems.grabber.commands;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
-public class CollectAlgaeCmd extends Command {
-    private GrabberSubsystem grabber_;
-    private State state_;
+public class CollectAlgaeCmd extends SequentialCommandGroup {
 
-    private enum State {
-        WaitingForAlgae,
-        Finish
-    }
+    private final GrabberSubsystem grabber_;
 
     public CollectAlgaeCmd(GrabberSubsystem grabber) {
-        addRequirements(grabber);
         grabber_ = grabber;
+
+        addCommands(
+            grabber.setVelocityCommand(GrabberConstants.Grabber.CollectAlgae.velocity),
+            logState("Waiting"),
+            Commands.waitUntil(this::hasAlgae),
+            logState("Grabbed"),
+            grabber.setVoltageCommand(Volts.of(GrabberConstants.Grabber.kHoldingVoltage))
+        );
     }
 
-    @Override
-    public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectAlgae.velocity);
-        state_ = State.WaitingForAlgae;
+    private boolean hasAlgae() {
+        return grabber_.algaeSensor(); // TODO: figure out what this should be
     }
 
-    @Override
-    public boolean isFinished() {
-        return state_ == State.Finish;
+    private Command logState(String state) {
+        return Commands.runOnce(() -> {
+            Logger.recordOutput("Commands/AlgaeCollect/State", state);
+        });
     }
 
-    @Override
-    public void execute() {
-        Logger.recordOutput("Grabber/CollectAlgae", state_.toString()) ;
-        switch(state_) {
-            case WaitingForAlgae:
-                if (!grabber_.algaeSensor() || grabber_.algaeFalling()) {
-                    grabber_.setGrabberMotorVoltage(GrabberConstants.Grabber.kHoldingVoltage) ;
-                    state_ = State.Finish;
-                }
-                break;
-            case Finish:
-                break;
-        }
-    }
-
-    @Override
-    public void end(boolean canceled) {
-        state_ = State.Finish;
-    }
 }
