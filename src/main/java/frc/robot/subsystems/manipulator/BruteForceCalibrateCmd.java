@@ -1,6 +1,5 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
