@@ -4,13 +4,12 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import java.util.Optional;
-
-import org.xerosw.util.XeroSequence;
+import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
@@ -27,8 +26,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
-public class CollectAlgaeReefCmd extends Command {
-    private XeroSequence sequence_;
+public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     private BrainSubsystem brain_ ;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
@@ -53,9 +51,8 @@ public class CollectAlgaeReefCmd extends Command {
     // GoToCmd
     // WaitForCoral
 
-    // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
+    public void initSequence(SequentialCommandGroup seq) {
         ReefLevel level = height_ ;
 
         Angle angle ;
@@ -84,9 +81,7 @@ public class CollectAlgaeReefCmd extends Command {
         if (reefFace.isEmpty())
             return ;
 
-        sequence_ = new XeroSequence();
-
-        sequence_.addCommands(
+        seq.addCommands(
             db_.stopCmd(),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
                                       ManipulatorConstants.Arm.Positions.kRaiseAngle),
@@ -94,7 +89,7 @@ public class CollectAlgaeReefCmd extends Command {
             new GoToCmd(manipulator_, height, angle, true)) ;
         
         if (driveto_) {
-            sequence_.addCommands(
+            seq.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
                     DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), 
@@ -103,10 +98,10 @@ public class CollectAlgaeReefCmd extends Command {
                     new CollectAlgaeCmd(grabber_))) ;
         }
         else {
-            sequence_.addCommands(
+            seq.addCommands(
                new CollectAlgaeCmd(grabber_)) ;
         }
-        sequence_.addCommands(
+        seq.addCommands(
             new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
             DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeBackupPose(), 
                                             MetersPerSecond.of(1.0), 
@@ -114,26 +109,5 @@ public class CollectAlgaeReefCmd extends Command {
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
                                       ManipulatorConstants.Arm.Positions.kAlgaeReefHold, true)) ;
-
-        sequence_.schedule();
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            sequence_.cancel();
-        }
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return sequence_.isComplete();
     }
 }

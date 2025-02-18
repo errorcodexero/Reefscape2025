@@ -6,10 +6,10 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
+import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
@@ -24,7 +24,6 @@ import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
-import frc.robot.commands.robot.scorealgae.ScoreAlgaeBefore;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.robot.CollectCoralCmd ;
 
@@ -43,7 +42,7 @@ public class BrainSubsystem extends SubsystemBase {
     private int current_robot_action_command_index_ ;
 
     // The command we are running
-    private Command current_cmd_ ;
+    private XeroSequenceCmd current_cmd_ ;
 
     // The OI subsystem, for LED control
     private OISubsystem oi_ ;
@@ -93,8 +92,6 @@ public class BrainSubsystem extends SubsystemBase {
         gp_ = GamePiece.NONE ;
         leds_inited_ = false ;
         periodic_count_ = 0 ;
-
-        CommandScheduler.getInstance().onCommandFinish(this::cmdFinished) ;
     }
 
     public GamePiece gp() {
@@ -142,19 +139,6 @@ public class BrainSubsystem extends SubsystemBase {
     public void clearAlgaeOnReef() {
         algae_on_reef_ = false ;
         oi_.setLEDState(OISubsystem.OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
-    }
-
-    private void cmdFinished(Command c) {
-        if (current_cmd_ == c && !clearing_state_) {
-            current_cmd_ = null ;
-            if (current_action_ != null && current_robot_action_command_index_ >= current_robot_action_command_.size()) {
-                //
-                // This was the last command in the current action, we are done so complete this action and move to
-                // the next action if there is one
-                //
-                completedAction() ;
-            }
-        }
     }
 
     public void setCoralLevel(ReefLevel height) {
@@ -367,6 +351,17 @@ public class BrainSubsystem extends SubsystemBase {
     public void periodic() {
         String status = "" ;
 
+        if (current_cmd_ != null && current_cmd_.isComplete() && !clearing_state_) {
+            current_cmd_ = null ;
+            if (current_action_ != null && current_robot_action_command_index_ >= current_robot_action_command_.size()) {
+                //
+                // This was the last command in the current action, we are done so complete this action and move to
+                // the next action if there is one
+                //
+                completedAction() ;
+            }            
+        }
+
         if (!RobotState.isEnabled() || !RobotState.isTeleop()) {
             clearRobotActions() ;
             return ;
@@ -417,7 +412,7 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     private RobotActionCommandList getRobotActionCommand(RobotAction action, ReefLevel level, CoralSide side) {
-        List<Command> list = new ArrayList<Command>() ;
+        List<XeroSequenceCmd> list = new ArrayList<XeroSequenceCmd>() ;
         List<BooleanSupplier> conds = new ArrayList<BooleanSupplier>() ;
 
         switch(action) {
@@ -435,7 +430,7 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case ScoreAlgae:
-                list.add(new ScoreAlgaeBefore(m_)) ;
+                list.add(new NullCmd()) ;
                 conds.add(null) ;
 
                 list.add(new ScoreAlgaeAfter(db_, this, m_, g_)) ;
