@@ -1,15 +1,20 @@
 package frc.robot.commands.robot.placecoral;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
 import java.util.Optional;
 
-import org.xerosw.util.XeroSequence;
-
+import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
@@ -29,10 +34,7 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
-public class PlaceCoralCmd extends Command {
-
-    private XeroSequence sequence_;
-
+public class PlaceCoralCmd extends XeroSequenceCmd {
     private final Drive drive_;
     private final ManipulatorSubsystem manipulator_; 
     private final GrabberSubsystem grabber_; 
@@ -62,11 +64,9 @@ public class PlaceCoralCmd extends Command {
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
+    public void initSequence(SequentialCommandGroup seq) {
         ReefLevel level ;
         CoralSide side ;
-
-        sequence_ = new XeroSequence();
 
         if (level_ == ReefLevel.AskBrain) {
             level = brain_.coralLevel() ;
@@ -96,6 +96,9 @@ public class PlaceCoralCmd extends Command {
             return ;
         }
 
+        LinearVelocity maxvel = CommandConstants.ReefDrive.kMaxDriveVelocity ;
+        LinearAcceleration maxaccel = CommandConstants.ReefDrive.kMaxDriveAcceleration ;
+
         switch(level) {
             case L1:
                 target_elev_pos_ = Elevator.Positions.kPlaceL1;
@@ -115,6 +118,8 @@ public class PlaceCoralCmd extends Command {
             case L4:
                 target_elev_pos_ = Elevator.Positions.kPlaceL4;
                 target_arm_pos_ = Arm.Positions.kPlaceL4;
+                // maxvel = CommandConstants.ReefDrive.kMaxDriveVelocityL4 ;
+                // maxaccel = CommandConstants.ReefDrive.kMaxDriveAccelerationL4 ;
                 break ;
 
             default:
@@ -123,48 +128,43 @@ public class PlaceCoralCmd extends Command {
         }
 
         ReefFace face = reefFace.get();
-        Pose2d scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();
+        Pose2d scoringPose ;
+        if (brain_.doesReefHaveAlgae()) {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringWithAlgaePose() : face.getRightScoringWithAlgaePose();
+        }
+        else {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
+        }
 
         if (driveto_) {
-            sequence_.addCommands(
+            seq.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
                     new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                    DriveCommands.simplePathCommand(drive_, scoringPose, CommandConstants.ReefDrive.kMaxDriveVelocity, CommandConstants.ReefDrive.kMaxDriveAcceleration))) ;
+                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel))) ;
         }
         else {
-            sequence_.addCommands(
+            seq.addCommands(
                 new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ; 
         }
 
-        sequence_.addCommands(
+
+        seq.addCommands(
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_, true),
-            new DepositCoralCmd(grabber_),
             new SetHoldingCmd(brain_, GamePiece.NONE),
-            new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true),
+
+            Commands.parallel(
+                new DepositCoralCmd(grabber_),
+                Commands.sequence(
+                    new WaitCommand(Milliseconds.of(750)),
+                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true)
+                )
+            ),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
 
         if (driveto_) {
-            sequence_.addCommands(
+            seq.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
         }
-        sequence_.schedule();
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        sequence_.cancel(); 
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return sequence_.isComplete(); 
     }
 }

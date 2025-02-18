@@ -3,10 +3,9 @@ package frc.robot.commands.robot.scorealgae;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import org.xerosw.util.XeroSequence;
-
-import edu.wpi.first.wpilibj2.command.Command;
+import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -18,11 +17,10 @@ import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
-public class ScoreAlgaeAfter extends Command {
+public class ScoreAlgaeAfter extends XeroSequenceCmd {
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;
     private BrainSubsystem brain_ ;
-    private XeroSequence sequence_ ;
     private Drive db_ ;
 
     public ScoreAlgaeAfter(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
@@ -33,9 +31,8 @@ public class ScoreAlgaeAfter extends Command {
     }
 
     @Override
-    public void initialize() {
-        sequence_ = new XeroSequence();
-        sequence_.addCommands(
+    public void initSequence(SequentialCommandGroup seq) {
+        seq.addCommands(
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef, 
                             ManipulatorConstants.Arm.Positions.kScoreAlgaeReef, true),
             new DepositAlgaeCmd(g_),
@@ -51,25 +48,5 @@ public class ScoreAlgaeAfter extends Command {
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
                             ManipulatorConstants.Arm.Positions.kRaiseAngle, true),
             new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
-        sequence_.schedule();
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            sequence_.cancel();
-        }
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return sequence_.isComplete();
     }
 }

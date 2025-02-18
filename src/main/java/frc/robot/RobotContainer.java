@@ -138,7 +138,7 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case ALPHA:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, AlphaTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             AlphaTunerConstants.FrontLeft,
                             AlphaTunerConstants.FrontRight,
@@ -156,7 +156,7 @@ public class RobotContainer {
 
                 case COMPETITION:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             CompTunerConstants.FrontLeft,
                             CompTunerConstants.FrontRight,
@@ -201,7 +201,7 @@ public class RobotContainer {
 
                 case PRACTICE:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id),
+                            new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id, PracticeTunerConstants.kCANBus),
                             ModuleIOTalonFX::new,
                             PracticeTunerConstants.FrontLeft,
                             PracticeTunerConstants.FrontRight,
@@ -475,6 +475,8 @@ public class RobotContainer {
         oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
         oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
+        oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()-> brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
+
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
@@ -482,6 +484,7 @@ public class RobotContainer {
 
         oi_.abort().onTrue(new AbortCmd(brain_)) ;
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
+        
 
         // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
         // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
@@ -517,6 +520,7 @@ public class RobotContainer {
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
+        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
         // Robot Relative
         gamepad_.povUp().whileTrue(

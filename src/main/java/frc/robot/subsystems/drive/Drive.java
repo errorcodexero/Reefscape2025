@@ -363,6 +363,10 @@ public class Drive extends SubsystemBase {
         return runOnce(() -> stopWithX());
     }
     
+    public Command stopCmd() {
+        return runOnce(() -> stop());
+    }
+    
     public Command runVelocityCmd(ChassisSpeeds speeds) {
         return run(() -> {
             runVelocity(speeds);

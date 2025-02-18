@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,30 +25,50 @@ public class AutoCommands {
 
   public static Command sideCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub,
       FunnelSubsystem funnelSub, boolean mirroredX) {
-    boolean mirroredY = DriverStation.getAlliance().isPresent()
-        ? DriverStation.getAlliance().get().equals(Alliance.Red)
-        : false;
-    if (!mirroredY) {
-      mirroredX = !mirroredX;
-    }
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    boolean mirroredY = alliance == Alliance.Red;
+
+    // if (!mirroredY) {
+    //   mirroredX = !mirroredX;
+    // }
 
     return Commands.sequence(
+        logState("Path 1"),
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
+        logState("Placing"),
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
+        logState("Path 2"),
         DriveCommands.followPathCommand("Side Coral 2", mirroredX),
+        logState("Wait For Coral"),
         new WaitForCoralCmd(grabberSub),
+        logState("Path 3"),
         DriveCommands.followPathCommand("Side Coral 3", mirroredX),
+        logState("Placing"),
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
+        logState("Path 4"),
         DriveCommands.followPathCommand("Side Coral 4", mirroredX),
+        logState("Wait For Coral"),
         new WaitForCoralCmd(grabberSub),
+        logState("Path 5"),
         DriveCommands.followPathCommand("Side Coral 5", mirroredX),
+        logState("Placing"),
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
+        logState("Path 6"),
         DriveCommands.followPathCommand("Side Coral 6", mirroredX),
+        logState("Wait For Coral"),
         new WaitForCoralCmd(grabberSub),
+        logState("Path 7"),
         DriveCommands.followPathCommand("Side Coral 7", mirroredX),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left));
+        logState("Placing"),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
+        logState("Finished!")
+      );
+  }
+
+  private static Command logState(String state) {
+    return Commands.runOnce(() -> Logger.recordOutput("Autos/SideCoralState", state));
   }
 
   public static Command algaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {

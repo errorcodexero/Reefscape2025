@@ -8,7 +8,9 @@ import edu.wpi.first.units.measure.LinearVelocity;
 
 public class CommandConstants {
     public static class ReefDrive {
-        public static final LinearVelocity kMaxDriveVelocity = MetersPerSecond.of(3.0) ;
-        public static final LinearAcceleration kMaxDriveAcceleration = MetersPerSecondPerSecond.of(3.0) ;
+        public static final LinearVelocity kMaxDriveVelocity = MetersPerSecond.of(2.0) ;
+        public static final LinearAcceleration kMaxDriveAcceleration = MetersPerSecondPerSecond.of(2.0) ;
+        public static final LinearVelocity kMaxDriveVelocityL4 = MetersPerSecond.of(2.0) ;
+        public static final LinearAcceleration kMaxDriveAccelerationL4 = MetersPerSecondPerSecond.of(2.0) ;
     }
 }
