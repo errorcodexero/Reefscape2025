@@ -62,6 +62,9 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
         Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
         Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        Logger.recordMetadata("Robot", Constants.getRobot().toString());
+        Logger.recordMetadata("Mode", Constants.getMode().toString());
+        Logger.recordMetadata("SimulationType", Robot.useXeroSimulator() ? "Xero Sim" : "Regular Sim");
         
         switch (BuildConstants.DIRTY) {
             case 0:

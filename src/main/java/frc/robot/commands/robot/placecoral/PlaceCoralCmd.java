@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import java.util.Optional;
 
 import org.xerosw.util.XeroSequenceCmd;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -17,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
@@ -27,9 +27,9 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
-import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
+import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
