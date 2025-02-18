@@ -87,6 +87,7 @@ public class CollectAlgaeReefCmd extends Command {
         sequence_ = new XeroSequence();
 
         sequence_.addCommands(
+            db_.stopCmd(),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
                                       ManipulatorConstants.Arm.Positions.kRaiseAngle),
             new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle, true),
