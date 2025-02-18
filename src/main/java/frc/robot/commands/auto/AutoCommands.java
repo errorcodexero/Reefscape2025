@@ -13,7 +13,6 @@ import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -23,10 +22,9 @@ public class AutoCommands {
   private AutoCommands() {
   }
 
-  public static Command sideCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub,
-      FunnelSubsystem funnelSub, boolean mirroredX) {
-    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-    boolean mirroredY = alliance == Alliance.Red;
+  public static Command sideCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, boolean mirroredX) {
+    // Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    // boolean mirroredY = alliance == Alliance.Red;
 
     // if (!mirroredY) {
     //   mirroredX = !mirroredX;

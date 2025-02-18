@@ -5,8 +5,6 @@ import java.util.function.BooleanSupplier;
 
 import org.xerosw.util.XeroSequenceCmd;
 
-import edu.wpi.first.wpilibj2.command.Command;
-
 public class RobotActionCommandList {
     public RobotAction action ;
     public List<XeroSequenceCmd> commands ;
