@@ -14,6 +14,8 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class ManipulatorConstants {
 
+    public static final int kFunnelSensorChannel = 6 ;
+
     public class Arm {
        
         // motor CAN ID
@@ -112,7 +114,8 @@ public class ManipulatorConstants {
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         public static final int kHallEffectSensorChannel = 4 ;
-        public static final Voltage kCalibrateVoltage = Volts.of(-2) ;
+        public static final Voltage kCalibrateVoltage = Volts.of(-1) ;
+        public static final int kCalibrateLoops = 4 ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around       
         // Used for simulation

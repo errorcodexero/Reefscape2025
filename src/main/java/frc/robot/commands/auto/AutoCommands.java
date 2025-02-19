@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CollectCoralCmd;
+import frc.robot.commands.robot.WaitForFunnelSensorCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -39,29 +40,23 @@ public class AutoCommands {
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         logState("Path 2"),
         DriveCommands.followPathCommand("Side Coral 2", mirroredX),
-        logState("Wait For Coral"),
-        new CollectCoralCmd(brainSub, manipSub, grabberSub),
-        logState("Path 3"),
-        DriveCommands.followPathCommand("Side Coral 3", mirroredX),
+        logState("WaitForFunnelSensor"),
+        new WaitForFunnelSensorCmd(manipSub),
+        logState("Path 3/Collect"),
+        Commands.parallel(
+          new CollectCoralCmd(brainSub, manipSub, grabberSub),
+          DriveCommands.followPathCommand("Side Coral 3", mirroredX)),
         logState("Placing"),
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
         logState("Path 4"),
         DriveCommands.followPathCommand("Side Coral 4", mirroredX),
         logState("Wait For Coral"),
-        new CollectCoralCmd(brainSub, manipSub, grabberSub),
-        logState("Path 5"),
-        DriveCommands.followPathCommand("Side Coral 5", mirroredX),
+        new WaitForFunnelSensorCmd(manipSub),
+        Commands.parallel(
+          new CollectCoralCmd(brainSub, manipSub, grabberSub),
+          DriveCommands.followPathCommand("Side Coral 5", mirroredX)),
         logState("Placing"),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
-        logState("Path 6"),
-        DriveCommands.followPathCommand("Side Coral 6", mirroredX),
-        logState("Wait For Coral"),
-        new CollectCoralCmd(brainSub, manipSub, grabberSub),
-        logState("Path 7"),
-        DriveCommands.followPathCommand("Side Coral 7", mirroredX),
-        logState("Placing"),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
-        logState("Finished!")
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left)
       );
   }
 
@@ -120,7 +115,7 @@ public class AutoCommands {
         Commands.parallel(
             DriveCommands.initialFollowPathCommand(driveSub, "Just Coral 1"),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, false, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, CoralSide.Left),
         DriveCommands.followPathCommand("Just Coral 2"));
   }
 }

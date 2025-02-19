@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7478693181818181,
-        "y": 1.3276846590909088
+        "x": 0.628875,
+        "y": 1.2267499999999996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.147441412061172,
-        "y": 1.5390519313063171
+        "x": 1.028447093879354,
+        "y": 1.4381172722154079
       },
       "isLocked": false,
       "linkedName": "Station Far"
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.2,
+    "maxAcceleration": 3.2,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

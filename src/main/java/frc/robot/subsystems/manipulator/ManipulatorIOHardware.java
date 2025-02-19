@@ -56,6 +56,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private EncoderMapper mapper_; 
     private DigitalInput hall_effect_sensor_ ;
 
+    private DigitalInput funnel_sensor_ ;
+
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
     private DutyCycleEncoderSim arm_encoder_sim_ ;
@@ -84,6 +86,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public ManipulatorIOHardware() throws Exception {
         createArm() ;
         createElevator() ;   
+
+        funnel_sensor_ = new DigitalInput(ManipulatorConstants.kFunnelSensorChannel) ;
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
@@ -280,6 +284,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             elevator_2_current_sig_
         );
 
+        inputs.funnelSensor = !funnel_sensor_.get() ;
 
         inputs.elevator1Ready = elevator1ErrorDebounce_.calculate(elevator1Status.isOK());
         inputs.elevator2Ready = elevator2ErrorDebounce_.calculate(elevator2Status.isOK());

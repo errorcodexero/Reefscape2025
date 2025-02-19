@@ -48,6 +48,9 @@ public interface ManipulatorIO {
 
         // hall effect sensor
         public boolean hallEffectSensor = false;
+
+        // Funnel sensor
+        public boolean funnelSensor = false ;
     }
 
     // updating inputs
