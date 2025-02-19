@@ -43,15 +43,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
-
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -328,14 +327,13 @@ public class DriveCommands {
    * @return A command that follows the created path.
    */
   public static Command simplePathCommand(Drive drive, Pose2d targetPose, LinearVelocity v, LinearAcceleration a) {
-    
+
     // Create Constraints
     PathConstraints constraints = new PathConstraints(
-      v.in(MetersPerSecond),
-      a.in(MetersPerSecondPerSecond),
-      DegreesPerSecond.of(540).in(RadiansPerSecond),
-      DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond)
-    );
+        v.in(MetersPerSecond),
+        a.in(MetersPerSecondPerSecond),
+        DegreesPerSecond.of(540).in(RadiansPerSecond),
+        DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
 
     // Create Command Only When It Is Starting
     return Commands.defer(() -> {
@@ -343,12 +341,13 @@ public class DriveCommands {
       Pose2d curPose = drive.getPose();
       Transform2d curToTarget = targetPose.minus(curPose);
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(),
+          curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
         Logger.recordOutput("SimplePathing/StartWaypoint", startWaypoint);
-        Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);  
+        Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
@@ -505,11 +504,9 @@ public class DriveCommands {
   private static Optional<PathPlannerPath> findPath(String pathName, boolean mirroredX) {
     try {
 
-      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-      if (mirroredX) {
-        path = path.mirrorPath();
-      }
+      PathPlannerPath path = mirroredX
+          ? PathPlannerPath.fromPathFile(pathName).mirrorPath()
+          : PathPlannerPath.fromPathFile(pathName);
 
       return Optional.of(path);
 
