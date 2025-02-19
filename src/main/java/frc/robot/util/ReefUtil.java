@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
@@ -230,7 +231,8 @@ public class ReefUtil {
 
         if (
             rotationToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
-            getDistanceFromFace(robotPose, nearestFace) <= ReefConstants.maximumDistanceToFace.in(Meters) // Distance is within limit
+            getDistanceFromFace(robotPose, nearestFace).lte(ReefConstants.maximumDistanceToFace) && // Distance is within limit
+            getDistanceFromFace(robotPose, nearestFace).gte(ReefConstants.minimumDistanceToFace) // Distance is past the minimum
         ) {
             return Optional.of(nearestFace); 
         } else {
@@ -251,9 +253,9 @@ public class ReefUtil {
         ReefFace nearest = faces[0];
 
         for (ReefFace face : faces) {
-            double distanceMeters = getDistanceFromFace(robotPose, face);
+            Distance distance = getDistanceFromFace(robotPose, face);
 
-            if (distanceMeters < getDistanceFromFace(robotPose, nearest)) {
+            if (distance.lt(getDistanceFromFace(robotPose, nearest))) {
                 nearest = face;
             }
         }
@@ -267,8 +269,8 @@ public class ReefUtil {
      * @param face The face to get the distance to.
      * @return
      */
-    public static double getDistanceFromFace(Pose2d robot, ReefFace face) {
-        return robot.getTranslation().getDistance(face.getTagPose().getTranslation());
+    public static Distance getDistanceFromFace(Pose2d robot, ReefFace face) {
+        return Meters.of(robot.getTranslation().getDistance(face.getTagPose().getTranslation()));
     }
 
 }
