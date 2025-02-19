@@ -48,6 +48,9 @@ public interface ManipulatorIO {
 
         // hall effect sensor
         public boolean hallEffectSensor = false;
+
+        // Funnel sensor
+        public boolean funnelSensor = false ;
     }
 
     // updating inputs
@@ -65,6 +68,7 @@ public interface ManipulatorIO {
     // ELEVATOR METHODS
     public default void setElevatorTarget(Distance dist) {}
     public default void resetPosition() {}
+    public default void enableSoftLimits(boolean b) {}
 
     // ARM METHODS
     public default void setArmTarget(Angle angle) {}

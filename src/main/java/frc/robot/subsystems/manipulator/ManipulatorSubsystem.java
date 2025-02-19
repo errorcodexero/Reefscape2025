@@ -36,11 +36,19 @@ public class ManipulatorSubsystem extends SubsystemBase{
         elevator_reset_ = false ;
 
         needs_reset_trigger_ = new Trigger(() -> !elevator_reset_) ;
-        RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new BruteForceCalibrateCmd(this)) ;
+        RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
     }
 
     public Trigger needsElevatorReset() { 
         return needs_reset_trigger_ ;
+    }
+
+    public void enableSoftLimits(boolean b) {
+        io_.enableSoftLimits(b) ;
+    }
+
+    public boolean sawFunnelCoral() {
+        return inputs_.funnelSensor ;
     }
 
     @Override
@@ -48,6 +56,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
+
+        Logger.recordOutput("Manipulator/calibrated", elevator_reset_) ;
 
         Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
         Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
@@ -95,16 +105,12 @@ public class ManipulatorSubsystem extends SubsystemBase{
         io_.setElevatorTarget(dist); 
     }
 
-    public void resetPosition() {
-        io_.resetPosition();
-    }
-
     public void setElevatorVoltage(Voltage volts) {
         io_.setElevatorMotorVoltage(volts.in(Volts)) ;
     }
 
     public boolean isElevAtBottom() {
-        return inputs_.hallEffectSensor ;
+        return !inputs_.hallEffectSensor ;
     }
 
     public boolean isElevAtTarget() {
