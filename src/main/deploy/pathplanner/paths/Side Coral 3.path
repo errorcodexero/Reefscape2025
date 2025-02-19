@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8497361041473304,
-        "y": 1.9472978589841468
+        "x": 2.6026636956958207,
+        "y": 1.7949760783853854
       },
       "isLocked": false,
       "linkedName": "Station Far"
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 53.72
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

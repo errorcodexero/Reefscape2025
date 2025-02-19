@@ -22,6 +22,7 @@ public abstract class XeroSequenceCmd extends Command {
         complete_ = false ;
         sequence_ = new SequentialCommandGroup() ;
         initSequence(sequence_) ;
+        sequence_.initialize() ;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -47,6 +48,7 @@ public abstract class XeroSequenceCmd extends Command {
         if (sequence_ != null && sequence_.isFinished()) {
             ret = true ;
             complete_ = true ;
+            sequence_ = null ;
         }
         return ret;
     }

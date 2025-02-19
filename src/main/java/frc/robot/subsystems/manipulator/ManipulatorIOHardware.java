@@ -1,6 +1,17 @@
 package frc.robot.subsystems.manipulator;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Revolution;
+import static edu.wpi.first.units.Units.Revolutions;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
@@ -90,7 +101,28 @@ public class ManipulatorIOHardware implements ManipulatorIO {
                 elevator_2_current_sig_
             )
         );
+    }
 
+    public void enableSoftLimits(boolean b) {
+        try {
+            SoftwareLimitSwitchConfigs elevatorLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
+            if (b) {
+                elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = true;
+                elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+            }
+            else {
+                elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = false;
+                elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = false;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+            }
+            TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
+        }
+        catch(Exception ex) {
+
+        }
     }
 
     private void createElevator() throws Exception {
@@ -127,15 +159,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevatorMotionMagicConfigs.MotionMagicAcceleration = ManipulatorConstants.Elevator.MotionMagic.kMaxAcceleration.in(RotationsPerSecondPerSecond) ;
         elevatorMotionMagicConfigs.MotionMagicJerk = ManipulatorConstants.Elevator.MotionMagic.kJerk ;
 
-        SoftwareLimitSwitchConfigs elevatorLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
-        elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = true;
-        elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
-        elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
-        TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs)) ;
+
+        enableSoftLimits(true);
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();

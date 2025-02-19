@@ -37,7 +37,6 @@ public class ManipulatorConstants {
         public static final Angle kMaxArmAngle = Degrees.of(179.0);
         public static final Angle kMinArmAngle = Degrees.of(-200) ;
 
-
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
 
@@ -112,8 +111,8 @@ public class ManipulatorConstants {
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
-        public static final int kHallEffectSensorChannel = 8 ;
-        public static final Voltage kCalibrateVoltage = Volts.of(-0.1) ;
+        public static final int kHallEffectSensorChannel = 4 ;
+        public static final Voltage kCalibrateVoltage = Volts.of(-2) ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around       
         // Used for simulation
