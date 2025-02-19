@@ -31,6 +31,7 @@ import org.xerosw.util.MessageType;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -551,7 +552,13 @@ public class RobotContainer {
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(
+            drivebase_.resetGyroCmd()
+        );
+
+        gamepad_.y().and(gamepad_.a()).and(gamepad_.rightBumper()).onTrue(
+            drivebase_.resetGyroCmd(new Rotation2d(Rotations.of(0.5)))
+        );
     }
 
     /**

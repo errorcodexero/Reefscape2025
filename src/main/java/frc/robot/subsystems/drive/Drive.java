@@ -353,10 +353,14 @@ public class Drive extends SubsystemBase {
         return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
     }
     
-    public Command resetGyroCmd() {
+    public Command resetGyroCmd(Rotation2d rotation) {
         return runOnce(() -> {
-            setPose(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+            setPose(new Pose2d(getPose().getTranslation(), rotation));
         }).ignoringDisable(true);
+    }
+
+    public Command resetGyroCmd() {
+        return resetGyroCmd(new Rotation2d());
     }
     
     public Command stopWithXCmd() {
