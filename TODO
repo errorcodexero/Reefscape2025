@@ -1,17 +1,13 @@
 Things to do
-------------
-- Look at loop times
-- Look at grabber tuning to get rid of grinding sound                                           Done
-- Hold algae more upright while transporting                                                    Done
-- Test new goto command, especially in stow after algae score                                   Done
-- Look at what is happening when motors are not created and subsystem creation fails            Done
-- Tune drive base                                                                               Done
-- Why is DB disabled with current Algae Reef Collect
-- Write vision driven algae reef collect
-- Test complete place coral sequence
-- Test complete collect algae sequence
-- Test climb sequence
-- Automode: justCoralAuto
-- Automode: sideCoralAuto
-- Automode: algaeAuto
-- Automode: centerCoralAuto
+----------------------------------------------------------------
+- Code: get pose of the scoring station
+- Teleop: Test auto algae scoring sequence (used in auto)
+- Automodes: Get Just Coral working with driveto in Place Coral
+- Automodes: Test Just Coral as red alliance
+- Automodes: Test Three Coral with driveto in Place Coral
+    o Update paths
+    o Update sequences
+- Automodes: Test Three Coral auto on blue/alliance side
+- Automodes: Test Three Coral auto on red/opposite side
+- Automodes: Test Three Coral auto on red/alliance side
+

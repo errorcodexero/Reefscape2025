@@ -21,73 +21,78 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage ;
 
 public class FunnelIOHardware implements FunnelIO {
+    private final static boolean hasMotor = false ;
 
-    private final TalonFX funnelMotor_;
+    private TalonFX funnelMotor_ = null ;
     private final DigitalInterrupt funnelSensor_;
 
-    private final StatusSignal<Angle> funnelPositionSig;
-    private final StatusSignal<AngularVelocity> funnelVelocitySig;
-    private final StatusSignal<Voltage> funnelVoltageSig;
-    private final StatusSignal<Current> funnelCurrentSig;
+    private StatusSignal<Angle> funnelPositionSig = null ;
+    private StatusSignal<AngularVelocity> funnelVelocitySig = null ;
+    private StatusSignal<Voltage> funnelVoltageSig = null ;
+    private StatusSignal<Current> funnelCurrentSig = null ;
 
     private final Debouncer funnelReadyDebouncer_ = new Debouncer(0.5);
 
     public FunnelIOHardware() throws Exception {
-        funnelMotor_ = TalonFXFactory.createTalonFX(
-            FunnelConstants.funnelCanId,
-            FunnelConstants.currentLimit,
-            FunnelConstants.lowerTime
-        );
+        if (hasMotor) {
+            funnelMotor_ = TalonFXFactory.createTalonFX(
+                FunnelConstants.funnelCanId,
+                FunnelConstants.currentLimit,
+                FunnelConstants.lowerTime
+            );
 
-        Slot0Configs pids = new Slot0Configs();
-        pids.kP = FunnelConstants.MotorPids.kP;
-        pids.kI = FunnelConstants.MotorPids.kI;
-        pids.kD = FunnelConstants.MotorPids.kD;
-        pids.kV = FunnelConstants.MotorPids.kV;
-        pids.kA = FunnelConstants.MotorPids.kA;
-        pids.kG = FunnelConstants.MotorPids.kG;
-        pids.kS = FunnelConstants.MotorPids.kS;
-        
-        TalonFXFactory.checkError(
-            FunnelConstants.funnelCanId,
-            "funnel motor pids",
-            () -> funnelMotor_.getConfigurator().apply(pids)
-        );
+            Slot0Configs pids = new Slot0Configs();
+            pids.kP = FunnelConstants.MotorPids.kP;
+            pids.kI = FunnelConstants.MotorPids.kI;
+            pids.kD = FunnelConstants.MotorPids.kD;
+            pids.kV = FunnelConstants.MotorPids.kV;
+            pids.kA = FunnelConstants.MotorPids.kA;
+            pids.kG = FunnelConstants.MotorPids.kG;
+            pids.kS = FunnelConstants.MotorPids.kS;
+            
+            TalonFXFactory.checkError(
+                FunnelConstants.funnelCanId,
+                "funnel motor pids",
+                () -> funnelMotor_.getConfigurator().apply(pids)
+            );
 
-        MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs();
-        motionMagicConfig.MotionMagicCruiseVelocity = FunnelConstants.maxVelocity.in(RotationsPerSecond);
-        motionMagicConfig.MotionMagicAcceleration = FunnelConstants.maxAcceleration.in(RotationsPerSecondPerSecond);
-        motionMagicConfig.MotionMagicJerk = FunnelConstants.jerk;
+            MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs();
+            motionMagicConfig.MotionMagicCruiseVelocity = FunnelConstants.maxVelocity.in(RotationsPerSecond);
+            motionMagicConfig.MotionMagicAcceleration = FunnelConstants.maxAcceleration.in(RotationsPerSecondPerSecond);
+            motionMagicConfig.MotionMagicJerk = FunnelConstants.jerk;
 
-        TalonFXFactory.checkError(
-            FunnelConstants.funnelCanId,
-            "funnel motor mm",
-            () -> funnelMotor_.getConfigurator().apply(motionMagicConfig)
-        );
+            TalonFXFactory.checkError(
+                FunnelConstants.funnelCanId,
+                "funnel motor mm",
+                () -> funnelMotor_.getConfigurator().apply(motionMagicConfig)
+            );
 
-        funnelVoltageSig = funnelMotor_.getMotorVoltage();
-        funnelCurrentSig = funnelMotor_.getSupplyCurrent();
-        funnelVelocitySig = funnelMotor_.getVelocity();
-        funnelPositionSig = funnelMotor_.getPosition();
+            funnelVoltageSig = funnelMotor_.getMotorVoltage();
+            funnelCurrentSig = funnelMotor_.getSupplyCurrent();
+            funnelVelocitySig = funnelMotor_.getVelocity();
+            funnelPositionSig = funnelMotor_.getPosition();
+        }
 
         funnelSensor_ = new DigitalInterrupt(FunnelConstants.funnelSensorId);
     }
 
     @Override
     public void updateInputs(FunnelInputs inputs) {
-        StatusCode funnelStatus = BaseStatusSignal.refreshAll(
-            funnelVoltageSig,
-            funnelCurrentSig,
-            funnelVelocitySig,
-            funnelPositionSig
-        );
+        if (hasMotor) {
+            StatusCode funnelStatus = BaseStatusSignal.refreshAll(
+                funnelVoltageSig,
+                funnelCurrentSig,
+                funnelVelocitySig,
+                funnelPositionSig
+            );
 
-        inputs.funnelReady = funnelReadyDebouncer_.calculate(funnelStatus.isOK());
+            inputs.funnelReady = funnelReadyDebouncer_.calculate(funnelStatus.isOK());
 
-        inputs.funnelPosition = funnelPositionSig.getValue();
-        inputs.funnelCurrent = funnelCurrentSig.getValue();
-        inputs.funnelVelocity = funnelVelocitySig.getValue();
-        inputs.funnelVoltage = funnelVoltageSig.getValue();
+            inputs.funnelPosition = funnelPositionSig.getValue();
+            inputs.funnelCurrent = funnelCurrentSig.getValue();
+            inputs.funnelVelocity = funnelVelocitySig.getValue();
+            inputs.funnelVoltage = funnelVoltageSig.getValue();
+        }
 
         inputs.coralFunnelSensor = funnelSensor_.getInput().get();
         inputs.coralFunnelFallingEdge = funnelSensor_.fallingEdge() ;
@@ -96,7 +101,8 @@ public class FunnelIOHardware implements FunnelIO {
 
     @Override
     public void setPosition(Angle angle) {
-        funnelMotor_.setControl(new MotionMagicVoltage(angle));
-    }
-    
+        if (hasMotor) {
+            funnelMotor_.setControl(new MotionMagicVoltage(angle));
+        }
+    }   
 }

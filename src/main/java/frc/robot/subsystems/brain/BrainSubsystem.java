@@ -21,10 +21,10 @@ import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.Constants.ReefLevel;
-import frc.robot.commands.robot.CollectCoralCmd ;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed

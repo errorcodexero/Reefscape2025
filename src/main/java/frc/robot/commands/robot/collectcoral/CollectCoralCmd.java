@@ -1,4 +1,4 @@
-package frc.robot.commands.robot;
+package frc.robot.commands.robot.collectcoral;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

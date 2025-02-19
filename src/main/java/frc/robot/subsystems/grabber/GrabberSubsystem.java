@@ -87,6 +87,10 @@ public class GrabberSubsystem extends SubsystemBase {
         return inputs_.coralSensor;
     }
 
+    public boolean hasSeenCoral() {
+        return coralFalling() || !coralSensor() ;
+    }
+
     ///////////////////////////
     // Algae Sensor State
     ///////////////////////////
