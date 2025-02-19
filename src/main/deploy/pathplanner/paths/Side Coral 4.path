@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.916453452956535,
-        "y": 3.1646479994221397
+        "x": 4.240889459284635,
+        "y": 3.2766699452383916
       },
       "isLocked": false,
       "linkedName": "3 alliance side"
     },
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7442567567567562
+        "x": 0.7478693181818181,
+        "y": 1.3276846590909088
       },
       "prevControl": {
-        "x": 1.7944655830694174,
-        "y": 0.9092411174738594
+        "x": 1.001517799163555,
+        "y": 1.451293077374434
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Station Close"
+      "linkedName": "Station Far"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.719746506237335
+    "rotation": 53.72
   },
   "reversed": false,
   "folder": "Side Coral",

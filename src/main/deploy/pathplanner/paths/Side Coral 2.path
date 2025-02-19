@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.68687921287832,
-        "y": 3.317906785860351
+        "x": 4.217982954545454,
+        "y": 2.0755539772727265
       },
       "isLocked": false,
       "linkedName": "1 alliance side"
     },
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7442567567567562
+        "x": 0.7478693181818181,
+        "y": 1.3276846590909088
       },
       "prevControl": {
-        "x": 1.3774916931259171,
-        "y": 0.6157147828071525
+        "x": 0.5245164167131406,
+        "y": 1.1991426851413052
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Station Close"
+      "linkedName": "Station Far"
     }
   ],
   "rotationTargets": [],

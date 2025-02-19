@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.302961099808993,
-        "y": 1.3302656997693514
+        "x": 1.7626130143454835,
+        "y": 1.7898131434717595
       },
       "isLocked": false,
       "linkedName": "Side Coral 5"
     },
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7442567567567562
+        "x": 0.7478693181818181,
+        "y": 1.3276846590909088
       },
       "prevControl": {
-        "x": 3.1692353957319597,
-        "y": 2.079789761216476
+        "x": 2.833276078305877,
+        "y": 2.265911790934676
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Station Close"
+      "linkedName": "Station Far"
     }
   ],
   "rotationTargets": [],
