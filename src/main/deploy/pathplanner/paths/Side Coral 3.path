@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.6894886363636368,
-        "y": 2.953053977272727
+        "x": 2.91525,
+        "y": 2.27
       },
       "prevControl": {
-        "x": 1.9217181091622642,
-        "y": 1.970943834088529
+        "x": 1.1474794727986273,
+        "y": 1.2878898568158021
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 59.99999999999999
+    "velocity": 1.5,
+    "rotation": 47.174744114609936
   },
   "reversed": false,
   "folder": "Side Coral",

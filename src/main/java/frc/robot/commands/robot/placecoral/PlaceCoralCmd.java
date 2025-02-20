@@ -155,7 +155,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
                 Commands.sequence(
-                    new WaitCommand(Milliseconds.of(750)),
+                    new WaitCommand(Milliseconds.of(200)),
                     new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true)
                 )
             ),

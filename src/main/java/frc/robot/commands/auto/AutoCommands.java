@@ -64,7 +64,7 @@ public class AutoCommands {
             DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
             new SetHoldingCmd(brainSub, GamePiece.CORAL)),
         logState("Placing"),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, CoralSide.Left),
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left),
         logState("Path 2"),
         DriveCommands.followPathCommand("Side Coral 2", mirroredX),
         logState("WaitForFunnelSensor"),
@@ -83,7 +83,7 @@ public class AutoCommands {
           new CollectCoralCmd(brainSub, manipSub, grabberSub),
           DriveCommands.followPathCommand("Side Coral 5", mirroredX)),
         logState("Placing"),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, CoralSide.Left)
+        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, CoralSide.Right)
       );
   }
 
@@ -95,17 +95,19 @@ public class AutoCommands {
     return Commands.sequence(
       
         logState("Path 1"),
-        Commands.parallel(
-            DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
-            new SetHoldingCmd(brainSub, GamePiece.CORAL)),
+        // Commands.parallel(
+        //     DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
+        //     new SetHoldingCmd(brainSub, GamePiece.CORAL)),
         
         logState("Placing Coral"),
+                //     DriveCommands.initialFollowPathCommand(driveSub, "Algae 1"),
+        //     new SetHoldingCmd(brainSub, GamePiece.CORAL)),
         new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, true, ReefLevel.L4, CoralSide.Left),
 
         logState("Backup from reef"),
         Commands.deadline(
           new WaitCommand(1.0),
-          driveSub.runVelocityCmd(MetersPerSecond.of(-2.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),  
+          driveSub.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),  
 
         logState("Collect Algae from reef"),
         new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2),

@@ -1,7 +1,6 @@
 Things to do
-----------------------------------------------------------------
-- Code: get pose of the scoring station
-- Teleop: Test auto algae scoring sequence (used in auto)
+----------------------------------------------------------------------------
+- Teleop: Test/tune auto algae scoring sequence (used in auto)          done
 - Automodes: Get Just Coral working with driveto in Place Coral
 - Automodes: Test Just Coral as red alliance
 - Automodes: Test Three Coral with driveto in Place Coral
@@ -10,4 +9,4 @@ Things to do
 - Automodes: Test Three Coral auto on blue/alliance side
 - Automodes: Test Three Coral auto on red/opposite side
 - Automodes: Test Three Coral auto on red/alliance side
-
+- Testing: 

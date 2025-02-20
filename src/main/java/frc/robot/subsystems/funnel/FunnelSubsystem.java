@@ -28,7 +28,7 @@ public class FunnelSubsystem extends SubsystemBase {
 
         disconnectedAlert_.set(!inputs_.funnelReady);
 
-        hasSeenCoral_ = inputs_.coralFunnelSensor || inputs_.coralFunnelRisingEdge;
+        hasSeenCoral_ = !inputs_.coralFunnelSensor || inputs_.coralFunnelFallingEdge;
     }
     
     public void runPosition(Angle angle) {

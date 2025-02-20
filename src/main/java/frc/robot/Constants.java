@@ -53,6 +53,11 @@ public final class Constants {
         
     }
 
+    public static class ProcessorConstants {
+        public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
+        public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
+    }
+
     public static class ReefConstants {
         /**
          * The maximum angle from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
@@ -67,12 +72,12 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(18);
+        public static final Distance distanceFromTagCoral = Inches.of(17);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
-        public static final Distance distanceFromTagAlgae = Inches.of(16);
+        public static final Distance distanceFromTagAlgae = Inches.of(14);
 
 
         /**

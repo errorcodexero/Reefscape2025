@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.057516891891892,
-        "y": 0.5268581081081072
+        "x": 6.1766250000000005,
+        "y": 1.7239999999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.105269630795373,
-        "y": 0.2814611319099154
+        "x": 6.224377738903482,
+        "y": 1.478603023801808
       },
       "isLocked": false,
       "linkedName": "Collection station"
     },
     {
       "anchor": {
-        "x": 4.9750808718038435,
-        "y": 2.9010588498079404
+        "x": 5.406375000000001,
+        "y": 2.35
       },
       "prevControl": {
-        "x": 4.942382448121121,
-        "y": 2.5853208667071326
+        "x": 5.373676576317278,
+        "y": 2.0342620168991923
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Side Algae (not used)",
+  "folder": "Side Algae",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

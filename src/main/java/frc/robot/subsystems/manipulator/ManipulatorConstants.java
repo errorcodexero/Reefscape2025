@@ -81,7 +81,7 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL2 = Degrees.of(35); 
             public static final Angle kPlaceL3 = Degrees.of(35); 
             public static final Angle kPlaceL4 = Degrees.of(75);
-            public static final Angle kKickbackAngle = Degrees.of(20); 
+            public static final Angle kKickbackAngle = Degrees.of(18); 
             public static final Angle kCollect = Degrees.of(16) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(-160.0) ;
             public static final Angle kAlgaeReefCollectL3 = Degrees.of(-160.0) ;
