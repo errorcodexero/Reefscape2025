@@ -131,7 +131,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "auto-threecoral" ;
+            String str = "auto-back2coral" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        

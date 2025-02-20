@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.89325,
-        "y": 3.85
+        "x": 5.831006493506493,
+        "y": 3.8588068181818174
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.7109204545454535,
-        "y": 3.292088068181818
+        "x": 8.618303571432023,
+        "y": 2.7904220779243043
       },
       "isLocked": false,
       "linkedName": "Algae 1"
     },
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7442567567567562
+        "x": 1.6381899350683853,
+        "y": 0.6963879870152141
       },
       "prevControl": {
-        "x": 6.072698863636364,
-        "y": 2.8932244318181812
+        "x": 6.367573051951503,
+        "y": 0.5871753246775528
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Station Close"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 51.83125590144261
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

@@ -1,0 +1,138 @@
+
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "start" : 5.0,
+                        "autonomous" : 30000.0,
+                        "between" : 0.0,
+                        "teleop" : 0.0,
+                        "fms" : false,
+                        "ds" : true,
+                        "alliance" : "blue1"
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 18.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 18.1,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 18.6,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 19.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 25.5,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 25.7,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 29.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 29.5,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : true
+                    }
+                }
+            ]
+        }         
+    ]
+}
