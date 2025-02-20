@@ -47,10 +47,6 @@ public class ManipulatorSubsystem extends SubsystemBase{
         io_.enableSoftLimits(b) ;
     }
 
-    public boolean sawFunnelCoral() {
-        return inputs_.funnelSensor ;
-    }
-
     @Override
     public void periodic() {
 

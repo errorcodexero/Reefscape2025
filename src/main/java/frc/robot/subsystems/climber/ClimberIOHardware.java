@@ -16,8 +16,6 @@ import org.xerosw.util.TalonFXFactory;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 
-
-
 public class ClimberIOHardware implements ClimberIO {
     
     private TalonFX climber_motor_;
@@ -66,13 +64,10 @@ public class ClimberIOHardware implements ClimberIO {
 
         BaseStatusSignal.setUpdateFrequencyForAll(50, climber_pos_sig_, climber_vel_sig_, 
         climber_vol_sig_, climber_current_sig_);
-
-
     }
 
     public void moveClimber(Angle angle) {
         climber_motor_.setControl(new MotionMagicVoltage(angle));
-        
     }
 
     @Override
@@ -86,6 +81,4 @@ public class ClimberIOHardware implements ClimberIO {
     public void setClimberPosition(Angle angle) {
         climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)));
     }
-        
 }
-

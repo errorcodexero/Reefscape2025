@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9750808718038435,
-        "y": 2.9010588498079404
+        "x": 5.403652597402597,
+        "y": 2.0354301948051945
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.435404893504381,
-        "y": 3.0599292599144947
+        "x": 5.863976619103134,
+        "y": 2.194300604911749
       },
       "isLocked": false,
       "linkedName": "1 alliance side"
@@ -48,7 +48,7 @@
   "folder": "Center Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 122.74434420636767
   },
   "useDefaultConstraints": false
 }

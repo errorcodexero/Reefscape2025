@@ -19,6 +19,7 @@ public class EjectCmd extends XeroSequenceCmd {
     private GrabberSubsystem grabber_;
 
     public EjectCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
+        super("EjectCmd") ;
         brain_ = brain ;
         manipulator_ = manipulator;
         grabber_ = grabber;

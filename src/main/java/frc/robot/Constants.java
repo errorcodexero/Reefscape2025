@@ -38,7 +38,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.XEROSIM;
 
     public static class DriveConstants {
         
@@ -51,6 +51,11 @@ public final class Constants {
         
         public static final AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
         
+    }
+
+    public static class ProcessorConstants {
+        public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
+        public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
     }
 
     public static class ReefConstants {
@@ -67,12 +72,12 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(18);
+        public static final Distance distanceFromTagCoral = Inches.of(17);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
-        public static final Distance distanceFromTagAlgae = Inches.of(16);
+        public static final Distance distanceFromTagAlgae = Inches.of(14);
 
 
         /**
@@ -130,7 +135,10 @@ public final class Constants {
         PRACTICE,
 
         /** The Sim Bot */
-        SIMBOT
+        SIMBOT,
+
+        /** The Xero simulator */
+        XEROSIM,
     }
 
     public enum ReefLevel {
@@ -171,6 +179,7 @@ public final class Constants {
     public static final Mode getMode() {
         return switch(getRobot()) {
             case SIMBOT -> Mode.SIM;
+            case XEROSIM -> Mode.SIM;
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }

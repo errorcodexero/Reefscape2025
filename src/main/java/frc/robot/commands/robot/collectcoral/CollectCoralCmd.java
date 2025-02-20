@@ -1,7 +1,8 @@
-package frc.robot.commands.robot;
+package frc.robot.commands.robot.collectcoral;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -17,6 +18,7 @@ public class CollectCoralCmd extends XeroSequenceCmd {
     private BrainSubsystem brain_;
 
     public CollectCoralCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, GrabberSubsystem grabber) {
+        super("CollectCoralCmd") ;
         manipulator_ = manipulator;
         grabber_ = grabber;
         brain_ = brain;

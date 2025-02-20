@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.05,
-        "y": 2.35
+        "x": 7.189042207792207,
+        "y": 0.4969561688311694
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.571363636363637,
-        "y": 2.369943181818181
+        "x": 6.140331527335876,
+        "y": 1.1825786742500095
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.9750808718038435,
-        "y": 2.9010588498079404
+        "x": 5.403652597402597,
+        "y": 2.0354301948051945
       },
       "prevControl": {
-        "x": 5.972982954545454,
-        "y": 1.99578125
+        "x": 6.5009574281369,
+        "y": 0.6555319410389289
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 119.99999999999999
+    "velocity": 1.5,
+    "rotation": 122.74434420636767
   },
   "reversed": false,
   "folder": "Side Coral",

@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -34,6 +36,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.generated.CompTunerConstants;
 import frc.simulator.engine.SimulationEngine;
 
@@ -44,14 +47,20 @@ import frc.simulator.engine.SimulationEngine;
 * project.
 */
 public class Robot extends LoggedRobot {
-    
-    private static boolean useXeroSimulator = false;
+    private HashMap<String, String> output_state_ ;
+
     private Command autonomousCommand;
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
 
     public Robot() throws RuntimeException {
+        //
+        // This is a hack, but it is the least intrusive approach based on where we are in the season
+        //
+        output_state_ = new HashMap<String, String>() ;
+        StateCmd.setRobot(this);
+
         enableMessageLogger();
 
         MessageLogger.getTheMessageLogger().startMessage(MessageType.Info).add("Robot code starting").endMessage() ;
@@ -122,7 +131,7 @@ public class Robot extends LoggedRobot {
         }
 
         if (Robot.useXeroSimulator()) {
-            String str = "invalid-place" ;
+            String str = "auto-threecoral" ;
             SimulationEngine.initializeSimulator(this);
             SimulationEngine.getInstance().initAll(str);
         }        
@@ -149,12 +158,15 @@ public class Robot extends LoggedRobot {
     }
 
     public static boolean useXeroSimulator() {
-        return useXeroSimulator && LoggedRobot.isSimulation() ;
+        return Constants.getRobot() == Constants.RobotType.XEROSIM;
+    }
+
+    public void setNamedState(String key, String value) {
+        output_state_.put(key, value) ;
     }
 
     public void robotInit() {
         super.robotInit() ;
-        //Pathfinding.setPathfinder(new LocalADStarAK());
 
         if (Robot.useXeroSimulator() && SimulationEngine.getInstance() != null) {
             //
@@ -179,6 +191,10 @@ public class Robot extends LoggedRobot {
         
         // Return to normal thread priority
         Threads.setCurrentThreadPriority(false, 10);
+
+        for(String key : output_state_.keySet()) {
+            Logger.recordOutput("RobotState/" + key, output_state_.get(key)) ;
+        }
     }
     
     /** This function is called once when the robot is disabled. */
@@ -197,11 +213,7 @@ public class Robot extends LoggedRobot {
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {
-        if (Robot.useXeroSimulator()) {
-        }
-        else {
-            autonomousCommand = robotContainer.getAutonomousCommand();
-        }
+        autonomousCommand = robotContainer.getAutonomousCommand();
             
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {

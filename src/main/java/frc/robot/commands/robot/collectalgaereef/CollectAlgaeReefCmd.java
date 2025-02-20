@@ -39,6 +39,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     }
 
     public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean driveto) {
+        super("CollectAlgaeReefCmd") ;
         brain_ = brain ;
         db_ = db ;
         manipulator_ = manipulator;

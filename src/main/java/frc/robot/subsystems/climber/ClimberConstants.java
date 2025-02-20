@@ -19,7 +19,7 @@ public class ClimberConstants {
         public static final int kMotorCANID = 5; 
 
         // gear ratio
-        public static final double kGearRatio = 307.20; 
+        public static final double kGearRatio = 266.67; 
 
         // if motor is inverted 
         public static final boolean kInverted = false; 

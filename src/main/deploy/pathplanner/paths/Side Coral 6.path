@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.9886363636363638,
-        "y": 2.7935085227272727
+        "x": 3.3238636363636362,
+        "y": 2.2443587662337667
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7626130143454835,
-        "y": 1.7898131434717595
+        "x": 1.097840287072756,
+        "y": 1.2406633869782535
       },
       "isLocked": false,
       "linkedName": "Side Coral 5"
@@ -20,7 +20,7 @@
         "y": 1.2267499999999996
       },
       "prevControl": {
-        "x": 2.714281760124059,
+        "x": 2.71428176012406,
         "y": 2.1649771318437665
       },
       "nextControl": null,
@@ -48,7 +48,7 @@
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 53.00472885729285
   },
   "useDefaultConstraints": false
 }

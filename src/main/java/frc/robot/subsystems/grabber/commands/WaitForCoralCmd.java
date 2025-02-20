@@ -11,6 +11,8 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class WaitForCoralCmd extends Command {
 
+    private static boolean showState = true ;
+
     private GrabberSubsystem grabber_;
     private State state_;
     private XeroTimer timer_ ;
@@ -43,7 +45,7 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForCoral:
-                if (grabber_.coralFalling()  && !grabber_.coralSensor()) {
+                if (grabber_.coralFalling() || !grabber_.coralSensor()) {
                     grabber_.setGrabberMotorVoltage(0.0) ;
                     timer_.start();
                     state_ = State.Delay;
@@ -58,7 +60,7 @@ public class WaitForCoralCmd extends Command {
                 break ;
 
             case BackupCoral:
-                if (grabber_.coralRising()) {
+                if (grabber_.coralRising() || grabber_.coralSensor()) {
                     grabber_.setGrabberMotorVoltage(0.0) ;
                     state_ = State.Finish;
                 }
@@ -68,7 +70,9 @@ public class WaitForCoralCmd extends Command {
                 break;
         }
 
-        Logger.recordOutput("Grabber/WaitForCoral", state_.toString()) ;
+        if (showState) {
+            Logger.recordOutput("waitforcoral", state_.toString());
+        }
     }
 
     @Override

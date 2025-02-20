@@ -24,18 +24,18 @@ public class OISubsystem extends SubsystemBase {
         CoralL2(2),                         //
         CoralL3(3),                         //
         CoralL4(4),                         //
-        ScoreAlgae(5),                      //
+        ScoreAlgae(5),                      // nothing
         CollectAlgaeGround(6),              //
-        AlgaeOnReef(7) ,                    // 
+        AlgaeOnReef(7) ,                    // Lights reef collect
         HoldingAlgaeLow(8),                 //
         HoldingAlgaeHigh(9),                // 
         HoldingCoral(10),                   //
-        Execute(11),                        //
-        CoralLeft(12),                      //
+        Execute(11),                        // nothing
+        CoralLeft(12),                      // 
         CoralRight(13),                     //
-        CollectCoral(14),                   //
-        PlaceCoral(15),                     //
-        CollectAlgaeReef(16);               //
+        CollectCoral(14),                   // nothing
+        PlaceCoral(15),                     // nothing
+        CollectAlgaeReef(16);               // nothing
 
         public final Integer value ;
 
@@ -249,10 +249,27 @@ public class OISubsystem extends SubsystemBase {
         }
     }
 
+    int n = 0 ;
+    boolean last = false ;
+
     @Override
     public void periodic() {
         ios_.updateInputs(inputs_) ;
         Logger.processInputs("OI", inputs_) ;
+
+        if (inputs_.coral_place && !last) {
+            for(int i = 1 ; i <= 16 ; i++) {
+                ios_.setLED(i, LEDState.Off);
+            }
+
+            n++ ;
+            if (n == 17)
+                n = 1 ;
+
+            Logger.recordOutput("oi/led", n) ;
+            ios_.setLED(n, LEDState.On) ;
+        }
+        last = inputs_.coral_place ;
 
         if (flashing_ && flashing_timer_.isExpired()) {
             ios_.restoreLEDState() ;

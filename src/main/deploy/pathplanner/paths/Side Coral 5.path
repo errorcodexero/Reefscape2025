@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.028447093879354,
-        "y": 1.4381172722154079
+        "x": 1.1604800788851417,
+        "y": 1.3953795929483963
       },
       "isLocked": false,
-      "linkedName": "Station Far"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.9886363636363638,
-        "y": 2.7935085227272727
+        "x": 3.3238636363636362,
+        "y": 2.2443587662337667
       },
       "prevControl": {
-        "x": 3.761831830252859,
-        "y": 2.688343397154721
+        "x": 3.085903781719155,
+        "y": 2.1668273573886125
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 59.99999999999999
+    "velocity": 1.5,
+    "rotation": 53.00472885729285
   },
   "reversed": false,
   "folder": "Side Coral",

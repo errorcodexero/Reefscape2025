@@ -137,23 +137,8 @@ public class RobotContainer {
         if (Constants.getMode() != Mode.REPLAY) {
             switch (Constants.getRobot()) {
                 case ALPHA:
-                    drivebase_ = new Drive(
-                            new GyroIOPigeon2(AlphaTunerConstants.DrivetrainConstants.Pigeon2Id, AlphaTunerConstants.kCANBus),
-                            ModuleIOTalonFX::new,
-                            AlphaTunerConstants.FrontLeft,
-                            AlphaTunerConstants.FrontRight,
-                            AlphaTunerConstants.BackLeft,
-                            AlphaTunerConstants.BackRight,
-                            AlphaTunerConstants.kSpeedAt12Volts);
-
-                    // Alpha Bot Does Not Have Any Other Subsystems
-
-                    try {
-                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                    } catch (Exception e) {
-                    }
-                    break;
-
+                    throw new RuntimeException("the alpha bot is no longer supported") ;
+                    
                 case COMPETITION:
                     drivebase_ = new Drive(
                             new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
@@ -184,6 +169,13 @@ public class RobotContainer {
                         subsystemCreateException(ex) ;
                     }
 
+                    try {
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                    } 
+                    catch (Exception ex) {
+                        subsystemCreateException(ex);
+                    }                    
+
                 //     try {
                 //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
                 //     }
@@ -191,12 +183,7 @@ public class RobotContainer {
                 //         subsystemCreateException(ex) ;
                 //     }
 
-                //     try {
-                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                //     } 
-                //     catch (Exception ex) {
-                //         subsystemCreateException(ex);
-                //     }
+
                     break;
 
                 case PRACTICE:
@@ -227,6 +214,13 @@ public class RobotContainer {
                         subsystemCreateException(ex) ;
                     }
 
+                    try {
+                        funnel_ = new FunnelSubsystem(new FunnelIOHardware());
+                    } 
+                    catch (Exception ex) {
+                        subsystemCreateException(ex);
+                    }                    
+
                 //     try {
                 //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
                 //     }
@@ -234,16 +228,10 @@ public class RobotContainer {
                 //         subsystemCreateException(ex) ;
                 //     }
 
-                //     try {
-                //         funnel_ = new FunnelSubsystem(new FunnelIOHardware());
-                //     } 
-                //     catch (Exception ex) {
-                //         subsystemCreateException(ex);
-                //     }
-
                     break;
 
                 case SIMBOT:
+                case XEROSIM:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
                             new GyroIO() {
@@ -355,6 +343,7 @@ public class RobotContainer {
                 case PRACTICE -> 1;
                 case COMPETITION -> 3;
                 case SIMBOT -> 4;
+                case XEROSIM -> 4;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -415,15 +404,15 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral",
-                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, true));
+                AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Opposing Side Coral",
-                AutoCommands.sideCoralAuto(brain_, drivebase_, manipulator_, grabber_, false));
-        autoChooser_.addOption("Center Algae", AutoCommands.algaeAuto(brain_, drivebase_, manipulator_, grabber_));
+                AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+        autoChooser_.addOption("Center Algae", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)",
                 AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
                 AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, false));
-        autoChooser_.addOption("Just Coral (center)", AutoCommands.justCoralAuto(brain_, drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.oneCoralAutoBackReef(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
         tuningChooser_.addOption("Straight Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
@@ -560,8 +549,19 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        Command autoChosen = autoChooser_.get();
-        return autoChosen != null ? autoChosen : tuningChooser_.get();
-    }
+        Command ret = null ;
 
+        if (Robot.useXeroSimulator()) {
+            //
+            // In the Xero simulator, set the auto mode you want to run
+            //
+            ret = AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false) ;
+        }
+        else {
+            Command autoChosen = autoChooser_.get();
+            ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+        }
+
+        return ret;
+    }
 }
