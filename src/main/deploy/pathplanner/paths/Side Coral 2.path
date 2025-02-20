@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.406375000000001,
-        "y": 2.35
+        "x": 5.00478896103896,
+        "y": 2.719196428571428
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.6492770827416114,
-        "y": 1.5244951274647862
+        "x": 4.302029220779221,
+        "y": 2.486525974025974
       },
       "isLocked": false,
-      "linkedName": "1 alliance side"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 1.2267499999999996
       },
       "prevControl": {
-        "x": 0.4055220985313225,
-        "y": 1.098208026050396
+        "x": 0.38697968276493827,
+        "y": 1.163610032469529
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 116.86981308749915
   },
   "useDefaultConstraints": false
 }

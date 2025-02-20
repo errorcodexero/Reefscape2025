@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.406375000000001,
-        "y": 2.35
+        "x": 5.403652597402597,
+        "y": 2.0354301948051945
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.724038003603597,
-        "y": 0.9468791718544467
+        "x": 5.721315601006193,
+        "y": 0.6323093666596411
       },
       "isLocked": false,
       "linkedName": "1 alliance side"
@@ -48,7 +48,7 @@
   "folder": "Side Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 122.74434420636767
   },
   "useDefaultConstraints": false
 }

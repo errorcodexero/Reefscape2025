@@ -38,7 +38,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.XEROSIM;
 
     public static class DriveConstants {
         
@@ -135,7 +135,10 @@ public final class Constants {
         PRACTICE,
 
         /** The Sim Bot */
-        SIMBOT
+        SIMBOT,
+
+        /** The Xero simulator */
+        XEROSIM,
     }
 
     public enum ReefLevel {
@@ -176,6 +179,7 @@ public final class Constants {
     public static final Mode getMode() {
         return switch(getRobot()) {
             case SIMBOT -> Mode.SIM;
+            case XEROSIM -> Mode.SIM;
             default -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         };
     }

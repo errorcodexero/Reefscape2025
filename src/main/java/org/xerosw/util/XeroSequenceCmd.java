@@ -7,7 +7,8 @@ public abstract class XeroSequenceCmd extends Command {
     private SequentialCommandGroup sequence_;
     private boolean complete_ ;
 
-    public XeroSequenceCmd() {
+    public XeroSequenceCmd(String name) {
+        setName(name) ;
     }
 
     public boolean isComplete() {

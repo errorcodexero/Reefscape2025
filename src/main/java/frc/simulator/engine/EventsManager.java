@@ -76,6 +76,7 @@ public class EventsManager {
             logger.startMessage(MessageType.Error);
             logger.add("cannot read events file ").addQuoted(file).add(" - ");
             logger.add("top level json object does not contains a models entry");
+            logger.endMessage();
             return false;
         }
 

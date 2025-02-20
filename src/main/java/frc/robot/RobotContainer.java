@@ -231,6 +231,7 @@ public class RobotContainer {
                     break;
 
                 case SIMBOT:
+                case XEROSIM:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
                             new GyroIO() {
@@ -342,6 +343,7 @@ public class RobotContainer {
                 case PRACTICE -> 1;
                 case COMPETITION -> 3;
                 case SIMBOT -> 4;
+                case XEROSIM -> 4;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -547,8 +549,19 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        Command autoChosen = autoChooser_.get();
-        return autoChosen != null ? autoChosen : tuningChooser_.get();
-    }
+        Command ret = null ;
 
+        if (Robot.useXeroSimulator()) {
+            //
+            // In the Xero simulator, set the auto mode you want to run
+            //
+            ret = AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false) ;
+        }
+        else {
+            Command autoChosen = autoChooser_.get();
+            ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+        }
+
+        return ret;
+    }
 }

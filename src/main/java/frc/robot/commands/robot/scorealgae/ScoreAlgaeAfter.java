@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ProcessorConstants;
-import frc.robot.Constants.ReefConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CommandConstants;
@@ -45,6 +44,7 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
     public final static Pose2d kProcessorBluePose = new Pose2d();
 
     public ScoreAlgaeAfter(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
+        super("ScoreAlgaeAfter");
         m_ = m;
         g_ = g;
         brain_ = b;

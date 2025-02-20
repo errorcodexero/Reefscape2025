@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -47,6 +48,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     private boolean driveto_ ;
 
     public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, boolean driveto, ReefLevel h, CoralSide s) {
+        super("PlaceCoralCmd") ;
         drive_ = drive;
         manipulator_ = manipulator; 
         grabber_ = grabber;
