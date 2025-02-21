@@ -57,6 +57,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.Drive;
 
@@ -86,6 +87,15 @@ public class DriveCommands {
     return new Pose2d(new Translation2d(), linearDirection)
         .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
         .getTranslation();
+  }
+
+  private static Pose2d rotateIfRed(Pose2d pose) {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      Translation2d center = new Translation2d(FieldConstants.layout.getFieldLength() / 2.0, FieldConstants.layout.getFieldWidth() / 2.0);
+      pose = pose.rotateAround(center, Rotation2d.fromDegrees(180.0)) ;
+    }
+
+    return pose ;
   }
 
   /**
@@ -460,7 +470,7 @@ public class DriveCommands {
       return Commands.sequence(
           setPoseCommand(
               drive,
-              initPosePath.getStartingHolonomicPose().orElseThrow()),
+              initPosePath.getStartingHolonomicPose().orElseThrow(), false),
           AutoBuilder.followPath(path.get()));
     }
 
@@ -489,8 +499,14 @@ public class DriveCommands {
    * @param pose  The pose to set it to.
    * @return A command that sets the pose of the drivebase.
    */
-  public static Command setPoseCommand(Drive drive, Pose2d pose) {
-    return Commands.runOnce(() -> drive.setPose(pose));
+  public static Command setPoseCommand(Drive drive, Pose2d pose, boolean perAlliance) {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && perAlliance && alliance.get() == Alliance.Red) {
+      pose = rotateIfRed(pose);
+    }
+
+    Pose2d copy = pose ;
+    return Commands.runOnce(() -> drive.setPose(copy));
   }
 
   /**

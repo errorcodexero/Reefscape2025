@@ -404,15 +404,15 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());
         autoChooser_.addOption("Alliance Side Coral",
-                AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Opposing Side Coral",
-                AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
         autoChooser_.addOption("Center Algae", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Center Coral (alliance side station)",
-                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, true));
+                AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
-                AutoCommands.centerCoralAuto(brain_, drivebase_, manipulator_, grabber_, false));
-        autoChooser_.addOption("Just Coral (center)", AutoCommands.oneCoralAutoBackReef(brain_, drivebase_, manipulator_, grabber_));
+                AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.oneCoralBackAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
         tuningChooser_.addOption("Straight Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
@@ -555,7 +555,7 @@ public class RobotContainer {
             //
             // In the Xero simulator, set the auto mode you want to run
             //
-            ret = AutoCommands.threeCoralAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false) ;
+            ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false) ;
         }
         else {
             Command autoChosen = autoChooser_.get();

@@ -2,7 +2,6 @@ package frc.robot.commands.robot.collectcoral;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.misc.StateCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
