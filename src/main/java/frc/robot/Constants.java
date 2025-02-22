@@ -16,6 +16,7 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.units.measure.Angle;
@@ -68,6 +69,11 @@ public final class Constants {
          * The maximum distance from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
          */
         public static final Distance maximumDistanceToFace = Meters.of(3);
+
+        /**
+         * The minimum distance from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
+         */
+        public static final Distance minimumDistanceToFace = Feet.of(2);
 
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
