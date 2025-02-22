@@ -63,6 +63,7 @@ public class AutoCommands {
     addToSequence(seq, logState(modename, "Place-1"));
     addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left)) ;
     addToSequence(seq, DriveCommands.followPathCommand("Just Coral 2")) ;
+    addToSequence(seq, logState(modename, "done")) ;
 
     return seq ;
   }
@@ -152,6 +153,8 @@ public class AutoCommands {
     addToSequence(seq, logState(modename, "Place 3rd")) ;
     addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Left : CoralSide.Right)) ;
 
+    addToSequence(seq, logState(modename, "done")) ;
+
     return seq ;
   }
 
@@ -180,6 +183,8 @@ public class AutoCommands {
     addToSequence(seq, logState(modename, "Drive Processor")) ;
     addToSequence(seq, DriveCommands.followPathCommand("Algae 2")) ;
     addToSequence(seq, new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub)) ;
+
+    addToSequence(seq, logState(modename, "done")) ;    
 
     return seq ;
   }
@@ -210,7 +215,6 @@ public class AutoCommands {
     addToSequence(seq, logState(modename, "Place 2nd"));
     addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Right)) ;
     addToSequence(seq, logState(modename, "done")) ;
-
 
     return seq ;
   }
