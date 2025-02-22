@@ -13,46 +13,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.brain.RobotAction;
+import frc.robot.subsystems.oi.OIConstants.LEDState;
+import frc.robot.subsystems.oi.OIConstants.OILed;
 
-public class OISubsystem extends SubsystemBase {
-    
-    //
-    // The LEDs on the driver station
-    //
-    public enum OILed {
-        CoralL1(1),                         //
-        CoralL2(2),                         //
-        CoralL3(3),                         //
-        CoralL4(4),                         //
-        ScoreAlgae(5),                      // nothing
-        CollectAlgaeGround(6),              //
-        AlgaeOnReef(7) ,                    // Lights reef collect
-        HoldingAlgaeLow(8),                 //
-        HoldingAlgaeHigh(9),                // 
-        HoldingCoral(10),                   //
-        Execute(11),                        // nothing
-        CoralLeft(12),                      // 
-        CoralRight(13),                     //
-        CollectCoral(14),                   // nothing
-        PlaceCoral(15),                     // nothing
-        CollectAlgaeReef(16);               // nothing
-
-        public final Integer value ;
-
-        private OILed(int value) {
-            this.value = value ;
-        }
-    }
-
-    //
-    // The states of the LEDs
-    //
-    public enum LEDState {
-        On,
-        Off,
-        Slow,
-        Fast
-    }
+public class OISubsystem extends SubsystemBase { 
 
     // The IO layer for the OI
     private OIIO ios_ ;

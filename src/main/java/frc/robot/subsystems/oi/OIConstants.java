@@ -27,6 +27,40 @@ public class OIConstants {
         public static final int kSpare0 = 13 ;              // Spare
         public static final int kSpare1 = 12 ;              // Spare
         public static final int kSpare2 = 6 ;              // Spare
+    }
 
+    public enum OILed {
+        CoralL1(1),                         //
+        CoralL2(2),                         //
+        CoralL3(3),                         //
+        CoralL4(4),                         //
+        ScoreAlgae(5),                      //
+        CollectAlgaeGround(6),              //
+        AlgaeOnReef(7) ,                    //
+        ReadyToClimb(8),                    //
+        HoldingAlgaeHigh(9),                // 
+        HoldingCoral(10),                   //
+        Execute(11),                        //
+        CoralLeft(12),                      // 
+        CoralRight(13),                     //
+        CollectCoral(14),                   //
+        PlaceCoral(15),                     //
+        CollectAlgaeReef(16);               //
+
+        public final Integer value ;
+
+        private OILed(int value) {
+            this.value = value ;
+        }
+    }
+
+        //
+    // The states of the LEDs
+    //
+    public enum LEDState {
+        On,
+        Off,
+        Slow,
+        Fast
     }
 }

@@ -11,14 +11,16 @@ import edu.wpi.first.units.measure.*;
 public interface ClimberIO {
     @AutoLog
     public class ClimberIOInputs {
-
         //climber inputs
         public Angle climberPosition = Degrees.of(0);
         public AngularVelocity climberVelocity = RadiansPerSecond.of(0);
         public Voltage climberVoltage = Volts.of(0);
         public Current climberCurrent = Amps.of(0);
 
+        public boolean attachedSensorOne = false ;
+        public boolean attachedSensorTwo = false ;
     }
+
     //Update Inputs
     public default void updateInputs(ClimberIOInputsAutoLogged inputs) {}
 
