@@ -412,7 +412,7 @@ public class RobotContainer {
                 AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Center Coral (opposing side station)",
                 AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Just Coral (center)", AutoCommands.oneCoralBackAuto(brain_, drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Just Coral (center)", AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_));
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
         tuningChooser_.addOption("Straight Tuning Path", DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
@@ -554,8 +554,13 @@ public class RobotContainer {
         if (Robot.useXeroSimulator()) {
             //
             // In the Xero simulator, set the auto mode you want to run
+            // Note: the auto used here must match the simulation stimulus file set in the Robot.java file.
             //
-            ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false) ;
+
+            // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
+            // ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
+            ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
         }
         else {
             Command autoChosen = autoChooser_.get();

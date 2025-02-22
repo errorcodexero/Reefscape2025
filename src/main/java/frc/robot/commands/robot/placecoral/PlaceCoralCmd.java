@@ -44,9 +44,14 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
     private Distance target_elev_pos_; 
     private Angle target_arm_pos_; 
-    private boolean driveto_ ;
 
-    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, boolean driveto, ReefLevel h, CoralSide s) {
+    private boolean lower_manip_ ;
+
+    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s) {
+        this(brain, drive, manipulator, grabber, h, s, true) ;
+    }
+
+    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s, boolean lower) {
         super("PlaceCoralCmd") ;
         drive_ = drive;
         manipulator_ = manipulator; 
@@ -57,9 +62,9 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         level_ = h ;
 
         target_elev_pos_ = Elevator.Positions.kStow; 
-        target_arm_pos_ = Arm.Positions.kStow; 
+        target_arm_pos_ = Arm.Positions.kStow;
 
-        driveto_ = driveto ;
+        lower_manip_ = lower ;
     }
 
     // Called when the command is initially scheduled.
@@ -136,18 +141,11 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
         }
 
-        if (driveto_) {
-            seq.addCommands(
-                RobotContainer.getInstance().gamepad().setLockCommand(true),
-                Commands.parallel(
-                    new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel))) ;
-        }
-        else {
-            seq.addCommands(
-                new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ; 
-        }
-
+        seq.addCommands(
+            RobotContainer.getInstance().gamepad().setLockCommand(true),
+            Commands.parallel(
+                new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+                DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel))) ;
 
         seq.addCommands(
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_, true),
@@ -159,12 +157,12 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     new WaitCommand(Milliseconds.of(200)),
                     new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle, true)
                 )
-            ),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
+            )) ;
 
-        if (driveto_) {
-            seq.addCommands(
-                RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
+        if (lower_manip_) {
+            seq.addCommands(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         }
+
+        seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
     }
 }
