@@ -3,8 +3,8 @@ package frc.robot.subsystems.oi;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.subsystems.oi.OIConstants.LEDState;
 import frc.robot.Constants.Mode;
-import frc.robot.subsystems.oi.OISubsystem.LEDState;
 import frc.simulator.engine.SimulationEngine;
 import frc.simulator.models.OIBaseModel;
 
@@ -16,8 +16,8 @@ public class OIIOHID implements OIIO {
     private GenericHID hid_ ;    
 
     private boolean led_onoff_[];
-    private OISubsystem.LEDState led_state_[] ;
-    private OISubsystem.LEDState led_save_state_[] ;
+    private LEDState led_state_[] ;
+    private LEDState led_save_state_[] ;
 
     private boolean fast_on_off_ ;
     private int fast_on_off_loops_ ;
@@ -28,8 +28,8 @@ public class OIIOHID implements OIIO {
          hid_ = new GenericHID(port) ;
 
         led_onoff_ = new boolean[kMaxLeds] ;
-        led_state_ = new OISubsystem.LEDState[kMaxLeds] ;
-        led_save_state_ = new OISubsystem.LEDState[kMaxLeds] ;
+        led_state_ = new LEDState[kMaxLeds] ;
+        led_save_state_ = new LEDState[kMaxLeds] ;
         for(int i = 0 ; i < kMaxLeds ; i++) {
             led_state_[i] = LEDState.Off ;
         }

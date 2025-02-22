@@ -10,13 +10,14 @@ import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
+import frc.robot.subsystems.oi.OIConstants.LEDState;
+import frc.robot.subsystems.oi.OIConstants.OILed;
 import frc.robot.subsystems.oi.OISubsystem;
-import frc.robot.subsystems.oi.OISubsystem.LEDState;
-import frc.robot.subsystems.oi.OISubsystem.OILed;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
@@ -76,12 +77,14 @@ public class BrainSubsystem extends SubsystemBase {
     private Drive db_ ;
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;   
+    private ClimberSubsystem c_ ;
 
-    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
         oi_ = oi ;
         db_ = db ;
         m_ = m ;
         g_ = g ;
+        c_ = c ;
         locked_ = false ;
 
         current_action_ = null ;
@@ -101,27 +104,18 @@ public class BrainSubsystem extends SubsystemBase {
         gp_ = gp ;
         switch(gp) {
             case NONE:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                oi_.setLEDState(OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OILed.HoldingAlgaeHigh, LEDState.Off) ;
                 break ;
 
             case CORAL:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.On) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
+                oi_.setLEDState(OILed.HoldingCoral, LEDState.On) ;
+                oi_.setLEDState(OILed.HoldingAlgaeHigh, LEDState.Off) ;
                 break ;
                 
             case ALGAE_HIGH:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.On) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.Off) ;
-                break ;
-
-            case ALGAE_LOW:
-                oi_.setLEDState(OISubsystem.OILed.HoldingCoral, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeHigh, LEDState.Off) ;
-                oi_.setLEDState(OISubsystem.OILed.HoldingAlgaeLow, LEDState.On) ;
+                oi_.setLEDState(OILed.HoldingCoral, LEDState.Off) ;
+                oi_.setLEDState(OILed.HoldingAlgaeHigh, LEDState.On) ;
                 break ;
         }
     }    
@@ -132,12 +126,12 @@ public class BrainSubsystem extends SubsystemBase {
 
     public void toggleAlgaeOnReef() {
         algae_on_reef_ = !algae_on_reef_ ;
-        oi_.setLEDState(OISubsystem.OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
+        oi_.setLEDState(OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
     }
 
     public void clearAlgaeOnReef() {
         algae_on_reef_ = false ;
-        oi_.setLEDState(OISubsystem.OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
+        oi_.setLEDState(OILed.AlgaeOnReef, algae_on_reef_ ? LEDState.On : LEDState.Off) ;
     }
 
     public void setCoralLevel(ReefLevel height) {
@@ -274,7 +268,7 @@ public class BrainSubsystem extends SubsystemBase {
                 break ;
 
             case ScoreAlgae:
-                ret = (gp_ == GamePiece.ALGAE_HIGH || gp_ == GamePiece.ALGAE_LOW) ;
+                ret = (gp_ == GamePiece.ALGAE_HIGH) ;
                 break ;
 
             case CollectAlgaeReef:
@@ -349,6 +343,13 @@ public class BrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         String status = "" ;
+
+        if (c_.readyToClimb()) {
+            //
+            // This does not really belong in the brain, but it is a good place to put it for now
+            //
+            oi_.setLEDState(OILed.ReadyToClimb, LEDState.Fast) ;
+        }
 
         if (current_cmd_ != null && current_cmd_.isComplete() && !clearing_state_) {
             current_cmd_ = null ;

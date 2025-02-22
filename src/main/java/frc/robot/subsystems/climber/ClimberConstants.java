@@ -13,6 +13,9 @@ import edu.wpi.first.units.measure.Time;
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
 
+    public static final int kAttachedSensorOne = 8;
+    public static final int kAttachedSensorTwo = 9;
+
     public class Climber{
        
         //climber motor CAN ID

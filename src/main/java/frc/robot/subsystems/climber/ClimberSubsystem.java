@@ -24,7 +24,7 @@ public class ClimberSubsystem extends SubsystemBase {
       inputs_ = new ClimberIOInputsAutoLogged();
       state_ = ClimberState.Stowed;
 
-      ready_to_climb_ = new Trigger(() -> { return state_ == ClimberState.PrepareToClimb ; });
+      ready_to_climb_ = new Trigger(this::readyToClimb) ;
    }
 
    public void setClimberState(ClimberState state) {
@@ -35,7 +35,11 @@ public class ClimberSubsystem extends SubsystemBase {
       return state_;
    }
 
-   public Trigger readyToClimb() {
+   public boolean readyToClimb() {
+      return state_ == ClimberState.PrepareToClimb && isClimberAttached(); 
+   }
+
+   public Trigger readyToClimbTrigger() {
       return ready_to_climb_;
    }
 
@@ -50,6 +54,10 @@ public class ClimberSubsystem extends SubsystemBase {
          return true;
       }
       return false;
+   }
+
+   public boolean isClimberAttached() {
+      return inputs_.attachedSensorOne && inputs_.attachedSensorTwo;
    }
 
    @Override

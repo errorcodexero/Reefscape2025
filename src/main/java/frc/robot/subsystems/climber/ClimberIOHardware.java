@@ -2,7 +2,7 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.*;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -25,7 +25,13 @@ public class ClimberIOHardware implements ClimberIO {
     private StatusSignal<Voltage> climber_vol_sig_; 
     private StatusSignal<Current> climber_current_sig_; 
 
+    private DigitalInput attached_switch_one_ ;
+    private DigitalInput attached_switch_two_ ;
+
     public ClimberIOHardware() throws Exception {
+        attached_switch_one_ = new DigitalInput(ClimberConstants.kAttachedSensorOne);
+        attached_switch_two_ = new DigitalInput(ClimberConstants.kAttachedSensorTwo);
+
         climber_motor_ = TalonFXFactory.createTalonFX(
             ClimberConstants.Climber.kMotorCANID,
             ClimberConstants.Climber.kInverted,
@@ -72,6 +78,9 @@ public class ClimberIOHardware implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberIOInputsAutoLogged inputs) {
+        inputs.attachedSensorOne = attached_switch_one_.get();
+        inputs.attachedSensorTwo = attached_switch_two_.get();
+
         inputs.climberPosition = climber_pos_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
         inputs.climberVelocity = climber_vel_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
         inputs.climberVoltage = climber_vol_sig_.getValue();

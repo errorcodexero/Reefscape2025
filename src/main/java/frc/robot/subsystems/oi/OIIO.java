@@ -2,7 +2,7 @@ package frc.robot.subsystems.oi;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import frc.robot.subsystems.oi.OISubsystem.LEDState;
+import frc.robot.subsystems.oi.OIConstants.LEDState;
 
 public interface OIIO {
     @AutoLog
