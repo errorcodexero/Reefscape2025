@@ -31,7 +31,7 @@ public class FunnelSubsystem extends SubsystemBase {
         hasSeenCoral_ = !inputs_.coralFunnelSensor || inputs_.coralFunnelFallingEdge;
     }
     
-    public void runPosition(Angle angle) {
+    public void setTargetPosition(Angle angle) {
         io_.setPosition(angle);
     }
 

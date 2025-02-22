@@ -10,35 +10,50 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
- 
-public class ClimberSubsystem extends SubsystemBase{
-   private ClimberIO io_; 
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+public class ClimberSubsystem extends SubsystemBase {
+   private ClimberIO io_;
    private ClimberIOInputsAutoLogged inputs_ = new ClimberIOInputsAutoLogged();
-   private Angle target_angle_ ;
+   private Angle target_angle_;
+   private ClimberState state_;
+   private Trigger ready_to_climb_ ;
 
-    public ClimberSubsystem(ClimberIO io) {
-        io_ = io; 
-        inputs_ = new ClimberIOInputsAutoLogged(); 
-    }
+   public ClimberSubsystem(ClimberIO io) {
+      io_ = io;
+      inputs_ = new ClimberIOInputsAutoLogged();
+      state_ = ClimberState.Stowed;
 
-//io_.moveClimber(Degrees.of(180));
+      ready_to_climb_ = new Trigger(() -> { return state_ == ClimberState.PrepareToClimb ; });
+   }
 
-   public void setClimberPosition(Angle angle) {
+   public void setClimberState(ClimberState state) {
+      state_ = state;
+   }
+
+   public ClimberState getClimberState() {
+      return state_;
+   }
+
+   public Trigger readyToClimb() {
+      return ready_to_climb_;
+   }
+
+   public void setClimberTarget(Angle angle) {
       target_angle_ = angle;
       io_.setClimberPosition(angle);
    }
 
    public boolean isClimberAtTarget() {
-        if((inputs_.climberPosition.isNear(target_angle_, ClimberConstants.Climber.kPosTolerance)) && (inputs_.climberVelocity.isNear(DegreesPerSecond.of(0), ClimberConstants.Climber.kVelTolerance))) {
-            return true; 
-        }
-        return false; 
-    }
+      if ((inputs_.climberPosition.isNear(target_angle_, ClimberConstants.Climber.kPosTolerance))
+            && (inputs_.climberVelocity.isNear(DegreesPerSecond.of(0), ClimberConstants.Climber.kVelTolerance))) {
+         return true;
+      }
+      return false;
+   }
 
    @Override
-   public void periodic(){
+   public void periodic() {
       io_.updateInputs(inputs_);
    }
 }
- 
- 
