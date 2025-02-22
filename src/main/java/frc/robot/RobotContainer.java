@@ -377,7 +377,7 @@ public class RobotContainer {
         // OI Setup
         oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_);
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_);
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
@@ -483,7 +483,7 @@ public class RobotContainer {
         oi_.climbLock().onTrue(new StowClimberCmd(climber_, funnel_)) ;
         oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
 
-        oi_.climbExecute().and(climber_.readyToClimb()).onTrue(vision_.setEnabledCommand(true)) ;
+        oi_.climbExecute().and(climber_.readyToClimbTrigger()).onTrue(vision_.setEnabledCommand(true)) ;
         oi_.climbDeploy().onTrue(vision_.setEnabledCommand(false)) ;
     }
 

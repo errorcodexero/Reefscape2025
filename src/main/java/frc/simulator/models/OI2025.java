@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import frc.robot.subsystems.oi.OIConstants;
+import frc.robot.subsystems.oi.OIConstants.OILed;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.simulator.engine.SimulationEngine;
 
@@ -39,17 +40,17 @@ public class OI2025 extends OIBaseModel {
     }
 
     private Map<String, Integer> getLedMap() {
-        ledMap.put("coral-l1", OISubsystem.OILed.CoralL1.value) ;
-        ledMap.put("coral-l2", OISubsystem.OILed.CoralL2.value) ;
-        ledMap.put("coral-l3", OISubsystem.OILed.CoralL3.value) ;
-        ledMap.put("coral-l4", OISubsystem.OILed.CoralL4.value) ;
-        ledMap.put("coral-collect", OISubsystem.OILed.CollectCoral.value) ;
-        ledMap.put("coral-place", OISubsystem.OILed.PlaceCoral.value) ;
-        ledMap.put("algae-ground", OISubsystem.OILed.CollectAlgaeGround.value) ;
-        ledMap.put("algae-score", OISubsystem.OILed.ScoreAlgae.value) ;
-        ledMap.put("algae-reef", OISubsystem.OILed.CollectAlgaeReef.value) ;
-        ledMap.put("coral-left", OISubsystem.OILed.CoralLeft.value) ;
-        ledMap.put("coral-right", OISubsystem.OILed.CoralRight.value) ;
+        ledMap.put("coral-l1", OILed.CoralL1.value) ;
+        ledMap.put("coral-l2", OILed.CoralL2.value) ;
+        ledMap.put("coral-l3", OILed.CoralL3.value) ;
+        ledMap.put("coral-l4", OILed.CoralL4.value) ;
+        ledMap.put("coral-collect", OILed.CollectCoral.value) ;
+        ledMap.put("coral-place", OILed.PlaceCoral.value) ;
+        ledMap.put("algae-ground", OILed.CollectAlgaeGround.value) ;
+        ledMap.put("algae-score", OILed.ScoreAlgae.value) ;
+        ledMap.put("algae-reef", OILed.CollectAlgaeReef.value) ;
+        ledMap.put("coral-left", OILed.CoralLeft.value) ;
+        ledMap.put("coral-right", OILed.CoralRight.value) ;
         return ledMap ;
     }
 }
