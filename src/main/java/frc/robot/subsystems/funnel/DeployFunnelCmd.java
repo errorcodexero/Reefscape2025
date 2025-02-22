@@ -22,7 +22,7 @@ public class DeployFunnelCmd extends Command {
 
     @Override
     public void initialize() {
-        funnel_.runPosition(targetAngle_);
+        funnel_.setTargetPosition(targetAngle_);
         state_ = State.MovingToPosition;
     }
 

@@ -48,6 +48,9 @@ import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
+import frc.robot.commands.robot.climb.ExecuteClimbCmd;
+import frc.robot.commands.robot.climb.PrepClimbCmd;
+import frc.robot.commands.robot.climb.StowClimberCmd;
 import frc.robot.generated.AlphaTunerConstants;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.generated.PracticeTunerConstants;
@@ -475,10 +478,11 @@ public class RobotContainer {
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_)) ;
         
 
-        // oi_.climbLock().onFalse(new PrepClimbCmd(climber_)) ;
-        // oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
+        oi_.climbLock().onFalse(new PrepClimbCmd(climber_, funnel_)) ;
+        oi_.climbLock().onTrue(new StowClimberCmd(climber_, funnel_)) ;
+        oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_)) ;
 
-        oi_.climbExecute().onTrue(vision_.setEnabledCommand(true).ignoringDisable(true)) ;
+        oi_.climbExecute().and(climber_.readyToClimb()).onTrue(vision_.setEnabledCommand(true).ignoringDisable(true)) ;
         oi_.climbDeploy().onTrue(vision_.setEnabledCommand(false).ignoringDisable(true)) ;
     }
 
