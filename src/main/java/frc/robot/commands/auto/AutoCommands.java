@@ -4,13 +4,12 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
@@ -19,6 +18,7 @@ import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -32,7 +32,15 @@ import frc.robot.subsystems.oi.CoralSide;
 
 
 public class AutoCommands {
+
+  private final static boolean kDebug = true;
+  private final static Time DelayBeforeDriving = Milliseconds.of(500) ;
+
   private AutoCommands() {
+  }
+
+  private static void addToSequence(SequentialCommandGroup seq, Command cmd) {
+    seq.addCommands(cmd);
   }
 
   //
@@ -41,13 +49,22 @@ public class AutoCommands {
   // - Place the coral on the reef
   // - Drive backwards to the starting position
   //
-  public static Command oneCoralBackAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
-    return Commands.sequence(
-        Commands.parallel(
-            DriveCommands.initialFollowPathCommand(driveSub, "Just Coral 1"),
-            new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left),
-        DriveCommands.followPathCommand("Just Coral 2"));
+  public static Command oneCoralAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
+    final String modename = "oneCoralBackAuto" ;
+
+    SequentialCommandGroup seq = new SequentialCommandGroup();
+
+    addToSequence(seq, logState(modename, "Start"));
+    addToSequence(seq,         
+      Commands.parallel(
+        DriveCommands.initialFollowPathCommand(driveSub, "Just Coral 1"),
+        new SetHoldingCmd(brainSub, GamePiece.CORAL))) ;
+
+    addToSequence(seq, logState(modename, "Place-1"));
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left)) ;
+    addToSequence(seq, DriveCommands.followPathCommand("Just Coral 2")) ;
+
+    return seq ;
   }
 
   //
@@ -57,111 +74,144 @@ public class AutoCommands {
   // - Place a total of three corals on the reef
   //
   public static Command threeCoralSideAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnel, boolean mirroredX) {
-    final Time DelayBeforeDriving = Milliseconds.of(500) ;
+    final String modename = "threeCoralSideAuto" ;
 
-    return Commands.sequence(
-        //
-        // Drive and place the first coral
-        //
-        Commands.parallel(
-            DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
-            new SetHoldingCmd(brainSub, GamePiece.CORAL)),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false),
+    SequentialCommandGroup seq = new SequentialCommandGroup();
+
+    addToSequence(seq, logState(modename, "Start"));
+
+    addToSequence(seq,
+      Commands.parallel(
+        DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
+        new SetHoldingCmd(brainSub, GamePiece.CORAL))) ;
+
+    addToSequence(seq, logState(modename, "Place 1st"));
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;
 
         //
         // Start driving to collect and lowering the elevator in parallel
         //
+    addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
+    addToSequence(seq,
         Commands.parallel(
           Commands.sequence(
-            new WaitCommand(DelayBeforeDriving),
+            new WaitCommand(AutoCommands.DelayBeforeDriving),
             DriveCommands.followPathCommand("Side Coral 2", mirroredX)),
-          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect)),
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect))) ;
 
-        //
-        // Wait for coral to pass through the funnel
-        //
-        new WaitForCoralInRobot(grabberSub, funnel),
+    //
+    // Wait for coral to pass through the funnel
+    //          
+    addToSequence(seq, logState(modename, "Wait For 2nd"));
+    addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
 
         //
         // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
         // of 1.5 m/s and the place coral below takes over
         //
+    addToSequence(seq, logState(modename, "Drive to Place 2nd")) ;
+    addToSequence(seq,
         Commands.parallel(
           new CollectCoralCmd(brainSub, manipSub, grabberSub),
-          DriveCommands.followPathCommand("Side Coral 3", mirroredX)),
+          DriveCommands.followPathCommand("Side Coral 3", mirroredX))) ;
 
         //
         // Place the second coral
         //
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false),
+    addToSequence(seq, logState(modename, "Place 2nd")) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;
 
         //
         // Start driving to collect and lowering the elevator in parallel
-        //        
+        //
+    addToSequence(seq, logState(modename, "Drive to Collect 3rd")) ;
+    addToSequence(seq, 
         Commands.parallel(
           Commands.sequence(
             new WaitCommand(DelayBeforeDriving),
             DriveCommands.followPathCommand("Side Coral 4", mirroredX)),
-          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect)),        
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect))) ;
 
         //
         // Wait for coral to pass through the funnel
         //          
-        new WaitForCoralInRobot(grabberSub, funnel),
+    addToSequence(seq, logState(modename, "Wait For 3rd")) ;
+    addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
 
         //
         // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
         // of 1.5 m/s and the place coral below takes over
         //        
+    addToSequence(seq, logState(modename, "Drive to Place 3rd")) ;
+    addToSequence(seq,
         Commands.parallel(
           new CollectCoralCmd(brainSub, manipSub, grabberSub),
-          DriveCommands.followPathCommand("Side Coral 5", mirroredX)),
+          DriveCommands.followPathCommand("Side Coral 5", mirroredX))) ;
 
         // Place the third coral
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Left : CoralSide.Right)
-      );
+    addToSequence(seq, logState(modename, "Place 3rd")) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Left : CoralSide.Right)) ;
+
+    return seq ;
   }
 
   private static Command logState(String mode, String state) {
-    return Commands.runOnce(() -> Logger.recordOutput("Autos/" + mode, state));
+    return kDebug ? new StateCmd("Autos/" + mode, state) : null ;
   }
 
   public static Command oneCoralOneAlgaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
-    return Commands.sequence(
-      
-        logState("oneCoralOneAlgaeAuto", "Place"),
-        DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true),
-        new SetHoldingCmd(brainSub, GamePiece.CORAL),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left),
+    final String modename = "oneCoralOneAlgaeAuto" ;
+    SequentialCommandGroup seq = new SequentialCommandGroup();
 
-        logState("oneCoralOneAlgaeAuto", "Backup from reef"),
+    addToSequence(seq, logState(modename, "Place"));
+    addToSequence(seq, DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true)) ;
+    addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL)) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left)) ;
+
+    addToSequence(seq, logState(modename, "Backup From Reef"));
+    addToSequence(seq, 
         Commands.deadline(
           new WaitCommand(0.5),
-          driveSub.runVelocityCmd(MetersPerSecond.of(-2.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),  
+          driveSub.runVelocityCmd(MetersPerSecond.of(-2.0), MetersPerSecond.of(0), RadiansPerSecond.zero()))) ;
 
-        logState("oneCoralOneAlgaeAuto", "Collect Algae from reef"),
-        new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2),
+    addToSequence(seq, logState(modename, "Collect Algae"));
+    addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2)) ;
 
-        logState("oneCoralOneAlgaeAuto", "driveProcessor"),
-        DriveCommands.followPathCommand("Algae 2"),       
-        new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub)
-      );
+    addToSequence(seq, logState(modename, "Drive Processor")) ;
+    addToSequence(seq, DriveCommands.followPathCommand("Algae 2")) ;
+    addToSequence(seq, new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub)) ;
+
+    return seq ;
   }
 
   public static Command twoCoralCenterAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, 
                                         GrabberSubsystem grabberSub, FunnelSubsystem funnel, boolean mirroredX) {
-    return Commands.sequence(
-        DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true),
-        new SetHoldingCmd(brainSub, GamePiece.CORAL),
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left),
 
-        DriveCommands.followPathCommand("Center Coral 2", mirroredX),
-        new WaitForCoralInRobot(grabberSub, funnel),
+    final String modename = "twoCoralCenterAuto" ;
 
+    SequentialCommandGroup seq = new SequentialCommandGroup();
+
+    addToSequence(seq, logState(modename, "Place 1st"));
+    addToSequence(seq, DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true)) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left));
+
+    addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
+    addToSequence(seq, DriveCommands.followPathCommand("Center Coral 2", mirroredX)) ;
+
+    addToSequence(seq, logState(modename, "Wait For 2nd"));
+    addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
+
+    addToSequence(seq, logState(modename, "Drive to Place 2nd"));
+    addToSequence(seq,
         Commands.parallel(
           new CollectCoralCmd(brainSub, manipSub, grabberSub),
-          DriveCommands.followPathCommand("Center Coral 3", mirroredX)),
+          DriveCommands.followPathCommand("Center Coral 3", mirroredX))) ;
 
-        new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Right)) ;
+    addToSequence(seq, logState(modename, "Place 2nd"));
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Right)) ;
+    addToSequence(seq, logState(modename, "done")) ;
+
+
+    return seq ;
   }
 }
