@@ -242,20 +242,20 @@ public class RobotContainer {
                 case XEROSIM:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
-                            new GyroIO() {
-                            },
-                            ModuleIOSim::new,
-                            CompTunerConstants.FrontLeft,
-                            CompTunerConstants.FrontRight,
-                            CompTunerConstants.BackLeft,
-                            CompTunerConstants.BackRight,
-                            CompTunerConstants.kSpeedAt12Volts);
+                        new GyroIO() {},
+                        ModuleIOSim::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
-                            PoseEstimateConsumer.ignore(),
-                            new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
-                            new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
-                            new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
+                        PoseEstimateConsumer.ignore(),
+                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
+                        new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
+                        new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
                     );
 
                     try {
