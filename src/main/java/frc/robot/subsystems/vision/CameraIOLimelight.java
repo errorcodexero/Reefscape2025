@@ -85,7 +85,7 @@ public class CameraIOLimelight implements CameraIO {
                 estimateMegatag1.pose,
                 estimateMegatag1.timestampSeconds,
                 estimateMegatag1.avgTagDist,
-                0.0,
+                estimateMegatag1.rawFiducials[0].ambiguity, // Single tag ambiguity
                 estimateMegatag1.tagCount,
                 PoseEstimationType.MEGATAG1
             ));
