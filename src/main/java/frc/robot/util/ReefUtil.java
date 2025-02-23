@@ -18,9 +18,11 @@ import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefConstants;
+import frc.robot.util.ReefAdjustments.ReefAdjustmentDistances;
 
 public class ReefUtil {
-    
+    private static boolean kUseAdjustments = false ;
+
     public static enum ReefFace {
         RED_AB(7),
         RED_CD(8),
@@ -64,9 +66,10 @@ public class ReefUtil {
 
         private ReefFace(int aprilTagID) {
             tagID_ = aprilTagID;
-            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().transformBy(new Transform2d(
-                new Translation2d(),
-                new Rotation2d(Degrees.of(180))
+            tagPose_ = FieldConstants.layout.getTagPose(aprilTagID).orElseThrow().toPose2d().transformBy(
+                new Transform2d(
+                    new Translation2d(),
+                    new Rotation2d(Degrees.of(180))
             ));
 
             algaeCollectPose_ = tagPose_.transformBy(new Transform2d(
@@ -87,16 +90,16 @@ public class ReefUtil {
 
             leftScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral.unaryMinus(),
-                    ReefConstants.leftRightOffset.minus(ReefConstants.robotToArm)
+                    getReefArmDistance(tagID_, true).unaryMinus(),
+                    getLeftRightDistance(tagID_, true, false).minus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d()
             ));
 
             leftScoringWithAlgaePose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral.unaryMinus(),
-                    ReefConstants.leftRightOffsetWithAlgae.minus(ReefConstants.robotToArm)
+                    getReefArmDistance(tagID_, true).unaryMinus(),
+                    getLeftRightDistance(tagID_, true, true).minus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d()
             ));            
@@ -111,16 +114,16 @@ public class ReefUtil {
 
             rightScoringPose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral.unaryMinus(),
-                    ReefConstants.leftRightOffset.unaryMinus().minus(ReefConstants.robotToArm)
+                    getReefArmDistance(tagID_, false).unaryMinus(),
+                    getLeftRightDistance(tagID_, false, false).unaryMinus().minus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d()
             ));
 
             rightScoringWithAlgaePose_ = tagPose_.transformBy(new Transform2d(
                 new Translation2d(
-                    ReefConstants.distanceFromTagCoral.unaryMinus(),
-                    ReefConstants.leftRightOffsetWithAlgae.unaryMinus().minus(ReefConstants.robotToArm)
+                    getReefArmDistance(tagID_, false).unaryMinus(),
+                    getLeftRightDistance(tagID_, false, true).unaryMinus().minus(ReefConstants.robotToArm)
                 ),
                 new Rotation2d()
             ));
@@ -172,6 +175,28 @@ public class ReefUtil {
 
         public Pose2d getRightBackupPose() {
             return rightBackupPose_;
+        }
+
+        private Distance getLeftRightDistance(int tagid, boolean left, boolean algae) {
+            Distance ret = ReefConstants.leftRightOffset ;
+
+            if (kUseAdjustments) {
+                ReefAdjustmentDistances dists = ReefAdjustments.AdjustmentData.adjustments.get(tagid) ;
+                ret = ReefConstants.leftRightOffset.plus(left ? dists.left_right_left_.unaryMinus() : dists.left_right_right_) ;
+            }
+
+            return ret ;
+        }
+
+        private Distance getReefArmDistance(int tagid, boolean left) {
+            Distance ret = ReefConstants.distanceFromTagCoral ;
+
+            if (kUseAdjustments) {
+                ReefAdjustmentDistances dists = ReefAdjustments.AdjustmentData.adjustments.get(tagid) ;
+                ret = ReefConstants.distanceFromTagCoral.plus(left ? dists.forward_back_left_ : dists.forward_back_right_) ;
+            }
+
+            return ret;
         }
     }
 
@@ -272,5 +297,4 @@ public class ReefUtil {
     public static Distance getDistanceFromFace(Pose2d robot, ReefFace face) {
         return Meters.of(robot.getTranslation().getDistance(face.getTagPose().getTranslation()));
     }
-
 }

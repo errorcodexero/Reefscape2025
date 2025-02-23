@@ -8,6 +8,8 @@ package frc.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -57,11 +59,12 @@ public class ClimberSubsystem extends SubsystemBase {
    }
 
    public boolean isClimberAttached() {
-      return inputs_.attachedSensorOne && inputs_.attachedSensorTwo;
+      return inputs_.attachedSensor;
    }
 
    @Override
    public void periodic() {
       io_.updateInputs(inputs_);
+      Logger.processInputs("Climber", inputs_);
    }
 }

@@ -39,7 +39,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
@@ -54,7 +53,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private TalonFX elevator_motor_2_;
     private DutyCycleEncoder encoder_; 
     private EncoderMapper mapper_; 
-    private DigitalInput hall_effect_sensor_ ;
 
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
@@ -121,7 +119,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
         }
         catch(Exception ex) {
-
+            throw new RuntimeException("Could not set motor soft limits") ;
         }
     }
 
@@ -162,8 +160,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
 
-        enableSoftLimits(true);
-
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();
         elevator_1_vol_sig_ = elevator_motor_.getMotorVoltage();
@@ -171,8 +167,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         elevator_2_vol_sig_ = elevator_motor_2_.getMotorVoltage();
         elevator_2_current_sig_ = elevator_motor_2_.getSupplyCurrent();
 
-        hall_effect_sensor_ = new DigitalInput(ManipulatorConstants.Elevator.kHallEffectSensorChannel);
-        
         if (Robot.isSimulation()) {
             LinearSystem<N2, N1, N2> sys = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(2), 
                                                      ManipulatorConstants.Elevator.kMOI.in(KilogramSquareMeters), 
@@ -197,7 +191,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
 
         // ENCODER + MAPPER
-        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderSource); 
+        encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kAbsEncoder); 
 
         mapper_ = new EncoderMapper(
             ManipulatorConstants.Arm.ThruBoreEncoder.kRobotMax,
@@ -298,7 +292,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevatorRawMotorPosition = elevator_pos_sig_.getValue() ;
         inputs.elevatorRawMotorVelocity = elevator_vel_sig_.getValue() ;
 
-        double vel = elevator_vel_sig_.getValue().in(DegreesPerSecond); 
+        double vel = inputs.elevatorRawMotorVelocity.in(DegreesPerSecond); 
         inputs.elevatorVelocity = MetersPerSecond.of(vel * ManipulatorConstants.Elevator.kMetersPerRev); 
 
         inputs.elevator1Voltage = elevator_1_vol_sig_.getValue();
@@ -306,8 +300,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
         inputs.elevator2Current = elevator_2_current_sig_.getValue();
-
-        inputs.hallEffectSensor = hall_effect_sensor_.get() ;
 
         if (Robot.isSimulation()) {
             simulateArm() ;
@@ -350,7 +342,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
+        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true)) ;
     }
 
     public void resetPosition() {
@@ -358,7 +350,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     }
 
     public void setArmTarget(Angle angle) {
-        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0).withEnableFOC(true)) ;
     }
 
     public void syncArmPosition() {

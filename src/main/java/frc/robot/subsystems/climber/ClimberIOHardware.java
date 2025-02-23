@@ -3,6 +3,9 @@ package frc.robot.subsystems.climber;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.subsystems.funnel.FunnelConstants;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -11,6 +14,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import static edu.wpi.first.units.Units.*;
 
+import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -19,6 +23,9 @@ import com.ctre.phoenix6.StatusSignal;
 public class ClimberIOHardware implements ClimberIO {
     
     private TalonFX climber_motor_;
+    private DutyCycleEncoder encoder_; 
+    private EncoderMapper mapper_; 
+    private boolean encoder_motor_synced_ = false ;
 
     private StatusSignal<Angle> climber_pos_sig_; 
     private StatusSignal<AngularVelocity> climber_vel_sig_; 
@@ -26,11 +33,22 @@ public class ClimberIOHardware implements ClimberIO {
     private StatusSignal<Current> climber_current_sig_; 
 
     private DigitalInput attached_switch_one_ ;
-    private DigitalInput attached_switch_two_ ;
 
     public ClimberIOHardware() throws Exception {
-        attached_switch_one_ = new DigitalInput(ClimberConstants.kAttachedSensorOne);
-        attached_switch_two_ = new DigitalInput(ClimberConstants.kAttachedSensorTwo);
+        encoder_ = new DutyCycleEncoder(ClimberConstants.ThruBoreEncoder.kAbsEncoder) ;
+
+        mapper_ = new EncoderMapper(
+            ClimberConstants.ThruBoreEncoder.kRobotMax,
+            ClimberConstants.ThruBoreEncoder.kRobotMin,
+            ClimberConstants.ThruBoreEncoder.kEncoderMax,
+            ClimberConstants.ThruBoreEncoder.kEncoderMin
+        );
+
+        // ENCODER CONFIGS: 
+        mapper_.calibrate(ClimberConstants.ThruBoreEncoder.kRobotCalibrationValue,
+                          ClimberConstants.ThruBoreEncoder.kEncoderCalibrationValue);         
+
+        attached_switch_one_ = new DigitalInput(ClimberConstants.kAttachedSensor);
 
         climber_motor_ = TalonFXFactory.createTalonFX(
             ClimberConstants.Climber.kMotorCANID,
@@ -73,21 +91,36 @@ public class ClimberIOHardware implements ClimberIO {
     }
 
     public void moveClimber(Angle angle) {
-        climber_motor_.setControl(new MotionMagicVoltage(angle));
+        climber_motor_.setControl(new MotionMagicVoltage(angle).withEnableFOC(true)) ;
     }
 
     @Override
     public void updateInputs(ClimberIOInputsAutoLogged inputs) {
-        inputs.attachedSensorOne = attached_switch_one_.get();
-        inputs.attachedSensorTwo = attached_switch_two_.get();
+            
+        if (!encoder_motor_synced_ && RobotState.isEnabled()) {
+            syncClimberPosition() ;
+            encoder_motor_synced_ = true ;
+        }
 
-        inputs.climberPosition = climber_pos_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
-        inputs.climberVelocity = climber_vel_sig_.getValue().div(ClimberConstants.Climber.kGearRatio);
-        inputs.climberVoltage = climber_vol_sig_.getValue();
-        inputs.climberCurrent = climber_current_sig_.getValue();
+        inputs.attachedSensor = attached_switch_one_.get();
+
+        inputs.climberPosition = climber_pos_sig_.refresh().getValue().div(ClimberConstants.Climber.kGearRatio);
+        inputs.climberVelocity = climber_vel_sig_.refresh().getValue().div(ClimberConstants.Climber.kGearRatio);
+        inputs.climberVoltage = climber_vol_sig_.refresh().getValue();
+        inputs.climberCurrent = climber_current_sig_.refresh().getValue();
+
+        inputs.absEncoderRawValue = encoder_.get();
+        inputs.absEncoderValue = Degrees.of(mapper_.toRobot(inputs.absEncoderRawValue)) ;
     }
 
     public void setClimberPosition(Angle angle) {
-        climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)));
+        climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)).withEnableFOC(true)) ;
+    }
+
+    public void syncClimberPosition() {
+        double enc = encoder_.get() ;
+        double angle = mapper_.toRobot(enc) ;
+        Angle armAngle = Degrees.of(angle).times(ClimberConstants.Climber.kGearRatio) ;
+        climber_motor_.setPosition(armAngle) ;
     }
 }

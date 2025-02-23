@@ -105,10 +105,6 @@ public class ManipulatorSubsystem extends SubsystemBase{
         io_.setElevatorMotorVoltage(volts.in(Volts)) ;
     }
 
-    public boolean isElevAtBottom() {
-        return !inputs_.hallEffectSensor ;
-    }
-
     public boolean isElevAtTarget() {
         if (target_height_ == null)
             return false;

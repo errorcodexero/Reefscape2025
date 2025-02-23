@@ -37,7 +37,7 @@ public class GrabberConstants {
         }
 
         public class AlgaeSensor {
-            public static final int kChannel = 2;
+            public static final int kChannel = 1;
         }
 
         public class DepositCoral {

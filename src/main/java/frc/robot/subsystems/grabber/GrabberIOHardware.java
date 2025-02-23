@@ -136,6 +136,6 @@ public class GrabberIOHardware implements GrabberIO {
 
     public void setGrabberTargetPosition(Angle pos) {
         Angle cpos = pos.div(GrabberConstants.Grabber.kGearRatio) ;
-        grabber_motor_.setControl(new MotionMagicVoltage(cpos)) ;
+        grabber_motor_.setControl(new MotionMagicVoltage(cpos).withEnableFOC(true)) ;
     }
 }

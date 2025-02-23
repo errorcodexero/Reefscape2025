@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -17,8 +18,10 @@ public interface ClimberIO {
         public Voltage climberVoltage = Volts.of(0);
         public Current climberCurrent = Amps.of(0);
 
-        public boolean attachedSensorOne = false ;
-        public boolean attachedSensorTwo = false ;
+        public boolean attachedSensor = false ;
+        
+        public double absEncoderRawValue = 0.0 ;
+        public Angle absEncoderValue = Rotations.zero() ;
     }
 
     //Update Inputs

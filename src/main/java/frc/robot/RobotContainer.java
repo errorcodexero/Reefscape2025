@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -75,6 +77,8 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.GoToCmd;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -119,7 +123,6 @@ public class RobotContainer {
     private OISubsystem oi_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
-    @SuppressWarnings("unused")
     private ClimberSubsystem climber_;
     private FunnelSubsystem funnel_;
     private BrainSubsystem brain_;
@@ -180,12 +183,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }                    
 
-                //     try {
-                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                //     }
-                //     catch(Exception ex) {
-                //         subsystemCreateException(ex) ;
-                //     }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
 
                     break;
@@ -225,12 +228,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }                    
 
-                //     try {
-                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                //     }
-                //     catch(Exception ex) {
-                //         subsystemCreateException(ex) ;
-                //     }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
                     break;
 
@@ -468,7 +471,10 @@ public class RobotContainer {
         oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
         oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
-        oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()-> brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
+        //
+        // Disable this for now until we have better data on whether this is an issue
+        //
+        // oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()-> brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
 
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
@@ -514,7 +520,13 @@ public class RobotContainer {
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
-        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
+        // gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
+
+        gamepad_.a().onTrue(
+            Commands.sequence(
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                new WaitCommand(Seconds.of(4)),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow))) ;
 
         // Robot Relative
         gamepad_.povUp().whileTrue(

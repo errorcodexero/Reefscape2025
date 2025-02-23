@@ -141,16 +141,16 @@ public class Robot extends LoggedRobot {
         // our delay is interrupted, we start over.  This delay is here because we see a race conditon
         // at times that causes the Pidgeon 2 to not get initialized.
         //
-        boolean done = false ;
-        for(int i = 0 ; i < 10 && !done ; i++) {
-            done = true ;
-            try {
-                Thread.sleep(1000) ;
-            }
-            catch(Exception ex) {
-                done = false ;
-            }
-        }
+        // boolean done = false ;
+        // for(int i = 0 ; i < 10 && !done ; i++) {
+        //     done = true ;
+        //     try {
+        //         Thread.sleep(1000) ;
+        //     }
+        //     catch(Exception ex) {
+        //         done = false ;
+        //     }
+        // }
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.        
