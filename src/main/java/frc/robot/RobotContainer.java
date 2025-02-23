@@ -201,8 +201,11 @@ public class RobotContainer {
                             PracticeTunerConstants.kSpeedAt12Volts);
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.practiceLimelightName, drivebase_::getRotation));
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());

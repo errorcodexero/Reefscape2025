@@ -3,11 +3,9 @@ package frc.robot.subsystems.vision;
 public class VisionConstants {
 
     // Limelight Names
-    public static final String frontLimelightName = "frontlimelight";
-    public static final String backLimelightName = "backlimelight";
-    public static final String leftLimelightName = "leftlimelight";
-
-    public static final String practiceLimelightName = "limelight";
+    public static final String frontLimelightName = "limelight-front";
+    public static final String backLimelightName = "limelight-back";
+    public static final String leftLimelightName = "limelight-left";
 
     // Odometry Filtering Configuration
     
