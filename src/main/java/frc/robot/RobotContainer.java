@@ -255,7 +255,7 @@ public class RobotContainer {
                             PoseEstimateConsumer.ignore(),
                             new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
                             new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
-                            new CameraIOPhotonSim("LeftCamera", VisionConstants.leftTransform, drivebase_::getPose, false)
+                            new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
                     );
 
                     try {
