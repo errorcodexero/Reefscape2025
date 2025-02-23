@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 public class VisionConstants {
 
     // Limelight Names
-    public static final String frontLimelightName = "limelight-front";
+    public static final String frontLimelightName = "limelight";
     public static final String backLimelightName = "limelight-back";
     public static final String leftLimelightName = "limelight-left";
 
