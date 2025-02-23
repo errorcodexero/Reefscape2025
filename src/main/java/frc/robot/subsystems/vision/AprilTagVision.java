@@ -140,6 +140,10 @@ public class AprilTagVision extends SubsystemBase {
             double timestampSecnds,
             Matrix<N3, N1> standardDeviations
         );
+
+        public static PoseEstimateConsumer ignore() {
+            return (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {};
+        }
     }
 
     /**
