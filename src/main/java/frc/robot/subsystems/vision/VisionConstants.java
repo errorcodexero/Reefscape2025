@@ -5,11 +5,12 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 public class VisionConstants {
 
     // Limelight Names
-    public static final String frontLimelightName = "limelight";
+    public static final String frontLimelightName = "limelight-front";
     public static final String backLimelightName = "limelight-back";
     public static final String leftLimelightName = "limelight-left";
 
@@ -38,7 +39,12 @@ public class VisionConstants {
     public static final double baseAngularStdDev = 0.06;
     public static final double megatag2Factor = 0.5;
 
-    // Use LL4 IMU
-    public static final boolean runWithoutIMU = true;
+    // LL4 Config
+    public static final boolean useIMU = false; // Whether or not to use the internal IMU
+    public static final IMUMode enabledIMUMode = IMUMode.ASSIST_EXTERNAL; // What mode to use on the internal IMU
+    
+    public static final boolean regulateThrottle = true; // Whether or not we use LL4 throttle to regulate temperature
+    public static final int numSkippedFramesEnabled = 0; // How many frames to skip in enabled, (probably 0 but you might want to?)
+    public static final int numSkippedFramesDisabled = 100; // Regulate temperature by skipping frames in disabled
 
 }
