@@ -41,8 +41,8 @@ public class CameraIOLimelight implements CameraIO {
         inputs.connected = (Timer.getFPGATimestamp() - lastUpdateSupplier_.get()) < 1;
 
         // Status information
-        inputs.fps = hardwareStatus[0];
-        inputs.cpuTemp = hardwareStatus[1];
+        inputs.fps = hardwareStatus[1];
+        inputs.cpuTemp = hardwareStatus[0];
 
         // Update Robot Orientation
         LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
