@@ -36,7 +36,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         elevator_reset_ = false ;
 
         needs_reset_trigger_ = new Trigger(() -> !elevator_reset_) ;
-//       RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
+        RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
     }
 
     public Trigger needsElevatorReset() { 

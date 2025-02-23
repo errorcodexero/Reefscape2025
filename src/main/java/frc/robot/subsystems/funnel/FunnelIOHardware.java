@@ -138,7 +138,7 @@ public class FunnelIOHardware implements FunnelIO {
 
     @Override
     public void setPosition(Angle angle) {
-        funnelMotor_.setControl(new MotionMagicVoltage(angle.times(FunnelConstants.kGearRatio)));
+        funnelMotor_.setControl(new MotionMagicVoltage(angle.times(FunnelConstants.kGearRatio)).withEnableFOC(true)) ;
     }   
 
     public void syncFunnelPosition() {

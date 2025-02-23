@@ -104,14 +104,14 @@ public class ManipulatorConstants {
 
         public static final String kCANBusName = "" ;
 
-        public static final Current kCurrentLimit = Amps.of(40); 
+        public static final Current kCurrentLimit = Amps.of(60); 
 
         public static final Distance kPosTolerance = Centimeter.of(0.5) ;
         public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
-        public static final Voltage kCalibrateVoltage = Volts.of(-1) ;
+        public static final Voltage kCalibrateVoltage = Volts.of(-2) ;
         public static final int kCalibrateLoops = 4 ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around       
@@ -138,8 +138,9 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(50) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(90) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(325
+            ) ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -149,7 +150,7 @@ public class ManipulatorConstants {
             public static final Distance kPlaceL1 = Centimeters.of(0); 
             public static final Distance kPlaceL2 = Centimeters.of(28); 
             public static final Distance kPlaceL3 = Centimeters.of(68); 
-            public static final Distance kPlaceL4 = Centimeters.of(139); 
+            public static final Distance kPlaceL4 = Centimeters.of(136); 
             public static final Distance kCollect = Centimeters.of(0.0) ;
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(92.0) ;
             public static final Distance kAlgaeReefCollectL2 = Centimeters.of(52.0) ;

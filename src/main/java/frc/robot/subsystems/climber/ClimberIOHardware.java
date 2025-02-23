@@ -91,7 +91,7 @@ public class ClimberIOHardware implements ClimberIO {
     }
 
     public void moveClimber(Angle angle) {
-        climber_motor_.setControl(new MotionMagicVoltage(angle));
+        climber_motor_.setControl(new MotionMagicVoltage(angle).withEnableFOC(true)) ;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class ClimberIOHardware implements ClimberIO {
     }
 
     public void setClimberPosition(Angle angle) {
-        climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)));
+        climber_motor_.setControl(new MotionMagicVoltage(angle.times(ClimberConstants.Climber.kGearRatio)).withEnableFOC(true)) ;
     }
 
     public void syncClimberPosition() {

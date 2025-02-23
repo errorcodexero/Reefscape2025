@@ -119,7 +119,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
         }
         catch(Exception ex) {
-
+            throw new RuntimeException("Could not set motor soft limits") ;
         }
     }
 
@@ -159,8 +159,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-PID-values", () -> elevator_motor_.getConfigurator().apply(elevator_pids));
         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-MM-values", () -> elevator_motor_.getConfigurator().apply(elevatorMotionMagicConfigs));
-
-        enableSoftLimits(true);
 
         elevator_pos_sig_ = elevator_motor_.getPosition();
         elevator_vel_sig_ = elevator_motor_.getVelocity();
@@ -344,7 +342,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0));
+        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true)) ;
     }
 
     public void resetPosition() {
@@ -352,7 +350,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     }
 
     public void setArmTarget(Angle angle) {
-        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0)); 
+        arm_motor_.setControl(new MotionMagicVoltage(angle.times(ManipulatorConstants.Arm.kGearRatio)).withSlot(0).withEnableFOC(true)) ;
     }
 
     public void syncArmPosition() {
