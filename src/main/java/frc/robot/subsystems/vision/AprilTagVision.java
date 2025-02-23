@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Matrix;
@@ -30,14 +29,15 @@ public class AprilTagVision extends SubsystemBase {
 
     private final Alert[] alerts_;
 
-    @AutoLogOutput(key = "Vision/PoseEstimatesEnabled")
-    private boolean enabled_;
+    private boolean enabled_; // Whether or not vision pose estimation is enabled
+    private Optional<String> exclusiveCamera_; // The only camera to get pose estimates from, if empty every camera will be used.
 
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
 
         io_ = io;
         enabled_ = true;
+        exclusiveCamera_ = Optional.empty();
 
         inputs_ = new CameraIOInputsAutoLogged[io.length];
         alerts_ = new Alert[io.length];
@@ -54,12 +54,50 @@ public class AprilTagVision extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets whether or not the vision pose estimates get merged with the drivebase.
+     * @param enabled
+     */
     public void setEnabled(boolean enabled) {
         enabled_ = enabled;
     }
 
+    /**
+     * Command that sets whether or not the vision pose estimates get merged with the drivebase.
+     * @param enabled
+     */
     public Command setEnabledCommand(boolean enabled) {
         return runOnce(() -> setEnabled(enabled));
+    }
+
+    /**
+     * Sets a camera that is the only camera that will be considered for poses.
+     * @param name The camera to use exclusively.
+     */
+    public void setExclusiveCamera(String name) {
+        exclusiveCamera_ = Optional.of(name);
+    }
+
+    /**
+     * After setting an exclusive camera, run this to use all of the cameras again.
+     */
+    public void useAllCameras() {
+        exclusiveCamera_ = Optional.empty();
+    }
+
+    /**
+     * Sets a camera that is the only camera that will be considered for poses.
+     * @param name The camera to use exclusively.
+     */
+    public Command setExclusiveCameraCommand(String name) {
+        return runOnce(() -> setExclusiveCamera(name));
+    }
+
+    /**
+     * After setting an exclusive camera, run this to use all of the cameras again.
+     */
+    public Command useAllCamerasCommand() {
+        return runOnce(this::useAllCameras);
     }
 
     @Override
@@ -131,6 +169,9 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/Summary/BotPoses/Accepted", summaryAcceptedPoses.toArray(new Pose2d[0]));
         Logger.recordOutput("Vision/Summary/BotPoses/Declined", summaryDeclinedPoses.toArray(new Pose2d[0]));
 
+        Logger.recordOutput("Vision/PoseEstimatesEnabled", enabled_);
+        Logger.recordOutput("Vision/ExclusiveCamera", exclusiveCamera_.isPresent() ? exclusiveCamera_.get() : "None");
+
     }
 
     @FunctionalInterface
@@ -181,6 +222,11 @@ public class AprilTagVision extends SubsystemBase {
         // Decline for any of the following reasons:
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
+
+        if (
+            exclusiveCamera_.isPresent() &&
+            !estimation.cameraName().equals(exclusiveCamera_.orElseThrow()) // If it does not match a set exclusive camera.
+        ) return false;
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 

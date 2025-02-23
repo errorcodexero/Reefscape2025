@@ -53,6 +53,7 @@ import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -328,10 +329,7 @@ public class RobotContainer {
         if (vision_ == null) {
             int numCams = switch (Constants.getRobot()) {
                 case ALPHA -> 0;
-                case PRACTICE -> 1;
-                case COMPETITION -> 3;
-                case SIMBOT -> 4;
-                case XEROSIM -> 4;
+                default -> 3;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -356,6 +354,10 @@ public class RobotContainer {
         if (funnel_ == null) {
             funnel_ = new FunnelSubsystem(new FunnelIO() {
             });
+        }
+
+        if (climber_ == null) {
+            climber_ = new ClimberSubsystem(new ClimberIO() {});
         }
 
         // OI Setup
