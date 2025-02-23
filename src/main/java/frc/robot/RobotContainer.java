@@ -13,10 +13,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -29,14 +26,7 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -82,6 +72,7 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
@@ -201,8 +192,11 @@ public class RobotContainer {
                             PracticeTunerConstants.kSpeedAt12Volts);
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.practiceLimelightName, drivebase_::getRotation));
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -238,34 +232,21 @@ public class RobotContainer {
                 case XEROSIM:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
-                            new GyroIO() {
-                            },
-                            ModuleIOSim::new,
-                            CompTunerConstants.FrontLeft,
-                            CompTunerConstants.FrontRight,
-                            CompTunerConstants.BackLeft,
-                            CompTunerConstants.BackRight,
-                            CompTunerConstants.kSpeedAt12Volts);
+                        new GyroIO() {},
+                        ModuleIOSim::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
-                            (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {
-                            },
-                            new CameraIOPhotonSim("Front", new Transform3d(
-                                    new Translation3d(Meters.of(0.3048), Meters.of(0.12), Meters.of(0.12)),
-                                    new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())),
-                                    drivebase_::getPose, true),
-                            new CameraIOPhotonSim("Back", new Transform3d(
-                                    new Translation3d(Meters.of(-0.3048), Inches.zero(), Meters.of(0.12)),
-                                    new Rotation3d(Degrees.zero(), Degrees.of(-20), Rotations.of(0.5))),
-                                    drivebase_::getPose, false),
-                            new CameraIOPhotonSim("LeftCamera", new Transform3d(
-                                    new Translation3d(Meters.of(-0.12), Meters.of(0.3048), Meters.of(0.12)),
-                                    new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(90))),
-                                    drivebase_::getPose, false),
-                            new CameraIOPhotonSim("RightCamera", new Transform3d(
-                                    new Translation3d(Meters.of(0.07), Meters.of(-0.3048), Meters.of(0.50)),
-                                    new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.of(-90))),
-                                    drivebase_::getPose, false));
+                        PoseEstimateConsumer.ignore(),
+                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
+                        new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
+                        new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
+                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());

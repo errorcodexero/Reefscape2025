@@ -53,6 +53,7 @@ public interface CameraIO {
 
         public IMUMode imuMode = IMUMode.NONE;
         public Rotation2d imuRobotYaw = Rotation2d.kZero;
+        public int frameSkipThrottle = 0;
 
         public double cpuTemp = -1.0;
         public double fps = -1.0;
