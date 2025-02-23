@@ -13,10 +13,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -29,14 +26,7 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -82,12 +72,12 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
