@@ -5,7 +5,6 @@ import java.util.Map;
 
 import frc.robot.subsystems.oi.OIConstants;
 import frc.robot.subsystems.oi.OIConstants.OILed;
-import frc.robot.subsystems.oi.OISubsystem;
 import frc.simulator.engine.SimulationEngine;
 
 public class OI2025 extends OIBaseModel {

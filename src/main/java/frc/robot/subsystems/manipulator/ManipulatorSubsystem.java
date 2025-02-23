@@ -36,7 +36,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         elevator_reset_ = false ;
 
         needs_reset_trigger_ = new Trigger(() -> !elevator_reset_) ;
-        RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
+//       RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
     }
 
     public Trigger needsElevatorReset() { 
@@ -103,10 +103,6 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public void setElevatorVoltage(Voltage volts) {
         io_.setElevatorMotorVoltage(volts.in(Volts)) ;
-    }
-
-    public boolean isElevAtBottom() {
-        return !inputs_.hallEffectSensor ;
     }
 
     public boolean isElevAtTarget() {

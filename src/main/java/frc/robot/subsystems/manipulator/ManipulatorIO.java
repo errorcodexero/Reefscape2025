@@ -45,9 +45,6 @@ public interface ManipulatorIO {
         // encoder
         public Angle absoluteEncoder = Degrees.of(0); 
         public double rawAbsoluteEncoder = 0;
-
-        // hall effect sensor
-        public boolean hallEffectSensor = false;
     }
 
     // updating inputs

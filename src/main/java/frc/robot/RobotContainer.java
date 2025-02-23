@@ -119,7 +119,6 @@ public class RobotContainer {
     private OISubsystem oi_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
-    @SuppressWarnings("unused")
     private ClimberSubsystem climber_;
     private FunnelSubsystem funnel_;
     private BrainSubsystem brain_;
@@ -180,12 +179,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }                    
 
-                //     try {
-                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                //     }
-                //     catch(Exception ex) {
-                //         subsystemCreateException(ex) ;
-                //     }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
 
                     break;
@@ -225,12 +224,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }                    
 
-                //     try {
-                //         climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                //     }
-                //     catch(Exception ex) {
-                //         subsystemCreateException(ex) ;
-                //     }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
                     break;
 

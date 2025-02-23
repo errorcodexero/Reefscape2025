@@ -27,7 +27,7 @@ public class CalibrateCmd extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (m_.isElevAtBottom() && m_.getElevatorVelocity().abs(MetersPerSecond) < 0.01) {
+        if (m_.getElevatorVelocity().abs(MetersPerSecond) < 0.01) {
             count_++ ;
             if (count_ == ManipulatorConstants.Elevator.kCalibrateLoops) {
                 elev_calibrated_ = true ;

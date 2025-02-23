@@ -13,8 +13,20 @@ import edu.wpi.first.units.measure.Time;
 public class ClimberConstants {
     // this information would go inside classes for each motor in the subsystem
 
-    public static final int kAttachedSensorOne = 8;
-    public static final int kAttachedSensorTwo = 9;
+    public static final int kAttachedSensor = 13;
+
+    public class ThruBoreEncoder {
+        // the encoder mapper needs double values, so these constants don't use the Units library
+        // robot min and max are in degrees
+        public static final double kRobotMax = 169.8 ;
+        public static final double kRobotMin = 0 ; 
+        public static final double kEncoderMax = 1; 
+        public static final double kEncoderMin = 0; 
+        public static final double kRobotCalibrationValue = 0;
+        public static final double kEncoderCalibrationValue = 0.566;
+
+        public static final int kAbsEncoder = 2; 
+    }
 
     public class Climber{
        
@@ -54,9 +66,9 @@ public class ClimberConstants {
 
         public class Position {
             //TODO : Add the correct angles
-            public static final Angle kStowed = Degrees.of(0);
-            public static final Angle kPrepped = Degrees.of(0);
-            public static final Angle kClimbed = Degrees.of(0);
+            public static final Angle kStowed = Degrees.of(52);
+            public static final Angle kPrepped = Degrees.of(148.5);
+            public static final Angle kClimbed = Degrees.of(26);
         }
     }   
 }

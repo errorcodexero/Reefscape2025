@@ -14,8 +14,6 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class ManipulatorConstants {
 
-    public static final int kFunnelSensorChannel = 6 ;
-
     public class Arm {
        
         // motor CAN ID
@@ -69,10 +67,10 @@ public class ManipulatorConstants {
             public static final double kRobotMin = -180; 
             public static final double kEncoderMax = 0; 
             public static final double kEncoderMin = 1; 
-            public static final double kRobotCalibrationValue = 0; 
-            public static final double kEncoderCalibrationValue = 0.515;
+            public static final double kRobotCalibrationValue = 0;
+            public static final double kEncoderCalibrationValue = 0.510;
 
-            public static final int kEncoderSource = 3; 
+            public static final int kAbsEncoder = 11; 
         }
 
         public class Positions {
@@ -113,7 +111,6 @@ public class ManipulatorConstants {
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
-        public static final int kHallEffectSensorChannel = 4 ;
         public static final Voltage kCalibrateVoltage = Volts.of(-1) ;
         public static final int kCalibrateLoops = 4 ;
 

@@ -145,7 +145,7 @@ public class Robot extends LoggedRobot {
         for(int i = 0 ; i < 10 && !done ; i++) {
             done = true ;
             try {
-                Thread.sleep(1000) ;
+                Thread.sleep(5000) ;
             }
             catch(Exception ex) {
                 done = false ;
