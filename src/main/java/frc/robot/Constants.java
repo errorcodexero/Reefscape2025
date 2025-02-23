@@ -42,10 +42,7 @@ public final class Constants {
     private static final RobotType robotType = RobotType.PRACTICE;
 
     public static class DriveConstants {
-        
-
         public static final double slowModeJoystickMultiplier = 0.4;
-        
     }
     
     public static class FieldConstants {

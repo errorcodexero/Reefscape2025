@@ -31,7 +31,11 @@ public class CameraIOLimelight implements CameraIO {
 
     @Override
     public void updateInputs(CameraIOInputsAutoLogged inputs) {
-
+        
+        // Update Robot Orientation
+        LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
+        
+        // Results
         LimelightResults results = LimelightHelpers.getLatestResults(name_);
         
         double[] rawCorners = rawCornersNT_.get(new double[] {});
@@ -41,11 +45,8 @@ public class CameraIOLimelight implements CameraIO {
         inputs.connected = (Timer.getFPGATimestamp() - lastUpdateSupplier_.get()) < 1;
 
         // Status information
-        inputs.fps = hardwareStatus[0];
-        inputs.cpuTemp = hardwareStatus[1];
-
-        // Update Robot Orientation
-        LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
+        inputs.fps = hardwareStatus[1];
+        inputs.cpuTemp = hardwareStatus[0];
 
         // Camera name
         inputs.name = name_;
