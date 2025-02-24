@@ -30,14 +30,12 @@ public class AprilTagVision extends SubsystemBase {
     private final Alert[] alerts_;
 
     private boolean enabled_; // Whether or not vision pose estimation is enabled
-    private Optional<String> exclusiveCamera_; // The only camera to get pose estimates from, if empty every camera will be used.
 
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
 
         io_ = io;
         enabled_ = true;
-        exclusiveCamera_ = Optional.empty();
 
         inputs_ = new CameraIOInputsAutoLogged[io.length];
         alerts_ = new Alert[io.length];
@@ -52,6 +50,8 @@ public class AprilTagVision extends SubsystemBase {
                 AlertType.kWarning
             );
         }
+
+        Logger.recordOutput("Vision/OnlyUseFront", VisionConstants.onlyUseFront);
     }
 
     /**
@@ -68,36 +68,6 @@ public class AprilTagVision extends SubsystemBase {
      */
     public Command setEnabledCommand(boolean enabled) {
         return runOnce(() -> setEnabled(enabled));
-    }
-
-    /**
-     * Sets a camera that is the only camera that will be considered for poses.
-     * @param name The camera to use exclusively.
-     */
-    public void setExclusiveCamera(String name) {
-        exclusiveCamera_ = Optional.of(name);
-    }
-
-    /**
-     * After setting an exclusive camera, run this to use all of the cameras again.
-     */
-    public void useAllCameras() {
-        exclusiveCamera_ = Optional.empty();
-    }
-
-    /**
-     * Sets a camera that is the only camera that will be considered for poses.
-     * @param name The camera to use exclusively.
-     */
-    public Command setExclusiveCameraCommand(String name) {
-        return runOnce(() -> setExclusiveCamera(name));
-    }
-
-    /**
-     * After setting an exclusive camera, run this to use all of the cameras again.
-     */
-    public Command useAllCamerasCommand() {
-        return runOnce(this::useAllCameras);
     }
 
     @Override
@@ -170,7 +140,6 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/Summary/BotPoses/Declined", summaryDeclinedPoses.toArray(new Pose2d[0]));
 
         Logger.recordOutput("Vision/PoseEstimatesEnabled", enabled_);
-        Logger.recordOutput("Vision/ExclusiveCamera", exclusiveCamera_.isPresent() ? exclusiveCamera_.get() : "None");
 
     }
 
@@ -216,17 +185,15 @@ public class AprilTagVision extends SubsystemBase {
     /**
      * Decides whether or not a pose estimation is deemed acceptable to use in the PoseEstimator.
      * @param estimation
-     * @return
+     * @return Whether or not to integrate the pose.
      */
+    @SuppressWarnings("unused")
     private boolean isEstimationAcceptable(PoseEstimation estimation) {
         // Decline for any of the following reasons:
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
 
-        if (
-            exclusiveCamera_.isPresent() &&
-            !estimation.cameraName().equals(exclusiveCamera_.orElseThrow()) // If it does not match a set exclusive camera.
-        ) return false;
+        if (VisionConstants.onlyUseFront && !estimation.cameraName().equals(VisionConstants.frontLimelightName)) return false;
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 

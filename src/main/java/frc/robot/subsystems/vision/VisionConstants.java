@@ -14,6 +14,9 @@ public class VisionConstants {
     public static final String backLimelightName = "limelight-back";
     public static final String leftLimelightName = "limelight-left";
 
+    // Exclusively use the front apriltag.
+    public static final boolean onlyUseFront = false;
+
     // Transforms
     public static final Transform3d frontTransform = new Transform3d(
         new Translation3d(Meters.of(0.1975), Meters.of(-0.2032), Meters.of(0.205)),
