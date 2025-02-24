@@ -43,12 +43,18 @@ public class EjectCmd extends XeroSequenceCmd {
             seq.addCommands(
                 new DepositAlgaeCmd(grabber_),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition(), true),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, 
+                                          ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                          ManipulatorConstants.Arm.Positions.kStow,
+                                          ManipulatorConstants.Arm.kPosTolerance)) ;
         }
         else {
             seq.addCommands(
                 new DepositCoralCmd(grabber_),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, 
+                                          ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                          ManipulatorConstants.Arm.Positions.kStow,
+                                          ManipulatorConstants.Arm.kPosTolerance)) ;
         }
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false));
         seq.addCommands(new SetHoldingCmd(brain_, GamePiece.NONE));

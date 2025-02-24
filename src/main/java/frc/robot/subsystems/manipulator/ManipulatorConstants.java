@@ -106,6 +106,7 @@ public class ManipulatorConstants {
         public static final Current kCurrentLimit = Amps.of(60); 
 
         public static final Distance kPosTolerance = Centimeter.of(0.5) ;
+        public static final Distance kPosToleranceBottom = Centimeter.of(3.0) ;
         public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 

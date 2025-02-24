@@ -143,11 +143,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         seq.addCommands(
             RobotContainer.getInstance().gamepad().setLockCommand(true),
-            Commands.parallel(
-                // new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel))) ;
-
-        seq.addCommands(
+            DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
             new SetHoldingCmd(brain_, GamePiece.NONE),
 

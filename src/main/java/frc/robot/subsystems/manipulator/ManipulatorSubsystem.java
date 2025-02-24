@@ -20,7 +20,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
     private final ManipulatorIO io_; 
     private final ManipulatorIOInputsAutoLogged inputs_;  
     private Angle target_angle_;
+    private Angle target_arm_tolerance_ ;
     private Distance target_height_;
+    private Distance target_elev_tolerance_ ;
     private boolean elevator_calibrated_ ;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
@@ -68,8 +70,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return target_angle_;
     }
 
-    public void setArmTarget(Angle angle) {
+    public void setArmTarget(Angle angle, Angle tolerance) {
         target_angle_ = angle;  
+        target_arm_tolerance_ = tolerance ;
         io_.setArmTarget(angle); 
     }
 
@@ -90,9 +93,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return target_height_;
     }
 
-    public void setElevatorTarget(Distance dist) {
-        target_height_ = dist;
-        io_.setElevatorTarget(dist); 
+    public void setElevatorTarget(Distance height, Distance tolerance) {
+        target_height_ = height;
+        target_elev_tolerance_ = tolerance ;
+        io_.setElevatorTarget(height); 
     }
 
     public void setElevatorVoltage(Voltage volts) {
@@ -103,7 +107,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
         if (target_height_ == null)
             return false;
 
-        if (!inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance))
+        if (!inputs_.elevatorPosition.isNear(target_height_, target_elev_tolerance_))
             return false ;
 
         if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance))
@@ -116,7 +120,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
         if (target_angle_ == null)
             return false;            
 
-        if (!inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance))
+        if (!inputs_.armPosition.isNear(target_angle_, target_arm_tolerance_))
             return false ;
 
         if (Robot.isReal() && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance))

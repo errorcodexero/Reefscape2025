@@ -31,7 +31,10 @@ public class CollectCoralCmd extends XeroSequenceCmd {
     @Override
     public void initSequence(SequentialCommandGroup seq) {
         seq.addCommands(
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect),
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, 
+                                      ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                      ManipulatorConstants.Arm.Positions.kCollect,
+                                      ManipulatorConstants.Arm.kPosTolerance),
             new WaitForCoralCmd(grabber_),
             new SetHoldingCmd(brain_, GamePiece.CORAL)) ;
     }

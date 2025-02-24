@@ -44,9 +44,8 @@ public class ClimberConstants {
 
         public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0);
         
-        //TODO: Add the correct values
-        public static final Angle kMaxClimberAngle = Degrees.of(0);
-        public static final Angle kMinClimberAngle = Degrees.of(0) ;
+        public static final Angle kMaxClimberAngle = Degrees.of(148);
+        public static final Angle kMinClimberAngle = Degrees.of(24) ;
 
         public class PID {
             public static final double kP = 0.0; 
@@ -65,9 +64,8 @@ public class ClimberConstants {
         }
 
         public class Position {
-            //TODO : Add the correct angles
             public static final Angle kStowed = Degrees.of(52);
-            public static final Angle kPrepped = Degrees.of(148.5);
+            public static final Angle kPrepped = Degrees.of(148);
             public static final Angle kClimbed = Degrees.of(26);
         }
     }   

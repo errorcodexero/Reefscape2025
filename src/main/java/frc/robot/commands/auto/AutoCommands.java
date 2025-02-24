@@ -98,7 +98,10 @@ public class AutoCommands {
           Commands.sequence(
             new WaitCommand(AutoCommands.DelayBeforeDriving),
             DriveCommands.followPathCommand("Side Coral 2", mirroredX)),
-          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect))) ;
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
+                                ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                ManipulatorConstants.Arm.Positions.kCollect,
+                                ManipulatorConstants.Arm.kPosTolerance)) ) ;
 
     //
     // Wait for coral to pass through the funnel
@@ -131,7 +134,10 @@ public class AutoCommands {
           Commands.sequence(
             new WaitCommand(DelayBeforeDriving),
             DriveCommands.followPathCommand("Side Coral 4", mirroredX)),
-          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect))) ;
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
+                                ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                ManipulatorConstants.Arm.Positions.kCollect,
+                                ManipulatorConstants.Arm.kPosTolerance)) ) ;
 
         //
         // Wait for coral to pass through the funnel
