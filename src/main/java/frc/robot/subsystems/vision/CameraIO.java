@@ -24,7 +24,8 @@ public interface CameraIO {
         double averageDist,
         double ambiguity,
         int tagCount,
-        PoseEstimationType type
+        PoseEstimationType type,
+        String cameraName
     ) {};
 
     public static record Fiducial(

@@ -106,7 +106,8 @@ public class CameraIOPhoton implements CameraIO {
                     averageTagDist,
                     multitagResult.get().estimatedPose.ambiguity,
                     multitagResult.get().fiducialIDsUsed.size(),
-                    PoseEstimationType.PHOTON_MULTITAG
+                    PoseEstimationType.PHOTON_MULTITAG,
+                    camera_.getName()
                 ));
             }
 

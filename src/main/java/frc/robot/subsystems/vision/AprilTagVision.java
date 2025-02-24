@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Matrix;
@@ -30,8 +29,7 @@ public class AprilTagVision extends SubsystemBase {
 
     private final Alert[] alerts_;
 
-    @AutoLogOutput(key = "Vision/PoseEstimatesEnabled")
-    private boolean enabled_;
+    private boolean enabled_; // Whether or not vision pose estimation is enabled
 
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
@@ -52,12 +50,22 @@ public class AprilTagVision extends SubsystemBase {
                 AlertType.kWarning
             );
         }
+
+        Logger.recordOutput("Vision/OnlyUseFront", VisionConstants.onlyUseFront);
     }
 
+    /**
+     * Sets whether or not the vision pose estimates get merged with the drivebase.
+     * @param enabled
+     */
     public void setEnabled(boolean enabled) {
         enabled_ = enabled;
     }
 
+    /**
+     * Command that sets whether or not the vision pose estimates get merged with the drivebase.
+     * @param enabled
+     */
     public Command setEnabledCommand(boolean enabled) {
         return runOnce(() -> setEnabled(enabled));
     }
@@ -131,6 +139,8 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/Summary/BotPoses/Accepted", summaryAcceptedPoses.toArray(new Pose2d[0]));
         Logger.recordOutput("Vision/Summary/BotPoses/Declined", summaryDeclinedPoses.toArray(new Pose2d[0]));
 
+        Logger.recordOutput("Vision/PoseEstimatesEnabled", enabled_);
+
     }
 
     @FunctionalInterface
@@ -175,12 +185,15 @@ public class AprilTagVision extends SubsystemBase {
     /**
      * Decides whether or not a pose estimation is deemed acceptable to use in the PoseEstimator.
      * @param estimation
-     * @return
+     * @return Whether or not to integrate the pose.
      */
+    @SuppressWarnings("unused")
     private boolean isEstimationAcceptable(PoseEstimation estimation) {
         // Decline for any of the following reasons:
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
+
+        if (VisionConstants.onlyUseFront && !estimation.cameraName().equals(VisionConstants.frontLimelightName)) return false;
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
