@@ -53,6 +53,7 @@ import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -67,6 +68,7 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.CalibrateCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
@@ -328,10 +330,7 @@ public class RobotContainer {
         if (vision_ == null) {
             int numCams = switch (Constants.getRobot()) {
                 case ALPHA -> 0;
-                case PRACTICE -> 1;
-                case COMPETITION -> 3;
-                case SIMBOT -> 4;
-                case XEROSIM -> 4;
+                default -> 3;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -358,6 +357,10 @@ public class RobotContainer {
             });
         }
 
+        if (climber_ == null) {
+            climber_ = new ClimberSubsystem(new ClimberIO() {});
+        }
+
         // OI Setup
         oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
 
@@ -378,6 +381,8 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+
+        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
     }
 
     public Drive drivebase() {

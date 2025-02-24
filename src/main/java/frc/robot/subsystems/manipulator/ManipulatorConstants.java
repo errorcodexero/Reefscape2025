@@ -34,8 +34,8 @@ public class ManipulatorConstants {
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         // The minimum and maximum arm angle, used to set the limits of travel
-        public static final Angle kMaxArmAngle = Degrees.of(179.0);
-        public static final Angle kMinArmAngle = Degrees.of(-200) ;
+        public static final Angle kMaxArmAngle = Degrees.of(200.0);
+        public static final Angle kMinArmAngle = Degrees.of(-5) ;
 
         // Moment of intertia for the arm, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
@@ -54,8 +54,7 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            // public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32.0) ;
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(32.0) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(56.0) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300.0) ;
             public static final double kJerk = 3000.0 ;
         }
@@ -78,15 +77,15 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL1 = Degrees.of(0); 
             public static final Angle kPlaceL2 = Degrees.of(35); 
             public static final Angle kPlaceL3 = Degrees.of(35); 
-            public static final Angle kPlaceL4 = Degrees.of(75);
-            public static final Angle kKickbackAngle = Degrees.of(18); 
-            public static final Angle kCollect = Degrees.of(16) ;
-            public static final Angle kAlgaeReefCollectL2 = Degrees.of(-160.0) ;
-            public static final Angle kAlgaeReefCollectL3 = Degrees.of(-160.0) ;
-            public static final Angle kAlgaeReefHold = Degrees.of(-140.0) ;
-            public static final Angle kScoreAlgaeReef = Degrees.of(-140.0) ;
-            public static final Angle kScoreAlgaeReef2 = Degrees.of(-140.0) ;
-            public static final Angle kRaiseAngle = Degrees.of(18.0) ;
+            public static final Angle kPlaceL4 = Degrees.of(80);
+            public static final Angle kKickbackAngle = Degrees.of(19); 
+            public static final Angle kCollect = Degrees.of(13) ;
+            public static final Angle kAlgaeReefCollectL2 = Degrees.of(190.0) ;
+            public static final Angle kAlgaeReefCollectL3 = Degrees.of(190.0) ;
+            public static final Angle kAlgaeReefHold = Degrees.of(200) ;
+            public static final Angle kScoreAlgaeReef = Degrees.of(200) ;
+            public static final Angle kScoreAlgaeReef2 = Degrees.of(200) ;
+            public static final Angle kRaiseAngle = Degrees.of(19.0) ;
         }
     }
 
@@ -111,8 +110,9 @@ public class ManipulatorConstants {
 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
-        public static final Voltage kCalibrateVoltage = Volts.of(-2) ;
-        public static final int kCalibrateLoops = 4 ;
+        public static final Voltage kCalibrateVoltage = Volts.of(-3) ;
+        public static final int kCalibrateLoops = 8 ;
+        public static final int kCalibrateLoopsFinal = kCalibrateLoops + 1 ;
 
         // Gear ratio between the motor and the wheel that the cable wraps around       
         // Used for simulation
@@ -139,8 +139,7 @@ public class ManipulatorConstants {
 
         public class MotionMagic {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(90) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(325
-            ) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(325) ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -148,9 +147,10 @@ public class ManipulatorConstants {
             public static final Distance kStow = Centimeters.of(2);
 
             public static final Distance kPlaceL1 = Centimeters.of(0); 
-            public static final Distance kPlaceL2 = Centimeters.of(28); 
-            public static final Distance kPlaceL3 = Centimeters.of(68); 
-            public static final Distance kPlaceL4 = Centimeters.of(136); 
+            public static final Distance kPlaceL2 = Centimeters.of(25); 
+            public static final Distance kPlaceL3 = Centimeters.of(65); 
+            public static final Distance kPlaceL4 = Centimeters.of(131
+            ); 
             public static final Distance kCollect = Centimeters.of(0.0) ;
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(92.0) ;
             public static final Distance kAlgaeReefCollectL2 = Centimeters.of(52.0) ;

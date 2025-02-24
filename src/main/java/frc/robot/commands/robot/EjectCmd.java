@@ -34,6 +34,7 @@ public class EjectCmd extends XeroSequenceCmd {
     public void initialize() {
         super.initialize();
         brain_.lock() ;
+        brain_.clearRobotActions() ;
     }
 
     @Override

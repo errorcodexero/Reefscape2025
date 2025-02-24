@@ -8,6 +8,8 @@ import edu.wpi.first.units.measure.Time;
 
 public class GrabberConstants {
 
+    public static final int kDistanceSensorInput = 0 ;
+
     public class Grabber {
 
         public static final int kMotorCANID = 1;
@@ -43,7 +45,7 @@ public class GrabberConstants {
         public class DepositCoral {
             public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
             public static final AngularVelocity velocity = RotationsPerSecond.of(60.0) ;
-            public static final Time delay = Milliseconds.of(500.0) ;
+            public static final Time delay = Milliseconds.of(300.0) ;
             public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 

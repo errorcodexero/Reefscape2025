@@ -221,20 +221,6 @@ public class OISubsystem extends SubsystemBase {
         ios_.updateInputs(inputs_) ;
         Logger.processInputs("OI", inputs_) ;
 
-        if (inputs_.coral_place && !last) {
-            for(int i = 1 ; i <= 16 ; i++) {
-                ios_.setLED(i, LEDState.Off);
-            }
-
-            n++ ;
-            if (n == 17)
-                n = 1 ;
-
-            Logger.recordOutput("oi/led", n) ;
-            ios_.setLED(n, LEDState.On) ;
-        }
-        last = inputs_.coral_place ;
-
         if (flashing_ && flashing_timer_.isExpired()) {
             ios_.restoreLEDState() ;
             flashing_ = false ;

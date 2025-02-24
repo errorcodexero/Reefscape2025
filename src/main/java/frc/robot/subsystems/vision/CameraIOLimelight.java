@@ -7,9 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.subsystems.vision.LimelightHelpers.LimelightResults;
-import frc.robot.subsystems.vision.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.subsystems.vision.LimelightHelpers.PoseEstimate;
+import frc.robot.subsystems.vision.LimelightHelpers.RawFiducial;
 
 public class CameraIOLimelight implements CameraIO {
 
@@ -34,10 +33,7 @@ public class CameraIOLimelight implements CameraIO {
         
         // Update Robot Orientation
         LimelightHelpers.SetRobotOrientation(name_, rotationSupplier_.get().getDegrees(), 0, 0, 0, 0, 0);
-        
-        // Results
-        LimelightResults results = LimelightHelpers.getLatestResults(name_);
-        
+
         double[] rawCorners = rawCornersNT_.get(new double[] {});
         double[] hardwareStatus = hardwareStatusNT_.get(new double[] {-1.0, -1.0, -1.0, -1.0});
 
@@ -70,8 +66,10 @@ public class CameraIOLimelight implements CameraIO {
         }
 
         // Fetch Fiducials
-        for (LimelightTarget_Fiducial fid : results.targets_Fiducials) {
-            fiducials.add(new Fiducial((int) fid.fiducialID, fid.ta, fid.tx, fid.ty));
+        RawFiducial[] fids = LimelightHelpers.getRawFiducials(name_);
+
+        for (RawFiducial fid : fids) {
+            fiducials.add(new Fiducial((int) fid.id, fid.ta, fid.txnc, fid.tync));
         }
 
         inputs.rawCorners = corners.toArray(new Translation2d[0]);
@@ -85,9 +83,10 @@ public class CameraIOLimelight implements CameraIO {
                 estimateMegatag1.pose,
                 estimateMegatag1.timestampSeconds,
                 estimateMegatag1.avgTagDist,
-                0.0,
+                estimateMegatag1.rawFiducials[0].ambiguity, // Single tag ambiguity
                 estimateMegatag1.tagCount,
-                PoseEstimationType.MEGATAG1
+                PoseEstimationType.MEGATAG1,
+                name_
             ));
         }
         
@@ -98,7 +97,8 @@ public class CameraIOLimelight implements CameraIO {
                 estimateMegatag2.avgTagDist,
                 0.0,
                 estimateMegatag2.tagCount,
-                PoseEstimationType.MEGATAG2
+                PoseEstimationType.MEGATAG2,
+                name_
             ));
         }
 

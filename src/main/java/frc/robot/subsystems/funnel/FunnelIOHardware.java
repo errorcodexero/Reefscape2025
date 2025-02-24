@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.EncoderMapper;
@@ -24,7 +25,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage ;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.RobotState;
 
 public class FunnelIOHardware implements FunnelIO {
     private TalonFX funnelMotor_ = null ;
@@ -36,8 +36,6 @@ public class FunnelIOHardware implements FunnelIO {
     private StatusSignal<AngularVelocity> funnelVelocitySig = null ;
     private StatusSignal<Voltage> funnelVoltageSig = null ;
     private StatusSignal<Current> funnelCurrentSig = null ;
-
-    private boolean encoder_motor_synced_ = false ;
 
     private final Debouncer funnelReadyDebouncer_ = new Debouncer(0.5);
 
@@ -101,14 +99,19 @@ public class FunnelIOHardware implements FunnelIO {
         funnelLimitSwitchConfigs.ForwardSoftLimitThreshold = FunnelConstants.funnelArmMaxAngle.times(FunnelConstants.kGearRatio).in(Rotations) ;
         funnelLimitSwitchConfigs.ReverseSoftLimitEnable = true;
         funnelLimitSwitchConfigs.ReverseSoftLimitThreshold = FunnelConstants.funnelArmMinAngle.times(FunnelConstants.kGearRatio).in(Rotations) ;
+
+        funnelMotor_.setPosition(Degrees.of(0.0)) ;
+
+        MotionMagicVoltage ctrl = new MotionMagicVoltage(Degrees.of(0)).withEnableFOC(true) ;
+        funnelMotor_.setControl(ctrl) ;
     }
 
     @Override
     public void updateInputs(FunnelInputs inputs) {
-        if (!encoder_motor_synced_ && RobotState.isEnabled()) {
-            syncFunnelPosition() ;
-            encoder_motor_synced_ = true ;
-        }
+        // if (!encoder_motor_synced_ && RobotState.isEnabled()) {
+        //     syncFunnelPosition() ;
+        //     encoder_motor_synced_ = true ;
+        // }
   
         StatusCode funnelStatus = BaseStatusSignal.refreshAll(
             funnelVoltageSig,
@@ -146,5 +149,9 @@ public class FunnelIOHardware implements FunnelIO {
         double angle = mapper_.toRobot(enc) ;
         Angle armAngle = Degrees.of(angle).times(FunnelConstants.kGearRatio) ;
         funnelMotor_.setPosition(armAngle) ;
-    }    
+    }
+
+    public void setVoltage(Voltage volts) {
+        funnelMotor_.setVoltage(volts.in(Volts)) ;
+    }
 }

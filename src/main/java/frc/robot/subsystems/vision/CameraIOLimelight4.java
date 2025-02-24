@@ -37,7 +37,7 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
     private IMUMode currentMode_ = VisionConstants.useIMU ? IMUMode.SEEDING : IMUMode.IGNORING;
 
     // The current throttle of the LL4, assuming this is not set anywhere else and throttling is enabled.
-    private int currentThrottle_ = 0;
+    private int currentThrottle_ = VisionConstants.regulateThrottle ? VisionConstants.numSkippedFramesDisabled : 0;
     
     public CameraIOLimelight4(String name, Supplier<Rotation2d> rotationSupplier) {
         super(name, rotationSupplier);

@@ -14,17 +14,14 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
  
-public class ManipulatorSubsystem extends SubsystemBase{
+public class ManipulatorSubsystem extends SubsystemBase {
     private final ManipulatorIO io_; 
     private final ManipulatorIOInputsAutoLogged inputs_;  
     private Angle target_angle_;
     private Distance target_height_;
-    private boolean elevator_reset_ ;
-    private Trigger needs_reset_trigger_ ;
+    private boolean elevator_calibrated_ ;
 
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
@@ -33,14 +30,11 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public ManipulatorSubsystem(ManipulatorIO io) {
         io_ = io; 
         inputs_ = new ManipulatorIOInputsAutoLogged(); 
-        elevator_reset_ = false ;
-
-        needs_reset_trigger_ = new Trigger(() -> !elevator_reset_) ;
-        RobotModeTriggers.teleop().or(RobotModeTriggers.autonomous()).and(needsElevatorReset()).onTrue(new CalibrateCmd(this)) ;
+        elevator_calibrated_ = false ;
     }
 
-    public Trigger needsElevatorReset() { 
-        return needs_reset_trigger_ ;
+    public boolean isElevatorCalibrated() {
+        return elevator_calibrated_ ;
     }
 
     public void enableSoftLimits(boolean b) {
@@ -53,7 +47,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         io_.updateInputs(inputs_);
         Logger.processInputs("Manipulator", inputs_);
 
-        Logger.recordOutput("Manipulator/calibrated", elevator_reset_) ;
+        Logger.recordOutput("Manipulator/calibrated", elevator_calibrated_) ;
 
         Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
         Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
@@ -84,7 +78,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void resetElevator() {
-        elevator_reset_ = true ;
+        elevator_calibrated_ = true ;
         io_.resetPosition() ;
     }
 
