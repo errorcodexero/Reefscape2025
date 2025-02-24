@@ -35,7 +35,7 @@ public class FunnelConstants {
 
     public static final AngularVelocity maxVelocity = RotationsPerSecond.of(40);
     public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(40);
-    public static final double jerk = 40;
+    public static final double jerk = 0;
 
     public static final double kGearRatio = 40.0 / 14.0;
 
@@ -44,10 +44,10 @@ public class FunnelConstants {
     public static final Angle funnelArmMinAngle = Degrees.of(-90.0) ;
 
     public static class MotorPids {
-        public static final double kP = 0;
+        public static final double kP = 32;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kV = 0;
+        public static final double kV = 0.1;
         public static final double kA = 0;
         public static final double kG = 0;
         public static final double kS = 0;

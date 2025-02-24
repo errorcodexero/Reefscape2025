@@ -84,7 +84,7 @@ public class AutoCommands {
     addToSequence(seq,
       Commands.parallel(
         DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
-        new SetHoldingCmd(brainSub, GamePiece.CORAL))) ;
+        new CollectCoralCmd(brainSub, manipSub, grabberSub))) ;
 
     addToSequence(seq, logState(modename, "Place 1st"));
     addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;

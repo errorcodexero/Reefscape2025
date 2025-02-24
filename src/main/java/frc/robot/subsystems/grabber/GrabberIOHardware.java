@@ -20,12 +20,16 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public class GrabberIOHardware implements GrabberIO {
     private DigitalInterrupt coral_;
     private DigitalInterrupt algae_;
+
+    private AnalogInput distance_sensor_;
 
     private TalonFX grabber_motor_;
 
@@ -89,6 +93,8 @@ public class GrabberIOHardware implements GrabberIO {
 
         algae_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeSensor.kChannel);
         algae_.enable();
+
+        distance_sensor_ = new AnalogInput(GrabberConstants.kDistanceSensorInput) ;
     }
 
     @Override
@@ -115,6 +121,13 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.algaeSensor = algae_.value();
         inputs.algaeRisingEdge = algae_.risingEdge();
         inputs.algaeFallingEdge = algae_.fallingEdge();
+
+        inputs.distanceFromReefRaw = distance_sensor_.getValue();
+        inputs.distanceFromReef = mapDistanceSensor(inputs.distanceFromReefRaw);
+    }
+
+    private Distance mapDistanceSensor(double raw) {
+        return Inches.of(raw) ;
     }
 
     public void logArmMotor(SysIdRoutineLog log) {

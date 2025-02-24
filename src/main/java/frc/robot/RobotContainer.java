@@ -67,6 +67,7 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.CalibrateCmd;
 import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
@@ -378,6 +379,8 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+
+        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
     }
 
     public Drive drivebase() {

@@ -119,7 +119,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
         }
         catch(Exception ex) {
-            throw new RuntimeException("Could not set motor soft limits") ;
+            throw new RuntimeException("Could not set motor soft limits - " + ex.getMessage()) ;
         }
     }
 
@@ -188,6 +188,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             ManipulatorConstants.Arm.kCurrentLimit,
             ManipulatorConstants.Arm.kCurrentLimitTime
         );
+
+        arm_motor_.setControl(new MotionMagicVoltage(Degrees.of(0.0)).withEnableFOC(true)) ;
 
 
         // ENCODER + MAPPER
