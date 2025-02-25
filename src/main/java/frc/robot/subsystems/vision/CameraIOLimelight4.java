@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CameraIOLimelight4 extends CameraIOLimelight {
+    int current_imu_mode_ = -1 ;
+    int current_ll_throttle_ = -1 ;
 
     /**
      * An enum representing the mode of the Limelight4's IMU. This is an enum for log readiblity.
@@ -50,8 +52,15 @@ public class CameraIOLimelight4 extends CameraIOLimelight {
     public void updateInputs(CameraIOInputsAutoLogged inputs) {
         super.updateInputs(inputs);
 
-        LimelightHelpers.SetIMUMode(name_, currentMode_.id); // Set IMU Mode
-        LimelightHelpers.setLimelightNTDouble(name_, "throttle_set", currentThrottle_); // Set Throttle
+        if (current_imu_mode_ != currentMode_.id) {
+            LimelightHelpers.SetIMUMode(name_, currentMode_.id); // Set IMU Mode
+            current_imu_mode_ = currentMode_.id ;
+        }
+
+        if (current_ll_throttle_ != currentThrottle_) {
+            LimelightHelpers.setLimelightNTDouble(name_, "throttle_set", currentThrottle_); // Set Throttle
+            current_ll_throttle_ = currentThrottle_ ;
+        }
 
         inputs.imuMode = currentMode_;
         inputs.imuRobotYaw = Rotation2d.fromDegrees(LimelightHelpers.getIMUData(name_).robotYaw);

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -143,7 +144,9 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         seq.addCommands(
             RobotContainer.getInstance().gamepad().setLockCommand(true),
+            new StateCmd("placecoral", "simplepath"),
             DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
+            new StateCmd("placecoral", "gotopath"),
             new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
             new SetHoldingCmd(brain_, GamePiece.NONE),
 

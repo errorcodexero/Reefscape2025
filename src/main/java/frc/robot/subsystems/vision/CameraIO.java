@@ -24,7 +24,7 @@ public interface CameraIO {
         double averageDist,
         double ambiguity,
         int tagCount,
-        PoseEstimationType type,
+        // PoseEstimationType type,
         String cameraName
     ) {};
 
@@ -49,7 +49,7 @@ public interface CameraIO {
         
         public Translation2d[] rawCorners = new Translation2d[] {};
         
-        public Fiducial[] fiducials = new Fiducial[] {};
+        // public Fiducial[] fiducials = new Fiducial[] {};
         public PoseEstimation[] poseEstimates = new PoseEstimation[] {};
 
         public IMUMode imuMode = IMUMode.NONE;

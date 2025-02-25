@@ -49,7 +49,7 @@ public class CameraIOPhoton implements CameraIO {
                 inputs.simpleValid = false;
 
                 inputs.poseEstimates = new PoseEstimation[] {};
-                inputs.fiducials = new Fiducial[] {};
+                // inputs.fiducials = new Fiducial[] {};
                 inputs.rawCorners = new Translation2d[] {};
 
                 continue;
@@ -119,7 +119,7 @@ public class CameraIOPhoton implements CameraIO {
 
             inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
             inputs.rawCorners = cornerCoords.toArray(new Translation2d[0]);
-            inputs.fiducials = fiducials.toArray(new Fiducial[0]);
+            // inputs.fiducials = fiducials.toArray(new Fiducial[0]);
         }
     }
 

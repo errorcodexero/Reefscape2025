@@ -198,9 +198,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
+                        // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -571,9 +571,9 @@ public class RobotContainer {
             //
 
             // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            // ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
             // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
         }
         else {
             Command autoChosen = autoChooser_.get();

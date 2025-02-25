@@ -70,9 +70,13 @@ public class AprilTagVision extends SubsystemBase {
         return runOnce(() -> setEnabled(enabled));
     }
 
+    static public boolean xyzzy = true ;
+
     @Override
     public void periodic() {
-            
+        
+
+
         // Update inputs for each camera
         for (int index = 0; index < io_.length; index++) {
             io_[index].updateInputs(inputs_[index]);
@@ -92,19 +96,19 @@ public class AprilTagVision extends SubsystemBase {
 
             // Skip this camera if it is not connected.
             if (!inputs_[cam].connected) continue;
-
             ArrayList<Pose3d> tagPoses = new ArrayList<>();
             ArrayList<Pose2d> estimatedPoses = new ArrayList<>();
             ArrayList<Pose2d> acceptedPoses = new ArrayList<>();
             ArrayList<Pose2d> declinedPoses = new ArrayList<>();
 
+
             // Loop through visible tags.
-            for (Fiducial fid : inputs_[cam].fiducials) {
-                Optional<Pose3d> pose = FieldConstants.layout.getTagPose(fid.id());
-                if (pose.isPresent()) {
-                    tagPoses.add(pose.get());
-                }
-            }
+            // for (Fiducial fid : inputs_[cam].fiducials) {
+            //     Optional<Pose3d> pose = FieldConstants.layout.getTagPose(fid.id());
+            //     if (pose.isPresent()) {
+            //         tagPoses.add(pose.get());
+            //     }
+            // }
 
             // Loop through pose estimations.
             for (PoseEstimation est : inputs_[cam].poseEstimates) {
@@ -243,5 +247,4 @@ public class AprilTagVision extends SubsystemBase {
     private String getCameraName(int index) {
         return "Camera" + Integer.toString(index);
     }
-
 }

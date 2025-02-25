@@ -66,14 +66,14 @@ public class CameraIOLimelight implements CameraIO {
         }
 
         // Fetch Fiducials
-        RawFiducial[] fids = LimelightHelpers.getRawFiducials(name_);
+        // RawFiducial[] fids = LimelightHelpers.getRawFiducials(name_);
 
-        for (RawFiducial fid : fids) {
-            fiducials.add(new Fiducial((int) fid.id, fid.ta, fid.txnc, fid.tync));
-        }
+        // for (RawFiducial fid : fids) {
+        //     fiducials.add(new Fiducial((int) fid.id, fid.ta, fid.txnc, fid.tync));
+        // }
 
         inputs.rawCorners = corners.toArray(new Translation2d[0]);
-        inputs.fiducials = fiducials.toArray(new Fiducial[0]);
+        // inputs.fiducials = fiducials.toArray(new Fiducial[0]);
 
         PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);

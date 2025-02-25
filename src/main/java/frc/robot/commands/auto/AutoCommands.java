@@ -87,79 +87,79 @@ public class AutoCommands {
         new CollectCoralCmd(brainSub, manipSub, grabberSub))) ;
 
     addToSequence(seq, logState(modename, "Place 1st"));
-    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left)) ;
 
-    //     //
-    //     // Start driving to collect and lowering the elevator in parallel
-    //     //
-    // addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
-    // addToSequence(seq,
-    //     Commands.parallel(
-    //       Commands.sequence(
-    //         new WaitCommand(AutoCommands.DelayBeforeDriving),
-    //         DriveCommands.followPathCommand("Side Coral 2", mirroredX)),
-    //       new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
-    //                             ManipulatorConstants.Elevator.kPosToleranceBottom,
-    //                             ManipulatorConstants.Arm.Positions.kCollect,
-    //                             ManipulatorConstants.Arm.kPosTolerance)) ) ;
+        //
+        // Start driving to collect and lowering the elevator in parallel
+        //
+    addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
+    addToSequence(seq,
+        Commands.parallel(
+          Commands.sequence(
+            new WaitCommand(AutoCommands.DelayBeforeDriving),
+            DriveCommands.followPathCommand("Side Coral 2", mirroredX)),
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
+                                ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                ManipulatorConstants.Arm.Positions.kCollect,
+                                ManipulatorConstants.Arm.kPosTolerance)) ) ;
 
-    // //
-    // // Wait for coral to pass through the funnel
-    // //          
-    // addToSequence(seq, logState(modename, "Wait For 2nd"));
-    // addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
+    //
+    // Wait for coral to pass through the funnel
+    //          
+    addToSequence(seq, logState(modename, "Wait For 2nd"));
+    addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
 
-    //     //
-    //     // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
-    //     // of 1.5 m/s and the place coral below takes over
-    //     //
-    // addToSequence(seq, logState(modename, "Drive to Place 2nd")) ;
-    // addToSequence(seq,
-    //     Commands.parallel(
-    //       new CollectCoralCmd(brainSub, manipSub, grabberSub),
-    //       DriveCommands.followPathCommand("Side Coral 3", mirroredX))) ;
+        //
+        // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
+        // of 1.5 m/s and the place coral below takes over
+        //
+    addToSequence(seq, logState(modename, "Drive to Place 2nd")) ;
+    addToSequence(seq,
+        Commands.parallel(
+          new CollectCoralCmd(brainSub, manipSub, grabberSub),
+          DriveCommands.followPathCommand("Side Coral 3", mirroredX))) ;
 
-    //     //
-    //     // Place the second coral
-    //     //
-    // addToSequence(seq, logState(modename, "Place 2nd")) ;
-    // addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;
+        //
+        // Place the second coral
+        //
+    addToSequence(seq, logState(modename, "Place 2nd")) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left)) ;
 
-    //     //
-    //     // Start driving to collect and lowering the elevator in parallel
-    //     //
-    // addToSequence(seq, logState(modename, "Drive to Collect 3rd")) ;
-    // addToSequence(seq, 
-    //     Commands.parallel(
-    //       Commands.sequence(
-    //         new WaitCommand(DelayBeforeDriving),
-    //         DriveCommands.followPathCommand("Side Coral 4", mirroredX)),
-    //       new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
-    //                             ManipulatorConstants.Elevator.kPosToleranceBottom,
-    //                             ManipulatorConstants.Arm.Positions.kCollect,
-    //                             ManipulatorConstants.Arm.kPosTolerance)) ) ;
+        //
+        // Start driving to collect and lowering the elevator in parallel
+        //
+    addToSequence(seq, logState(modename, "Drive to Collect 3rd")) ;
+    addToSequence(seq, 
+        Commands.parallel(
+          Commands.sequence(
+            new WaitCommand(DelayBeforeDriving),
+            DriveCommands.followPathCommand("Side Coral 4", mirroredX)),
+          new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect, 
+                                ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                ManipulatorConstants.Arm.Positions.kCollect,
+                                ManipulatorConstants.Arm.kPosTolerance)) ) ;
 
-    //     //
-    //     // Wait for coral to pass through the funnel
-    //     //          
-    // addToSequence(seq, logState(modename, "Wait For 3rd")) ;
-    // addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
+        //
+        // Wait for coral to pass through the funnel
+        //          
+    addToSequence(seq, logState(modename, "Wait For 3rd")) ;
+    addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
 
-    //     //
-    //     // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
-    //     // of 1.5 m/s and the place coral below takes over
-    //     //        
-    // addToSequence(seq, logState(modename, "Drive to Place 3rd")) ;
-    // addToSequence(seq,
-    //     Commands.parallel(
-    //       new CollectCoralCmd(brainSub, manipSub, grabberSub),
-    //       DriveCommands.followPathCommand("Side Coral 5", mirroredX))) ;
+        //
+        // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
+        // of 1.5 m/s and the place coral below takes over
+        //        
+    addToSequence(seq, logState(modename, "Drive to Place 3rd")) ;
+    addToSequence(seq,
+        Commands.parallel(
+          new CollectCoralCmd(brainSub, manipSub, grabberSub),
+          DriveCommands.followPathCommand("Side Coral 5", mirroredX))) ;
 
-    //     // Place the third coral
-    // addToSequence(seq, logState(modename, "Place 3rd")) ;
-    // addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Left : CoralSide.Right)) ;
+        // Place the third coral
+    addToSequence(seq, logState(modename, "Place 3rd")) ;
+    addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Left : CoralSide.Right)) ;
 
-    // addToSequence(seq, logState(modename, "done")) ;
+    addToSequence(seq, logState(modename, "done")) ;
 
     return seq ;
   }
