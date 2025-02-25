@@ -23,18 +23,9 @@ public interface CameraIO {
         double timestamp,
         double averageDist,
         double ambiguity,
-        int tagCount,
-        // PoseEstimationType type,
-        String cameraName
+        int tagCount
     ) {};
-
-    public static record Fiducial(
-        int id,
-        double area,
-        double x,
-        double y
-    ) {};
-    
+   
     @AutoLog
     public static class CameraIOInputs {
         

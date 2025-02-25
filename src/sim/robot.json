@@ -198,7 +198,7 @@
                 "coral-sensor-init" : true,
                 "algae-sensor" : 2,
                 "algae-sensor-init" : true,
-                "funnel-sensor" : 6,
+                "funnel-sensor" : 10,
                 "funnel-sensor-init" : true
             },
             "events" : {

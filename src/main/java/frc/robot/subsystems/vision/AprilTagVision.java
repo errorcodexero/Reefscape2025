@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.subsystems.vision.CameraIO.Fiducial;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
@@ -174,10 +173,8 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/PoseStdDev/Linear", linearStdDev);
         Logger.recordOutput("Vision/PoseStdDev/Angular", angularStdDev);
 
-        if (est.type() == PoseEstimationType.MEGATAG2) {
-          linearStdDev *= VisionConstants.megatag2Factor;
-          angularStdDev = Double.POSITIVE_INFINITY;
-        }
+        linearStdDev *= VisionConstants.megatag2Factor;
+        angularStdDev = Double.POSITIVE_INFINITY;
 
         poseEstimateConsumer_.integrate(
             est.pose(),
@@ -197,11 +194,7 @@ public class AprilTagVision extends SubsystemBase {
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
 
-        if (VisionConstants.onlyUseFront && !estimation.cameraName().equals(VisionConstants.frontLimelightName)) return false;
-
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
-
-        if (estimation.type() == PoseEstimationType.MEGATAG1) return false; // If it is using Megatag1.
 
         if (estimation.tagCount() < VisionConstants.minimumTagCount) return false; // If there are less than the configured minimum.
 

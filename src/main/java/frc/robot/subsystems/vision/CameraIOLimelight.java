@@ -55,7 +55,6 @@ public class CameraIOLimelight implements CameraIO {
         inputs.simpleY = LimelightHelpers.getTY(name_);
 
         ArrayList<Translation2d> corners = new ArrayList<>();
-        ArrayList<Fiducial> fiducials = new ArrayList<>();
         ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
         // Fetch Raw Corners
@@ -75,30 +74,14 @@ public class CameraIOLimelight implements CameraIO {
         inputs.rawCorners = corners.toArray(new Translation2d[0]);
         // inputs.fiducials = fiducials.toArray(new Fiducial[0]);
 
-        PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);
-
-        if (estimateMegatag1 != null && estimateMegatag1.tagCount > 0) {
-            poseEstimates.add(new PoseEstimation(
-                estimateMegatag1.pose,
-                estimateMegatag1.timestampSeconds,
-                estimateMegatag1.avgTagDist,
-                estimateMegatag1.rawFiducials[0].ambiguity, // Single tag ambiguity
-                estimateMegatag1.tagCount,
-                PoseEstimationType.MEGATAG1,
-                name_
-            ));
-        }
-        
         if (estimateMegatag2 != null && estimateMegatag2.tagCount > 0) {
             poseEstimates.add(new PoseEstimation(
                 estimateMegatag2.pose,
                 estimateMegatag2.timestampSeconds,
                 estimateMegatag2.avgTagDist,
                 0.0,
-                estimateMegatag2.tagCount,
-                PoseEstimationType.MEGATAG2,
-                name_
+                estimateMegatag2.tagCount
             ));
         }
 
@@ -130,5 +113,4 @@ public class CameraIOLimelight implements CameraIO {
     public void resetLed() {
         LimelightHelpers.setLEDMode_PipelineControl(name_);
     }
-
 }

@@ -62,7 +62,6 @@ public class CameraIOPhoton implements CameraIO {
             // Target information to fill
 
             ArrayList<Translation2d> cornerCoords = new ArrayList<>();
-            ArrayList<Fiducial> fiducials = new ArrayList<>();
             ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
             
             // Get target information
@@ -71,14 +70,7 @@ public class CameraIOPhoton implements CameraIO {
 
                 for (TargetCorner corner : target.getDetectedCorners()) {
                     cornerCoords.add(new Translation2d(corner.x, corner.y));
-                }
-                
-                fiducials.add(new Fiducial(
-                    target.getFiducialId(),
-                    target.getArea(),
-                    target.getPitch(),
-                    target.getYaw()
-                ));
+                }   
             }
 
             // Calculate Average Tag Distance and Ambiguity
@@ -105,9 +97,7 @@ public class CameraIOPhoton implements CameraIO {
                     result.getTimestampSeconds(),
                     averageTagDist,
                     multitagResult.get().estimatedPose.ambiguity,
-                    multitagResult.get().fiducialIDsUsed.size(),
-                    PoseEstimationType.PHOTON_MULTITAG,
-                    camera_.getName()
+                    multitagResult.get().fiducialIDsUsed.size()
                 ));
             }
 

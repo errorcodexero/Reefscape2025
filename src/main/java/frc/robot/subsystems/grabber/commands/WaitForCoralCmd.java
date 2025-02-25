@@ -11,7 +11,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class WaitForCoralCmd extends Command {
 
-    private static boolean showState = true ;
+    private static boolean showState = false ;
 
     private GrabberSubsystem grabber_;
     private State state_;
@@ -71,7 +71,7 @@ public class WaitForCoralCmd extends Command {
         }
 
         if (showState) {
-            Logger.recordOutput("waitforcoral", state_.toString());
+            Logger.recordOutput("RobotState/waitforcoral", state_.toString());
         }
     }
 

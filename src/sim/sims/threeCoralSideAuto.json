@@ -23,35 +23,7 @@
             ]
         },
         {
-            "time" : 18.0,
-            "events" :
-            [
-                {
-                    "model" : "dio",
-                    "instance" : "1",
-                    "values" : 
-                    {
-                        "funnel-sensor" : false
-                    }
-                }
-            ]
-        },
-        {
-            "time" : 18.1,
-            "events" :
-            [
-                {
-                    "model" : "dio",
-                    "instance" : "1",
-                    "values" : 
-                    {
-                        "funnel-sensor" : true
-                    }
-                }
-            ]
-        },
-        {
-            "time" : 18.2,
+            "time" : 7.5,
             "events" :
             [
                 {
@@ -65,7 +37,63 @@
             ]
         },
         {
-            "time" : 18.3,
+            "time" : 7.8,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : true
+                    }
+                }
+            ]
+        },        
+        {
+            "time" : 16.6,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 16.8,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "funnel-sensor" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 18.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 18.4,
             "events" :
             [
                 {

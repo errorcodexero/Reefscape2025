@@ -363,6 +363,7 @@ public class BrainSubsystem extends SubsystemBase {
         }
 
         if (!RobotState.isEnabled() || !RobotState.isTeleop()) {
+            Logger.recordOutput("brain/holding", gp_.toString()) ;
             clearRobotActions() ;
             return ;
         }
