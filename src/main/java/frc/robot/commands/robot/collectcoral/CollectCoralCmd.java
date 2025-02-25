@@ -36,6 +36,10 @@ public class CollectCoralCmd extends XeroSequenceCmd {
                                       ManipulatorConstants.Arm.Positions.kCollect,
                                       ManipulatorConstants.Arm.kPosTolerance),
             new WaitForCoralCmd(grabber_),
+            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, 
+                                      ManipulatorConstants.Elevator.kPosToleranceBottom,
+                                      ManipulatorConstants.Arm.Positions.kStow,
+                                      ManipulatorConstants.Arm.kPosTolerance),            
             new SetHoldingCmd(brain_, GamePiece.CORAL)) ;
     }
 }

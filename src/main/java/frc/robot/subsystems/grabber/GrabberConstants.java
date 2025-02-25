@@ -29,8 +29,8 @@ public class GrabberConstants {
         }
 
         public class MotionMagic {
-            public static final double kMaxVelocity = 60.0 ;
-            public static final double kMaxAcceleration = 60.0 ;
+            public static final double kMaxVelocity = 100.0 ;
+            public static final double kMaxAcceleration = 300.0 ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -44,8 +44,10 @@ public class GrabberConstants {
 
         public class DepositCoral {
             public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
-            public static final AngularVelocity velocity = RotationsPerSecond.of(60.0) ;
-            public static final Time delay = Milliseconds.of(300.0) ;
+            public static final AngularVelocity velocityl4 = RotationsPerSecond.of(80.0) ;
+            public static final AngularVelocity velocityl2l3 = RotationsPerSecond.of(80.0) ;
+            public static final Time delayl2l3 = Milliseconds.of(600.0) ;
+            public static final Time delayl4 = Milliseconds.of(300.0) ;
             public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 

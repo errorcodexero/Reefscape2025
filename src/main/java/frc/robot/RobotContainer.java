@@ -151,9 +151,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                            new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
-                            new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation));
+                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)) ;
+                            // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                            // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation));
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -505,7 +505,7 @@ public class RobotContainer {
         );
 
         // Switch to X pattern / brake while X button is pressed
-        gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
+        // gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
         // gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
         gamepad_.a().onTrue(
@@ -513,6 +513,10 @@ public class RobotContainer {
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new WaitCommand(Seconds.of(4)),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow))) ;
+
+        gamepad_.x().onTrue(
+                    Commands.sequence(
+                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, ManipulatorConstants.Arm.Positions.kRaiseAngle)));
 
         // Robot Relative
         gamepad_.povUp().whileTrue(
