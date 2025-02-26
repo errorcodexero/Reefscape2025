@@ -382,7 +382,7 @@ public class RobotContainer {
         configureDriveBindings();
         configureButtonBindings();
 
-        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        // manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
     }
 
     public Drive drivebase() {
