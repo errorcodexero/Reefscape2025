@@ -82,7 +82,6 @@ import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
-import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.simulator.engine.ISimulatedSubsystem;
 
@@ -246,12 +245,12 @@ public class RobotContainer {
                         CompTunerConstants.kSpeedAt12Volts
                     );
 
-                    vision_ = new AprilTagVision(
-                        PoseEstimateConsumer.ignore(),
-                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
-                        new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
-                        new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
-                    );
+                    // vision_ = new AprilTagVision(
+                    //     PoseEstimateConsumer.ignore(),
+                    //     new CameraIOPhotonSim("Front", VisionConstants.frontTransform, drivebase_::getPose, true),
+                    //     new CameraIOPhotonSim("Back", VisionConstants.backTransform, drivebase_::getPose, false),
+                    //     new CameraIOPhotonSim("Left", VisionConstants.leftTransform, drivebase_::getPose, false)
+                    // );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());

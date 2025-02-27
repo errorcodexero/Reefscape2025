@@ -79,6 +79,8 @@ public class BrainSubsystem extends SubsystemBase {
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
 
+    private ReefFace [] values_ ;
+
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
         oi_ = oi ;
         db_ = db ;
@@ -94,6 +96,8 @@ public class BrainSubsystem extends SubsystemBase {
         gp_ = GamePiece.NONE ;
         leds_inited_ = false ;
         periodic_count_ = 0 ;
+
+        values_ = ReefFace.values() ;
     }
 
     public GamePiece gp() {
