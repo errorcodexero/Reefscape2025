@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6467532467532466,
-        "y": 2.966112012987013
+        "x": 3.290625,
+        "y": 2.5917499999999993
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.053675118272646,
-        "y": 3.2114690864662014
+        "x": 3.6975468715193993,
+        "y": 2.8371070734791877
       },
       "isLocked": false,
       "linkedName": "3 alliance side"
     },
     {
       "anchor": {
-        "x": 0.7215,
-        "y": 1.377874999999999
+        "x": 0.804375,
+        "y": 1.060999999999999
       },
       "prevControl": {
-        "x": 0.94957822700664,
-        "y": 1.4963591630340087
+        "x": 1.03245322700664,
+        "y": 1.1794841630340087
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.2,
+    "maxAcceleration": 4.2,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "Side Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 56.97613244420335
+    "rotation": 55.27100372047911
   },
   "useDefaultConstraints": false
 }

@@ -197,9 +197,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
-                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                        new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
-                        new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
+                        // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                        // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -381,7 +381,7 @@ public class RobotContainer {
         configureDriveBindings();
         configureButtonBindings();
 
-        // manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
     }
 
     public Drive drivebase() {

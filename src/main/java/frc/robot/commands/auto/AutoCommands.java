@@ -34,7 +34,7 @@ import frc.robot.subsystems.oi.CoralSide;
 public class AutoCommands {
 
   private final static boolean kDebug = true;
-  private final static Time DelayBeforeDriving = Milliseconds.of(500) ;
+  private final static Time DelayBeforeDriving = Milliseconds.of(100) ;
 
   private AutoCommands() {
   }

@@ -104,7 +104,7 @@ public class Drive extends SubsystemBase {
     private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> frConfig_;
     private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> blConfig_;
     private final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> brConfig_;
-    
+
     public Drive(
         GyroIO gyroIO,
         Function<SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>, ModuleIO> moduleConstructor,
@@ -201,7 +201,7 @@ public class Drive extends SubsystemBase {
             new SysIdRoutine.Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this)
         );
     }
-    
+
     @Override
     public void periodic() {
         odometryLock.lock(); // Prevents odometry updates while reading data
