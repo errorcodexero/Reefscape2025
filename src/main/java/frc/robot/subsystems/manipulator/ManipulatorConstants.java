@@ -14,6 +14,28 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class ManipulatorConstants {
 
+    public class SmartGoToValues {
+        //
+        // If the elevator is below this height, the arm can rotate from 0 to 90 degrees
+        //
+        public static final Distance kLowerRotateHeight = Centimeters.of(5.0) ;
+        public static final Angle kLowerRotateMinAngle = Degrees.of(0.0) ;
+        public static final Angle kLowerRotateMaxAingle = Degrees.of(90.0) ;
+
+        //
+        // If the elevator is betweeen the kLowerRotateForwardHeight and kUpperRotateForwardHeight, the arm must remain at the
+        // kRaiseAngle.  kRaiseAngle is defined below.
+        //
+
+        //
+        // If the elevator is above this height, the arm can rotate from 0 to 270 degrees
+        //
+        public static final Distance kUpperRotateHeight = Centimeters.of(92.0) ;
+        public static final Angle kUpperRotateMinAngle = Degrees.of(0.0) ;
+        public static final Angle kUpperRotateMaxAingle = Degrees.of(2700.0) ;
+    }
+
+
     public class Arm {
        
         // motor CAN ID
@@ -80,9 +102,9 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL4 = Degrees.of(80);
             public static final Angle kKickbackAngle = Degrees.of(19); 
             public static final Angle kCollect = Degrees.of(13) ;
-            public static final Angle kAlgaeReefCollectL2 = Degrees.of(190.0) ;
-            public static final Angle kAlgaeReefCollectL3 = Degrees.of(190.0) ;
-            public static final Angle kAlgaeReefHold = Degrees.of(200) ;
+            public static final Angle kAlgaeReefCollectL2 = Degrees.of(165.0) ;
+            public static final Angle kAlgaeReefCollectL3 = Degrees.of(165.0) ;
+            public static final Angle kAlgaeReefHold = Degrees.of(165) ;
             public static final Angle kScoreAlgaeReef = Degrees.of(200) ;
             public static final Angle kScoreAlgaeReef2 = Degrees.of(200) ;
             public static final Angle kRaiseAngle = Degrees.of(19.0) ;
@@ -149,14 +171,13 @@ public class ManipulatorConstants {
             public static final Distance kPlaceL1 = Centimeters.of(0); 
             public static final Distance kPlaceL2 = Centimeters.of(25); 
             public static final Distance kPlaceL3 = Centimeters.of(65); 
-            public static final Distance kPlaceL4 = Centimeters.of(131
-            ); 
+            public static final Distance kPlaceL4 = Centimeters.of(131); 
             public static final Distance kCollect = Centimeters.of(0.0) ;
-            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(92.0) ;
-            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(52.0) ;
+            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(78.0) ;
+            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(38.0) ;
             public static final Distance kAlgaeReefHold = Centimeters.of(12.0) ;
-            public static final Distance kScoreAlgaeReef = Centimeters.of(12.0) ;
-            public static final Distance kScoreAlgaeReef2 = Centimeters.of(12.0) ;
+            public static final Distance kScoreAlgaeReef = Centimeters.of(8.0) ;
+            public static final Distance kScoreAlgaeReef2 = Centimeters.of(8.0) ;
         }
     }
 }

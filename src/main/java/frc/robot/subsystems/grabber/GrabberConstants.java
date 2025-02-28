@@ -30,7 +30,7 @@ public class GrabberConstants {
 
         public class MotionMagic {
             public static final double kMaxVelocity = 60.0 ;
-            public static final double kMaxAcceleration = 60.0 ;
+            public static final double kMaxAcceleration = 300.0 ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -50,7 +50,7 @@ public class GrabberConstants {
         }
 
         public class CollectCoral {
-            public static final AngularVelocity kVelocity = RotationsPerSecond.of(30.0) ;
+            public static final AngularVelocity kVelocity = RotationsPerSecond.of(15.0) ;
             public static final AngularVelocity kBackupVelocity = RotationsPerSecond.of(-20.0) ;
         }
 

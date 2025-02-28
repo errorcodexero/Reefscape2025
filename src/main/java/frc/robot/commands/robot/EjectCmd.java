@@ -9,9 +9,10 @@ import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
-import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 
 public class EjectCmd extends XeroSequenceCmd {
     private BrainSubsystem brain_ ;
@@ -42,7 +43,7 @@ public class EjectCmd extends XeroSequenceCmd {
         if (brain_.gp() == GamePiece.ALGAE_HIGH) {
             seq.addCommands(
                 new DepositAlgaeCmd(grabber_),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition(), true),
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition()),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         }
         else {

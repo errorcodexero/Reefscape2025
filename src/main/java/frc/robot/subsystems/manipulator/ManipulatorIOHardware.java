@@ -358,6 +358,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public void syncArmPosition() {
         double enc = encoder_.get() ;
         double angle = mapper_.toRobot(enc) ;
+        if (angle < -135.0) {
+            angle += 360.0 ;
+        }
         Angle armAngle = Degrees.of(angle).times(ManipulatorConstants.Arm.kGearRatio) ;
         arm_motor_.setPosition(armAngle) ;
     }

@@ -1,8 +1,10 @@
-package frc.robot.subsystems.manipulator;
+package frc.robot.subsystems.manipulator.commands;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class GoToCmd extends Command {
 
@@ -10,7 +12,6 @@ public class GoToCmd extends Command {
         MoveArmToRaise,
         MoveElevator,
         MoveArm,
-        Direct,
         Done
     }
 
@@ -18,35 +19,22 @@ public class GoToCmd extends Command {
     private Distance targetElevPos_ ;
     private Angle targetArmPos_ ;
     private State state_ ;
-    private boolean direct_ ;
 
-    public GoToCmd(ManipulatorSubsystem m, Distance targetElevPos, Angle targetArmPos, boolean direct) {
+    public GoToCmd(ManipulatorSubsystem m, Distance targetElevPos, Angle targetArmPos) {
         m_ = m ;
         targetElevPos_ = targetElevPos ;
         targetArmPos_ = targetArmPos ;
-        direct_ = direct ;
-    }
-
-    public GoToCmd(ManipulatorSubsystem m, Distance targetElevPos, Angle targetArmPos) {
-        this(m, targetElevPos, targetArmPos, false) ;
     }
 
     @Override
     public void initialize() {
-        if (direct_) {
+        if (m_.getArmPosition().isNear(ManipulatorConstants.Arm.Positions.kRaiseAngle, ManipulatorConstants.Arm.kPosTolerance)) {
             m_.setElevatorTarget(targetElevPos_);
-            m_.setArmTarget(targetArmPos_);
-            state_ = State.Direct ;
+            state_ = State.MoveElevator ;
         }
         else {
-            if (m_.getArmPosition().isNear(ManipulatorConstants.Arm.Positions.kRaiseAngle, ManipulatorConstants.Arm.kPosTolerance)) {
-                m_.setElevatorTarget(targetElevPos_);
-                state_ = State.MoveElevator ;
-            }
-            else {
-                m_.setArmTarget(ManipulatorConstants.Arm.Positions.kRaiseAngle);
-                state_ = State.MoveArmToRaise ;
-            }
+            m_.setArmTarget(ManipulatorConstants.Arm.Positions.kRaiseAngle);
+            state_ = State.MoveArmToRaise ;
         }
     }
 
@@ -69,12 +57,6 @@ public class GoToCmd extends Command {
 
             case MoveArm:
                 if (m_.isArmAtTarget()) {
-                    state_ = State.Done ;
-                }
-                break ;
-
-            case Direct:
-                if (m_.isArmAtTarget() && m_.isElevAtTarget()) {
                     state_ = State.Done ;
                 }
                 break ;

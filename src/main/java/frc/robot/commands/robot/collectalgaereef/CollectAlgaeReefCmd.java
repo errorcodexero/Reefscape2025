@@ -20,9 +20,10 @@ import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
-import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.ReefUtil.ReefFace;
 
@@ -33,12 +34,13 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     private ReefLevel height_ ;
     private Drive db_ ;
     private boolean driveto_ ;
+    private boolean skipfirst_ ;
 
     public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height) {
-        this(brain, db, manipulator, grabber, height, true) ;
+        this(brain, db, manipulator, grabber, height, true, false) ;
     }
 
-    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean driveto) {
+    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean driveto, boolean skipfirst) {
         super("CollectAlgaeReefCmd") ;
         brain_ = brain ;
         db_ = db ;
@@ -46,6 +48,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         grabber_ = grabber;
         height_ = height ;
         driveto_ = driveto ;
+        skipfirst_ = skipfirst ;
     }
 
     // COMMANDS NEEDED:
@@ -82,12 +85,17 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         if (reefFace.isEmpty())
             return ;
 
-        seq.addCommands(
-            db_.stopCmd(),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
-                                      ManipulatorConstants.Arm.Positions.kRaiseAngle),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle, true),
-            new GoToCmd(manipulator_, height, angle, true)) ;
+        if (!skipfirst_) {
+            seq.addCommands(
+                db_.stopCmd(),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
+                                        ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle),
+                new GoToCmdDirect(manipulator_, height, angle)) ;
+        }
+        else {
+            seq.addCommands(new GoToCmdDirect(manipulator_, height, angle)) ;      
+        }
         
         if (driveto_) {
             seq.addCommands(
@@ -108,7 +116,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
                                             MetersPerSecond.of(1.0), 
                                             MetersPerSecondPerSecond.of(1.0)),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
-            new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
-                                      ManipulatorConstants.Arm.Positions.kAlgaeReefHold, true)) ;
+            new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
+                                      ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
     }
 }

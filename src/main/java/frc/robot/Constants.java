@@ -39,7 +39,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.COMPETITION;
 
     public static class DriveConstants {
         public static final double slowModeJoystickMultiplier = 0.4;
@@ -70,12 +70,12 @@ public final class Constants {
         /**
          * The minimum distance from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
          */
-        public static final Distance minimumDistanceToFace = Feet.of(2);
+        public static final Distance minimumDistanceToFace = Feet.of(0);
 
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(17);
+        public static final Distance distanceFromTagCoral = Inches.of(16);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
@@ -128,9 +128,6 @@ public final class Constants {
     }
 
     public static enum RobotType {
-        /** The Alpha Bot (aka the 2024 practice bot drivebase) */
-        ALPHA,
-
         /** The Competition Bot */
         COMPETITION,
 

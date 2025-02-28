@@ -171,7 +171,8 @@ public class AprilTagVision extends SubsystemBase {
         Logger.recordOutput("Vision/PoseStdDev/Angular", angularStdDev);
 
         if (est.type() == PoseEstimationType.MEGATAG2) {
-          linearStdDev *= VisionConstants.megatag2Factor;
+          linearStdDev = VisionConstants.megatag2Factor;
+          
           angularStdDev = Double.POSITIVE_INFINITY;
         }
 

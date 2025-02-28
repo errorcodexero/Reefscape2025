@@ -29,6 +29,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
@@ -353,8 +354,7 @@ public class DriveCommands {
       Pose2d curPose = drive.getPose();
       Transform2d curToTarget = targetPose.minus(curPose);
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(),
-          curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
@@ -363,11 +363,19 @@ public class DriveCommands {
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
+      ChassisSpeeds speed = drive.getChassisSpeeds() ;
+      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+
+      //
+      // The robot is currently moving in a given direction.  The path needs to take into account
+      // this starting condition.
+      //
+      IdealStartingState start = new IdealStartingState(vel, drive.getPose().getRotation()) ;
 
       PathPlannerPath path = new PathPlannerPath(
           waypoints,
           constraints,
-          null,
+          start,
           new GoalEndState(0.0, targetPose.getRotation()));
 
       path.preventFlipping = true;
