@@ -64,8 +64,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 
 public class Drive extends SubsystemBase {
     // These Constants should be the same for every drivebase, so just use the comp bot constants.
@@ -262,7 +262,7 @@ public class Drive extends SubsystemBase {
 
         // If in a simulation or replay, log reef face selection information.
         if (Constants.getMode() != Mode.REAL) {
-            Optional<ReefFace> face = ReefUtil.getTargetedReefFace(getPose());
+            Optional<ReefFaceInfo> face = ReefUtil.getTargetedReefFace(getPose());
 
             if (face.isPresent()) {
                 Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});

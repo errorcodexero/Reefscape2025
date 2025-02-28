@@ -80,6 +80,7 @@ import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.ReefUtil;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -126,7 +127,9 @@ public class RobotContainer {
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
-    private RobotContainer() {
+    private RobotContainer() {  
+        ReefUtil.initialize();
+
         /**
          * Subsystem setup
          */
@@ -549,11 +552,9 @@ public class RobotContainer {
             //
 
             // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            // ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_,
-            // grabber_, funnel_, true) ;
-            // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_,
-            // grabber_) ;
-            ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
+            ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
+            // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
         } else {
             Command autoChosen = autoChooser_.get();
             ret = autoChosen != null ? autoChosen : tuningChooser_.get();

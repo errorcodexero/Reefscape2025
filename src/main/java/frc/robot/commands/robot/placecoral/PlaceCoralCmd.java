@@ -32,8 +32,8 @@ import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
+import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
     private final Drive drive_;
@@ -94,7 +94,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         if (DriverStation.getAlliance().isEmpty())
             return ;
 
-        Optional<ReefFace> reefFace = ReefUtil.getTargetedReefFace(drive_.getPose());
+        Pose2d robotPose = drive_.getPose() ;
+        Optional<ReefFaceInfo> reefFace = ReefUtil.getTargetedReefFace(robotPose) ;
         if (reefFace.isEmpty())
             return ;
 
@@ -136,7 +137,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                 break ;
         }
 
-        ReefFace face = reefFace.get();
+        ReefFaceInfo face = reefFace.get();
         Pose2d scoringPose ;
         if (brain_.doesReefHaveAlgae()) {
             scoringPose = side == CoralSide.Left ? face.getLeftScoringWithAlgaePose() : face.getRightScoringWithAlgaePose();

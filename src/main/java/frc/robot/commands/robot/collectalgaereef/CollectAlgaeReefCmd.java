@@ -24,8 +24,8 @@ import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
+import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 
 public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     private BrainSubsystem brain_ ;
@@ -81,7 +81,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
             return ;
         }
 
-        Optional<ReefFace> reefFace = ReefUtil.getTargetedReefFace(db_.getPose());
+        Optional<ReefFaceInfo> reefFace = ReefUtil.getTargetedReefFace(db_.getPose());
         if (reefFace.isEmpty())
             return ;
 

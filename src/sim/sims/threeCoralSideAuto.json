@@ -23,6 +23,34 @@
             ]
         },
         {
+            "time" : 1.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.0,
+            "events" :
+            [
+                {
+                    "model" : "dio",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "coral-sensor" : true
+                    }
+                }
+            ]
+        },        
+        {
             "time" : 18.0,
             "events" :
             [

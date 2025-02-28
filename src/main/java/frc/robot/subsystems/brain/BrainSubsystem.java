@@ -18,8 +18,8 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIConstants.LEDState;
 import frc.robot.subsystems.oi.OIConstants.OILed;
 import frc.robot.subsystems.oi.OISubsystem;
+import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
-import frc.robot.util.ReefUtil.ReefFace;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
@@ -79,13 +79,6 @@ public class BrainSubsystem extends SubsystemBase {
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
 
-    //
-    // Do not remove this.  It is not used, but this forces the values to be loaded which avoids
-    // this long load during a robot loop
-    //
-    @SuppressWarnings("unused")
-    private ReefFace [] values_ ;
-
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
         oi_ = oi ;
         db_ = db ;
@@ -101,12 +94,6 @@ public class BrainSubsystem extends SubsystemBase {
         gp_ = GamePiece.NONE ;
         leds_inited_ = false ;
         periodic_count_ = 0 ;
-
-        //
-        // Do not remove this.  It is not used, but this forces the values to be loaded which avoids
-        // this long load during a robot loop
-        //        
-        values_ = ReefFace.values() ;
     }
 
     public GamePiece gp() {
@@ -420,7 +407,7 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     private void trackReefPlace() {
-        Optional<ReefFace> info = ReefUtil.getTargetedReefFace(db_.getPose()) ;
+        Optional<ReefFaceInfo> info = ReefUtil.getTargetedReefFace(db_.getPose()) ;
         if (info.isPresent()) {
             Logger.recordOutput("brain/reefplace", info.get().getLeftScoringPose()) ;
         }
