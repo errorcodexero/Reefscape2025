@@ -13,6 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,8 +52,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
@@ -354,6 +355,18 @@ public class Drive extends SubsystemBase {
     /** Returns a command to run a dynamic test in the specified direction. */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    }
+
+    /**
+     * Resets the gyroscope to be forward based on which alliance is present.
+     * This allows drivers to always Y & B to the same direction no matter the alliance.
+     * @return The command that does the stated
+     */
+    public Command smartResetGyro() {
+        return defer(() -> {
+            Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+            return alliance == Alliance.Blue ? resetGyroCmd() : resetGyroCmd(Rotation2d.fromRotations(0.5));
+        });
     }
     
     public Command resetGyroCmd(Rotation2d rotation) {

@@ -188,7 +188,6 @@ public class XeroGamepad {
     public void setRumble(RumbleType type, double value) {
         gamepad_.setRumble(type, value);
     }
-    
 
     public boolean isConnected() {
         return gamepad_.isConnected();

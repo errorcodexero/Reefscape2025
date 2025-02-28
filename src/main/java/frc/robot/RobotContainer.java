@@ -16,8 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,12 +25,10 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -67,12 +63,10 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.CalibrateCmd;
-import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -134,7 +128,10 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case COMPETITION:
                     drivebase_ = new Drive(
-                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
+                        new GyroIOPigeon2(
+                            CompTunerConstants.DrivetrainConstants.Pigeon2Id,
+                            CompTunerConstants.kCANBus
+                        ),
                         ModuleIOTalonFX::new,
                         CompTunerConstants.FrontLeft,
                         CompTunerConstants.FrontRight,
@@ -181,22 +178,25 @@ public class RobotContainer {
 
                 case PRACTICE:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(PracticeTunerConstants.DrivetrainConstants.Pigeon2Id,
-                                    PracticeTunerConstants.kCANBus),
-                            ModuleIOTalonFX::new,
-                            PracticeTunerConstants.FrontLeft,
-                            PracticeTunerConstants.FrontRight,
-                            PracticeTunerConstants.BackLeft,
-                            PracticeTunerConstants.BackRight,
-                            PracticeTunerConstants.kSpeedAt12Volts);
+                        new GyroIOPigeon2(
+                            PracticeTunerConstants.DrivetrainConstants.Pigeon2Id,
+                            PracticeTunerConstants.kCANBus
+                        ),
+                        ModuleIOTalonFX::new,
+                        PracticeTunerConstants.FrontLeft,
+                        PracticeTunerConstants.FrontRight,
+                        PracticeTunerConstants.BackLeft,
+                        PracticeTunerConstants.BackRight,
+                        PracticeTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.backLimelightName,
-                    // drivebase_::getRotation),
-                    // new CameraIOLimelight(VisionConstants.leftLimelightName,
-                    // drivebase_::getRotation)
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
+                        // new CameraIOLimelight(VisionConstants.backLimelightName,
+                        // drivebase_::getRotation),
+                        // new CameraIOLimelight(VisionConstants.leftLimelightName,
+                        // drivebase_::getRotation)
                     );
 
                     try {
@@ -226,18 +226,17 @@ public class RobotContainer {
 
                     break;
 
-                case SIMBOT:
-                case XEROSIM:
+                case SIMBOT, XEROSIM:
                     // Sim robot, instantiate physics sim IO implementations
                     drivebase_ = new Drive(
-                            new GyroIO() {
-                            },
-                            ModuleIOSim::new,
-                            CompTunerConstants.FrontLeft,
-                            CompTunerConstants.FrontRight,
-                            CompTunerConstants.BackLeft,
-                            CompTunerConstants.BackRight,
-                            CompTunerConstants.kSpeedAt12Volts);
+                        new GyroIO() {},
+                        ModuleIOSim::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     // vision_ = new AprilTagVision(
                     // PoseEstimateConsumer.ignore(),
@@ -466,66 +465,72 @@ public class RobotContainer {
 
         // Default command, normal field-relative drive
         drivebase_.setDefaultCommand(
-                DriveCommands.joystickDrive(
-                        drivebase_,
-                        () -> -gamepad_.getLeftY(),
-                        () -> -gamepad_.getLeftX(),
-                        () -> -gamepad_.getRightX()));
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> -gamepad_.getLeftY(),
+                () -> -gamepad_.getLeftX(),
+                () -> -gamepad_.getRightX()
+            )
+        );
 
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
-                DriveCommands.joystickDrive(
-                        drivebase_,
-                        () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier
+            )
+        );
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
+
+        // Execute
         // gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
 
-        gamepad_.a().onTrue(
-                Commands.sequence(
-                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4,
-                                ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                        new WaitCommand(Seconds.of(4)),
-                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow,
-                                ManipulatorConstants.Arm.Positions.kStow)));
+        // Drivers could press this by accident
+        // gamepad_.a().onTrue(
+        //     Commands.sequence(
+        //         new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4,
+        //                 ManipulatorConstants.Arm.Positions.kRaiseAngle),
+        //         new WaitCommand(Seconds.of(4)),
+        //         new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow,
+        //                 ManipulatorConstants.Arm.Positions.kStow)
+        //     )
+        // );
 
         // Robot Relative
         gamepad_.povUp().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero()));
 
         gamepad_.povDown().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0),
-                        RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0),
+                RadiansPerSecond.zero()));
 
         gamepad_.povLeft().whileTrue(
-                drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero()));
 
         gamepad_.povRight().whileTrue(
-                drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(),
-                        RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(),
+                RadiansPerSecond.zero()));
 
         // Robot relative diagonal
         gamepad_.povUpLeft().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
         gamepad_.povUpRight().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         gamepad_.povDownLeft().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
         gamepad_.povDownRight().whileTrue(
-                drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
+            drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(
-                drivebase_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.smartResetGyro());
 
-        gamepad_.y().and(gamepad_.a()).and(gamepad_.rightBumper()).onTrue(
-                drivebase_.resetGyroCmd(new Rotation2d(Rotations.of(0.5))));
     }
 
     /**
