@@ -39,7 +39,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.PRACTICE;
+    private static final RobotType robotType = RobotType.COMPETITION;
 
     public static class DriveConstants {
         public static final double slowModeJoystickMultiplier = 0.4;
@@ -128,9 +128,6 @@ public final class Constants {
     }
 
     public static enum RobotType {
-        /** The Alpha Bot (aka the 2024 practice bot drivebase) */
-        ALPHA,
-
         /** The Competition Bot */
         COMPETITION,
 
