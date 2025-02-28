@@ -13,6 +13,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -22,11 +28,6 @@ import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -133,21 +134,22 @@ public class RobotContainer {
             switch (Constants.getRobot()) {
                 case COMPETITION:
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
-                                ModuleIOTalonFX::new,
-                                CompTunerConstants.FrontLeft,
-                                CompTunerConstants.FrontRight,
-                                CompTunerConstants.BackLeft,
-                                CompTunerConstants.BackRight,
-                                CompTunerConstants.kSpeedAt12Volts);
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
+                        ModuleIOTalonFX::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.backLimelightName,
-                    // drivebase_::getRotation),
-                    // new CameraIOLimelight(VisionConstants.leftLimelightName,
-                    // drivebase_::getRotation)
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
+                        // new CameraIOLimelight(VisionConstants.backLimelightName,
+                        // drivebase_::getRotation),
+                        // new CameraIOLimelight(VisionConstants.leftLimelightName,
+                        // drivebase_::getRotation)
                     );
 
                     try {
@@ -277,32 +279,33 @@ public class RobotContainer {
 
         /**
          * Empty subsystem setup (required in replay)
+         * 
+         * These will be null in replay, or whenever a case
+         * above leaves a subsystem uninstantiated.
          */
-        if (drivebase_ == null) { // This will be null in replay, or whenever a case above leaves a subsystem
-                                  // uninstantiated.
+        if (drivebase_ == null) {
             switch (Constants.getRobot()) {
                 case PRACTICE:
                     drivebase_ = new Drive(
-                            new GyroIO() {
-                            },
-                            ModuleIOReplay::new,
-                            PracticeTunerConstants.FrontLeft,
-                            PracticeTunerConstants.FrontRight,
-                            PracticeTunerConstants.BackLeft,
-                            PracticeTunerConstants.BackRight,
-                            PracticeTunerConstants.kSpeedAt12Volts);
+                        new GyroIO() {},
+                        ModuleIOReplay::new,
+                        PracticeTunerConstants.FrontLeft,
+                        PracticeTunerConstants.FrontRight,
+                        PracticeTunerConstants.BackLeft,
+                        PracticeTunerConstants.BackRight,
+                        PracticeTunerConstants.kSpeedAt12Volts
+                    );
                     break;
-                    
                 default: // SimBot or Comp Bot
                     drivebase_ = new Drive(
-                            new GyroIO() {
-                            },
-                            ModuleIOReplay::new,
-                            CompTunerConstants.FrontLeft,
-                            CompTunerConstants.FrontRight,
-                            CompTunerConstants.BackLeft,
-                            CompTunerConstants.BackRight,
-                            CompTunerConstants.kSpeedAt12Volts);
+                        new GyroIO() {},
+                        ModuleIOReplay::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
                     break;
             }
         }
@@ -313,32 +316,25 @@ public class RobotContainer {
             };
 
             CameraIO[] cams = new CameraIO[numCams];
-            Arrays.fill(cams, new CameraIO() {
-            });
+            Arrays.fill(cams, new CameraIO() {});
 
-            vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
-                    cams);
+            vision_ = new AprilTagVision(drivebase_::addVisionMeasurement, cams);
         }
 
         if (manipulator_ == null) {
-            manipulator_ = new ManipulatorSubsystem(new ManipulatorIO() {
-            });
+            manipulator_ = new ManipulatorSubsystem(new ManipulatorIO() {});
         }
 
         if (grabber_ == null) {
-            grabber_ = new GrabberSubsystem(new GrabberIO() {
-            });
+            grabber_ = new GrabberSubsystem(new GrabberIO() {});
         }
 
         if (funnel_ == null) {
-            funnel_ = new FunnelSubsystem(new FunnelIO() {
-            });
+            funnel_ = new FunnelSubsystem(new FunnelIO() {});
         }
 
         if (climber_ == null) {
-            climber_ = new ClimberSubsystem(new ClimberIO() {
-            });
+            climber_ = new ClimberSubsystem(new ClimberIO() {});
         }
 
         // OI Setup
