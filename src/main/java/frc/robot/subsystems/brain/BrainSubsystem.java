@@ -79,6 +79,11 @@ public class BrainSubsystem extends SubsystemBase {
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
 
+    //
+    // Do not remove this.  It is not used, but this forces the values to be loaded which avoids
+    // this long load during a robot loop
+    //
+    @SuppressWarnings("unused")
     private ReefFace [] values_ ;
 
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
@@ -97,6 +102,10 @@ public class BrainSubsystem extends SubsystemBase {
         leds_inited_ = false ;
         periodic_count_ = 0 ;
 
+        //
+        // Do not remove this.  It is not used, but this forces the values to be loaded which avoids
+        // this long load during a robot loop
+        //        
         values_ = ReefFace.values() ;
     }
 
@@ -348,6 +357,8 @@ public class BrainSubsystem extends SubsystemBase {
     public void periodic() {
         String status = "" ;
 
+        Logger.recordOutput("brain/holding", gp_.toString()) ;
+
         if (c_.readyToClimb()) {
             //
             // This does not really belong in the brain, but it is a good place to put it for now
@@ -405,7 +416,7 @@ public class BrainSubsystem extends SubsystemBase {
         Logger.recordOutput("brain/locked", locked_) ;
         Logger.recordOutput("brain/current_action", (current_action_ != null) ? current_action_.toString() : "none") ; 
         Logger.recordOutput("brain/next_action", next_action_ != null ? next_action_.toString() : "none") ;
-        Logger.recordOutput("brain/holding", gp_.toString()) ;
+;
     }
 
     private void trackReefPlace() {
@@ -421,7 +432,7 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(this, m_, g_)) ;
+                list.add(new CollectCoralCmd(this, m_, g_, false)) ;
                 conds.add(null) ;
                 break ;
 

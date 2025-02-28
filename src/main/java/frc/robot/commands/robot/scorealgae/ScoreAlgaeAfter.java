@@ -27,9 +27,10 @@ import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositAlgaeCmd;
-import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 
 public class ScoreAlgaeAfter extends XeroSequenceCmd {
     private static final int kRedAprilTag = 3;
@@ -61,8 +62,8 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
         seq.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
-                        new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef,
-                                ManipulatorConstants.Arm.Positions.kScoreAlgaeReef, true),
+                        new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kScoreAlgaeReef,
+                                ManipulatorConstants.Arm.Positions.kScoreAlgaeReef),
                         DriveCommands.simplePathCommand(db_, scoringPose.get(),
                                 CommandConstants.AlgaeScore.kMaxDriveVelocity,
                                 CommandConstants.AlgaeScore.kMaxDriveAcceleration)),
@@ -75,10 +76,10 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
                         db_.runVelocityCmd(MetersPerSecond.of(0.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
                 RobotContainer.getInstance().gamepad().setLockCommand(false),                        
                 new SetHoldingCmd(brain_, GamePiece.NONE),
-                new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        m_.getArmPosition(), true),
-                new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        ManipulatorConstants.Arm.Positions.kRaiseAngle, true),
+                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
+                        m_.getArmPosition()),
+                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
+                        ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow,
                         ManipulatorConstants.Arm.Positions.kStow));
     }

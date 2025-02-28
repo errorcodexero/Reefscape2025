@@ -270,6 +270,9 @@ public class Drive extends SubsystemBase {
                 Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {});
             }
         }
+
+        ChassisSpeeds spd = getChassisSpeeds() ;
+        Logger.recordOutput("drive/velocity", Math.hypot(spd.vxMetersPerSecond, spd.vyMetersPerSecond)) ;
     }
     
     /**

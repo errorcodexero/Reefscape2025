@@ -1,4 +1,4 @@
-package frc.robot.subsystems.manipulator;
+package frc.robot.subsystems.manipulator.commands;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Volts;
@@ -7,6 +7,8 @@ import org.littletonrobotics.junction.Logger;
 import org.xerosw.SampleAverager;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 
 public class CalibrateCmd extends Command {
     private ManipulatorSubsystem m_ ;

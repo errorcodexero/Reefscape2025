@@ -70,7 +70,7 @@ public final class Constants {
         /**
          * The minimum distance from the ROBOT to the nearest face of the REEF for it to be considered targeting that face.
          */
-        public static final Distance minimumDistanceToFace = Feet.of(2);
+        public static final Distance minimumDistanceToFace = Feet.of(0);
 
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.

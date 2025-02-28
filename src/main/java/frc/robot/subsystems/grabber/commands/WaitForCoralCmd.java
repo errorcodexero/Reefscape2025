@@ -16,6 +16,7 @@ public class WaitForCoralCmd extends Command {
     private GrabberSubsystem grabber_;
     private State state_;
     private XeroTimer timer_ ;
+    private boolean dobackup_ ;
 
     private enum State {
         WaitingForCoral,
@@ -24,10 +25,11 @@ public class WaitForCoralCmd extends Command {
         Finish
     }
 
-    public WaitForCoralCmd(GrabberSubsystem grabber) {
+    public WaitForCoralCmd(GrabberSubsystem grabber, boolean dobackup) {
         addRequirements(grabber);
         grabber_ = grabber;
-        timer_ = new XeroTimer(Milliseconds.of(200)) ;
+        timer_ = new XeroTimer(Milliseconds.of(40)) ;
+        dobackup_ = dobackup ;
     }
 
     @Override
@@ -47,8 +49,13 @@ public class WaitForCoralCmd extends Command {
             case WaitingForCoral:
                 if (grabber_.coralFalling() || !grabber_.coralSensor()) {
                     grabber_.setGrabberMotorVoltage(0.0) ;
-                    timer_.start();
-                    state_ = State.Delay;
+                    if (!dobackup_) {
+                        state_ = State.Finish;
+                    }
+                    else {
+                        timer_.start();
+                        state_ = State.Delay;
+                    }
                 }
                 break;
 

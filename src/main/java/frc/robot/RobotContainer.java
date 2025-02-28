@@ -68,17 +68,16 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.manipulator.CalibrateCmd;
-import frc.robot.subsystems.manipulator.GoToCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.commands.CalibrateCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
-import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
@@ -223,12 +222,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }                    
 
-                    try {
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                    }
-                    catch(Exception ex) {
-                        subsystemCreateException(ex) ;
-                    }
+                    // try {
+                    //     climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    // }
+                    // catch(Exception ex) {
+                    //     subsystemCreateException(ex) ;
+                    // }
 
                     break;
 
