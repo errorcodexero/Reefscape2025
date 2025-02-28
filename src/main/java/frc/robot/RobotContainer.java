@@ -75,6 +75,7 @@ import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.CalibrateCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -492,20 +493,6 @@ public class RobotContainer {
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
-        gamepad_.a().onTrue(
-            Commands.sequence(
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, Degrees.of(100.0)),
-                new RunGrabberVoltsCmd(grabber_, Seconds.of(2.0))
-            )
-        ) ;
-
-        gamepad_.a().onTrue(
-                Commands.sequence(
-                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4,
-                                ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                        new WaitCommand(Seconds.of(4)),
-                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow,
-                                ManipulatorConstants.Arm.Positions.kStow)));
 
         // Robot Relative
         gamepad_.povUp().whileTrue(
@@ -538,9 +525,6 @@ public class RobotContainer {
         // Reset gyro to 0° when Y & B button is pressed
         gamepad_.y().and(gamepad_.b()).onTrue(
                 drivebase_.resetGyroCmd());
-
-        gamepad_.y().and(gamepad_.a()).and(gamepad_.rightBumper()).onTrue(
-                drivebase_.resetGyroCmd(new Rotation2d(Rotations.of(0.5))));
     }
 
     /**

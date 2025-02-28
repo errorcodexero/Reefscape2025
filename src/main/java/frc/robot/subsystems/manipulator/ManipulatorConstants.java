@@ -66,7 +66,7 @@ public class ManipulatorConstants {
         public static final Angle kStartAbsEncoderAngle = Degrees.of(-45.0) ;        
 
         public class PID {
-            public static final double kP = 4.0 ; 
+            public static final double kP = 48.0 ; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.1 ;
@@ -77,8 +77,8 @@ public class ManipulatorConstants {
 
         public class MotionMagic {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(56.0) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300.0) ;
-            public static final double kJerk = 3000.0 ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(450.0) ;
+            public static final double kJerk = 0.0 ;
         }
 
         public class ThruBoreEncoder {
@@ -173,8 +173,8 @@ public class ManipulatorConstants {
             public static final Distance kPlaceL3 = Centimeters.of(68); 
             public static final Distance kPlaceL4 = Centimeters.of(131); 
             public static final Distance kCollect = Centimeters.of(0.0) ;
-            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(78.0) ;
-            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(38.0) ;
+            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(76.0) ;
+            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(36.0) ;
             public static final Distance kAlgaeReefHold = Centimeters.of(12.0) ;
             public static final Distance kScoreAlgaeReef = Centimeters.of(8.0) ;
             public static final Distance kScoreAlgaeReef2 = Centimeters.of(8.0) ;

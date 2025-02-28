@@ -39,7 +39,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.XEROSIM;
+    private static final RobotType robotType = RobotType.COMPETITION;
 
     public static class DriveConstants {
         public static final double slowModeJoystickMultiplier = 0.4;
