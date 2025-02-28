@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -67,6 +68,7 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.RunGrabberVoltsCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
@@ -490,7 +492,12 @@ public class RobotContainer {
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
-        // gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_)) ;
+        gamepad_.a().onTrue(
+            Commands.sequence(
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, Degrees.of(100.0)),
+                new RunGrabberVoltsCmd(grabber_, Seconds.of(2.0))
+            )
+        ) ;
 
         gamepad_.a().onTrue(
                 Commands.sequence(

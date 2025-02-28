@@ -169,8 +169,8 @@ public class ManipulatorConstants {
             public static final Distance kStow = Centimeters.of(2);
 
             public static final Distance kPlaceL1 = Centimeters.of(0); 
-            public static final Distance kPlaceL2 = Centimeters.of(25); 
-            public static final Distance kPlaceL3 = Centimeters.of(65); 
+            public static final Distance kPlaceL2 = Centimeters.of(28); 
+            public static final Distance kPlaceL3 = Centimeters.of(68); 
             public static final Distance kPlaceL4 = Centimeters.of(131); 
             public static final Distance kCollect = Centimeters.of(0.0) ;
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(78.0) ;
