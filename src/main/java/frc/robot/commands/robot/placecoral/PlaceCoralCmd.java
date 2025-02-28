@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -69,6 +70,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         lower_manip_ = lower ;
         drive_while_raising_ = drive_while_raising ;
+
+        drive_while_raising_ = true ;
     }
 
     // Called when the command is initially scheduled.
@@ -128,8 +131,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             case L4:
                 target_elev_pos_ = Elevator.Positions.kPlaceL4;
                 target_arm_pos_ = Arm.Positions.kPlaceL4;
-                // maxvel = CommandConstants.ReefDrive.kMaxDriveVelocityL4 ;
-                // maxaccel = CommandConstants.ReefDrive.kMaxDriveAccelerationL4 ;
                 break ;
 
             default:
@@ -151,19 +152,17 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         if (drive_while_raising_) {
             seq.addCommands(
                 Commands.parallel(
-                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel)),
+                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
                     new BackupCoralCmd(grabber_),
-                    new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ;
+                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle)));
         }
         else {
+            seq.addCommands(new BackupCoralCmd(grabber_)) ;
             seq.addCommands(DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel)) ;
         }
 
         seq.addCommands(
-            Commands.parallel(
-                new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-                new BackupCoralCmd(grabber_)),
-
+            new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
                 Commands.sequence(

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.290625,
-        "y": 2.5917499999999993
+        "x": 3.1005000000000003,
+        "y": 2.5039999999999996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6975468715193993,
-        "y": 2.8371070734791877
+        "x": 3.5074218715193997,
+        "y": 2.749357073479188
       },
       "isLocked": false,
       "linkedName": "3 alliance side"
     },
     {
       "anchor": {
-        "x": 0.8404626623376623,
-        "y": 1.171225649350648
+        "x": 0.7605000000000001,
+        "y": 1.295
       },
       "prevControl": {
-        "x": 1.0685408893443022,
-        "y": 1.2897098123846578
+        "x": 0.98857822700664,
+        "y": 1.4134841630340096
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.8,
-    "maxAcceleration": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
