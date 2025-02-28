@@ -23,6 +23,7 @@ import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.grabber.commands.BackupCoralCmd;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
@@ -150,6 +151,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             seq.addCommands(
                 Commands.parallel(
                     DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel)),
+                    new BackupCoralCmd(grabber_),
                     new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_)) ;
         }
         else {
@@ -157,8 +159,9 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         }
 
         seq.addCommands(
-            new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
-            new SetHoldingCmd(brain_, GamePiece.NONE),
+            Commands.parallel(
+                new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+                new BackupCoralCmd(grabber_)),
 
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
@@ -166,7 +169,10 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     new WaitCommand(Milliseconds.of(200)),
                     new GoToCmdDirect(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle)
                 )
-            )) ;
+            ),
+
+            new SetHoldingCmd(brain_, GamePiece.NONE)
+        ) ;
             
 
         if (lower_manip_) {
