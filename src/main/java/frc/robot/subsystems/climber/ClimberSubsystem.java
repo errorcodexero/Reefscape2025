@@ -29,10 +29,6 @@ public class ClimberSubsystem extends SubsystemBase {
       ready_to_climb_ = new Trigger(this::readyToClimb) ;
    }
 
-   public void setClimberState(ClimberState state) {
-      state_ = state;
-   }
-
    public ClimberState getClimberState() {
       return state_;
    }
@@ -45,9 +41,10 @@ public class ClimberSubsystem extends SubsystemBase {
       return ready_to_climb_;
    }
 
-   public void setClimberTarget(Angle angle) {
-      target_angle_ = angle;
-      io_.setClimberPosition(angle);
+   public void setClimberTarget(ClimberState state) {
+      state_ = state ;
+      target_angle_ = state.getAngle();
+      io_.setClimberPosition(target_angle_);
    }
 
    public boolean isClimberAtTarget() {

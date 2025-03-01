@@ -13,13 +13,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -28,12 +24,10 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
@@ -68,14 +62,10 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.RunGrabberVoltsCmd;
-import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.CalibrateCmd;
-import frc.robot.subsystems.manipulator.commands.GoToCmd;
-import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -151,10 +141,8 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
                             new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.backLimelightName,
-                    // drivebase_::getRotation),
-                    // new CameraIOLimelight(VisionConstants.leftLimelightName,
-                    // drivebase_::getRotation)
+                    // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                    // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -175,12 +163,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }
 
-                    // try {
-                    // climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                    // }
-                    // catch(Exception ex) {
-                    // subsystemCreateException(ex) ;
-                    // }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
                     break;
 
@@ -222,12 +210,12 @@ public class RobotContainer {
                         subsystemCreateException(ex);
                     }
 
-                    // try {
-                    // climber_ = new ClimberSubsystem(new ClimberIOHardware());
-                    // }
-                    // catch(Exception ex) {
-                    // subsystemCreateException(ex) ;
-                    // }
+                    try {
+                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                    }
+                    catch(Exception ex) {
+                        subsystemCreateException(ex) ;
+                    }
 
                     break;
 
@@ -462,12 +450,9 @@ public class RobotContainer {
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));
 
-        oi_.climbLock().onFalse(new PrepClimbCmd(climber_, funnel_));
-        oi_.climbLock().onTrue(new StowClimberCmd(climber_, funnel_));
-        oi_.climbExecute().onTrue(new ExecuteClimbCmd(climber_));
-
+        oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(climber_, funnel_, manipulator_));
+        oi_.climbLock().onTrue(new StowClimberCmd(manipulator_, climber_, funnel_)) ;
         oi_.climbExecute().and(climber_.readyToClimbTrigger()).onTrue(vision_.setEnabledCommand(true));
-        oi_.climbDeploy().onTrue(vision_.setEnabledCommand(false));
     }
 
     /**

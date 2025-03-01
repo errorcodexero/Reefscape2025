@@ -69,7 +69,7 @@ public class OISubsystem extends SubsystemBase {
         // Create the action triggers
         abort_trigger_ = new Trigger(() -> inputs_.abort) ;
         eject_trigger_ = new Trigger(() -> inputs_.eject) ;
-        climb_lock_trigger_ = new Trigger(() -> inputs_.climb_lock) ;
+        climb_lock_trigger_ = new Trigger(() -> !inputs_.climb_lock) ;
         climb_exec_trigger_ = new Trigger(()-> inputs_.climb_execute) ;
         climb_deploy_trigger_ = new Trigger(()-> inputs_.climb_deploy) ;
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;

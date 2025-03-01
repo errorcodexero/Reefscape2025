@@ -345,6 +345,7 @@ public class BrainSubsystem extends SubsystemBase {
         String status = "" ;
 
         Logger.recordOutput("brain/holding", gp_.toString()) ;
+        trackReefPlace() ;
 
         if (c_.readyToClimb()) {
             //
@@ -397,7 +398,6 @@ public class BrainSubsystem extends SubsystemBase {
             }
         }
 
-        trackReefPlace() ;
 
         Logger.recordOutput("brain/status", status) ;
         Logger.recordOutput("brain/locked", locked_) ;

@@ -15,7 +15,7 @@ public class ClimberPositionCmd extends Command {
 
     @Override
     public void initialize() {
-        sub_.setClimberTarget(goalState_.getAngle());
+        sub_.setClimberTarget(goalState_);
     }
 
     @Override
@@ -24,7 +24,6 @@ public class ClimberPositionCmd extends Command {
 
         if (sub_.isClimberAtTarget()) {
             ret = true ;
-            sub_.setClimberState(goalState_);
         }
 
         return ret;

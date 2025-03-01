@@ -13,7 +13,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import static edu.wpi.first.units.Units.*;
 
-import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -23,7 +22,6 @@ public class ClimberIOHardware implements ClimberIO {
     
     private TalonFX climber_motor_;
     private DutyCycleEncoder encoder_; 
-    private EncoderMapper mapper_; 
     private boolean encoder_motor_synced_ = false ;
 
     private StatusSignal<Angle> climber_pos_sig_; 
@@ -35,17 +33,6 @@ public class ClimberIOHardware implements ClimberIO {
 
     public ClimberIOHardware() throws Exception {
         encoder_ = new DutyCycleEncoder(ClimberConstants.ThruBoreEncoder.kAbsEncoder) ;
-
-        mapper_ = new EncoderMapper(
-            ClimberConstants.ThruBoreEncoder.kRobotMax,
-            ClimberConstants.ThruBoreEncoder.kRobotMin,
-            ClimberConstants.ThruBoreEncoder.kEncoderMax,
-            ClimberConstants.ThruBoreEncoder.kEncoderMin
-        );
-
-        // ENCODER CONFIGS: 
-        mapper_.calibrate(ClimberConstants.ThruBoreEncoder.kRobotCalibrationValue,
-                          ClimberConstants.ThruBoreEncoder.kEncoderCalibrationValue);         
 
         attached_switch_one_ = new DigitalInput(ClimberConstants.kAttachedSensor);
 
@@ -89,27 +76,23 @@ public class ClimberIOHardware implements ClimberIO {
         climber_vol_sig_, climber_current_sig_);
     }
 
-    public void moveClimber(Angle angle) {
-        climber_motor_.setControl(new MotionMagicVoltage(angle).withEnableFOC(true)) ;
-    }
-
     @Override
     public void updateInputs(ClimberIOInputsAutoLogged inputs) {
-            
         if (!encoder_motor_synced_ && RobotState.isEnabled()) {
             syncClimberPosition() ;
             encoder_motor_synced_ = true ;
         }
 
-        inputs.attachedSensor = attached_switch_one_.get();
+        inputs.attachedSensor = !attached_switch_one_.get();
 
-        inputs.climberPosition = climber_pos_sig_.refresh().getValue().div(ClimberConstants.Climber.kGearRatio);
+        inputs.absEncoderRawValue = encoder_.get();
+        inputs.absEncoderValue = Degrees.of(encoderToRobot(inputs.absEncoderRawValue));
+
+        inputs.climberRawPosition = climber_pos_sig_.refresh().getValue();
+        inputs.climberPosition = inputs.climberRawPosition.div(ClimberConstants.Climber.kGearRatio);
         inputs.climberVelocity = climber_vel_sig_.refresh().getValue().div(ClimberConstants.Climber.kGearRatio);
         inputs.climberVoltage = climber_vol_sig_.refresh().getValue();
         inputs.climberCurrent = climber_current_sig_.refresh().getValue();
-
-        inputs.absEncoderRawValue = encoder_.get();
-        inputs.absEncoderValue = Degrees.of(mapper_.toRobot(inputs.absEncoderRawValue)) ;
     }
 
     public void setClimberPosition(Angle angle) {
@@ -118,8 +101,16 @@ public class ClimberIOHardware implements ClimberIO {
 
     public void syncClimberPosition() {
         double enc = encoder_.get() ;
-        double angle = mapper_.toRobot(enc) ;
+        double angle = encoderToRobot(enc) ;
         Angle armAngle = Degrees.of(angle).times(ClimberConstants.Climber.kGearRatio) ;
         climber_motor_.setPosition(armAngle) ;
+    }
+
+    private double encoderToRobot(double encoderValue) {
+        if (encoderValue < ClimberConstants.kMinAbsEncoderRollover) {
+            encoderValue += 1.0 ;
+        }
+        
+        return encoderValue * ClimberConstants.kMConvertAbsToRobot + ClimberConstants.kBConvertAbsToRobot;
     }
 }

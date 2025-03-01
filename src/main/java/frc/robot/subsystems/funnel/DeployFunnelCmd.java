@@ -4,46 +4,30 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DeployFunnelCmd extends Command {
+
+    public enum Position {
+        Normal,
+        Climb
+    } ;
+
     private final FunnelSubsystem funnel_;
-    private final Angle targetAngle_;
-    private State state_;
+    private final Position position_ ;
 
-    private enum State {
-        MovingToPosition, 
-        WaitingForCompletion,
-        Done
-    }
 
-    public DeployFunnelCmd(FunnelSubsystem funnel, Angle targetAngle) {
+    public DeployFunnelCmd(FunnelSubsystem funnel, Position pos) {
         addRequirements(funnel);
         funnel_ = funnel;
-        targetAngle_ = targetAngle;
+        position_ = pos ;
     }
 
     @Override
     public void initialize() {
-        funnel_.setTargetPosition(targetAngle_);
-        state_ = State.MovingToPosition;
+        Angle v = (position_ == Position.Normal) ? FunnelConstants.kNormalPosition : FunnelConstants.kClimbPosition ;
+        funnel_.setTargetPosition(v) ;
     }
 
     @Override
     public void execute() {
-        switch (state_) {
-            case MovingToPosition:
-                // check if the funnel has reached the target position
-                if (hasReachedTarget()) {
-                    state_ = State.WaitingForCompletion;
-                }
-                break;
-            case WaitingForCompletion:
-                // ensure the funnel is stable at the target position
-                if (hasReachedTarget()) {
-                    state_ = State.Done;
-                }
-                break;
-            case Done:
-                break;
-        }
     }
 
     @Override
@@ -52,12 +36,6 @@ public class DeployFunnelCmd extends Command {
 
     @Override
     public boolean isFinished() {
-        return state_ == State.Done;
-    }
-
-    private boolean hasReachedTarget() {
-        // Add logic to check if the funnel has reached the target position
-        // This might involve checking the funnel position input
-        return true; // Replace with actual condition
+        return funnel_.isAtTarget() ;
     }
 }

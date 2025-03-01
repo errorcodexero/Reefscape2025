@@ -34,7 +34,7 @@ import frc.robot.subsystems.oi.CoralSide;
 
 public class AutoCommands {
 
-    private final static boolean kDebug = false ;
+    private final static boolean kDebug = true ;
     private final static boolean kDriveWhileRaising = true ;
     private final static Time DelayBeforeDriving = Milliseconds.of(20) ;
 
@@ -189,7 +189,6 @@ public class AutoCommands {
     public static Command oneCoralOneAlgaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
         final String modename = "oneCoralOneAlgaeAuto" ;
         SequentialCommandGroup seq = new SequentialCommandGroup();
-
 
         addToSequence(seq, logState(modename, "Start"));
         addToSequence(seq, DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true)) ;

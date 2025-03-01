@@ -14,6 +14,7 @@ public interface ClimberIO {
     public class ClimberIOInputs {
         //climber inputs
         public Angle climberPosition = Degrees.of(0);
+        public Angle climberRawPosition = Degrees.of(0);
         public AngularVelocity climberVelocity = RadiansPerSecond.of(0);
         public Voltage climberVoltage = Volts.of(0);
         public Current climberCurrent = Amps.of(0);

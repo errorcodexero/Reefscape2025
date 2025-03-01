@@ -189,7 +189,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             ManipulatorConstants.Arm.kCurrentLimitTime
         );
 
-        arm_motor_.setControl(new MotionMagicVoltage(Degrees.of(0.0)).withEnableFOC(true)) ;
+        arm_motor_.setControl(new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true)) ;
 
 
         // ENCODER + MAPPER

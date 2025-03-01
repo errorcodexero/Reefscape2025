@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.xerosw.util.DigitalInterrupt;
-import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -24,13 +23,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage ;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class FunnelIOHardware implements FunnelIO {
     private TalonFX funnelMotor_ = null ;
     private final DigitalInterrupt funnelSensor_;
-    private DutyCycleEncoder encoder_; 
-    private EncoderMapper mapper_; 
 
     private StatusSignal<Angle> funnelPositionSig = null ;
     private StatusSignal<AngularVelocity> funnelVelocitySig = null ;
@@ -40,19 +36,6 @@ public class FunnelIOHardware implements FunnelIO {
     private final Debouncer funnelReadyDebouncer_ = new Debouncer(0.5);
 
     public FunnelIOHardware() throws Exception {
-        encoder_ = new DutyCycleEncoder(FunnelConstants.ThruBoreEncoder.kAbsEncoder);
-
-        mapper_ = new EncoderMapper(
-            FunnelConstants.ThruBoreEncoder.kRobotMax,
-            FunnelConstants.ThruBoreEncoder.kRobotMin,
-            FunnelConstants.ThruBoreEncoder.kEncoderMax,
-            FunnelConstants.ThruBoreEncoder.kEncoderMin
-        );
-
-        // ENCODER CONFIGS: 
-        mapper_.calibrate(FunnelConstants.ThruBoreEncoder.kRobotCalibrationValue,
-        FunnelConstants.ThruBoreEncoder.kEncoderCalibrationValue); 
-
         funnelMotor_ = TalonFXFactory.createTalonFX(
             FunnelConstants.funnelCanId,
             "",
@@ -96,23 +79,15 @@ public class FunnelIOHardware implements FunnelIO {
 
         SoftwareLimitSwitchConfigs funnelLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
         funnelLimitSwitchConfigs.ForwardSoftLimitEnable = true;
-        funnelLimitSwitchConfigs.ForwardSoftLimitThreshold = FunnelConstants.funnelArmMaxAngle.times(FunnelConstants.kGearRatio).in(Rotations) ;
+        funnelLimitSwitchConfigs.ForwardSoftLimitThreshold = FunnelConstants.kMaxPosition.in(Rotations) ;
         funnelLimitSwitchConfigs.ReverseSoftLimitEnable = true;
-        funnelLimitSwitchConfigs.ReverseSoftLimitThreshold = FunnelConstants.funnelArmMinAngle.times(FunnelConstants.kGearRatio).in(Rotations) ;
+        funnelLimitSwitchConfigs.ReverseSoftLimitThreshold = FunnelConstants.kMinPosition.in(Rotations) ;
 
         funnelMotor_.setPosition(Degrees.of(0.0)) ;
-
-        MotionMagicVoltage ctrl = new MotionMagicVoltage(Degrees.of(0)).withEnableFOC(true) ;
-        funnelMotor_.setControl(ctrl) ;
     }
 
     @Override
     public void updateInputs(FunnelInputs inputs) {
-        // if (!encoder_motor_synced_ && RobotState.isEnabled()) {
-        //     syncFunnelPosition() ;
-        //     encoder_motor_synced_ = true ;
-        // }
-  
         StatusCode funnelStatus = BaseStatusSignal.refreshAll(
             funnelVoltageSig,
             funnelCurrentSig,
@@ -122,11 +97,8 @@ public class FunnelIOHardware implements FunnelIO {
 
         inputs.funnelReady = funnelReadyDebouncer_.calculate(funnelStatus.isOK());
 
-        inputs.funnelRawPosition = funnelPositionSig.getValue();
-        inputs.funnelPosition = inputs.funnelRawPosition.div(FunnelConstants.kGearRatio) ;
-
-        inputs.funnelRawVelocity = funnelVelocitySig.getValue();
-        inputs.funnelVelocity = inputs.funnelRawVelocity.div(FunnelConstants.kGearRatio) ;
+        inputs.funnelPosition = funnelPositionSig.getValue() ;
+        inputs.funnelVelocity = funnelVelocitySig.getValue();
 
         inputs.funnelCurrent = funnelCurrentSig.getValue();
         inputs.funnelVoltage = funnelVoltageSig.getValue();
@@ -134,22 +106,12 @@ public class FunnelIOHardware implements FunnelIO {
         inputs.coralFunnelSensor = funnelSensor_.getInput().get();
         inputs.coralFunnelFallingEdge = funnelSensor_.fallingEdge() ;
         inputs.coralFunnelRisingEdge = funnelSensor_.risingEdge() ;
-
-        inputs.absEncoderRawValue = encoder_.get();
-        inputs.absEncoderValue = Degrees.of(mapper_.toRobot(inputs.absEncoderRawValue)) ;
     }
 
     @Override
-    public void setPosition(Angle angle) {
-        funnelMotor_.setControl(new MotionMagicVoltage(angle.times(FunnelConstants.kGearRatio)).withEnableFOC(true)) ;
+    public void setTargetPosition(Angle v) {
+        funnelMotor_.setControl(new MotionMagicVoltage(v).withEnableFOC(true)) ;
     }   
-
-    public void syncFunnelPosition() {
-        double enc = encoder_.get() ;
-        double angle = mapper_.toRobot(enc) ;
-        Angle armAngle = Degrees.of(angle).times(FunnelConstants.kGearRatio) ;
-        funnelMotor_.setPosition(armAngle) ;
-    }
 
     public void setVoltage(Voltage volts) {
         funnelMotor_.setVoltage(volts.in(Volts)) ;

@@ -11,6 +11,7 @@ public class FunnelSubsystem extends SubsystemBase {
 
     private final FunnelIO io_; 
     private final FunnelInputsAutoLogged inputs_;
+    private Angle target_ ;
 
     private final Alert disconnectedAlert_ = new Alert("Funnel motor is disconnected or failed to initialize!", AlertType.kError);
 
@@ -31,8 +32,16 @@ public class FunnelSubsystem extends SubsystemBase {
         hasSeenCoral_ = !inputs_.coralFunnelSensor || inputs_.coralFunnelFallingEdge;
     }
     
-    public void setTargetPosition(Angle angle) {
-        io_.setPosition(angle);
+    public void setTargetPosition(Angle v) {
+        target_ = v ;
+        io_.setTargetPosition(v) ;
+    }
+
+    public boolean isAtTarget() {
+        if (target_ == null)
+            return false ;
+
+        return inputs_.funnelPosition.isNear(target_, FunnelConstants.kTolerence) ;
     }
 
     /**

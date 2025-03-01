@@ -17,8 +17,6 @@ public interface FunnelIO {
         public boolean funnelReady = false;
         public Voltage funnelVoltage = Volts.zero();
         public Current funnelCurrent = Amps.zero();
-        public Angle funnelRawPosition = Rotations.zero();
-        public AngularVelocity funnelRawVelocity = RotationsPerSecond.zero();
         public Angle funnelPosition = Rotations.zero();
         public AngularVelocity funnelVelocity = RotationsPerSecond.zero();
 
@@ -33,6 +31,6 @@ public interface FunnelIO {
 
     public default void updateInputs(FunnelInputs inputs) {};
 
-    public default void setPosition(Angle angle) {};
+    public default void setTargetPosition(Angle v) {};
 
 }

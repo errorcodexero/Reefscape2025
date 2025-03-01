@@ -15,11 +15,15 @@ public class ClimberConstants {
 
     public static final int kAttachedSensor = 13;
 
+    public static final double kMinAbsEncoderRollover = 0.3289;
+    public static final double kMConvertAbsToRobot = 167.286 ;
+    public static final double kBConvertAbsToRobot = -110.743 ;
+
     public class ThruBoreEncoder {
         // the encoder mapper needs double values, so these constants don't use the Units library
         // robot min and max are in degrees
-        public static final double kRobotMax = 169.8 ;
-        public static final double kRobotMin = 0 ; 
+        public static final double kRobotMax = 275 ;
+        public static final double kRobotMin = 151 ; 
         public static final double kEncoderMax = 1; 
         public static final double kEncoderMin = 0; 
         public static final double kRobotCalibrationValue = 0;
@@ -40,35 +44,32 @@ public class ClimberConstants {
         public static final boolean kInverted = false; 
         public static final Current kcurrentLimit = Amps.of(40);
         public static final Time kCurrentLimitTime = Seconds.of(1); 
-        public static final Angle kPosTolerance = null;
-
-        public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0);
+        public static final Angle kPosTolerance = Degrees.of(2.0) ;
+        public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0.5) ;
         
-        //TODO: Add the correct values
-        public static final Angle kMaxClimberAngle = Degrees.of(0);
-        public static final Angle kMinClimberAngle = Degrees.of(0) ;
+        public static final Angle kMaxClimberAngle = Degrees.of(100);
+        public static final Angle kMinClimberAngle = Degrees.of(-34) ;
 
         public class PID {
-            public static final double kP = 0.0; 
+            public static final double kP = 2.0; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
-            public static final double kV = 0.0 ;
+            public static final double kV = 0.02 ;
             public static final double kA = 0.0 ;
             public static final double kG = 0.0 ;
             public static final double kS = 0.0 ;
         }
 
         public class MotionMagic {
-            public static final double kMaxVelocity = 0.0 ;
-            public static final double kMaxAcceleration = 0.0 ;
+            public static final double kMaxVelocity = 20.0 ;           // 160
+            public static final double kMaxAcceleration = 600.0 ;
             public static final double kJerk = 0.0 ;
         }
 
         public class Position {
-            //TODO : Add the correct angles
-            public static final Angle kStowed = Degrees.of(52);
-            public static final Angle kPrepped = Degrees.of(148.5);
-            public static final Angle kClimbed = Degrees.of(26);
+            public static final Angle kStowed = Degrees.of(0.0);
+            public static final Angle kPrepped = Degrees.of(90.0);
+            public static final Angle kClimbed = Degrees.of(-20.0);
         }
     }   
 }
