@@ -24,6 +24,11 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -371,18 +376,18 @@ public class RobotContainer {
     public void setupAutos() {
 
         autoChooser_.addDefaultOption("Do Nothing", Commands.none());
-        autoChooser_.addOption("Alliance Side Coral",
+        autoChooser_.addOption("Left Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
-        autoChooser_.addOption("Opposing Side Coral",
+        autoChooser_.addOption("Right Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Center Algae",
-                AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
-        autoChooser_.addOption("Center Coral (alliance side station)",
+        autoChooser_.addOption("Center Algae (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Center Coral (left side station) (2 Coral) (untested)",
+
                 AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
-        autoChooser_.addOption("Center Coral (opposing side station)",
+        autoChooser_.addOption("Center Coral (right side station) (2 Coral) (untested)",
                 AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Just Coral (center)",
-                AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Just Coral (center) (1 Coral)", AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_));
+
         autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
         tuningChooser_.addOption("Straight Tuning Path",
