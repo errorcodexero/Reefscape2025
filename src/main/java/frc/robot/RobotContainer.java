@@ -127,6 +127,12 @@ public class RobotContainer {
      */
     private RobotContainer() {  
         ReefUtil.initialize();
+        DriveCommands.configure(
+            drivebase_,
+            () -> -gamepad_.getLeftY(),
+            () -> -gamepad_.getLeftX(),
+            () -> -gamepad_.getRightX()
+        );
 
         /**
          * Subsystem setup
@@ -466,20 +472,15 @@ public class RobotContainer {
     private void configureDriveBindings() {
 
         // Default command, normal field-relative drive
-        drivebase_.setDefaultCommand(
-                DriveCommands.joystickDrive(
-                        drivebase_,
-                        () -> -gamepad_.getLeftY(),
-                        () -> -gamepad_.getLeftX(),
-                        () -> -gamepad_.getRightX()));
+        drivebase_.setDefaultCommand(DriveCommands.joystickDrive());
 
         // Slow Mode, during left bumper
         gamepad_.leftBumper().whileTrue(
-                DriveCommands.joystickDrive(
-                        drivebase_,
-                        () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
-                        () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
+            DriveCommands.joystickDrive(
+                drivebase_,
+                () -> -gamepad_.getLeftY() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getLeftX() * DriveConstants.slowModeJoystickMultiplier,
+                () -> -gamepad_.getRightX() * DriveConstants.slowModeJoystickMultiplier));
 
         // Switch to X pattern / brake while X button is pressed
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
