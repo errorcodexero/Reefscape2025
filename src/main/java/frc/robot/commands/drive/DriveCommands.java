@@ -13,6 +13,13 @@
 
 package frc.robot.commands.drive;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -44,12 +51,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -73,7 +74,28 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
-  private DriveCommands() {
+  private static Drive drive_;
+  private static DoubleSupplier xSupplier_;
+  private static DoubleSupplier ySupplier_;
+  private static DoubleSupplier omegaSupplier_;
+  private static boolean configured = false;
+
+  private DriveCommands() {}
+
+  /**
+   * Configures the drive commands. In order to call convenience drive commands, this must be configured beforehand.
+   * @param drive Drive subsystem
+   * @param xSupplier Supplier of X velocity (negative left joystick Y)
+   * @param ySupplier Supplier of Y velocity (negative left joystick X)
+   * @param omegaSupplier Supplier of rotational velocity (negative right joystick X)
+   */
+  public static void configure(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier omegaSupplier) {
+    drive_ = drive;
+    xSupplier_ = xSupplier;
+    ySupplier_ = ySupplier;
+    omegaSupplier_ = omegaSupplier;
+
+    configured = true;
   }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
@@ -97,6 +119,30 @@ public class DriveCommands {
     }
 
     return pose ;
+  }
+
+  /**
+   * Field relative drive command using two joysticks (controlling linear and
+   * angular velocities). This is preconfigured with {@link #configure(Drive, DoubleSupplier, DoubleSupplier, DoubleSupplier)}
+   */
+  public static Command joystickDrive() {
+    if (!configured) throw new IllegalStateException("DriveCommands joystickDrive called without first configuring!");
+    
+    return configured ? joystickDrive(drive_, xSupplier_, ySupplier_, omegaSupplier_) : Commands.print("joystickDrive was created but DriveCommands was not configured!");
+  }
+
+  /**
+   * Field relative drive command using joystick for linear control and PID for
+   * angular control.
+   * Possible use cases include snapping to an angle, aiming at a vision target,
+   * or controlling
+   * absolute rotation with a joystick.
+   * This is preconfigured with {@link #configure(Drive, DoubleSupplier, DoubleSupplier, DoubleSupplier)}
+   */
+  public static Command joystickDriveAtAngle(Supplier<Rotation2d> rotationSupplier) {
+    if (!configured) throw new IllegalStateException("DriveCommands joystickDriveAtAngle called without first configuring!");
+
+    return joystickDriveAtAngle(drive_, xSupplier_, ySupplier_, rotationSupplier);
   }
 
   /**
