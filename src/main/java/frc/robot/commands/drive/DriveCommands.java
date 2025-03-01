@@ -128,7 +128,7 @@ public class DriveCommands {
   public static Command joystickDrive() {
     if (!configured) throw new IllegalStateException("DriveCommands joystickDrive called without first configuring!");
     
-    return configured ? joystickDrive(drive_, xSupplier_, ySupplier_, omegaSupplier_) : Commands.print("joystickDrive was created but DriveCommands was not configured!");
+    return joystickDrive(drive_, xSupplier_, ySupplier_, omegaSupplier_);
   }
 
   /**
