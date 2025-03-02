@@ -79,7 +79,7 @@ public class ManipulatorConstants {
 
         public class MotionMagic {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(56.0) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(450.0) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(300.0) ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -111,9 +111,8 @@ public class ManipulatorConstants {
             public static final Angle kCollect = Degrees.of(13) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(170.0) ;
             public static final Angle kAlgaeReefCollectL3 = Degrees.of(170.0) ;
-            public static final Angle kAlgaeReefHold = Degrees.of(165) ;
-            public static final Angle kScoreAlgaeReef = Degrees.of(195) ;
-            public static final Angle kScoreAlgaeReef2 = Degrees.of(195) ;
+            public static final Angle kAlgaeReefHold = Degrees.of(170) ;
+            public static final Angle kScoreAlgaeReef = Degrees.of(190) ;
             public static final Angle kRaiseAngle = Degrees.of(20.0) ;
             public static final Angle kClimb = Degrees.of(58.0) ;
         }
@@ -186,11 +185,10 @@ public class ManipulatorConstants {
             public static final Distance kPlaceL2L3TwoCoralAdder = Centimeters.of(6) ;
 
             public static final Distance kCollect = Centimeters.of(0.0) ;
-            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(76.0) ;
-            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(36.0) ;
+            public static final Distance kAlgaeReefCollectL3 = Centimeters.of(79.0) ;
+            public static final Distance kAlgaeReefCollectL2 = Centimeters.of(40.0) ;
             public static final Distance kAlgaeReefHold = Centimeters.of(12.0) ;
             public static final Distance kScoreAlgaeReef = Centimeters.of(8.0) ;
-            public static final Distance kScoreAlgaeReef2 = Centimeters.of(8.0) ;
         }
     }
 }

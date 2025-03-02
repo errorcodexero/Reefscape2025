@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -161,14 +162,16 @@ public class AprilTagVision extends SubsystemBase {
      * @param est
      */
     private void integratePoseEstimate(PoseEstimation est) {
-        double linearStdDev = VisionConstants.megatag2Factor;
-        double angularStdDev = Double.POSITIVE_INFINITY;
+        if (RobotState.isEnabled()) {
+            double linearStdDev = VisionConstants.megatag2Factor;
+            double angularStdDev = Double.POSITIVE_INFINITY;
 
-        poseEstimateConsumer_.integrate(
-            est.pose(),
-            est.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
-        );
+            poseEstimateConsumer_.integrate(
+                est.pose(),
+                est.timestamp(),
+                VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
+            );
+        }
     }
 
     /**

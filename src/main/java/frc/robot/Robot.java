@@ -31,13 +31,16 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.generated.CompTunerConstants;
+import frc.robot.subsystems.drive.Drive;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -53,6 +56,7 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
+    private AutoModeBaseCmd auto_cmd_ = null ;
 
     public Robot() throws RuntimeException {
         //
@@ -208,8 +212,24 @@ public class Robot extends LoggedRobot {
             robotContainer.setupAutos();
             hasSetupAutos = true;
         }
+
+        if (hasSetupAutos) {
+            Command cmd = robotContainer.getAutonomousCommand();
+            if (cmd != null) {
+                AutoModeBaseCmd autoCmd = (AutoModeBaseCmd) cmd;
+                if (autoCmd != null) {
+                    Drive d = RobotContainer.getInstance().drivebase() ;
+                    Pose2d autopose = d.getPose() ;
+
+                    if (auto_cmd_ == null || auto_cmd_ != autoCmd) {
+                        d.setPose(autopose) ;
+                        auto_cmd_ = autoCmd ;
+                    }
+                }
+            }
+        }
     }
-    
+
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
     @Override
     public void autonomousInit() {

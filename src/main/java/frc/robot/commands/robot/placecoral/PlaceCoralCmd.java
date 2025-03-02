@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
@@ -152,6 +151,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
         seq.addCommands(
+            new StateCmd("place", "big-parallel"),
             Commands.parallel(
                 DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
                 new BackupCoralCmd(grabber_),
@@ -161,7 +161,9 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     this::raiseWhileDriving))) ;
 
         seq.addCommands(
+            new StateCmd("place", "positiontoplace"),
             new PositionToPlaceCmd(drive_, brain_, manipulator_, level, scoringPose),
+            new StateCmd("place", "deposit"),
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
                 Commands.sequence(
@@ -197,6 +199,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             }
         }
 
+        ret = false ;
         return ret;
     }
 }

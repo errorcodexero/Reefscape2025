@@ -573,7 +573,7 @@ public class DriveCommands {
    * 
    * @return The path, or an empty optional if it could not be found.
    */
-  private static Optional<PathPlannerPath> findPath(String pathName, boolean mirroredX) {
+  public static Optional<PathPlannerPath> findPath(String pathName, boolean mirroredX) {
     try {
 
       PathPlannerPath path = mirroredX

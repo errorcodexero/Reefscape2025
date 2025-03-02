@@ -16,7 +16,7 @@ public class GrabberConstants {
         public static final double kGearRatio = 1.0;
         public static final boolean kInverted = true; 
         public static final double kHoldingVoltage = -3.0 ;
-        public static final double kDepositVoltage = 6.0 ;
+        public static final double kDepositVoltage = 3.0 ;
 
         public class PID {
             public static final double kP = 0.6; 

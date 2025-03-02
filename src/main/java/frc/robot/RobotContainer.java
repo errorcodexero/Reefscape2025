@@ -34,6 +34,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
+import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
@@ -72,6 +73,7 @@ import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
+import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
@@ -143,7 +145,7 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
                             new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation),
+                            // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
                     // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
@@ -379,39 +381,38 @@ public class RobotContainer {
 
     public void setupAutos() {
 
-        autoChooser_.addDefaultOption("Do Nothing", Commands.none());
+        autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd()) ;
         autoChooser_.addOption("Left Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Right Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
         autoChooser_.addOption("Center Algae (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
-        autoChooser_.addOption("Center Coral (left side station) (2 Coral) (untested)",
+        
+        // autoChooser_.addOption("Center Coral (left side station) (2 Coral) (untested)",
+        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+        // autoChooser_.addOption("Center Coral (right side station) (2 Coral) (untested)",
+        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
 
-                AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
-        autoChooser_.addOption("Center Coral (right side station) (2 Coral) (untested)",
-                AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Just Coral (center) (1 Coral)", AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_));
+        // autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
 
-        autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
+        // tuningChooser_.addOption("Straight Tuning Path",
+        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
+        // tuningChooser_.addOption("Curved Tuning Path",
+        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
 
-        tuningChooser_.addOption("Straight Tuning Path",
-                DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
-        tuningChooser_.addOption("Curved Tuning Path",
-                DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
-
-        // Add SysId routines to the chooser
-        tuningChooser_.addOption("Drive Wheel Radius Characterization",
-                DriveCommands.wheelRadiusCharacterization(drivebase_));
-        tuningChooser_.addOption("Drive Simple FF Characterization",
-                DriveCommands.feedforwardCharacterization(drivebase_));
-        tuningChooser_.addOption("Drive SysId (Quasistatic Forward)",
-                drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)",
-                drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        tuningChooser_.addOption("Drive SysId (Dynamic Forward)",
-                drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        tuningChooser_.addOption("Drive SysId (Dynamic Reverse)",
-                drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // // Add SysId routines to the chooser
+        // tuningChooser_.addOption("Drive Wheel Radius Characterization",
+        //         DriveCommands.wheelRadiusCharacterization(drivebase_));
+        // tuningChooser_.addOption("Drive Simple FF Characterization",
+        //         DriveCommands.feedforwardCharacterization(drivebase_));
+        // tuningChooser_.addOption("Drive SysId (Quasistatic Forward)",
+        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)",
+        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // tuningChooser_.addOption("Drive SysId (Dynamic Forward)",
+        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // tuningChooser_.addOption("Drive SysId (Dynamic Reverse)",
+        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     }
 
