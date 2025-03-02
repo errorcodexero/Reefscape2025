@@ -31,7 +31,7 @@ public class FunnelConstants {
     public static final double jerk = 0;
 
     public static class MotorPids {
-        public static final double kP = 8;
+        public static final double kP = 32;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kV = 0.1;

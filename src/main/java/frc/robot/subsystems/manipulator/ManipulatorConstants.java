@@ -37,6 +37,8 @@ public class ManipulatorConstants {
 
 
     public class Arm {
+
+        public static AngularVelocity kSyncVelocity = DegreesPerSecond.of(1.0) ;
        
         // motor CAN ID
         public static final int kMotorCANID = 2; 
@@ -44,7 +46,7 @@ public class ManipulatorConstants {
         // if motor is inverted 
         public static final boolean kInverted = true; 
 
-        public static final double kGearRatio = 36.0 ;
+        public static final double kGearRatio = 36.0 * 0.97;
 
         public static final String kCANBusName = null; 
 
@@ -84,8 +86,8 @@ public class ManipulatorConstants {
         public class ThruBoreEncoder {
             // the encoder mapper needs double values, so these constants don't use the Units library
             // robot min and max are in degrees
-            public static final double kRobotMax = 180; 
-            public static final double kRobotMin = -180; 
+            public static final double kRobotMax = 330; 
+            public static final double kRobotMin = -30; 
             public static final double kEncoderMax = 0; 
             public static final double kEncoderMin = 1; 
             public static final double kRobotCalibrationValue = 0;
@@ -108,7 +110,7 @@ public class ManipulatorConstants {
             public static final Angle kScoreAlgaeReef = Degrees.of(195) ;
             public static final Angle kScoreAlgaeReef2 = Degrees.of(195) ;
             public static final Angle kRaiseAngle = Degrees.of(19.0) ;
-            public static final Angle kClimb = Degrees.of(75.0) ;
+            public static final Angle kClimb = Degrees.of(58.0) ;
         }
     }
 

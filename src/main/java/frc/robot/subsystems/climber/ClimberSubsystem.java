@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -57,6 +58,14 @@ public class ClimberSubsystem extends SubsystemBase {
 
    public boolean isClimberAttached() {
       return inputs_.attachedSensor;
+   }
+
+   public void setMotorVoltage(Voltage v) {
+      io_.setClimberVoltage(v);
+   }
+
+   public Angle getClimberPosition() {
+      return inputs_.climberPosition;
    }
 
    @Override

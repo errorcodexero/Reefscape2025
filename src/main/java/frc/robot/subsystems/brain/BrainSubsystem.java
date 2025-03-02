@@ -1,5 +1,7 @@
 package frc.robot.subsystems.brain;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +70,8 @@ public class BrainSubsystem extends SubsystemBase {
     // If true, we are clearing state
     private boolean clearing_state_ ;
 
+    private boolean climb_signaled_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -94,6 +98,7 @@ public class BrainSubsystem extends SubsystemBase {
         gp_ = GamePiece.NONE ;
         leds_inited_ = false ;
         periodic_count_ = 0 ;
+        climb_signaled_ = false ;
     }
 
     public GamePiece gp() {
@@ -347,11 +352,13 @@ public class BrainSubsystem extends SubsystemBase {
         Logger.recordOutput("brain/holding", gp_.toString()) ;
         trackReefPlace() ;
 
-        if (c_.readyToClimb()) {
+        if (c_.readyToClimb() && !climb_signaled_) {
             //
             // This does not really belong in the brain, but it is a good place to put it for now
             //
             oi_.setLEDState(OILed.ReadyToClimb, LEDState.Fast) ;
+            oi_.rumble(Seconds.of(2.0));
+            climb_signaled_ = true ;
         }
 
         if (current_cmd_ != null && current_cmd_.isComplete() && !clearing_state_) {

@@ -65,8 +65,8 @@ import frc.robot.subsystems.drive.Drive;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.4;
+  private static final double ANGLE_KP = 4.0;
+  private static final double ANGLE_KD = 0.0;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
   private static final double FF_START_DELAY = 2.0; // Secs
@@ -112,7 +112,7 @@ public class DriveCommands {
         .getTranslation();
   }
 
-  private static Pose2d rotateIfRed(Pose2d pose) {
+  public static Pose2d rotateIfRed(Pose2d pose) {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       Translation2d center = new Translation2d(FieldConstants.layout.getFieldLength() / 2.0, FieldConstants.layout.getFieldWidth() / 2.0);
       pose = pose.rotateAround(center, Rotation2d.fromDegrees(180.0)) ;

@@ -57,7 +57,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
     private DutyCycleEncoderSim arm_encoder_sim_ ;
-    private boolean encoder_motor_synced_ ;
+    private boolean encoder_motor_syncing_ ;
 
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
@@ -82,6 +82,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public ManipulatorIOHardware() throws Exception {
         createArm() ;
         createElevator() ;   
+
+        encoder_motor_syncing_ = true ;
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
@@ -179,8 +181,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     private void createArm() throws Exception {
 
-        encoder_motor_synced_ = false ;
-
         arm_motor_ = TalonFXFactory.createTalonFX(
             ManipulatorConstants.Arm.kMotorCANID,
             ManipulatorConstants.Arm.kCANBusName,
@@ -252,11 +252,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (!encoder_motor_synced_ && RobotState.isEnabled()) {
+        if (RobotState.isDisabled()) {
             syncArmPosition() ;
-            encoder_motor_synced_ = true ;
         }
 
+        inputs.encoderSynced = encoder_motor_syncing_ ;
         StatusCode armStatus = BaseStatusSignal.refreshAll(
             arm_pos_sig_,
             arm_vel_sig_,
@@ -365,6 +365,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_motor_.setPosition(armAngle) ;
     }
 
+    public void toggleSyncing() {
+        encoder_motor_syncing_ = !encoder_motor_syncing_ ;
+    }
+
     private void simulateArm() {
         TalonFXSimState st = arm_motor_.getSimState() ;
         st.setSupplyVoltage(RobotController.getBatteryVoltage()) ;
@@ -374,11 +378,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_sim_.update(0.02) ;
         st.setRawRotorPosition(arm_sim_.getAngularPosition().times(ManipulatorConstants.Arm.kGearRatio)) ;
         st.setRotorVelocity(arm_sim_.getAngularVelocity().times(ManipulatorConstants.Arm.kGearRatio)) ;
-
-        if (encoder_motor_synced_) {
-            arm_encoder_sim_.set(mapper_.toEncoder(arm_sim_.getAngularPosition().in(Degrees))) ;
-            encoder_motor_synced_ = true ;
-        }
     }
 
     private void simulateElevator() {

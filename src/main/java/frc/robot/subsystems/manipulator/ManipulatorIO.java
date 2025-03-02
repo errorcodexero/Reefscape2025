@@ -25,6 +25,7 @@ public interface ManipulatorIO {
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
         public Angle armRawMotorPosition = Degrees.of(0);
         public AngularVelocity armRawMotorVelocity = DegreesPerSecond.of(0.0) ;
+        public boolean encoderSynced = false ;
       
         // elevator
         public Distance elevatorPosition = Meters.of(0); 
@@ -49,6 +50,8 @@ public interface ManipulatorIO {
 
     // updating inputs
     public default void updateInputs(ManipulatorIOInputs inputs) {}
+
+    public default void toggleSyncing() {}
 
     // Needed for SYS ID support
     public default void setArmMotorVoltage(double vol) {}

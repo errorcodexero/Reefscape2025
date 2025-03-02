@@ -84,6 +84,7 @@ public class FunnelIOHardware implements FunnelIO {
         funnelLimitSwitchConfigs.ReverseSoftLimitThreshold = FunnelConstants.kMinPosition.in(Rotations) ;
 
         funnelMotor_.setPosition(Degrees.of(0.0)) ;
+        funnelMotor_.setControl(new MotionMagicVoltage(Degrees.of(0.0))) ;
     }
 
     @Override

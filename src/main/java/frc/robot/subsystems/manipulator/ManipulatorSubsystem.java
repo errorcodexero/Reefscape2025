@@ -41,6 +41,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
         io_.enableSoftLimits(b) ;
     }
 
+    public void toggleSyncing() {
+        io_.toggleSyncing() ;
+    }
+
     @Override
     public void periodic() {
 
