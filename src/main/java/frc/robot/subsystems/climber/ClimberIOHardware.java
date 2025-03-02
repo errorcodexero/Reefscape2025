@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import static edu.wpi.first.units.Units.*;
@@ -104,6 +105,10 @@ public class ClimberIOHardware implements ClimberIO {
         double angle = encoderToRobot(enc) ;
         Angle armAngle = Degrees.of(angle).times(ClimberConstants.Climber.kGearRatio) ;
         climber_motor_.setPosition(armAngle) ;
+    }
+
+    public void setClimberVoltage(Voltage voltage) {
+        climber_motor_.setControl(new VoltageOut(voltage)) ;
     }
 
     private double encoderToRobot(double encoderValue) {

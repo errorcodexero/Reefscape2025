@@ -161,20 +161,8 @@ public class AprilTagVision extends SubsystemBase {
      * @param est
      */
     private void integratePoseEstimate(PoseEstimation est) {
-        // TODO: Look into this calculation / into other calculations.
-        double stdDevFactor =
-            est.averageDist() * est.averageDist() / est.tagCount();
-        double linearStdDev = VisionConstants.baseLinearStdDev * stdDevFactor;
-        double angularStdDev = VisionConstants.baseAngularStdDev * stdDevFactor;
-
-        Logger.recordOutput("Vision/PoseStdDev/Linear", linearStdDev);
-        Logger.recordOutput("Vision/PoseStdDev/Angular", angularStdDev);
-
-        if (est.type() == PoseEstimationType.MEGATAG2) {
-          linearStdDev = VisionConstants.megatag2Factor;
-          
-          angularStdDev = Double.POSITIVE_INFINITY;
-        }
+        double linearStdDev = VisionConstants.megatag2Factor;
+        double angularStdDev = Double.POSITIVE_INFINITY;
 
         poseEstimateConsumer_.integrate(
             est.pose(),

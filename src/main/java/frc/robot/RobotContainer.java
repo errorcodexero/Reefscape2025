@@ -16,6 +16,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -24,11 +26,6 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,9 +36,9 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
-import frc.robot.commands.robot.climb.ExecuteClimbCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
 import frc.robot.commands.robot.climb.StowClimberCmd;
 import frc.robot.generated.CompTunerConstants;
@@ -52,6 +49,7 @@ import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
+import frc.robot.subsystems.climber.ClimbCmd;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -127,12 +125,7 @@ public class RobotContainer {
      */
     private RobotContainer() {  
         ReefUtil.initialize();
-        DriveCommands.configure(
-            drivebase_,
-            () -> -gamepad_.getLeftY(),
-            () -> -gamepad_.getLeftX(),
-            () -> -gamepad_.getRightX()
-        );
+
 
         /**
          * Subsystem setup
@@ -352,6 +345,13 @@ public class RobotContainer {
 
         brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_);
 
+        DriveCommands.configure(
+            drivebase_,
+            () -> -gamepad_.getLeftY(),
+            () -> -gamepad_.getLeftX(),
+            () -> -gamepad_.getRightX()
+        );        
+
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
         ShuffleboardTab tuningTab = Shuffleboard.getTab("Tuning");
@@ -461,9 +461,11 @@ public class RobotContainer {
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));
 
-        oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(climber_, funnel_, manipulator_));
+        oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(drivebase_, climber_, funnel_, manipulator_));
         oi_.climbLock().onTrue(new StowClimberCmd(manipulator_, climber_, funnel_)) ;
-        oi_.climbExecute().and(climber_.readyToClimbTrigger()).onTrue(vision_.setEnabledCommand(true));
+        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ClimbCmd(climber_)) ;
+
+        climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
     }
 
     /**

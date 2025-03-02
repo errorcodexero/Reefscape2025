@@ -38,7 +38,7 @@ public class ClimberConstants {
         public static final int kMotorCANID = 5; 
 
         // gear ratio
-        public static final double kGearRatio = 266.67; 
+        public static final double kGearRatio = 480.0 ;
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
@@ -48,7 +48,7 @@ public class ClimberConstants {
         public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0.5) ;
         
         public static final Angle kMaxClimberAngle = Degrees.of(100);
-        public static final Angle kMinClimberAngle = Degrees.of(-34) ;
+        public static final Angle kMinClimberAngle = Degrees.of(-48) ;
 
         public class PID {
             public static final double kP = 2.0; 
@@ -61,15 +61,20 @@ public class ClimberConstants {
         }
 
         public class MotionMagic {
-            public static final double kMaxVelocity = 20.0 ;           // 160
+            public static final double kMaxVelocity = 160.0 ;
             public static final double kMaxAcceleration = 600.0 ;
             public static final double kJerk = 0.0 ;
         }
+        
+        // Climb voltage
+        public static final double kClimbVoltage = -5.0 ;
 
         public class Position {
             public static final Angle kStowed = Degrees.of(0.0);
-            public static final Angle kPrepped = Degrees.of(90.0);
-            public static final Angle kClimbed = Degrees.of(-20.0);
+            public static final Angle kPrepped = Degrees.of(88.5
+            );
+            public static final Angle kClimbed = Degrees.of(-30.0);
+            public static final Angle kReapplyThreshold = Degrees.of(-26.0);
         }
     }   
 }
