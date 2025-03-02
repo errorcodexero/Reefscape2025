@@ -219,8 +219,7 @@ public class Robot extends LoggedRobot {
                 AutoModeBaseCmd autoCmd = (AutoModeBaseCmd) cmd;
                 if (autoCmd != null) {
                     Drive d = RobotContainer.getInstance().drivebase() ;
-                    Pose2d autopose = d.getPose() ;
-
+                    Pose2d autopose = autoCmd.getStartingPose() ;
                     if (auto_cmd_ == null || auto_cmd_ != autoCmd) {
                         d.setPose(autopose) ;
                         auto_cmd_ = autoCmd ;

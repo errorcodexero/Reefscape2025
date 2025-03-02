@@ -162,16 +162,14 @@ public class AprilTagVision extends SubsystemBase {
      * @param est
      */
     private void integratePoseEstimate(PoseEstimation est) {
-        if (RobotState.isEnabled()) {
-            double linearStdDev = VisionConstants.megatag2Factor;
-            double angularStdDev = Double.POSITIVE_INFINITY;
+        double linearStdDev = VisionConstants.megatag2Factor;
+        double angularStdDev = Double.POSITIVE_INFINITY;
 
-            poseEstimateConsumer_.integrate(
-                est.pose(),
-                est.timestamp(),
-                VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
-            );
-        }
+        poseEstimateConsumer_.integrate(
+            est.pose(),
+            est.timestamp(),
+            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev)
+        );
     }
 
     /**
