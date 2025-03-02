@@ -102,6 +102,11 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL2 = Degrees.of(35); 
             public static final Angle kPlaceL3 = Degrees.of(35); 
             public static final Angle kPlaceL4 = Degrees.of(80);
+            public static final Angle kPlaceL4OneCoral = Degrees.of(60);
+            public static final Angle kPlaceL4TwoCoral = Degrees.of(80);
+            public static final Angle kPlaceL2L3OneCoralAdder = Degrees.of(0) ;
+            public static final Angle kPlaceL2L3TwoCoralAdder = Degrees.of(0) ;
+
             public static final Angle kKickbackAngle = Degrees.of(19); 
             public static final Angle kCollect = Degrees.of(13) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(170.0) ;
@@ -109,7 +114,7 @@ public class ManipulatorConstants {
             public static final Angle kAlgaeReefHold = Degrees.of(165) ;
             public static final Angle kScoreAlgaeReef = Degrees.of(195) ;
             public static final Angle kScoreAlgaeReef2 = Degrees.of(195) ;
-            public static final Angle kRaiseAngle = Degrees.of(19.0) ;
+            public static final Angle kRaiseAngle = Degrees.of(20.0) ;
             public static final Angle kClimb = Degrees.of(58.0) ;
         }
     }
@@ -172,9 +177,14 @@ public class ManipulatorConstants {
             public static final Distance kStow = Centimeters.of(2);
 
             public static final Distance kPlaceL1 = Centimeters.of(0); 
-            public static final Distance kPlaceL2 = Centimeters.of(27); 
-            public static final Distance kPlaceL3 = Centimeters.of(67); 
-            public static final Distance kPlaceL4 = Centimeters.of(131); 
+            public static final Distance kPlaceL2 = Centimeters.of(25); 
+            public static final Distance kPlaceL3 = Centimeters.of(65); 
+            public static final Distance kPlaceL4 = Centimeters.of(131);
+            public static final Distance kPlaceL4OneCoral = Centimeters.of(133);
+            public static final Distance kPlaceL4TwoCoral = Centimeters.of(131);
+            public static final Distance kPlaceL2L3OneCoralAdder = Centimeters.of(3) ;
+            public static final Distance kPlaceL2L3TwoCoralAdder = Centimeters.of(6) ;
+
             public static final Distance kCollect = Centimeters.of(0.0) ;
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(76.0) ;
             public static final Distance kAlgaeReefCollectL2 = Centimeters.of(36.0) ;

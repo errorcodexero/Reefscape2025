@@ -16,7 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.misc.RumbleGamepadCmd;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
@@ -457,6 +455,7 @@ public class RobotContainer {
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
+        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_));
 
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));

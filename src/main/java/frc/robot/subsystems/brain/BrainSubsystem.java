@@ -83,6 +83,8 @@ public class BrainSubsystem extends SubsystemBase {
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
 
+    private boolean placed_ok_ ;
+
     public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
         oi_ = oi ;
         db_ = db ;
@@ -99,10 +101,19 @@ public class BrainSubsystem extends SubsystemBase {
         leds_inited_ = false ;
         periodic_count_ = 0 ;
         climb_signaled_ = false ;
+        placed_ok_ = false ;
     }
 
     public GamePiece gp() {
         return gp_ ;
+    }
+
+    public boolean placedOk() {
+        return placed_ok_ ;
+    }
+
+    public void setPlacedOk(boolean v) {
+        placed_ok_ = v ;
     }
 
     public void setGp(GamePiece gp) {
@@ -164,6 +175,38 @@ public class BrainSubsystem extends SubsystemBase {
         return coral_side_ ;
     }
 
+    private boolean isNextActionLegal(RobotAction act) {
+        boolean ret = true ;
+
+        if (current_action_ != null) {
+            switch(current_action_) {
+                case CollectCoral:
+                    ret = (act == RobotAction.PlaceCoral) ;
+                    break ;
+
+                case PlaceCoral:
+                    ret = (act != RobotAction.PlaceCoral && act != RobotAction.ScoreAlgae) ;
+                    break ;
+
+                case ScoreAlgae:
+                    ret = (act == RobotAction.PlaceCoral) ;
+                    break ;
+
+                case CollectAlgaeReef:
+                    ret = (act != RobotAction.PlaceCoral && act != RobotAction.CollectCoral) ;
+                    break ;
+
+                case CollectAlgaeGround:
+                    break ;
+
+                default:
+                    break ;
+            }
+        }
+
+        return ret;
+    }
+
     public void queueRobotAction(RobotAction action) {
         if (!locked_ && RobotState.isEnabled() && RobotState.isTeleop()) {
             //
@@ -175,6 +218,16 @@ public class BrainSubsystem extends SubsystemBase {
                 //
                 oi_.setRobotActionLEDState(next_action_, LEDState.Off) ;
             }
+
+            if (!isNextActionLegal(action)) {
+                oi_.flashDisplay();
+                return ;
+            }
+            else {
+                next_action_ = action ;
+                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+            }
+
 
             //
             // Assign (or reassign) the next action
@@ -350,6 +403,7 @@ public class BrainSubsystem extends SubsystemBase {
         String status = "" ;
 
         Logger.recordOutput("brain/holding", gp_.toString()) ;
+        Logger.recordOutput("brain/placedok", placed_ok_) ;
         trackReefPlace() ;
 
         if (c_.readyToClimb() && !climb_signaled_) {
@@ -434,7 +488,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain)) ;
+                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain, true, true)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 

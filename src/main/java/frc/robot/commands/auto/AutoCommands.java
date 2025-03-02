@@ -3,6 +3,7 @@ package frc.robot.commands.auto;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -93,7 +94,9 @@ public class AutoCommands {
         addToSequence(seq,
             Commands.parallel(
                 DriveCommands.initialFollowPathCommand(driveSub, "Side Coral 1", mirroredX),
-                new CollectCoralCmd(brainSub, manipSub, grabberSub, false))) ;
+                new SetHoldingCmd(brainSub, GamePiece.CORAL)
+            )
+        ) ;
 
         // 
         // Place first coral
@@ -191,10 +194,14 @@ public class AutoCommands {
         SequentialCommandGroup seq = new SequentialCommandGroup();
 
         addToSequence(seq, logState(modename, "Start"));
-        addToSequence(seq, DriveCommands.setPoseCommand(driveSub, new Pose2d(7.22, 3.85, Rotation2d.fromDegrees(180.0)), true)) ;
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL)) ;
+        addToSequence(seq, logState(modename, "Drive To Place"));
+        addToSequence(seq, DriveCommands.initialFollowPathCommand(driveSub, "Algae 1")) ;
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left, false, AutoCommands.kDriveWhileRaising)) ;
+
+        addToSequence(seq, 
+            new ConditionalCommand(new NullCmd(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk())) ;
 
         addToSequence(seq, logState(modename, "Backup From Reef"));
         addToSequence(seq,

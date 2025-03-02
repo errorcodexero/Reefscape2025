@@ -4,20 +4,24 @@ import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
+import frc.robot.commands.robot.NullCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -26,7 +30,6 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.BackupCoralCmd;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
-import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
@@ -45,7 +48,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     private final ReefLevel level_ ;
 
     private Distance target_elev_pos_; 
-    private Angle target_arm_pos_; 
 
     private boolean lower_manip_ ;
     private boolean drive_while_raising_ ;
@@ -65,7 +67,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         level_ = h ;
 
         target_elev_pos_ = Elevator.Positions.kStow; 
-        target_arm_pos_ = Arm.Positions.kStow;
 
         lower_manip_ = lower ;
         drive_while_raising_ = drive_while_raising ;
@@ -93,13 +94,19 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             side = side_ ;
         }
 
-        if (DriverStation.getAlliance().isEmpty())
+        brain_.setPlacedOk(true);
+
+        if (DriverStation.getAlliance().isEmpty()) {
+            brain_.setPlacedOk(false);
             return ;
+        }
 
         Pose2d robotPose = drive_.getPose() ;
         Optional<ReefFaceInfo> reefFace = ReefUtil.getTargetedReefFace(robotPose) ;
-        if (reefFace.isEmpty())
+        if (reefFace.isEmpty()) {
+            brain_.setPlacedOk(false);
             return ;
+        }
 
         if (level == ReefLevel.AskBrain || side == CoralSide.AskBrain) {
             //
@@ -114,22 +121,18 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         switch(level) {
             case L1:
                 target_elev_pos_ = Elevator.Positions.kPlaceL1;
-                target_arm_pos_ = Arm.Positions.kPlaceL1;  
                 break ;
 
             case L2:
                 target_elev_pos_ = Elevator.Positions.kPlaceL2; 
-                target_arm_pos_ = Arm.Positions.kPlaceL2;  
                 break ;
             
             case L3:
                 target_elev_pos_ = Elevator.Positions.kPlaceL3; 
-                target_arm_pos_ = Arm.Positions.kPlaceL3;  
                 break ;
 
             case L4:
                 target_elev_pos_ = Elevator.Positions.kPlaceL4;
-                target_arm_pos_ = Arm.Positions.kPlaceL4;
                 break ;
 
             default:
@@ -148,20 +151,17 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
-        if (drive_while_raising_) {
-            seq.addCommands(
-                Commands.parallel(
-                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
-                    new BackupCoralCmd(grabber_),
-                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle)));
-        }
-        else {
-            seq.addCommands(new BackupCoralCmd(grabber_)) ;
-            seq.addCommands(DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel)) ;
-        }
+        seq.addCommands(
+            Commands.parallel(
+                DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
+                new BackupCoralCmd(grabber_),
+                new ConditionalCommand(
+                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                    new NullCmd(),
+                    this::raiseWhileDriving))) ;
 
         seq.addCommands(
-            new GoToCmd(manipulator_, target_elev_pos_, target_arm_pos_),
+            new PositionToPlaceCmd(drive_, brain_, manipulator_, level, scoringPose),
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
                 Commands.sequence(
@@ -179,5 +179,24 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         }
 
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
+    }
+
+    private boolean raiseWhileDriving() {
+        boolean ret = false ;
+        if (drive_while_raising_) {
+            if (level_ == ReefLevel.AskBrain) {
+                ReefLevel l = brain_.coralLevel() ;
+                if (l != ReefLevel.L4) {
+                    ret = true ;
+                }
+            }
+            else {
+                if (level_ != ReefLevel.L4 || RobotState.isAutonomous()) {
+                    ret = true ;
+                }
+            }
+        }
+
+        return ret;
     }
 }

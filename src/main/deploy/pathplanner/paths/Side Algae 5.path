@@ -9,19 +9,19 @@
       "prevControl": null,
       "nextControl": {
         "x": 5.520508145993198,
-        "y": 4.818173626979095
+        "y": 4.818173626979096
       },
       "isLocked": false,
       "linkedName": "Collection station"
     },
     {
       "anchor": {
-        "x": 5.831006493506493,
-        "y": 3.8588068181818174
+        "x": 6.357,
+        "y": 3.85
       },
       "prevControl": {
-        "x": 5.950506176061769,
-        "y": 2.6661291076089735
+        "x": 6.476499682555276,
+        "y": 2.657322289427156
       },
       "nextControl": null,
       "isLocked": false,
