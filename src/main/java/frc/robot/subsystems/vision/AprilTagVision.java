@@ -80,10 +80,7 @@ public class AprilTagVision extends SubsystemBase {
             Logger.processInputs("Vision/Camera" + index, inputs_[index]);
         }
 
-        ArrayList<Pose3d> summaryTagPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryAcceptedPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryDeclinedPoses = new ArrayList<>();
+        ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
         // Iterate cameras for logging and pose estimations.
         for (int cam = 0; cam < io_.length; cam++) {
@@ -94,54 +91,31 @@ public class AprilTagVision extends SubsystemBase {
             // Skip this camera if it is not connected.
             if (!inputs_[cam].connected) continue;
 
-            ArrayList<Pose3d> tagPoses = new ArrayList<>();
-            ArrayList<Pose2d> estimatedPoses = new ArrayList<>();
-            ArrayList<Pose2d> acceptedPoses = new ArrayList<>();
-            ArrayList<Pose2d> declinedPoses = new ArrayList<>();
-
-            // Loop through visible tags.
-            for (Fiducial fid : inputs_[cam].fiducials) {
-                Optional<Pose3d> pose = FieldConstants.layout.getTagPose(fid.id());
-                if (pose.isPresent()) {
-                    tagPoses.add(pose.get());
-                }
-            }
-
             // Loop through pose estimations.
             for (PoseEstimation est : inputs_[cam].poseEstimates) {
-                
-                estimatedPoses.add(est.pose());
-
                 if (isEstimationAcceptable(est)) {
-                    acceptedPoses.add(est.pose());
-                    integratePoseEstimate(est);
-                } else {
-                    declinedPoses.add(est.pose());
+                    poseEstimates.add(est) ;
                 }
-
             }
-
-            // Add to summaries.
-            summaryTagPoses.addAll(tagPoses);
-            summaryPoses.addAll(estimatedPoses);
-            summaryAcceptedPoses.addAll(acceptedPoses);
-            summaryDeclinedPoses.addAll(declinedPoses);
-
-            // Log camera-specific outputs.
-            Logger.recordOutput(getCameraKey(cam, "TagPoses"), tagPoses.toArray(new Pose3d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/All"), estimatedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/Accepted"), acceptedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/Declined"), declinedPoses.toArray(new Pose2d[0]));
-
         }
 
-        Logger.recordOutput("Vision/Summary/TagPoses", summaryTagPoses.toArray(new Pose3d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/All", summaryPoses.toArray(new Pose2d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/Accepted", summaryAcceptedPoses.toArray(new Pose2d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/Declined", summaryDeclinedPoses.toArray(new Pose2d[0]));
+        String status = "none" ;
+        if (poseEstimates.size() > 0) {
+            PoseEstimation bestEstimation = null;
 
-        Logger.recordOutput("Vision/PoseEstimatesEnabled", enabled_);
+            for (PoseEstimation est : poseEstimates) {
+                if (bestEstimation == null || est.averageDist() < bestEstimation.averageDist()) {
+                    bestEstimation = est;
+                }
+            }
 
+            if (bestEstimation != null) {
+                status = bestEstimation.cameraName() ;
+                integratePoseEstimate(bestEstimation);
+            }
+        }
+
+        Logger.recordOutput("vision/posecamera", status) ;
     }
 
     @FunctionalInterface
