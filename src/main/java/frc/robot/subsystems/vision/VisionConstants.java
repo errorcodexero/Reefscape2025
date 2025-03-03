@@ -40,7 +40,7 @@ public class VisionConstants {
     // Standard Deviation Factors, (we need to talk about how stddev is calculated, dont change until then)
     public static final double baseLinearStdDev = 0.02;
     public static final double baseAngularStdDev = 0.06;
-    public static final double megatag2Factor = 0.1;
+    public static final double megatag2Factor = 0.5;
 
     // LL4 Config
     public static final boolean useIMU = false; // Whether or not to use the internal IMU

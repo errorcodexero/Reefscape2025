@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.831006493506493,
-        "y": 3.8588068181818174
+        "x": 6.357,
+        "y": 3.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.649500000000001,
-        "y": 3.4936249999999998
+        "x": 6.800625,
+        "y": 2.9232499999999995
       },
       "isLocked": false,
-      "linkedName": "Algae 1"
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.517875,
+        "y": 2.523499999999999
+      },
+      "prevControl": {
+        "x": 6.659249999999999,
+        "y": 3.181624999999999
+      },
+      "nextControl": {
+        "x": 6.384098886046643,
+        "y": 1.900749124699883
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -33,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

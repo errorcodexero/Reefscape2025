@@ -2,6 +2,7 @@ package frc.robot.commands.robot.scorealgae;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Optional;
 
@@ -68,6 +69,7 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
                                 CommandConstants.AlgaeScore.kMaxDriveVelocity,
                                 CommandConstants.AlgaeScore.kMaxDriveAcceleration)),
                 new DepositAlgaeCmd(g_),
+                new WaitCommand(Seconds.of(1.0)),
                 Commands.deadline(
                         new WaitCommand(1.0),
                         db_.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
