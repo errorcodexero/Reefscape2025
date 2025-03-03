@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.341243506493508,
-        "y": 3.7431931818181825
+        "x": 6.800625,
+        "y": 2.9232499999999995
       },
       "isLocked": false,
-      "linkedName": "Algae 1"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

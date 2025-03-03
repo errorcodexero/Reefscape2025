@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.2222808441558435,
-        "y": 3.85
+        "x": 5.733,
+        "y": 3.8641249999999996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.520350137143099,
-        "y": 3.8581822460813004
+        "x": 6.020625,
+        "y": 3.8446249999999993
       },
       "isLocked": false,
-      "linkedName": "Center Start"
+      "linkedName": "Algae 1"
     },
     {
       "anchor": {
-        "x": 6.357,
-        "y": 3.85
+        "x": 6.313125,
+        "y": 3.9859999999999998
       },
       "prevControl": {
-        "x": 6.107000556019649,
-        "y": 3.850527266076488
+        "x": 5.581875,
+        "y": 3.942124999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Algae 1"
+      "linkedName": "actual algae 1"
     }
   ],
   "rotationTargets": [],
@@ -33,15 +33,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.5,
+    "velocity": 0,
     "rotation": 180.0
   },
   "reversed": false,

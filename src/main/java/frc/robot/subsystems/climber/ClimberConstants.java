@@ -73,7 +73,7 @@ public class ClimberConstants {
             public static final Angle kStowed = Degrees.of(0.0);
             public static final Angle kPrepped = Degrees.of(88.5
             );
-            public static final Angle kClimbed = Degrees.of(-30.0);
+            public static final Angle kClimbed = Degrees.of(-33.0);
             public static final Angle kReapplyThreshold = Degrees.of(-26.0);
         }
     }   

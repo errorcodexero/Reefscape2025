@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 1"
+                  "pathName": null
                 }
               },
               {
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 1.5"
+                  "pathName": "Algae 1"
                 }
               },
               {
@@ -92,7 +92,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 3"
+                  "pathName": null
                 }
               },
               {
@@ -117,7 +117,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 4"
+                  "pathName": null
                 }
               },
               {
@@ -142,7 +142,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 5"
+                  "pathName": null
                 }
               },
               {
@@ -167,7 +167,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Algae 6"
+                  "pathName": null
                 }
               },
               {

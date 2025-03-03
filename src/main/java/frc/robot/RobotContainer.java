@@ -144,9 +144,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                            // new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
+                            new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
+                            // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -381,7 +381,7 @@ public class RobotContainer {
 
     public void setupAutos() {
 
-        autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd()) ;
+        autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
         autoChooser_.addOption("Left Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
         autoChooser_.addOption("Right Side Coral (3 Coral)",

@@ -221,6 +221,8 @@ public class Robot extends LoggedRobot {
                     Drive d = RobotContainer.getInstance().drivebase() ;
                     Pose2d autopose = autoCmd.getStartingPose() ;
                     if (auto_cmd_ == null || auto_cmd_ != autoCmd) {
+                        Logger.recordOutput("automode/name", autoCmd.getName()) ;
+                        Logger.recordOutput("automode/pose", autopose) ;
                         d.setPose(autopose) ;
                         auto_cmd_ = autoCmd ;
                     }
@@ -254,6 +256,8 @@ public class Robot extends LoggedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+
+        RobotContainer.getInstance().gamepad().setLocked(false);
     }
     
     /** This function is called periodically during operator control. */
