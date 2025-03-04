@@ -13,7 +13,6 @@ import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -23,7 +22,7 @@ public class PositionToPlaceCmd extends Command {
     private static final Distance kNoCoralDistance = Centimeters.of(5.0) ;
     private static final Distance kOneCoralDistance = Centimeters.of(15.0) ;
 
-	private static final boolean kSkipPlaceChecks = false ;
+	private static final boolean kSkipPlaceChecks = true ;
 
 	private final ManipulatorSubsystem m_;
     private final Drive db_ ;
