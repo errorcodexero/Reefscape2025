@@ -16,25 +16,30 @@
     },
     {
       "anchor": {
-        "x": 1.102836277173913,
-        "y": 0.9936905570652153
+        "x": 1.14075,
+        "y": 0.9586249999999995
       },
       "prevControl": {
-        "x": 0.8609409599388513,
-        "y": 0.9305505895347448
+        "x": 0.8988546827649382,
+        "y": 0.8954850324695292
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Station Far"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3058267716535291,
+      "rotationDegrees": 59.115253406746476
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
