@@ -1,8 +1,11 @@
 package frc.robot.subsystems.grabber.commands;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 
@@ -10,18 +13,24 @@ public class RunGrabberVoltsCmd extends Command {
     private GrabberSubsystem g_ ;
     private XeroTimer timer_ ;
     private boolean done_ ;
+    private Voltage volts_ ;
 
     public RunGrabberVoltsCmd(GrabberSubsystem grabber, Time duration) {
+        this(grabber, duration, Volts.of(12.0)) ;
+    }
+
+    public RunGrabberVoltsCmd(GrabberSubsystem grabber, Time duration, Voltage volts) {
         g_ = grabber ;
         addRequirements(g_) ;
         timer_ = new XeroTimer(duration) ;
+        volts_ = volts ;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         done_ = false ;
-        g_.setGrabberMotorVoltage(12.0) ;
+        g_.setGrabberMotorVoltage(volts_.in(Volts)) ;
         timer_.start() ;
     }
 

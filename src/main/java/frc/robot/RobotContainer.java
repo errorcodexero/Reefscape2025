@@ -16,7 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -25,11 +24,12 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
@@ -64,10 +64,12 @@ import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.CalibrateCmd;
+import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
@@ -120,10 +122,16 @@ public class RobotContainer {
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
 
+    private Trigger testModeTrigger ;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {  
+        testModeTrigger = new Trigger(() -> {
+            return RobotState.isTest() && RobotState.isEnabled() ;
+        }) ;
+        
         ReefUtil.initialize();
 
 
@@ -367,6 +375,7 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
+        configureTestModeBindings() ;
 
         manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
     }
@@ -426,6 +435,14 @@ public class RobotContainer {
         if (Constants.propogateExceptionOnSubsystemCreateFail) {
             throw new RuntimeException("Error creating subsystem", ex);
         }
+    }
+
+    private void configureTestModeBindings() {
+        gamepad_.start().and(testModeTrigger).onTrue(
+            new ConditionalCommand(
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
     }
 
     /**
