@@ -107,6 +107,7 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL2L3OneCoralAdder = Degrees.of(0) ;
             public static final Angle kPlaceL2L3TwoCoralAdder = Degrees.of(0) ;
 
+            public static final Angle kFinishedAlgaeThreshood = Degrees.of(100.0) ;
             public static final Angle kKickbackAngle = Degrees.of(19); 
             public static final Angle kCollect = Degrees.of(13) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(170.0) ;
