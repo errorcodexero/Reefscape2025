@@ -196,9 +196,6 @@ public class AprilTagVision extends SubsystemBase {
 
         if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) return false; // It is ambiguous (photonvision especially)
 
-        // TODO: Velocity Thresholding
-
-        // Otherwise, accept!
         return true;
     }
 
