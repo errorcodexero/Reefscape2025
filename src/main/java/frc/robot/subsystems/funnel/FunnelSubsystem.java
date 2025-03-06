@@ -30,7 +30,7 @@ public class FunnelSubsystem extends SubsystemBase {
         disconnectedAlert_.set(!inputs_.funnelReady);
 
         if (!inputs_.coralFunnelSensor || inputs_.coralFunnelFallingEdge) {
-            lastcoral = Timer.getFPGATimestamp();
+            lastcoral = Timer.getTimestamp();
         }
 
         Logger.recordOutput("funnel/seencoral", hasSeenCoral());
@@ -49,12 +49,10 @@ public class FunnelSubsystem extends SubsystemBase {
     }
 
     /**
-     * Functionally the same as {@link #hasSeenCoral()}, but in the event that you have seen coral,
-     * this automatically resets the flag for you.
-     * @return Whether or not the Funnel has seen a Coral since the last {@link #resetSeenCoral()}.
+     * Whether or not the Funnel has seen a Coral in the last few seconds.
      */
     public boolean hasSeenCoral() {
-        if (Timer.getFPGATimestamp() - lastcoral < 3.0) {
+        if (Timer.getTimestamp() - lastcoral < 3.0) {
             return true ;
         }
 
