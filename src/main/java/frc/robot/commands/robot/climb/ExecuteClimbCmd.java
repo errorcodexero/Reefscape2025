@@ -8,8 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.climber.ClimberPositionCmd;
-import frc.robot.subsystems.climber.ClimberState;
+import frc.robot.subsystems.climber.ClimbCmd;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 
@@ -31,6 +30,6 @@ public class ExecuteClimbCmd extends XeroSequenceCmd {
                 new WaitCommand(Seconds.of(1.25)),
                 drive_.runVelocityCmd(new ChassisSpeeds(0.0, 0.25, 0.0)))
         ) ;
-        sequence.addCommands(new ClimberPositionCmd(climber_, ClimberState.Climb));
+        sequence.addCommands(new ClimbCmd(climber_));
     }
 }

@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -484,6 +485,7 @@ public class RobotContainer {
         oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(climber_, drivebase_)) ;
 
         climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
+        oi_.rotateArm().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, Degrees.of(90.0))) ;
     }
 
     /**

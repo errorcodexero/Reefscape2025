@@ -46,7 +46,7 @@ public class OISubsystem extends SubsystemBase {
     private Trigger algae_reef_trigger_ ;
     private Trigger algae_score_trigger_ ;
     private Trigger execute_trigger_ ;
-    private Trigger algae_on_reef_trigger_ ;
+    private Trigger rotate_arm_trigger_ ;
     
     private Trigger l1_ ;
     private Trigger l2_ ;
@@ -78,7 +78,7 @@ public class OISubsystem extends SubsystemBase {
         algae_reef_trigger_ = new Trigger(()-> inputs_.algae_reef) ;
         algae_score_trigger_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
-        algae_on_reef_trigger_ = new Trigger(()-> inputs_.algae_on_reef) ;
+        rotate_arm_trigger_ = new Trigger(()-> inputs_.rotate_arm) ;
 
         l1_ = new Trigger(()-> inputs_.coral_l1) ;
         l2_ = new Trigger(()-> inputs_.coral_l2) ;
@@ -124,8 +124,8 @@ public class OISubsystem extends SubsystemBase {
         return coral_collect_trigger_ ;
     }
 
-    public Trigger algaeOnReefTrigger() {
-        return algae_on_reef_trigger_ ;
+    public Trigger rotateArm() {
+        return rotate_arm_trigger_ ;
     }
 
     public Trigger algaeGround() {
@@ -381,10 +381,10 @@ public class OISubsystem extends SubsystemBase {
             str += "coral_side_right" ;
         }
 
-        if (inputs_.algae_on_reef) {
+        if (inputs_.rotate_arm) {
             if (str.length() > 0)
                 str += "," ;
-            str += "algae_on_reef" ;
+            str += "rotate_arm" ;
         }
 
         if (gamepad_.a().getAsBoolean()) {
