@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -38,6 +39,7 @@ import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
+import frc.robot.commands.robot.climb.ExecuteClimbCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
 import frc.robot.commands.robot.climb.StowClimberCmd;
 import frc.robot.generated.CompTunerConstants;
@@ -480,9 +482,10 @@ public class RobotContainer {
 
         oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(drivebase_, climber_, funnel_, manipulator_));
         oi_.climbLock().onTrue(new StowClimberCmd(manipulator_, climber_, funnel_)) ;
-        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ClimbCmd(climber_)) ;
+        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(climber_, drivebase_)) ;
 
         climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
+        oi_.rotateArm().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, Degrees.of(90.0))) ;
     }
 
     /**

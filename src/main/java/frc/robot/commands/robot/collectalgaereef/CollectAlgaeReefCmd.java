@@ -9,6 +9,7 @@ import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
@@ -55,6 +56,10 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     // GoToCmd
     // WaitForCoral
 
+    private boolean alreadyRotated() {
+        return manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshhold) ;
+    }
+
     @Override
     public void initSequence(SequentialCommandGroup seq) {
         ReefLevel level = height_ ;
@@ -88,10 +93,17 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         if (!skipfirst_) {
             seq.addCommands(
                 db_.stopCmd(),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
-                                        ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle),
-                new GoToCmdDirect(manipulator_, height, angle)) ;
+                new ConditionalCommand(
+                    // If we are already rotated to the correct angle, skip the sequence to the raise angle
+                    new GoToCmdDirect(manipulator_, height, angle),
+
+                    // Otherwise carefully go through the correct sequence
+                    Commands.sequence(
+                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
+                                            ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                    new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle),
+                    new GoToCmdDirect(manipulator_, height, angle)),
+                    this::alreadyRotated)) ;
         }
         else {
             seq.addCommands(new GoToCmdDirect(manipulator_, height, angle)) ;      

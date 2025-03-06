@@ -41,12 +41,17 @@ public class EjectCmd extends XeroSequenceCmd {
     @Override
     public void initSequence(SequentialCommandGroup seq) {
         if (brain_.gp() == GamePiece.ALGAE_HIGH) {
-            seq.addCommands(
-                new DepositAlgaeCmd(grabber_),
-                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition()),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
+            //
+            // We are up with algae, just eject, but stay up until eject is hit twice
+            //
+            seq.addCommands(new DepositAlgaeCmd(grabber_)) ;
         }
-        else {
+        else if (manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshhold)) {
+            seq.addCommands(
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition()),
+                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)
+            ) ;
+        } else {
             seq.addCommands(
                 new DepositCoralCmd(grabber_),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
