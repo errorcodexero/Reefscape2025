@@ -46,7 +46,7 @@ public class EjectCmd extends XeroSequenceCmd {
             //
             seq.addCommands(new DepositAlgaeCmd(grabber_)) ;
         }
-        else if (manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshood)) {
+        else if (manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshhold)) {
             seq.addCommands(
                 new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition()),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)
