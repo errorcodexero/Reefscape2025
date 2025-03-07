@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,22 +17,22 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.NullCmd;
 import frc.robot.commands.robot.WaitForCoralInRobot;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
-import frc.robot.commands.misc.StateCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
-import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.oi.CoralSide;
 
 public class AutoCommands {
@@ -101,7 +103,7 @@ public class AutoCommands {
         // Wait for coral to pass through the funnel
         //          
         addToSequence(seq, logState(modename, "Wait For 2nd"));
-        addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
+        addToSequence(seq, new WaitCommand(Seconds.of(1.5))) ;
 
         //
         // Drive to place position while collecting coral.  The path ends a few feet away with a forware
@@ -174,12 +176,8 @@ public class AutoCommands {
     public static AutoModeBaseCmd oneCoralOneAlgaeAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub) {
         final String modename = "oneCoralOneAlgaeAuto" ;
 
-        Optional<PathPlannerPath> path = DriveCommands.findPath("Algae 1", false) ;
-        if (!path.isPresent()) {
-            return new AutoModeBaseCmd("empty") ;
-        }
-
-        AutoModeBaseCmd seq = new AutoModeBaseCmd("oneCoralOneAlgae", path.get()) ;
+        Pose2d p = new Pose2d(7.84, 3.94, Rotation2d.fromDegrees(180.0)) ;
+        AutoModeBaseCmd seq = new AutoModeBaseCmd("oneCoralOneAlgae", p) ;
 
         addToSequence(seq, logState(modename, "Start"));
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL)) ;
