@@ -46,7 +46,7 @@ public class VisionConstants {
     public static final boolean useIMU = false; // Whether or not to use the internal IMU
     public static final IMUMode enabledIMUMode = IMUMode.ASSIST_EXTERNAL; // What mode to use on the internal IMU
     
-    public static final boolean regulateThrottle = true; // Whether or not we use LL4 throttle to regulate temperature
+    public static final boolean regulateThrottle = false; // Whether or not we use LL4 throttle to regulate temperature
     public static final int numSkippedFramesEnabled = 0; // How many frames to skip in enabled, (probably 0 but you might want to?)
     public static final int numSkippedFramesDisabled = 100; // Regulate temperature by skipping frames in disabled
 
