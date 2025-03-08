@@ -46,6 +46,7 @@ import frc.robot.generated.CompTunerConstants;
 import frc.robot.generated.PracticeTunerConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
+import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
@@ -81,6 +82,7 @@ import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
+import frc.robot.util.Mechanism3d;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -121,6 +123,10 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser_;
     private final LoggedDashboardChooser<Command> tuningChooser_;
 
+    // Visualizer
+    private final Mechanism3d measuredVisualizer_;
+    private final Mechanism3d setpointVisualizer_;
+
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
 
@@ -135,7 +141,6 @@ public class RobotContainer {
         }) ;
         
         ReefUtil.initialize();
-
 
         /**
          * Subsystem setup
@@ -373,6 +378,27 @@ public class RobotContainer {
         // Add choosers/widgets to tabs.
         autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
         tuningTab.add("Tuning Modes", tuningChooser_.getSendableChooser()).withSize(2, 1);
+
+        // Visualizers
+        measuredVisualizer_ = new Mechanism3d(
+            "Measured",
+            drivebase_::getPose,
+            manipulator_::getElevatorPosition,
+            manipulator_::getArmPosition,
+            climber_::getClimberPosition,
+            () -> !grabber_.algaeSensor(),
+            () -> brain_.gp() == GamePiece.CORAL
+        );
+
+        setpointVisualizer_ = new Mechanism3d(
+            "Setpoints",
+            drivebase_::getPose,
+            manipulator_::getElevatorTarget,
+            manipulator_::getArmTarget,
+            climber_::getClimberPosition,
+            () -> !grabber_.algaeSensor(),
+            () -> brain_.gp() == GamePiece.CORAL
+        );
 
         // Configure the button bindings
         configureDriveBindings();
