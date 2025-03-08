@@ -79,7 +79,7 @@ public class Mechanism3d extends SubsystemBase {
         Pose3d arm = new Pose3d(
             Meters.of(0.28575),
             Meters.zero(),
-            Meters.of(0.48).plus(elevatorHeight_),
+            Meters.of(0.42).plus(elevatorHeight_),
             new Rotation3d(Degrees.zero(), armAngle_, Degrees.zero())
         );
 
