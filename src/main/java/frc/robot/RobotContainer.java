@@ -451,7 +451,7 @@ public class RobotContainer {
 
     boolean isArmOkToRaise() {
         Angle pos = manipulator_.getArmPosition() ;
-        return pos.gte(ManipulatorConstants.Arm.Positions.kRaiseAngle) && pos.lte(Degrees.of(178.0)) ;
+        return pos.gte(Degrees.of(18.0)) && pos.lte(Degrees.of(178.0)) ;
     }
 
     /**
