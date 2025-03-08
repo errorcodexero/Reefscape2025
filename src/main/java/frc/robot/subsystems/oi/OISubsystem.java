@@ -47,6 +47,7 @@ public class OISubsystem extends SubsystemBase {
     private Trigger algae_score_trigger_ ;
     private Trigger execute_trigger_ ;
     private Trigger rotate_arm_trigger_ ;
+    private Trigger raise_arm_trigger_ ;
     
     private Trigger l1_ ;
     private Trigger l2_ ;
@@ -79,6 +80,7 @@ public class OISubsystem extends SubsystemBase {
         algae_score_trigger_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
         rotate_arm_trigger_ = new Trigger(()-> inputs_.rotate_arm) ;
+        raise_arm_trigger_ = new Trigger(()-> inputs_.raise_arm) ;
 
         l1_ = new Trigger(()-> inputs_.coral_l1) ;
         l2_ = new Trigger(()-> inputs_.coral_l2) ;
@@ -126,6 +128,10 @@ public class OISubsystem extends SubsystemBase {
 
     public Trigger rotateArm() {
         return rotate_arm_trigger_ ;
+    }
+
+    public Trigger raiseArm() {
+        return raise_arm_trigger_ ;
     }
 
     public Trigger algaeGround() {
