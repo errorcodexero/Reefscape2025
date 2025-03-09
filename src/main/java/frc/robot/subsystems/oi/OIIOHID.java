@@ -59,6 +59,7 @@ public class OIIOHID implements OIIO {
             inputs.climb_lock = hid_.getRawButton(OIConstants.Buttons.kClimbLock) ;
             inputs.coral_side = hid_.getRawButton(OIConstants.Buttons.kCoralSide) ;
             inputs.rotate_arm = hid_.getRawButton(OIConstants.Buttons.kRotateArm) ;
+            inputs.raise_arm = hid_.getRawButton(OIConstants.Buttons.kRaiseArm) ;
         }
 
         updateLEDs() ;

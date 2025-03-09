@@ -14,6 +14,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -25,6 +26,7 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -447,6 +449,11 @@ public class RobotContainer {
                 () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
     }
 
+    boolean isArmOkToRaise() {
+        Angle pos = manipulator_.getArmPosition() ;
+        return pos.gte(Degrees.of(18.0)) && pos.lte(Degrees.of(178.0)) ;
+    }
+
     /**
      * Use this method to define your button -> command mappings for drivers.
      */
@@ -486,6 +493,10 @@ public class RobotContainer {
 
         climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
         oi_.rotateArm().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, Degrees.of(90.0))) ;
+
+        oi_.raiseArm().and(this::isArmOkToRaise).onTrue(
+            new GoToCmd(manipulator_, Feet.of(2.0), manipulator_.getArmPosition())
+        ) ;
     }
 
     /**

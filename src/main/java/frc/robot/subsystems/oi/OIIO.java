@@ -24,6 +24,7 @@ public interface OIIO {
         public boolean climb_execute = false ;
         public boolean climb_lock = false ;
         public boolean coral_side = false ;
+        public boolean raise_arm = false ;
     }
 
     public default void updateInputs(OIIosInputs inputs) {
