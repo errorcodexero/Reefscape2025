@@ -19,10 +19,8 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 
 public class PositionToPlaceCmd extends Command {
-    private static final Distance kNoCoralDistance = Centimeters.of(5.0) ;
-    private static final Distance kOneCoralDistance = Centimeters.of(15.0) ;
-
-	private static final boolean kSkipPlaceChecks = true ;
+	private static final boolean kSkipDistanceChecks = true ;
+	private static final boolean kSkipAngleChecks = true ;
 
 	private final ManipulatorSubsystem m_;
     private final Drive db_ ;
@@ -162,29 +160,16 @@ public class PositionToPlaceCmd extends Command {
     private int findCoralOnFloor() {
 		int ret = 0 ;
 
-		if (!kSkipPlaceChecks) {
-        	ret = -1 ;
-			Distance dist = Meters.of(db_.getPose().getTranslation().getDistance(target_pose_.getTranslation())) ;
-
-			if (dist.lt(kNoCoralDistance)) {
-				Logger.recordOutput("place/status", "none") ;
-				ret = 0 ;
-			}
-			else if (dist.lt(kOneCoralDistance)) {
-				if (level_ != ReefLevel.L4) {
-					Logger.recordOutput("place/status", "one-" + level_.toString()) ;
-					ret = 1 ;
-				}
-				else {
-					Logger.recordOutput("place/status", "abort-one-" + level_.toString()) ;
-				}
-			}
-
+		if (!kSkipAngleChecks) {
 			double delta = target_pose_.getRotation().minus(db_.getPose().getRotation()).getDegrees() ;
 			if (Math.abs(delta) > 5.0) {
 				Logger.recordOutput("place/status", "abort-angle-" + delta) ;
 				ret = -1 ;
 			}
+		}
+
+		if (ret == 0 && !kSkipDistanceChecks) {
+
 		}
 
         return ret ;

@@ -127,7 +127,7 @@ public class GrabberIOHardware implements GrabberIO {
     }
 
     private Distance mapDistanceSensor(double raw) {
-        return Inches.of(raw) ;
+        return Centimeters.of(raw * GrabberConstants.kDistanceSensorSlope + GrabberConstants.kDistanceSensorIntercept) ;
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
