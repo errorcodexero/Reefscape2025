@@ -1,5 +1,7 @@
 package frc.robot.subsystems.grabber.commands;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.xerosw.util.XeroTimer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.grabber.GrabberConstants;
@@ -31,13 +33,13 @@ public class DepositCoralCmd extends Command {
     @Override
     public void initialize() {
         if (l1_) {
-            grabber_.setGrabberMotorVoltage(6.0) ;
+            grabber_.setGrabberMotorVoltage(Volts.of(6.0)) ;
             timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.l1delay);
             timer_.start() ;
             state_ = State.WaitingForTimer ;
         }
         else {
-            grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.DepositCoral.velocity) ;
+            grabber_.setGrabberMotorVoltage(Volts.of(12.0)) ;
             timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.delay);
             timer_.start() ;
             state_ = State.WaitingForTimer ;

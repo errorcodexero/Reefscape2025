@@ -23,10 +23,13 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage ;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotState;
 
 public class FunnelIOHardware implements FunnelIO {
     private TalonFX funnelMotor_ = null ;
-    private final DigitalInterrupt funnelSensor_;
+    private final DigitalInput lower_sensor_ ;
+    private final DigitalInput upper_sensor_ ;
 
     private StatusSignal<Angle> funnelPositionSig = null ;
     private StatusSignal<AngularVelocity> funnelVelocitySig = null ;
@@ -35,7 +38,10 @@ public class FunnelIOHardware implements FunnelIO {
 
     private final Debouncer funnelReadyDebouncer_ = new Debouncer(0.5);
 
+    private boolean is_inited_ ;
+
     public FunnelIOHardware() throws Exception {
+        is_inited_ = false ;
         funnelMotor_ = TalonFXFactory.createTalonFX(
             FunnelConstants.funnelCanId,
             "",
@@ -75,7 +81,8 @@ public class FunnelIOHardware implements FunnelIO {
         funnelVelocitySig = funnelMotor_.getVelocity();
         funnelPositionSig = funnelMotor_.getPosition();
 
-        funnelSensor_ = new DigitalInterrupt(FunnelConstants.funnelSensorId);
+        lower_sensor_ = new DigitalInput(FunnelConstants.funnelLowerSensorId);
+        upper_sensor_ = new DigitalInput(FunnelConstants.funnelUpperSensorId);
 
         SoftwareLimitSwitchConfigs funnelLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
         funnelLimitSwitchConfigs.ForwardSoftLimitEnable = true;
@@ -89,6 +96,12 @@ public class FunnelIOHardware implements FunnelIO {
 
     @Override
     public void updateInputs(FunnelInputs inputs) {
+
+        if (RobotState.isAutonomous() && RobotState.isEnabled() && !is_inited_) {
+            funnelMotor_.setPosition(0.0) ;
+            is_inited_ = true ;
+        }
+
         StatusCode funnelStatus = BaseStatusSignal.refreshAll(
             funnelVoltageSig,
             funnelCurrentSig,
@@ -104,9 +117,8 @@ public class FunnelIOHardware implements FunnelIO {
         inputs.funnelCurrent = funnelCurrentSig.getValue();
         inputs.funnelVoltage = funnelVoltageSig.getValue();
 
-        inputs.coralFunnelSensor = funnelSensor_.getInput().get();
-        inputs.coralFunnelFallingEdge = funnelSensor_.fallingEdge() ;
-        inputs.coralFunnelRisingEdge = funnelSensor_.risingEdge() ;
+        inputs.coralFunnelUpperSensor = !upper_sensor_.get() ;
+        inputs.coralFunnelLowerSensor = !lower_sensor_.get() ;
     }
 
     @Override

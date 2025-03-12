@@ -41,6 +41,7 @@ import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
+import frc.robot.commands.robot.algaenet.AlgaeNetCmd;
 import frc.robot.commands.robot.climb.ExecuteClimbCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
 import frc.robot.commands.robot.climb.StowClimberCmd;
@@ -52,7 +53,6 @@ import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
-import frc.robot.subsystems.climber.ClimbCmd;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -355,7 +355,7 @@ public class RobotContainer {
         // OI Setup
         oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_);
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_, funnel_);
 
         DriveCommands.configure(
             drivebase_,
@@ -482,7 +482,7 @@ public class RobotContainer {
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
-        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_));
+        gamepad_.a().onTrue(new AlgaeNetCmd(manipulator_, grabber_)) ;
 
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));
@@ -497,6 +497,7 @@ public class RobotContainer {
         oi_.raiseArm().and(this::isArmOkToRaise).onTrue(
             new GoToCmd(manipulator_, Feet.of(2.0), manipulator_.getArmPosition())
         ) ;
+
     }
 
     /**

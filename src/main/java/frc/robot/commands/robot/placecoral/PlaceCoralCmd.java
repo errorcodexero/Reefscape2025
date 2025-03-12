@@ -1,5 +1,6 @@
 package frc.robot.commands.robot.placecoral;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.util.Optional;
@@ -12,32 +13,32 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
-import frc.robot.commands.robot.NullCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.BackupCoralCmd;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
+import frc.robot.subsystems.manipulator.commands.GoToWhenClose;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
+
+    private static final Distance kRaiseElevatorDistance = Centimeters.of(160.0) ;
+
     private final Drive drive_;
     private final ManipulatorSubsystem manipulator_; 
     private final GrabberSubsystem grabber_; 
@@ -69,8 +70,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         lower_manip_ = lower ;
         drive_while_raising_ = drive_while_raising ;
-
-        drive_while_raising_ = true ;
     }
 
     // Called when the command is initially scheduled.
@@ -151,23 +150,17 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
         seq.addCommands(
-            new StateCmd("place", "big-parallel"),
             Commands.parallel(
                 DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
-                new BackupCoralCmd(grabber_),
-                new ConditionalCommand(
-                    new GoToCmd(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                    new NullCmd(),
-                    this::raiseWhileDriving))) ;
-
+                new GoToWhenClose(drive_, manipulator_, target_elev_pos_, 
+                    ManipulatorConstants.Arm.Positions.kRaiseAngle, scoringPose, kRaiseElevatorDistance)
+            )) ;
         seq.addCommands(
-            new StateCmd("place", "positiontoplace"),
             new PositionToPlaceCmd(drive_, brain_, manipulator_, level, scoringPose),
-            new StateCmd("place", "deposit"),
             Commands.parallel(
                 new DepositCoralCmd(grabber_),
                 Commands.sequence(
-                    new WaitCommand(Milliseconds.of(200)),
+                    new WaitCommand(Milliseconds.of(100)),
                     new GoToCmdDirect(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle)
                 )
             ),
@@ -198,8 +191,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                 }
             }
         }
-
-        ret = false ;
+        ret = true ;
         return ret;
     }
 }

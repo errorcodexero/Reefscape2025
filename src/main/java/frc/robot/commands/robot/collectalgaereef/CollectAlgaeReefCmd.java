@@ -23,7 +23,6 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
@@ -99,14 +98,14 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
 
                     // Otherwise carefully go through the correct sequence
                     Commands.sequence(
-                        new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, 
-                                            ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                    new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, angle),
-                    new GoToCmdDirect(manipulator_, height, angle)),
+                        new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, manipulator_.getArmPosition()),
+                        new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, angle),
+                        new GoToCmdDirect(manipulator_, height, angle)
+                    ),
                     this::alreadyRotated)) ;
         }
         else {
-            seq.addCommands(new GoToCmdDirect(manipulator_, height, angle)) ;      
+            seq.addCommands(new GoToCmdDirect(manipulator_, height, angle)) ;
         }
         
         if (driveto_) {
@@ -125,8 +124,8 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         seq.addCommands(
             new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
             DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeBackupPose(), 
-                                            MetersPerSecond.of(1.0), 
-                                            MetersPerSecondPerSecond.of(1.0)),
+                                            MetersPerSecond.of(2.0), 
+                                            MetersPerSecondPerSecond.of(2.0)),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
                                       ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
