@@ -19,7 +19,6 @@ import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.NullCmd;
-import frc.robot.commands.robot.WaitForCoralInRobot;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -34,12 +33,13 @@ import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.oi.CoralSide;
+import frc.robot.commands.robot.WaitForCoralInRobot;
 
 public class AutoCommands {
 
     private final static boolean kDebug = true ;
     private final static boolean kDriveWhileRaising = true ;
-    private final static Time DelayBeforeDriving = Milliseconds.of(20) ;
+    private final static Time DelayBeforeDriving = Milliseconds.of(0) ;
 
     private AutoCommands() {
     }
@@ -60,7 +60,7 @@ public class AutoCommands {
     // - Drive to coral collect station on the side nearest the endline and collect
     // - Place a total of three corals on the reef
     //
-    public static AutoModeBaseCmd threeCoralSideAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnel, boolean mirroredX) {
+    public static AutoModeBaseCmd threeCoralSideAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
         final String modename = "threeCoralSideAuto" ;
 
         Optional<PathPlannerPath> path = DriveCommands.findPath("Side Coral 1", mirroredX) ;
@@ -103,7 +103,7 @@ public class AutoCommands {
         // Wait for coral to pass through the funnel
         //          
         addToSequence(seq, logState(modename, "Wait For 2nd"));
-        addToSequence(seq, new WaitCommand(Seconds.of(1.5))) ;
+        addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnelSub)) ;
 
         //
         // Drive to place position while collecting coral.  The path ends a few feet away with a forware
@@ -112,7 +112,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Place 2nd")) ;
         addToSequence(seq,
                 Commands.parallel(
-                    new CollectCoralCmd(brainSub, manipSub, grabberSub, false),
+                    new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
                     Commands.sequence(
                         DriveCommands.followPathCommand("Side Coral 3", mirroredX),
                         new ConditionalCommand(
@@ -141,7 +141,7 @@ public class AutoCommands {
         // Wait for coral to pass through the funnel
         //          
         addToSequence(seq, logState(modename, "Wait For 3rd")) ;
-        addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnel)) ;
+        addToSequence(seq, new WaitForCoralInRobot(grabberSub, funnelSub)) ;
 
         //
         // Drive to place position while collecting coral.  The path ends a few feet away with a velocity
@@ -150,7 +150,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Place 3rd")) ;
         addToSequence(seq,
                 Commands.parallel(
-                    new CollectCoralCmd(brainSub, manipSub, grabberSub, false),
+                    new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
                     Commands.sequence(
                         DriveCommands.followPathCommand("Side Coral 5", mirroredX),
                         new ConditionalCommand(

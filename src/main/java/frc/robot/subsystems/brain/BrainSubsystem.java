@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
@@ -82,15 +83,17 @@ public class BrainSubsystem extends SubsystemBase {
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
+    private FunnelSubsystem f_ ;
 
     private boolean placed_ok_ ;
 
-    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
+    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c, FunnelSubsystem f) {
         oi_ = oi ;
         db_ = db ;
         m_ = m ;
         g_ = g ;
         c_ = c ;
+        f_ = f ;
         locked_ = false ;
 
         current_action_ = null ;
@@ -480,7 +483,7 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(this, m_, g_, false)) ;
+                list.add(new CollectCoralCmd(this, m_, f_, g_, true)) ;
                 conds.add(null) ;
                 break ;
 

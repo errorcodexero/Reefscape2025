@@ -1,12 +1,7 @@
-Things to do
-----------------------------------------------------------------------------
-- Teleop: Test/tune auto algae scoring sequence (used in auto)          done
-- Automodes: Get Just Coral working with driveto in Place Coral
-- Automodes: Test Just Coral as red alliance
-- Automodes: Test Three Coral with driveto in Place Coral
-    o Update paths
-    o Update sequences
-- Automodes: Test Three Coral auto on blue/alliance side
-- Automodes: Test Three Coral auto on red/opposite side
-- Automodes: Test Three Coral auto on red/alliance side
-- Testing: 
+Things to do Monday
+-------------------
+- Start working on three coral auto
+  o Continue to debug dropped coral
+  o Look at robot velocity, make sure path moves into place driving without dip
+  
+- Speed up climber

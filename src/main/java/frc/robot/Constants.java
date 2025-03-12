@@ -96,14 +96,9 @@ public final class Constants {
         public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.25);
 
         /**
-         * How far to back up from the CORAL scoring pose.
-         */
-        public static final Distance backupDistanceCoral = Inches.of(28);
-
-        /**
          * How far to back up from the ALGAE scoring pose.
          */
-        public static final Distance backupDistanceAlgae = Inches.of(28);
+        public static final Distance backupDistanceAlgae = Inches.of(20);
 
         /**
          * The distance from the center of the ROBOT to the ARM.

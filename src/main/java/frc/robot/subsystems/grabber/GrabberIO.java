@@ -28,8 +28,6 @@ public interface GrabberIO {
 
         // Sensor Inputs
         public boolean coralSensor = false;
-        public boolean coralRisingEdge = false;
-        public boolean coralFallingEdge = false;
 
         public boolean algaeSensor = false;
         public boolean algaeRisingEdge = false;
@@ -41,11 +39,10 @@ public interface GrabberIO {
 
     public default void updateInputs(GrabberIOInputs inputs) {}
 
-    public default void setGrabberMotorVoltage(double vol) {}
+    public default void setGrabberMotorVoltage(Voltage vol) {}
 
     public default void logGrabberMotor(SysIdRoutineLog log) {}
 
-    public default void setGrabberTargetVelocity(AngularVelocity vel) {} 
     public default void setGrabberTargetPosition(Angle pos) {}
 
 }

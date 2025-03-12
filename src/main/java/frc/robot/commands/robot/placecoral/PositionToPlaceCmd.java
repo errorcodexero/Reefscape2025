@@ -1,8 +1,5 @@
 package frc.robot.commands.robot.placecoral;
 
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Meters;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,7 +17,7 @@ import frc.robot.subsystems.manipulator.commands.GoToCmd;
 
 public class PositionToPlaceCmd extends Command {
 	private static final boolean kSkipDistanceChecks = true ;
-	private static final boolean kSkipAngleChecks = true ;
+	private static final boolean kSkipAngleChecks = false ;
 
 	private final ManipulatorSubsystem m_;
     private final Drive db_ ;
@@ -129,34 +126,6 @@ public class PositionToPlaceCmd extends Command {
 		}
 	}
 
-	// private void twoCoralOnFloor() {
-	// 	switch (level_) {
-	// 		case L1:
-	// 			target_elev_pos_ = Elevator.Positions.kPlaceL1;
-	// 			target_arm_pos_ = Arm.Positions.kPlaceL1;
-	// 			break;
-
-	// 		case L2:
-	// 			target_elev_pos_ = Elevator.Positions.kPlaceL2.plus(Elevator.Positions.kPlaceL2L3TwoCoralAdder);
-	// 			target_arm_pos_ = Arm.Positions.kPlaceL2;
-	// 			break;
-
-	// 		case L3:
-	// 			target_elev_pos_ = Elevator.Positions.kPlaceL3.plus(Elevator.Positions.kPlaceL2L3TwoCoralAdder);
-	// 			target_arm_pos_ = Arm.Positions.kPlaceL3;
-	// 			break;
-
-	// 		case L4:
-	// 			target_elev_pos_ = Elevator.Positions.kPlaceL4TwoCoral;
-	// 			target_arm_pos_ = Arm.Positions.kPlaceL4TwoCoral;
-	// 			break;
-
-	// 		default:
-	// 			// Just to keep the intellisense happy
-	// 			break;
-	// 	}
-	// }
-    
     private int findCoralOnFloor() {
 		int ret = 0 ;
 
@@ -169,7 +138,6 @@ public class PositionToPlaceCmd extends Command {
 		}
 
 		if (ret == 0 && !kSkipDistanceChecks) {
-
 		}
 
         return ret ;

@@ -15,7 +15,8 @@ import edu.wpi.first.units.measure.Time;
 public class FunnelConstants {
     
     public static final int funnelCanId = 6;
-    public static final int funnelSensorId = 10 ;
+    public static final int funnelUpperSensorId = 10 ;
+    public static final int funnelLowerSensorId = 4 ;
     
     public static final Current currentLimit = Amps.of(40);
     public static final Time lowerTime = Seconds.of(1);

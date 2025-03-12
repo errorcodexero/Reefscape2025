@@ -114,9 +114,7 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.grabberPosition = grabber_pos_sig_.getValue();
         inputs.grabberVoltage = grabber_vol_sig_.getValue();
 
-        inputs.coralSensor = coral_.value();
-        inputs.coralRisingEdge = coral_.risingEdge();
-        inputs.coralFallingEdge = coral_.fallingEdge();
+        inputs.coralSensor = !coral_.value();
 
         inputs.algaeSensor = algae_.value();
         inputs.algaeRisingEdge = algae_.risingEdge();
@@ -148,7 +146,6 @@ public class GrabberIOHardware implements GrabberIO {
     }
 
     public void setGrabberTargetPosition(Angle pos) {
-        Angle cpos = pos.div(GrabberConstants.Grabber.kGearRatio) ;
-        grabber_motor_.setControl(new MotionMagicVoltage(cpos).withEnableFOC(true)) ;
+        grabber_motor_.setControl(new MotionMagicVoltage(pos).withEnableFOC(true)) ;
     }
 }
