@@ -73,17 +73,11 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
                 Commands.deadline(
                         new WaitCommand(1.0),
                         db_.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
-                Commands.deadline(
-                        new WaitCommand(0.02),
-                        db_.runVelocityCmd(MetersPerSecond.of(0.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
+                        db_.stopCmd(),
                 RobotContainer.getInstance().gamepad().setLockCommand(false),                        
                 new SetHoldingCmd(brain_, GamePiece.NONE),
-                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        m_.getArmPosition()),
-                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow,
-                        ManipulatorConstants.Arm.Positions.kStow));
+                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kStow,m_.getArmPosition()),
+                new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow));
     }
 
     private Optional<Pose2d> getProcessorScorePose() {

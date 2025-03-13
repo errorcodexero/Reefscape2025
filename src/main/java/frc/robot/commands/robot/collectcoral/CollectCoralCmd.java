@@ -2,6 +2,7 @@ package frc.robot.commands.robot.collectcoral;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -36,10 +37,12 @@ public class CollectCoralCmd extends XeroSequenceCmd {
     @Override
     public void initSequence(SequentialCommandGroup seq) {
         if (moveman_) {
+            seq.addCommands(new StateCmd("collectcoral", "start")) ;
             seq.addCommands(
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kCollect, ManipulatorConstants.Arm.Positions.kCollect)) ;
         }
         seq.addCommands(
+            new StateCmd("collectcoral", "wait"),
             new WaitForCoralCmd(funnel_, grabber_),
             new SetHoldingCmd(brain_, GamePiece.CORAL)) ;
     }

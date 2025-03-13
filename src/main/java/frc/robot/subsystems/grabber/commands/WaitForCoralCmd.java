@@ -20,6 +20,7 @@ public class WaitForCoralCmd extends Command {
 
     private enum State {
         WaitingForCoral,
+        WaitForTrailingEdge,
         Finish
     }
 
@@ -48,11 +49,23 @@ public class WaitForCoralCmd extends Command {
                     grabber_.setGrabberMotorVoltage(Volts.zero()) ;
                     state_ = State.Finish;
                 }
+                else if (funnel_.lowerCoralSensor()) {
+                    state_ = State.WaitForTrailingEdge;
+                }
+                break;
+
+            case WaitForTrailingEdge:
+                if (grabber_.coralSensor()) {
+                    grabber_.setGrabberMotorVoltage(Volts.zero()) ;
+                    grabber_.collecting();
+                    state_ = State.Finish;
+                }
                 else if (!funnel_.lowerCoralSensor()) {
+                    state_ = State.WaitForTrailingEdge;
                     grabber_.collecting();
                     state_ = State.Finish ;
                 }
-                break;
+                break ;
 
             case Finish:
                 break;

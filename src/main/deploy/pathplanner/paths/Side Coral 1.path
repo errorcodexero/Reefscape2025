@@ -8,32 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.333259169739317,
-        "y": 1.8586138058514572
+        "x": 5.0456838942931475,
+        "y": 2.2312821306712363
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.445375,
-        "y": 2.2894999999999994
+        "x": 5.728125,
+        "y": 1.7873749999999995
       },
       "prevControl": {
-        "x": 5.705085177189088,
-        "y": 1.9796037662274242
+        "x": 6.385330229914137,
+        "y": 1.075265252318973
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5274027005559938,
-      "rotationDegrees": 133.55389093294355
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -46,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.5,
-    "rotation": 122.74434420636767
+    "velocity": 2.5,
+    "rotation": 122.74400000000001
   },
   "reversed": false,
   "folder": "Side Coral",
