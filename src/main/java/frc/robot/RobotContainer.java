@@ -396,16 +396,23 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
 
+        autoChooser_.addOption("Left Side Coral (2 Coral)",
+            AutoCommands.twoCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+
+        autoChooser_.addOption("Right Side Coral (2 Coral)",
+            AutoCommands.twoCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+
         autoChooser_.addOption("Left Side Coral (3 Coral)",
-                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+            AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
 
         autoChooser_.addOption("Right Side Coral (3 Coral)",
-                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+            AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
 
-        autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
+        autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", 
+            AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
 
-        autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
-                
+        autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
+            AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));     
     }
 
     private void subsystemCreateException(Exception ex) {
