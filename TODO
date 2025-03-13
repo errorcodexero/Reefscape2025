@@ -1,7 +1,8 @@
 Things to do Monday
 -------------------
-- Start working on three coral auto
-  o Continue to debug dropped coral
-  o Look at robot velocity, make sure path moves into place driving without dip
-  
-- Speed up climber
+- Check the auto barge shot, tune the shoot location        Butch
+- Tune/Verify the algae barge auto mode                     Butch
+- Verify the algae processor auto mode                      Butch
+- Verify the two coral auto mode                            Butch
+- Continue tuning the climber                               Butch/Marshal
+- Continue the three coral auto mode                        Butch/Students
