@@ -262,15 +262,17 @@ public class Drive extends SubsystemBase {
         // Update gyro alert
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
 
-        // If in a simulation or replay, log reef face selection information.
+        // If in a simulation or replay, field util selection information.
         if (Constants.getMode() != Mode.REAL) {
             Optional<ReefFaceInfo> face = ReefUtil.getTargetedReefFace(getPose());
 
             if (face.isPresent()) {
-                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});
+                Logger.recordOutput("FieldMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});
             } else {
-                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {});
+                Logger.recordOutput("FieldMath/NearestFace", new Pose2d[] {});
             }
+
+            Logger.recordOutput("FieldMath/BargeScorePose", ReefUtil.getBargeScorePose(getPose()));
         }
 
         ChassisSpeeds spd = getChassisSpeeds() ;

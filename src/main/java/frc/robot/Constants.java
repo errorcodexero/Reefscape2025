@@ -15,6 +15,8 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
@@ -54,6 +56,10 @@ public final class Constants {
     public static class ProcessorConstants {
         public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
         public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
+    }
+
+    public static class BargeConstants {
+        public static final Distance distanceFromBargeTag = Centimeters.of(115);
     }
 
     public static class ReefConstants {
