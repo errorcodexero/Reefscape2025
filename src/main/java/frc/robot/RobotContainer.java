@@ -395,38 +395,17 @@ public class RobotContainer {
     public void setupAutos() {
 
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
+
         autoChooser_.addOption("Left Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+
         autoChooser_.addOption("Right Side Coral (3 Coral)",
                 AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Center Algae (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
-        
-        // autoChooser_.addOption("Center Coral (left side station) (2 Coral) (untested)",
-        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
-        // autoChooser_.addOption("Center Coral (right side station) (2 Coral) (untested)",
-        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
 
-        // autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
+        autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
 
-        // tuningChooser_.addOption("Straight Tuning Path",
-        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
-        // tuningChooser_.addOption("Curved Tuning Path",
-        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
-
-        // // Add SysId routines to the chooser
-        // tuningChooser_.addOption("Drive Wheel Radius Characterization",
-        //         DriveCommands.wheelRadiusCharacterization(drivebase_));
-        // tuningChooser_.addOption("Drive Simple FF Characterization",
-        //         DriveCommands.feedforwardCharacterization(drivebase_));
-        // tuningChooser_.addOption("Drive SysId (Quasistatic Forward)",
-        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)",
-        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // tuningChooser_.addOption("Drive SysId (Dynamic Forward)",
-        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // tuningChooser_.addOption("Drive SysId (Dynamic Reverse)",
-        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+        autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
+                
     }
 
     private void subsystemCreateException(Exception ex) {
@@ -471,12 +450,6 @@ public class RobotContainer {
         oi_.l2().onTrue(new SetLevelCmd(brain_, ReefLevel.L2).ignoringDisable(true));
         oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
         oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
-
-        //
-        // Disable this for now until we have better data on whether this is an issue
-        //
-        // oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()->
-        // brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
 
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
