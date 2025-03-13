@@ -27,7 +27,7 @@ public class ExecuteClimbCmd extends XeroSequenceCmd {
     public void initSequence(SequentialCommandGroup sequence) {
         sequence.addCommands(
             Commands.deadline(
-                new WaitCommand(Seconds.of(1.25)),
+                new WaitCommand(Seconds.of(2.0)),
                 drive_.runVelocityCmd(new ChassisSpeeds(0.0, 0.25, 0.0)))
         ) ;
         sequence.addCommands(new ClimbCmd(climber_));

@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.xerosw.util.DigitalInterrupt;
 import org.xerosw.util.TalonFXFactory;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -90,7 +89,7 @@ public class FunnelIOHardware implements FunnelIO {
         funnelLimitSwitchConfigs.ReverseSoftLimitEnable = true;
         funnelLimitSwitchConfigs.ReverseSoftLimitThreshold = FunnelConstants.kMinPosition.in(Rotations) ;
 
-        funnelMotor_.setPosition(Degrees.of(0.0)) ;
+        funnelMotor_.setPosition(0.0) ;
         funnelMotor_.setControl(new MotionMagicVoltage(Degrees.of(0.0))) ;
     }
 

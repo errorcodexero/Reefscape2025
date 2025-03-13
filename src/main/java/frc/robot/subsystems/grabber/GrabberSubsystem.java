@@ -1,6 +1,5 @@
 package frc.robot.subsystems.grabber;
 
-import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
@@ -10,7 +9,6 @@ import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
@@ -20,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class GrabberSubsystem extends SubsystemBase {
+    private Angle grabber_hold_offset_ = Rotations.of(-1.4) ;
 
     private enum CollectState {
         COLLECTING,
@@ -75,7 +74,7 @@ public class GrabberSubsystem extends SubsystemBase {
 
             case BACKING_UP:
                 if (!inputs_.coralSensor) {
-                    setGrabberTargetPosition(inputs_.grabberPosition) ;
+                    setGrabberTargetPosition(inputs_.grabberPosition.plus(grabber_hold_offset_)) ;
                     collect_state_ = CollectState.IDLE ;
                 }
                 break ;

@@ -22,11 +22,11 @@ public class OIConstants {
         public static final int kClimbLock =  16 ;           // Status
         public static final int kCoralSide = 17 ;           // Status
 
-        public static final int kRotateArm = 7 ;          // Rotate the arm to free coral
+        public static final int kRotateArm = 13 ;          // Rotate the arm to free coral
 
-        public static final int kSpare0 = 13 ;              // Spare
+        public static final int kSpare0 = 7 ;              // Spare
         public static final int kRaiseArm = 12 ;              // Spare
-        public static final int kSpare2 = 6 ;              // Spare
+        public static final int kAlgaeNet = 6 ;              // Spare
     }
 
     public enum OILed {

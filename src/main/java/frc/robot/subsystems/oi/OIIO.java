@@ -25,6 +25,7 @@ public interface OIIO {
         public boolean climb_lock = false ;
         public boolean coral_side = false ;
         public boolean raise_arm = false ;
+        public boolean algae_net = false ;
     }
 
     public default void updateInputs(OIIosInputs inputs) {

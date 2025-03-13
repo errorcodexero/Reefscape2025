@@ -482,7 +482,6 @@ public class RobotContainer {
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
-        gamepad_.a().onTrue(new AlgaeNetCmd(manipulator_, grabber_)) ;
 
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));
@@ -498,6 +497,7 @@ public class RobotContainer {
             new GoToCmd(manipulator_, Feet.of(2.0), manipulator_.getArmPosition())
         ) ;
 
+        oi_.algaeNet().onTrue(new AlgaeNetCmd(brain_, manipulator_, grabber_)) ;
     }
 
     /**

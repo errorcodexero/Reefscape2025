@@ -16,7 +16,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -33,7 +32,7 @@ public class GrabberIOHardware implements GrabberIO {
 
     private TalonFX grabber_motor_;
 
-    private double grabber_voltage_;
+    private Voltage grabber_voltage_;
 
     private StatusSignal<Angle> grabber_pos_sig_;
     private StatusSignal<AngularVelocity> grabber_vel_sig_;
@@ -130,12 +129,12 @@ public class GrabberIOHardware implements GrabberIO {
 
     public void logArmMotor(SysIdRoutineLog log) {
         log.motor("grabber")
-            .voltage(Units.Volts.of(grabber_voltage_))
+            .voltage(grabber_voltage_)
             .angularPosition(Revolutions.of(grabber_pos_sig_.refresh().getValueAsDouble()))
             .angularVelocity(RevolutionsPerSecond.of(grabber_vel_sig_.refresh().getValueAsDouble()));
     }
 
-    public void setGrabberMotorVoltage(double vol) {
+    public void setGrabberMotorVoltage(Voltage vol) {
         grabber_voltage_ = vol;
         grabber_motor_.setControl(new VoltageOut(vol)) ;
     }

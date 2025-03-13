@@ -30,6 +30,7 @@ public interface FunnelIO {
 
     public default void updateInputs(FunnelInputs inputs) {};
 
-    public default void setTargetPosition(Angle v) {};
+    public default void 
+    setTargetPosition(Angle v) {};
 
 }

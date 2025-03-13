@@ -14,7 +14,7 @@ public class GrabberConstants {
     public static final double kDistanceSensorSlope = 1.0 ;
     public static final double kDistanceSensorIntercept = 0.0 ;
 
-    public static final Voltage kCollectVoltage = Volts.of(8.0) ;
+    public static final Voltage kCollectVoltage = Volts.of(3.0) ;
 
     public class Grabber {
 
