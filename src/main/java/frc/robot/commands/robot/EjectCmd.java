@@ -2,6 +2,7 @@ package frc.robot.commands.robot;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -53,7 +54,7 @@ public class EjectCmd extends XeroSequenceCmd {
             ) ;
         } else {
             seq.addCommands(
-                new DepositCoralCmd(grabber_),
+                new DepositCoralCmd(grabber_, ReefLevel.L4),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
         }
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false));

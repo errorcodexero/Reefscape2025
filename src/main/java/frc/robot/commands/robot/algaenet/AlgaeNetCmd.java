@@ -8,6 +8,7 @@ import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.brain.BrainSubsystem;
+import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -74,6 +75,7 @@ public class AlgaeNetCmd extends Command {
             case Down:
                 goto_.execute() ;
                 if (goto_.isFinished()) {
+                    b_.setGp(GamePiece.NONE) ;
                     b_.clearRobotActions();
                     state_ = State.Done ;
                 }

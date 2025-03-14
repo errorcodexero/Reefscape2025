@@ -30,16 +30,17 @@ public class ClimbCmd extends Command {
         Logger.recordOutput("climber/holding", holding_) ;
 
         if (holding_) {
-            if (climber_.getClimberPosition().gt(threshold)) {
-                climber_.setMotorVoltage(Volts.of(ClimberConstants.Climber.kClimbVoltage)) ;
-            }
-            else if (climber_.getClimberPosition().gt(ClimberConstants.Climber.Position.kClimbed)) {
-                climber_.setMotorVoltage(Volts.of(0.0)) ;
-            }
+            // if (climber_.getClimberPosition().gt(threshold)) {
+            //     climber_.setMotorVoltage(Volts.of(ClimberConstants.Climber.kClimbVoltage)) ;
+            // }
+            // else if (climber_.getClimberPosition().gt(ClimberConstants.Climber.Position.kClimbed)) {
+            //     climber_.setMotorVoltage(Volts.of(-2.0)) ;
+            // }
         }
         else {
             if (climber_.getClimberPosition().isNear(ClimberConstants.Climber.Position.kClimbed, ClimberConstants.Climber.kPosTolerance)) {
-                climber_.setMotorVoltage(Volts.of(0.0)) ;
+                // climber_.setMotorVoltage(Volts.of(-2.0)) ;
+                climber_.setClimberTarget(ClimberState.Climb) ;
                 holding_ = true ;
             }
         }

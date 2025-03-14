@@ -11,7 +11,6 @@ import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
@@ -33,7 +32,8 @@ public interface GrabberIO {
         public boolean algaeRisingEdge = false;
         public boolean algaeFallingEdge = false;
 
-        public Distance distanceFromReef = Centimeters.zero() ;
+        public int numberOfCoral = 0 ;
+        public double distanceMedian = 0.0;
         public double distanceFromReefRaw = 0.0 ;
     }
 
