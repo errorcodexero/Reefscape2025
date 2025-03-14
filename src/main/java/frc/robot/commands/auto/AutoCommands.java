@@ -316,6 +316,7 @@ public class AutoCommands {
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));
+        addToSequence(seq, new WaitCommand(Milliseconds.of(500)));
         addToSequence(seq, new AlgaeNetCmd(brainSub, manipSub, grabberSub)) ;
 
         addToSequence(seq, logState(modename, "done"));

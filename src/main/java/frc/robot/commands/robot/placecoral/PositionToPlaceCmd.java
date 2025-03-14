@@ -8,6 +8,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.RobotContainer;
@@ -16,23 +17,25 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 
 public class PositionToPlaceCmd extends Command {
-	private static final boolean kSkipDistanceChecks = true ;
+	private static final boolean kSkipDistanceChecks = false ;
 	private static final boolean kSkipAngleChecks = false ;
 
 	private final ManipulatorSubsystem m_;
     private final Drive db_ ;
 	private final BrainSubsystem b_ ;
+	private final GrabberSubsystem g_ ;
 	private final Pose2d target_pose_;
 	private final ReefLevel level_;
 	private Command cmd_;
 	private Distance target_elev_pos_;
 	private Angle target_arm_pos_;
 
-	public PositionToPlaceCmd(Drive db, BrainSubsystem b, ManipulatorSubsystem m, ReefLevel level, Pose2d target) {
+	public PositionToPlaceCmd(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g, ReefLevel level, Pose2d target) {
 		addRequirements(m);
 		m_ = m;
         db_ = db ;
 		b_ = b;
+		g_ = g ;
         
 		level_ = level;
         target_pose_ = target;
@@ -51,7 +54,13 @@ public class PositionToPlaceCmd extends Command {
 				break ;
 
             case 1:
-                oneCoralOnFloor() ;
+				if (level_ == ReefLevel.L4) {
+					enableGamePad();
+					b_.clearRobotActions();
+				}
+				else {
+	                oneCoralOnFloor() ;
+				}
                 break ;
 
 			case 0:	
@@ -106,13 +115,13 @@ public class PositionToPlaceCmd extends Command {
 				break;
 
 			case L2:
-				target_elev_pos_ = Elevator.Positions.kPlaceL2.plus(Elevator.Positions.kPlaceL2L3OneCoralAdder);
-				target_arm_pos_ = Arm.Positions.kPlaceL2;
+				target_elev_pos_ = Elevator.Positions.kPlaceL2.plus(Elevator.Positions.kPlaceL2OneCoralAdder);
+				target_arm_pos_ = Arm.Positions.kPlaceL2OneCoral;
 				break;
 
 			case L3:
-				target_elev_pos_ = Elevator.Positions.kPlaceL3.plus(Elevator.Positions.kPlaceL2L3OneCoralAdder);
-				target_arm_pos_ = Arm.Positions.kPlaceL3;
+				target_elev_pos_ = Elevator.Positions.kPlaceL3.plus(Elevator.Positions.kPlaceL3OneCoralAdder);
+				target_arm_pos_ = Arm.Positions.kPlaceL3OneCoral;
 				break;
 
 			case L4:
@@ -138,8 +147,13 @@ public class PositionToPlaceCmd extends Command {
 		}
 
 		if (ret == 0 && !kSkipDistanceChecks) {
+			ret = g_.coralOnFloor() ;
+			if (ret > 1) {
+				ret = -1 ;
+			}
 		}
 
+		Logger.recordOutput("place/findCoralOnFloor", ret) ;
         return ret ;
     }
 

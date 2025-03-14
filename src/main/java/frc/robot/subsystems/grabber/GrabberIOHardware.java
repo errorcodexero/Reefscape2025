@@ -16,6 +16,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -38,6 +39,8 @@ public class GrabberIOHardware implements GrabberIO {
     private StatusSignal<AngularVelocity> grabber_vel_sig_;
     private StatusSignal<Current> grabber_curr_sig_;
     private StatusSignal<Voltage> grabber_vol_sig_;
+
+    private MedianFilter distanceFilter_ = new MedianFilter(5);
 
     private final Debouncer grabberErrorDebounce_ = new Debouncer(0.5);
 
@@ -120,11 +123,16 @@ public class GrabberIOHardware implements GrabberIO {
         inputs.algaeFallingEdge = algae_.fallingEdge();
 
         inputs.distanceFromReefRaw = distance_sensor_.getValue();
-        inputs.distanceFromReef = mapDistanceSensor(inputs.distanceFromReefRaw);
-    }
-
-    private Distance mapDistanceSensor(double raw) {
-        return Centimeters.of(raw * GrabberConstants.kDistanceSensorSlope + GrabberConstants.kDistanceSensorIntercept) ;
+        inputs.distanceMedian = distanceFilter_.calculate(inputs.distanceFromReefRaw);
+        if (inputs.distanceMedian > 1272) {
+            inputs.numberOfCoral = 0;
+        }
+        else if (inputs.distanceMedian > 819) {
+            inputs.numberOfCoral = 1 ;
+        }
+        else {
+            inputs.numberOfCoral = 2 ;
+        }
     }
 
     public void logArmMotor(SysIdRoutineLog log) {

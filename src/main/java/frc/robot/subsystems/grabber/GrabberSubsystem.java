@@ -47,6 +47,10 @@ public class GrabberSubsystem extends SubsystemBase {
         collect_state_ = CollectState.COLLECTING ;
     }
 
+    public int coralOnFloor() {
+        return inputs_.numberOfCoral;
+    }
+
     @Override
     public void periodic() {
         io_.updateInputs(inputs_);

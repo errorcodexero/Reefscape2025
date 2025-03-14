@@ -59,7 +59,7 @@ public final class Constants {
     }
 
     public static class BargeConstants {
-        public static final Distance distanceFromBargeTag = Centimeters.of(115);
+        public static final Distance distanceFromBargeTag = Centimeters.of(105);
     }
 
     public static class ReefConstants {

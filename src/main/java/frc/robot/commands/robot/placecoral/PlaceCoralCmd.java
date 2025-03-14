@@ -147,7 +147,9 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
         }
 
-        seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
+
+        seq.addCommands(
+            RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
         seq.addCommands(
             Commands.parallel(
@@ -156,15 +158,16 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     ManipulatorConstants.Arm.Positions.kRaiseAngle, scoringPose, kRaiseElevatorDistance)
             )) ;
         seq.addCommands(
-            new PositionToPlaceCmd(drive_, brain_, manipulator_, level, scoringPose),
+            new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
             Commands.parallel(
-                new DepositCoralCmd(grabber_),
+                new DepositCoralCmd(grabber_, brain_.coralLevel()),
                 Commands.sequence(
                     new WaitCommand(Milliseconds.of(100)),
                     new GoToCmdDirect(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle)
                 )
             ),
 
+            Commands.runOnce(()-> brain_.setGoingDown(true)),
             new SetHoldingCmd(brain_, GamePiece.NONE)
         ) ;
             

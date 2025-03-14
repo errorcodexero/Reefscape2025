@@ -17,6 +17,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIConstants.LEDState;
 import frc.robot.subsystems.oi.OIConstants.OILed;
@@ -29,6 +30,7 @@ import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -73,6 +75,8 @@ public class BrainSubsystem extends SubsystemBase {
 
     private boolean climb_signaled_ ;
 
+    private boolean going_down_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -105,6 +109,10 @@ public class BrainSubsystem extends SubsystemBase {
         periodic_count_ = 0 ;
         climb_signaled_ = false ;
         placed_ok_ = false ;
+    }
+
+    public void setGoingDown(boolean b) {
+        going_down_ = b ;
     }
 
     public GamePiece gp() {
@@ -350,6 +358,8 @@ public class BrainSubsystem extends SubsystemBase {
     private String startNewAction() {
         String status ;
 
+        going_down_ = false ;
+
         //
         // We are executing nothing, see if there are things to run queued
         //
@@ -404,6 +414,12 @@ public class BrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         String status = "" ;
+
+        if (current_action_ == RobotAction.PlaceCoral && going_down_) {
+            if (m_.getElevatorPosition().lte(ManipulatorConstants.Elevator.Positions.kReleaseGamePad)) {
+                RobotContainer.getInstance().gamepad().setLocked(false) ;
+            }
+        }
 
         Logger.recordOutput("brain/holding", gp_.toString()) ;
         Logger.recordOutput("brain/placedok", placed_ok_) ;
