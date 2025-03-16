@@ -1,8 +1,11 @@
 package frc.robot.commands.drive;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
@@ -15,6 +18,13 @@ public class RotateRobotCmd extends Command {
     private Rotation2d target_ ;
     private boolean done_ ;
     private PIDController pid_ ;
+    
+    public RotateRobotCmd(Drive db, Angle angle) {
+        db_ = db;
+        addRequirements(db_);
+
+        target_ = Rotation2d.fromDegrees(angle.in(Degrees)) ;
+    }
 
     public RotateRobotCmd(Drive db, Rotation2d angle) {
         db_ = db;

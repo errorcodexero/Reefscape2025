@@ -29,7 +29,6 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotState;
@@ -44,6 +43,7 @@ import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.drive.RotateRobotCmd;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
 import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
@@ -439,6 +439,9 @@ public class RobotContainer {
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
+
+        gamepad_.back().and(testModeTrigger).onTrue(new RotateRobotCmd(drivebase_, Degrees.of(180.0))) ;
+        
     }
 
     boolean isArmOkToRaise() {

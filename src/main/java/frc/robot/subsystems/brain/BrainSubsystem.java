@@ -536,7 +536,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain, true, true)) ;
+                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain, true)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 

@@ -1,8 +1,10 @@
 Things to do Monday
 -------------------
-- Check the auto barge shot, tune the shoot location        Butch
-- Tune/Verify the algae barge auto mode                     Butch
-- Verify the algae processor auto mode                      Butch
-- Verify the two coral auto mode                            Butch
-- Continue tuning the climber                               Butch/Marshal
-- Continue the three coral auto mode                        Butch/Students
+- Check the collect sequence
+- Tune the robot rotate
+- Tune the barge shot while moving
+- Test/tune the 2m to 4m barge shot range
+- Test the barge auto mode
+- Test the twist light off after climb
+- Test the coral between robot/reef lights
+- Test the place coral speedup

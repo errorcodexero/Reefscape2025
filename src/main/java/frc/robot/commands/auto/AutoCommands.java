@@ -38,7 +38,6 @@ import frc.robot.subsystems.oi.CoralSide;
 public class AutoCommands {
 
     private final static boolean kDebug = true;
-    private final static boolean kDriveWhileRaising = true;
     private final static Time DelayBeforeDriving = Milliseconds.of(0);
 
     private AutoCommands() {
@@ -84,7 +83,7 @@ public class AutoCommands {
         // Place first coral
         //
         addToSequence(seq, logState(modename, "Place 1st"));
-        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false, AutoCommands.kDriveWhileRaising)) ;
+        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, false)) ;
 
         //
         // Start driving to collect and lowering the elevator in parallel
@@ -122,7 +121,7 @@ public class AutoCommands {
         // Place the second coral
         //
         addToSequence(seq, logState(modename, "Place 2nd")) ;
-        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, true, AutoCommands.kDriveWhileRaising)) ;
+        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, mirroredX ? CoralSide.Right : CoralSide.Left, true)) ;
 
         addToSequence(seq, logState(modename, "done")) ;
 
@@ -163,7 +162,7 @@ public class AutoCommands {
         //
         addToSequence(seq, logState(modename, "Place 1st"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4,
-                mirroredX ? CoralSide.Right : CoralSide.Left, false, AutoCommands.kDriveWhileRaising));
+                mirroredX ? CoralSide.Right : CoralSide.Left, false));
 
         //
         // Start driving to collect and lowering the elevator in parallel
@@ -203,7 +202,7 @@ public class AutoCommands {
         //
         addToSequence(seq, logState(modename, "Place 2nd"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4,
-                mirroredX ? CoralSide.Right : CoralSide.Left, false, AutoCommands.kDriveWhileRaising));
+                mirroredX ? CoralSide.Right : CoralSide.Left, false));
 
         //
         // Start driving to collect and lowering the elevator in parallel
@@ -242,7 +241,7 @@ public class AutoCommands {
         //
         addToSequence(seq, logState(modename, "Place 3rd"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4,
-                mirroredX ? CoralSide.Left : CoralSide.Right, true, AutoCommands.kDriveWhileRaising));
+                mirroredX ? CoralSide.Left : CoralSide.Right, true));
 
         addToSequence(seq, logState(modename, "done"));
 
@@ -260,7 +259,7 @@ public class AutoCommands {
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left,
-                false, AutoCommands.kDriveWhileRaising));
+                false));
 
         addToSequence(seq,
                 new ConditionalCommand(new NullCmd(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));
@@ -296,8 +295,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Start"));
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
         addToSequence(seq, logState(modename, "Place Coral"));
-        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left,
-                false, AutoCommands.kDriveWhileRaising));
+        addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left, false));
 
         addToSequence(seq,
                 new ConditionalCommand(new NullCmd(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));

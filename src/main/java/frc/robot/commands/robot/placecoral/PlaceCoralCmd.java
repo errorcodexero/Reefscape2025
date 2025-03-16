@@ -1,6 +1,9 @@
 package frc.robot.commands.robot.placecoral;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.util.Optional;
@@ -11,7 +14,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -51,13 +53,12 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     
 
     private boolean lower_manip_ ;
-    private boolean drive_while_raising_ ;
 
     public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s) {
-        this(brain, drive, manipulator, grabber, h, s, true, false) ;
+        this(brain, drive, manipulator, grabber, h, s, true) ;
     }
 
-    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s, boolean lower, boolean drive_while_raising) {
+    public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s, boolean lower) {
         super("PlaceCoralCmd") ;
         drive_ = drive;
         manipulator_ = manipulator; 
@@ -70,7 +71,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         target_elev_pos_ = Elevator.Positions.kStow; 
 
         lower_manip_ = lower ;
-        drive_while_raising_ = drive_while_raising ;
     }
 
     // Called when the command is initially scheduled.
@@ -155,8 +155,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         seq.addCommands(
             Commands.parallel(
                 DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
-                new GoToWhenClose(drive_, manipulator_, target_elev_pos_, 
-                    ManipulatorConstants.Arm.Positions.kRaiseAngle, scoringPose, kRaiseElevatorDistance)
+                new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(0.01),
+                    ManipulatorConstants.Arm.Positions.kRaiseAngle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, kRaiseElevatorDistance)
             )) ;
         seq.addCommands(
             new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
@@ -164,7 +164,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                 new DepositCoralCmd(grabber_, brain_.coralLevel()),
                 Commands.sequence(
                     new WaitCommand(Milliseconds.of(100)),
-                    new GoToCmdDirect(manipulator_, target_elev_pos_, ManipulatorConstants.Arm.Positions.kKickbackAngle)
+                    new GoToCmdDirect(manipulator_, target_elev_pos_, Centimeters.of(5.0), MetersPerSecond.of(0.01), 
+                                                    ManipulatorConstants.Arm.Positions.kKickbackAngle, Degrees.of(5.0), DegreesPerSecond.of(10.0))
                 )
             ),
 
@@ -178,24 +179,5 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         }
 
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
-    }
-
-    private boolean raiseWhileDriving() {
-        boolean ret = false ;
-        if (drive_while_raising_) {
-            if (level_ == ReefLevel.AskBrain) {
-                ReefLevel l = brain_.coralLevel() ;
-                if (l != ReefLevel.L4) {
-                    ret = true ;
-                }
-            }
-            else {
-                if (level_ != ReefLevel.L4 || RobotState.isAutonomous()) {
-                    ret = true ;
-                }
-            }
-        }
-        ret = true ;
-        return ret;
     }
 }

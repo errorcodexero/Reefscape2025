@@ -35,10 +35,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
         Done
     }
 
-    private BrainSubsystem b_ ;
     private Drive db_ ;
-    private ManipulatorSubsystem m_ ;
-    private GrabberSubsystem g_ ;
 
     private Pose2d target_ ;
     private State state_ = State.Idle ;
@@ -49,10 +46,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
     private Command stop_cmd_ ;
 
     public AlgaeNetWhileMovingCmd(BrainSubsystem b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
-        b_ = b ;
         db_ = db ;
-        m_ = m ;
-        g_ = g ;
 
         state_ = State.Idle ;
         shoot_cmd_ = new AlgaeNetCmd(b, m, g);
