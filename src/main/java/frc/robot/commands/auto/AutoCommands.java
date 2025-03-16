@@ -20,6 +20,7 @@ import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.NullCmd;
 import frc.robot.commands.robot.WaitForCoralInRobot;
 import frc.robot.commands.robot.algaenet.AlgaeNetCmd;
+import frc.robot.commands.robot.algaenet.AlgaeNetDriveCmd;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -112,7 +113,7 @@ public class AutoCommands {
                 Commands.parallel(
                     new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
                     Commands.sequence(
-                        DriveCommands.followPathCommand("Side Coral 3", mirroredX),
+                        DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
                             new NullCmd(), 
                             driveSub.stopCmd(),
@@ -141,7 +142,7 @@ public class AutoCommands {
             ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
         final String modename = "threeCoralSideAuto";
 
-        Optional<PathPlannerPath> path = DriveCommands.findPath("Side Coral 1", mirroredX);
+        Optional<PathPlannerPath> path = DriveCommands.findPath("ThreeCoral1", mirroredX);
         if (!path.isPresent()) {
             return new AutoModeBaseCmd("empty");
         }
@@ -155,7 +156,7 @@ public class AutoCommands {
         //
         addToSequence(seq,
                 Commands.parallel(
-                        DriveCommands.followPathCommand("Side Coral 1", mirroredX),
+                        DriveCommands.followPathCommand("ThreeCoral1", mirroredX),
                         new SetHoldingCmd(brainSub, GamePiece.CORAL)));
 
         //
@@ -173,7 +174,7 @@ public class AutoCommands {
                 Commands.parallel(
                         Commands.sequence(
                                 new WaitCommand(AutoCommands.DelayBeforeDriving),
-                                DriveCommands.followPathCommand("Side Coral 2", mirroredX)),
+                                DriveCommands.followPathCommand("ThreeCoral2", mirroredX)),
                         new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
                                 ManipulatorConstants.Arm.Positions.kCollect)));
 
@@ -192,7 +193,7 @@ public class AutoCommands {
                         // velocity.
                         //
                         logState(modename, "Drive to Place 2nd"),
-                        DriveCommands.followPathCommand("Side Coral 3", mirroredX),
+                        DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
                                 new NullCmd(),
                                 driveSub.stopCmd(),
@@ -213,7 +214,7 @@ public class AutoCommands {
                 Commands.parallel(
                         Commands.sequence(
                                 new WaitCommand(DelayBeforeDriving),
-                                DriveCommands.followPathCommand("Side Coral 4", mirroredX)),
+                                DriveCommands.followPathCommand("ThreeCoral4", mirroredX)),
                         new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
                                 ManipulatorConstants.Arm.Positions.kCollect)));
 
@@ -232,7 +233,7 @@ public class AutoCommands {
                         // velocity.
                         //
                         logState(modename, "Drive to Place 3rd"),
-                        DriveCommands.followPathCommand("Side Coral 5", mirroredX),
+                        DriveCommands.followPathCommand("ThreeCoral5", mirroredX),
                         new ConditionalCommand(
                                 new NullCmd(),
                                 driveSub.stopCmd(),
@@ -268,7 +269,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Backup From Reef"));
         addToSequence(seq,
                 Commands.parallel(
-                        DriveCommands.followPathCommand("Algae 1"),
+                        DriveCommands.followPathCommand("ProcessorAlgaeBackup"),
                         new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL2,
                                 ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL2)));
         addToSequence(seq, logState(modename, "Stop"));
@@ -278,7 +279,7 @@ public class AutoCommands {
         addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true, true));
 
         addToSequence(seq, logState(modename, "Drive Processor"));
-        addToSequence(seq, DriveCommands.followPathCommand("Algae 2"));
+        addToSequence(seq, DriveCommands.followPathCommand("ProcessorAlgaeProcessor"));
         addToSequence(seq, new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub));
 
         addToSequence(seq, logState(modename, "done"));
@@ -316,8 +317,7 @@ public class AutoCommands {
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));
-        addToSequence(seq, new WaitCommand(Milliseconds.of(500)));
-        addToSequence(seq, new AlgaeNetCmd(brainSub, manipSub, grabberSub)) ;
+        addToSequence(seq, new AlgaeNetDriveCmd(brainSub, driveSub, manipSub, grabberSub)) ;
 
         addToSequence(seq, logState(modename, "done"));
 
