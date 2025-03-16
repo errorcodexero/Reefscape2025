@@ -21,7 +21,8 @@ public class FunnelConstants {
     public static final Current currentLimit = Amps.of(40);
     public static final Time lowerTime = Seconds.of(1);
 
-    public static final Angle kClimbPosition = Rotations.of(0.81) ;
+    // public static final Angle kClimbPosition = Rotations.of(0.81) ;
+    public static final Angle kClimbPosition = Rotations.of(0.0) ;
     public static final Angle kNormalPosition = Rotations.of(0.0) ;
     public static final Angle kMaxPosition = Rotations.of(0.85) ;
     public static final Angle kMinPosition = Rotations.of(-0.05) ;

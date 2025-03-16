@@ -111,15 +111,16 @@ public class ManipulatorConstants {
 
             public static final Angle kFinishedAlgaeThreshhold = Degrees.of(150.0) ;
             public static final Angle kKickbackAngle = Degrees.of(19); 
-            public static final Angle kCollect = Degrees.of(13) ;
+            public static final Angle kCollect = Degrees.of(15) ;
             public static final Angle kAlgaeReefCollectL2 = Degrees.of(175.0) ;
             public static final Angle kAlgaeReefCollectL3 = Degrees.of(175.0) ;
             public static final Angle kAlgaeReefHold = Degrees.of(170) ;
             public static final Angle kScoreAlgaeReef = Degrees.of(190) ;
             public static final Angle kRaiseAngle = Degrees.of(20.0) ;
-            public static final Angle kClimb = Degrees.of(58.0) ;
+            public static final Angle kClimb = Degrees.of(180.0) ;
 
             public static final Angle kShootAlgae = Degrees.of(170) ;
+            public static final Angle kShootAlgae2 = Degree.of(185.0) ;
         }
     }
 
@@ -196,8 +197,9 @@ public class ManipulatorConstants {
             public static final Distance kAlgaeReefHold = Centimeters.of(12.0) ;
             public static final Distance kScoreAlgaeReef = Centimeters.of(6.0) ;
 
-            public static final Distance kShootAlgae = Centimeters.of(140) ;
-            public static final Distance kShootAlgaeEject = Centimeters.of(126) ;
+            public static final Distance kShootAlgae = Centimeters.of(141) ;
+            public static final Distance kShootAlgaeEject = Centimeters.of(127) ;
+            public static final Distance kShootRotate = Centimeter.of(117) ;
         }
     }
 }

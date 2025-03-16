@@ -48,14 +48,17 @@ public class PositionToPlaceCmd extends Command {
 		target_elev_pos_ = null ;
 
         switch(coral) {
-			case -1: 
+			case -1:
 				enableGamePad() ;
+				enableGamePad();
+				b_.coralOnFloor() ;
 				b_.clearRobotActions() ;
 				break ;
 
             case 1:
 				if (level_ == ReefLevel.L4) {
 					enableGamePad();
+					b_.coralOnFloor() ;
 					b_.clearRobotActions();
 				}
 				else {

@@ -48,6 +48,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     private final ReefLevel level_ ;
 
     private Distance target_elev_pos_; 
+    
 
     private boolean lower_manip_ ;
     private boolean drive_while_raising_ ;

@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroSequenceCmd;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -77,6 +78,8 @@ public class BrainSubsystem extends SubsystemBase {
 
     private boolean going_down_ ;
 
+    private XeroTimer flash_timer_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -109,6 +112,8 @@ public class BrainSubsystem extends SubsystemBase {
         periodic_count_ = 0 ;
         climb_signaled_ = false ;
         placed_ok_ = false ;
+
+        flash_timer_ = null ;
     }
 
     public void setGoingDown(boolean b) {
@@ -162,6 +167,10 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     public void setCoralLevel(ReefLevel height) {
+        if (flash_timer_ != null) {
+            flash_timer_ = null ;
+        }
+        
         coral_level_ = height ;
         oi_.setLevelLED(height);
     }
@@ -259,6 +268,15 @@ public class BrainSubsystem extends SubsystemBase {
             }
         }
     }    
+
+    public void coralOnFloor() {
+        flash_timer_ = new XeroTimer(Seconds.of(3.0)) ;
+        flash_timer_.start() ;
+        oi_.setLEDState(OILed.CoralL1, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL2, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL3, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL4, LEDState.Fast) ;
+    }
 
     //
     // This clears the state of the OI to a basic default, no actions 
@@ -414,6 +432,17 @@ public class BrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         String status = "" ;
+
+        if (flash_timer_ != null) {
+            if (flash_timer_.isExpired()) {
+                flash_timer_ = null ;
+                oi_.setLEDState(OILed.CoralL1, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL2, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL3, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL4, LEDState.Off) ;
+                oi_.setLevelLED(coral_level_);
+            }
+        }
 
         if (current_action_ == RobotAction.PlaceCoral && going_down_) {
             if (m_.getElevatorPosition().lte(ManipulatorConstants.Elevator.Positions.kReleaseGamePad)) {
