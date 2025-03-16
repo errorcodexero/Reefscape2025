@@ -26,7 +26,8 @@ public class CalibrateCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!m_.isElevatorCalibrated() || m_.getElevatorPosition().lte(Centimeters.of(4.0))) {
+        // if (!m_.isElevatorCalibrated() || m_.getElevatorPosition().lte(Centimeters.of(4.0))) {
+        if (!m_.isElevatorCalibrated()) {
             m_.enableSoftLimits(false);
             m_.setElevatorVoltage(ManipulatorConstants.Elevator.kCalibrateVoltage);
             elev_calibrated_ = false ;

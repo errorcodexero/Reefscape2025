@@ -38,7 +38,7 @@ public class AlgaeNetCmd extends Command {
         addRequirements(m_, g_) ;
 
         eject_ = g_.setVoltageCommand(Volts.of(12.0)) ;
-        timer_ = new XeroTimer(Milliseconds.of(1000)) ;
+        timer_ = new XeroTimer(Milliseconds.of(500)) ;
     }
 
     @Override
