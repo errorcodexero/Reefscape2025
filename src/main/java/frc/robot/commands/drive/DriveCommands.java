@@ -386,6 +386,23 @@ public class DriveCommands {
    * @return A command that follows the created path.
    */
   public static Command simplePathCommand(Drive drive, Pose2d targetPose, LinearVelocity v, LinearAcceleration a) {
+    return simplePathCommand(drive, targetPose, null, v, a);
+  }
+
+  /**
+   * Creates an on-the-fly path, and creates a command that follows that path.
+   * This is different to pathfinding because it is ignorant of field obstacles,
+   * and should not be used when doing any complex navigations.
+   * 
+   * Otherwise, when there are no obstacles between your current pose, and your
+   * target pose, (e.g. 2025 reef targeting),
+   * this is a marginal performance increase.
+   * 
+   * @param targetPose The pose to create an on-the-fly path to.
+   * @param middleWaypoint The waypoint in the middle of a path, the rotational element of this should be the direction of travel, not the holonomic yaw.
+   * @return A command that follows the created path.
+   */
+  public static Command simplePathCommand(Drive drive, Pose2d targetPose, Pose2d middleWaypoint, LinearVelocity v, LinearAcceleration a) {
 
     // Create Constraints
     PathConstraints constraints = new PathConstraints(
@@ -408,7 +425,10 @@ public class DriveCommands {
         Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);
       }
 
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
+      List<Waypoint> waypoints = middleWaypoint != null ?
+        PathPlannerPath.waypointsFromPoses(startWaypoint, middleWaypoint, endWaypoint) :
+        PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
+
       ChassisSpeeds speed = drive.getChassisSpeeds() ;
       double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
 
