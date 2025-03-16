@@ -19,8 +19,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.NullCmd;
 import frc.robot.commands.robot.WaitForCoralInRobot;
-import frc.robot.commands.robot.algaenet.AlgaeNetCmd;
-import frc.robot.commands.robot.algaenet.AlgaeNetDriveCmd;
+import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -317,7 +316,7 @@ public class AutoCommands {
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));
-        addToSequence(seq, new AlgaeNetDriveCmd(brainSub, driveSub, manipSub, grabberSub)) ;
+        addToSequence(seq, new AlgaeNetWhileMovingCmd(brainSub, driveSub, manipSub, grabberSub)) ;
 
         addToSequence(seq, logState(modename, "done"));
 
