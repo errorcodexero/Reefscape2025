@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.DepositCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
+import frc.robot.subsystems.manipulator.ManipulatorConstants.Arm;
 import frc.robot.subsystems.manipulator.ManipulatorConstants.Elevator;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
@@ -39,7 +41,7 @@ import frc.robot.util.ReefUtil;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
 
-    private static final Distance kRaiseElevatorDistance = Centimeters.of(100.0) ;
+    private static final Distance kRaiseElevatorDistance = Centimeters.of(150.0) ;
 
     private final Drive drive_;
     private final ManipulatorSubsystem manipulator_; 
@@ -78,6 +80,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     public void initSequence(SequentialCommandGroup seq) {
         ReefLevel level ;
         CoralSide side ;
+        Angle immdangle ;
 
         if (level_ == ReefLevel.AskBrain) {
             level = brain_.coralLevel() ;
@@ -117,6 +120,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
         LinearVelocity maxvel = CommandConstants.ReefDrive.kMaxDriveVelocity ;
         LinearAcceleration maxaccel = CommandConstants.ReefDrive.kMaxDriveAcceleration ;
 
+        immdangle = Arm.Positions.kRaiseAngle ;
         switch(level) {
             case L1:
                 target_elev_pos_ = Elevator.Positions.kPlaceL1;
@@ -156,7 +160,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             Commands.parallel(
                 DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
                 new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(0.01),
-                    ManipulatorConstants.Arm.Positions.kRaiseAngle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, kRaiseElevatorDistance)
+                    immdangle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, kRaiseElevatorDistance)
             )) ;
         seq.addCommands(
             new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),

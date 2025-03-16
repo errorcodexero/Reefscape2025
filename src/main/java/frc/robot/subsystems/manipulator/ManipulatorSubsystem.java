@@ -29,8 +29,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
     private LinearVelocity elev_vel_tolerance_ ;
 
     private boolean elevator_calibrated_ ;
-
-
+    
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);

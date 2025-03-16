@@ -38,7 +38,7 @@ public class RotateRobotCmd extends Command {
         done_ = false ;
         pid_ = new PIDController(kP, kI, kD);
         pid_.enableContinuousInput(-180.0, 180.0);
-        pid_.setTolerance(0.1);
+        pid_.setTolerance(3);
 
         pid_.setSetpoint(target_.getDegrees());
     }

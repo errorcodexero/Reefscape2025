@@ -189,8 +189,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             ManipulatorConstants.Arm.kCurrentLimitTime
         );
 
-        setArmTarget(Degrees.of(19.0)) ;
-
         // ENCODER + MAPPER
         encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kAbsEncoder); 
 
@@ -348,6 +346,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     public void resetPosition() {
         elevator_motor_.setPosition(Degrees.of(0.0));
+        setArmTarget(ManipulatorConstants.Arm.Positions.kStow);
+        setElevatorTarget(ManipulatorConstants.Elevator.Positions.kStow);
     }
 
     public void setArmTarget(Angle angle) {
