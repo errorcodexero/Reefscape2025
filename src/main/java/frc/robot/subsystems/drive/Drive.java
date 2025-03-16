@@ -272,7 +272,7 @@ public class Drive extends SubsystemBase {
                 Logger.recordOutput("FieldMath/NearestFace", new Pose2d[] {});
             }
 
-            Logger.recordOutput("FieldMath/BargeScorePose", ReefUtil.getBargeScorePose(getPose()));
+            Logger.recordOutput("FieldMath/BargeScorePose", ReefUtil.getBargeScorePose(getPose(), Constants.BargeConstants.distanceFromBargeTag));
         }
 
         ChassisSpeeds spd = getChassisSpeeds() ;

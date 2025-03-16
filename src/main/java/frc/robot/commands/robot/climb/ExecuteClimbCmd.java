@@ -14,16 +14,21 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.climber.ClimbCmd;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.oi.OIConstants.LEDState;
+import frc.robot.subsystems.oi.OIConstants.OILed;
+import frc.robot.subsystems.oi.OISubsystem;
 
 public class ExecuteClimbCmd extends XeroSequenceCmd {
+    private OISubsystem oi_ ;
     private ClimberSubsystem climber_;
     private Drive drive_ ;
     private LinearVelocity vel_ ;
     private Time length_ ;
 
-    public ExecuteClimbCmd(ClimberSubsystem climber, Drive drive, LinearVelocity vel, Time length) {
+    public ExecuteClimbCmd(OISubsystem oi, ClimberSubsystem climber, Drive drive, LinearVelocity vel, Time length) {
         super("ExecuteClimbCmd");
 
+        oi_ = oi ;
         climber_ = climber;
         drive_ = drive ;
         vel_ = vel ;
@@ -32,6 +37,7 @@ public class ExecuteClimbCmd extends XeroSequenceCmd {
 
     @Override
     public void initSequence(SequentialCommandGroup sequence) {
+        oi_.setLEDState(OILed.ReadyToClimb, LEDState.On) ;
         if (length_.gt(Seconds.zero()) && vel_.gt(MetersPerSecond.zero())) {
             sequence.addCommands(
                 Commands.deadline(
