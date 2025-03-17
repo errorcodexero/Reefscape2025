@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ClimbCmd extends Command {
@@ -26,20 +25,10 @@ public class ClimbCmd extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        Angle threshold = ClimberConstants.Climber.Position.kClimbed.plus(ClimberConstants.Climber.Position.kReapplyOffset) ;
         Logger.recordOutput("climber/holding", holding_) ;
 
-        if (holding_) {
-            // if (climber_.getClimberPosition().gt(threshold)) {
-            //     climber_.setMotorVoltage(Volts.of(ClimberConstants.Climber.kClimbVoltage)) ;
-            // }
-            // else if (climber_.getClimberPosition().gt(ClimberConstants.Climber.Position.kClimbed)) {
-            //     climber_.setMotorVoltage(Volts.of(-2.0)) ;
-            // }
-        }
-        else {
+        if (!holding_) {
             if (climber_.getClimberPosition().isNear(ClimberConstants.Climber.Position.kClimbed, ClimberConstants.Climber.kPosTolerance)) {
-                // climber_.setMotorVoltage(Volts.of(-2.0)) ;
                 climber_.setClimberTarget(ClimberState.Climb) ;
                 holding_ = true ;
             }

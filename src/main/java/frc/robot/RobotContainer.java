@@ -29,7 +29,6 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotState;
@@ -44,10 +43,10 @@ import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.drive.RotateRobotCmd;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
-import frc.robot.commands.robot.algaenet.AlgaeNetCmd;
-import frc.robot.commands.robot.algaenet.AlgaeNetDriveCmd;
+import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
 import frc.robot.commands.robot.climb.ExecuteClimbCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
 import frc.robot.commands.robot.climb.StowClimberCmd;
@@ -434,12 +433,13 @@ public class RobotContainer {
     }
 
     private void configureTestModeBindings() {
-        Distance h = Centimeters.of(141) ;
+        Distance h = Centimeters.of(130) ;
         gamepad_.start().and(testModeTrigger).onTrue(
             new ConditionalCommand(
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
+        
     }
 
     boolean isArmOkToRaise() {
@@ -475,7 +475,7 @@ public class RobotContainer {
 
         oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(drivebase_, climber_, funnel_, manipulator_));
         oi_.climbLock().onTrue(new StowClimberCmd(manipulator_, climber_, funnel_)) ;
-        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(climber_, drivebase_, MetersPerSecond.of(0.25), Seconds.of(0.6))) ;
+        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(oi_, climber_, drivebase_, MetersPerSecond.of(0.25), Seconds.of(0.6))) ;
         
         climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
         oi_.rotateArm().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, Degrees.of(90.0))) ;
@@ -484,7 +484,7 @@ public class RobotContainer {
             new GoToCmd(manipulator_, Feet.of(2.0), manipulator_.getArmPosition())
         ) ;
 
-        oi_.algaeNet().onTrue(new AlgaeNetDriveCmd(brain_, drivebase_, manipulator_, grabber_)) ;
+        oi_.algaeNet().onTrue(new AlgaeNetWhileMovingCmd(brain_, drivebase_, manipulator_, grabber_)) ;
     }
 
     /**

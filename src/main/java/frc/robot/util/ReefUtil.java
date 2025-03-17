@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ReefConstants;
 
@@ -79,15 +78,11 @@ public class ReefUtil {
         return nearest;
     }
 
-    public static Pose2d getBargeScorePose(Pose2d robotPose) {
+    public static Pose2d getBargeScorePose(Pose2d robotPose, Distance d) {
         boolean isOnBlue = robotPose.getX() < FieldConstants.layout.getFieldLength() / 2;
         Pose2d tagPose = isOnBlue ? blueBargeTagPose : redBargeTagPose;
 
-        Pose2d baseScorePose = tagPose.transformBy(new Transform2d(
-            Constants.BargeConstants.distanceFromBargeTag,
-            Meters.zero(),
-            Rotation2d.k180deg
-        ));
+        Pose2d baseScorePose = tagPose.transformBy(new Transform2d(d, Meters.zero(), Rotation2d.k180deg)) ;
         
         return new Pose2d(baseScorePose.getX(), robotPose.getY(), baseScorePose.getRotation());
     }

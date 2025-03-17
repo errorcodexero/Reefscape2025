@@ -1,6 +1,9 @@
 package frc.robot.commands.robot.placecoral;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
 import org.littletonrobotics.junction.Logger;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
@@ -20,6 +23,13 @@ public class PositionToPlaceCmd extends Command {
 	private static final boolean kSkipDistanceChecks = false ;
 	private static final boolean kSkipAngleChecks = false ;
 
+	private enum State {
+		Idle,
+		Moving,
+		Waiting,
+		Done,
+	}
+
 	private final ManipulatorSubsystem m_;
     private final Drive db_ ;
 	private final BrainSubsystem b_ ;
@@ -29,6 +39,8 @@ public class PositionToPlaceCmd extends Command {
 	private Command cmd_;
 	private Distance target_elev_pos_;
 	private Angle target_arm_pos_;
+	private XeroTimer timer_ ;
+	private State state_ ;
 
 	public PositionToPlaceCmd(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g, ReefLevel level, Pose2d target) {
 		addRequirements(m);
@@ -49,7 +61,6 @@ public class PositionToPlaceCmd extends Command {
 
         switch(coral) {
 			case -1:
-				enableGamePad() ;
 				enableGamePad();
 				b_.coralOnFloor() ;
 				b_.clearRobotActions() ;
@@ -73,8 +84,12 @@ public class PositionToPlaceCmd extends Command {
         }
 
 		if (target_arm_pos_ != null && target_elev_pos_ != null) {
-	        cmd_ = new GoToCmd(m_, target_elev_pos_, target_arm_pos_) ;
-    	    cmd_.initialize() ;
+			cmd_ = new GoToCmd(m_, target_elev_pos_, target_arm_pos_) ;
+			cmd_.initialize() ;
+			state_ = State.Moving ;
+		}
+		else {
+			state_ = State.Done ;
 		}
 	}
 
@@ -83,6 +98,7 @@ public class PositionToPlaceCmd extends Command {
 	}
 
 	private void noCoralOnFloor() {
+		timer_ = null ;
 		switch (level_) {
 			case L1:
 				target_elev_pos_ = Elevator.Positions.kPlaceL1;
@@ -111,6 +127,7 @@ public class PositionToPlaceCmd extends Command {
 	}
 
 	private void oneCoralOnFloor() {
+		timer_ = new XeroTimer(Milliseconds.of(500)) ;
 		switch (level_) {
 			case L1:
 				target_elev_pos_ = Elevator.Positions.kPlaceL1;
@@ -119,17 +136,15 @@ public class PositionToPlaceCmd extends Command {
 
 			case L2:
 				target_elev_pos_ = Elevator.Positions.kPlaceL2.plus(Elevator.Positions.kPlaceL2OneCoralAdder);
-				target_arm_pos_ = Arm.Positions.kPlaceL2OneCoral;
+				target_arm_pos_ = Arm.Positions.kPlaceL2;
 				break;
 
 			case L3:
 				target_elev_pos_ = Elevator.Positions.kPlaceL3.plus(Elevator.Positions.kPlaceL3OneCoralAdder);
-				target_arm_pos_ = Arm.Positions.kPlaceL3OneCoral;
+				target_arm_pos_ = Arm.Positions.kPlaceL3;
 				break;
 
 			case L4:
-				target_elev_pos_ = Elevator.Positions.kPlaceL4OneCoral;
-				target_arm_pos_ = Arm.Positions.kPlaceL4OneCoral;
 				break;
 
 			default:
@@ -162,12 +177,35 @@ public class PositionToPlaceCmd extends Command {
 
 	@Override
 	public void execute() {
-        cmd_.execute();
+		switch(state_) {
+			case Moving:
+				cmd_.execute();
+				if (cmd_.isFinished()) {
+					if (timer_ != null) {
+						state_ = State.Waiting ;
+						timer_.start() ;
+					}
+					else {
+						state_ = State.Done ;
+					}
+				}
+				break ;
+
+			case Waiting:
+				if (timer_.isExpired()) {
+					state_ = State.Done ;
+				}
+				break ;
+
+			case Idle:
+			case Done:
+				break ;
+		}
 	}
 
 	@Override
 	public boolean isFinished() {
-        return cmd_.isFinished() ;
+        return state_ == State.Done ;
 	}
 
     @Override
@@ -175,6 +213,8 @@ public class PositionToPlaceCmd extends Command {
         if (interrupted) {
             cmd_.cancel() ;
         }
-        cmd_.end(interrupted);
+		if (cmd_ != null) {
+	        cmd_.end(interrupted);
+		}
     }
 }

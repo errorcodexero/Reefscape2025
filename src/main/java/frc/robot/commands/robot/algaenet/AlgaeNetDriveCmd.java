@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -36,7 +37,7 @@ public class AlgaeNetDriveCmd extends XeroSequenceCmd {
 
     @Override
     public void initSequence(SequentialCommandGroup seq) {
-        Pose2d target = ReefUtil.getBargeScorePose(db_.getPose()) ;
+        Pose2d target = ReefUtil.getBargeScorePose(db_.getPose(), Constants.BargeConstants.distanceFromBargeTag) ;
         if (target.getTranslation().getDistance(db_.getPose().getTranslation()) < 2.0) {
             seq.addCommands(
                 DriveCommands.simplePathCommand(db_, target, kMaxVel, kMaxAcc),

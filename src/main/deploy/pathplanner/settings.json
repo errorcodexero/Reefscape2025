@@ -3,12 +3,10 @@
   "robotLength": 0.73025,
   "holonomicMode": true,
   "pathFolders": [
-    "Algae",
-    "Center Coral",
-    "Just Place",
+    "Processor Algae",
     "Barge Algae",
-    "Side Algae",
-    "Side Coral"
+    "Three Coral",
+    "Two Coral"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

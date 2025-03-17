@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -19,10 +20,16 @@ import frc.robot.Robot;
 public class ManipulatorSubsystem extends SubsystemBase {
     private final ManipulatorIO io_; 
     private final ManipulatorIOInputsAutoLogged inputs_;  
-    private Angle target_angle_;
-    private Distance target_height_;
-    private boolean elevator_calibrated_ ;
+    private Angle arm_target_;
+    private Angle arm_pos_tolerance_ ;
+    private AngularVelocity arm_vel_tolerance_ ;
 
+    private Distance elev_target_;
+    private Distance elev_pos_tolerance_ ;
+    private LinearVelocity elev_vel_tolerance_ ;
+
+    private boolean elevator_calibrated_ ;
+    
     private final Alert armDisconnected_ = new Alert("Arm motor failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator1Disconnected_ = new Alert("Elevator motor 1 failed to configure or is disconnected!", AlertType.kError);
     private final Alert elevator2Disconnected_ = new Alert("Elevator motor 2 failed to configure or is disconnected!", AlertType.kError);
@@ -53,8 +60,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
         Logger.recordOutput("Manipulator/calibrated", elevator_calibrated_) ;
 
-        Logger.recordOutput("Manipulator/ArmTarget", target_angle_) ;
-        Logger.recordOutput("Manipulator/ElevatorTarget", target_height_) ;
+        Logger.recordOutput("Manipulator/ArmTarget", arm_target_) ;
+        Logger.recordOutput("Manipulator/ElevatorTarget", elev_target_) ;
 
         Logger.recordOutput("Manipulator/armReady", isArmAtTarget()) ;
         Logger.recordOutput("Manipulator/elevatorReady", isElevAtTarget()) ;
@@ -69,11 +76,17 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     public Angle getArmTarget() {
-        return target_angle_;
+        return arm_target_;
     }
 
     public void setArmTarget(Angle angle) {
-        target_angle_ = angle;  
+        setArmTarget(angle, null, null) ;
+    }
+
+    public void setArmTarget(Angle angle, Angle postol, AngularVelocity veltol) {
+        arm_target_ = angle;  
+        arm_pos_tolerance_ = postol ;
+        arm_vel_tolerance_ = veltol ;
         io_.setArmTarget(angle); 
     }
 
@@ -91,11 +104,17 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     public Distance getElevatorTarget() {
-        return target_height_;
+        return elev_target_;
     }
 
     public void setElevatorTarget(Distance dist) {
-        target_height_ = dist;
+        setElevatorTarget(dist, null, null) ;
+    }
+
+    public void setElevatorTarget(Distance dist, Distance postol, LinearVelocity veltol) {
+        elev_target_ = dist;
+        elev_pos_tolerance_ = postol ;
+        elev_vel_tolerance_ = veltol ;
         io_.setElevatorTarget(dist); 
     }
 
@@ -104,26 +123,32 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     public boolean isElevAtTarget() {
-        if (target_height_ == null)
+        if (elev_target_ == null)
             return false;
 
-        if (!inputs_.elevatorPosition.isNear(target_height_, ManipulatorConstants.Elevator.kPosTolerance))
+        Distance postol = (elev_pos_tolerance_ != null) ? elev_pos_tolerance_ : ManipulatorConstants.Elevator.kPosTolerance ;
+        LinearVelocity veltol = (elev_vel_tolerance_ != null) ? elev_vel_tolerance_ : ManipulatorConstants.Elevator.kVelTolerance ;
+
+        if (!inputs_.elevatorPosition.isNear(elev_target_, postol))
             return false ;
 
-        if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), ManipulatorConstants.Elevator.kVelTolerance))
+        if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), veltol))
             return false ;
 
         return true ;
     }
 
     public boolean isArmAtTarget() {
-        if (target_angle_ == null)
+        if (arm_target_ == null)
             return false;            
 
-        if (!inputs_.armPosition.isNear(target_angle_, ManipulatorConstants.Arm.kPosTolerance))
+        Angle postol = (arm_pos_tolerance_ != null) ? arm_pos_tolerance_ : ManipulatorConstants.Arm.kPosTolerance ;
+        AngularVelocity veltol = (arm_vel_tolerance_ != null) ? arm_vel_tolerance_ : ManipulatorConstants.Arm.kVelTolerance ;
+
+        if (!inputs_.armPosition.isNear(arm_target_, postol))
             return false ;
 
-        if (Robot.isReal() && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), ManipulatorConstants.Arm.kVelTolerance))
+        if (Robot.isReal() && !inputs_.armVelocity.isNear(RotationsPerSecond.of(0), veltol))
             return false ;
 
         return true ;

@@ -19,7 +19,6 @@ public class AlgaeNetCmd extends Command {
     private enum State {
         GoingUp,
         Shooting,
-        Down,
         Done
     } ;
 
@@ -39,7 +38,7 @@ public class AlgaeNetCmd extends Command {
         addRequirements(m_, g_) ;
 
         eject_ = g_.setVoltageCommand(Volts.of(12.0)) ;
-        timer_ = new XeroTimer(Milliseconds.of(1000)) ;
+        timer_ = new XeroTimer(Milliseconds.of(500)) ;
     }
 
     @Override
@@ -64,23 +63,14 @@ public class AlgaeNetCmd extends Command {
 
             case Shooting:
                 eject_.execute() ;
+                b_.setGp(GamePiece.NONE);
                 if (timer_.isExpired()) {
                     g_.setGrabberMotorVoltage(Volts.zero()) ;
                     goto_ = new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow) ;
                     goto_.initialize() ;
-                    state_ = State.Down ;
+                    state_ = State.Done;
                 }
                 break ;
-
-            case Down:
-                goto_.execute() ;
-                if (goto_.isFinished()) {
-                    b_.setGp(GamePiece.NONE) ;
-                    b_.clearRobotActions();
-                    state_ = State.Done ;
-                }
-                break ;
-
             case Done:
                 break ;
         }

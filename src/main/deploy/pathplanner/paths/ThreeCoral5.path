@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.826875,
-        "y": 3.244999999999999
+        "x": 1.243125,
+        "y": 0.8367499999999995
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.421489186047525,
-        "y": 3.7274802028380822
+        "x": 1.519973734160522,
+        "y": 1.004189551681572
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3601249999999998,
-        "y": 1.0073749999999995
+        "x": 3.563625,
+        "y": 2.391875
       },
       "prevControl": {
-        "x": 1.584350879172037,
-        "y": 1.1470585398491302
+        "x": 3.276845183461185,
+        "y": 2.200176848128945
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Side Coral 5"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 53.4089117326008
+    "velocity": 1.5,
+    "rotation": 53.00472885729285
   },
   "reversed": false,
-  "folder": "Side Coral",
+  "folder": "Three Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 56.49656301758577
+    "rotation": 53.72
   },
   "useDefaultConstraints": false
 }
