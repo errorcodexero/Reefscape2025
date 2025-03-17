@@ -33,6 +33,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.manipulator.commands.WaitForCalibrationCmd;
 import frc.robot.subsystems.oi.CoralSide;
 
 public class AutoCommands {
@@ -255,7 +256,8 @@ public class AutoCommands {
         Pose2d p = new Pose2d(7.84, 3.94, Rotation2d.fromDegrees(180.0));
         AutoModeBaseCmd seq = new AutoModeBaseCmd("oneCoralOneAlgaeProcessor", p);
 
-        addToSequence(seq, logState(modename, "Start"));
+        addToSequence(seq, logState(modename, "Calibrating"));
+        addToSequence(seq, new WaitForCalibrationCmd(manipSub));
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left,
@@ -292,7 +294,8 @@ public class AutoCommands {
         Pose2d p = new Pose2d(7.84, 3.94, Rotation2d.fromDegrees(180.0));
         AutoModeBaseCmd seq = new AutoModeBaseCmd("oneCoralOneAlgaeBarge", p);
 
-        addToSequence(seq, logState(modename, "Start"));
+        addToSequence(seq, logState(modename, "Calibrating"));
+        addToSequence(seq, new WaitForCalibrationCmd(manipSub));
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left, false));
