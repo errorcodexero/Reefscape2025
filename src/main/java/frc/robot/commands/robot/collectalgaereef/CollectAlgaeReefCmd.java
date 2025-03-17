@@ -112,7 +112,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
             seq.addCommands(
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.parallel(
-                    DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), 
+                    DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(),
                                                     MetersPerSecond.of(1.0), 
                                                     CommandConstants.ReefDrive.kMaxDriveAcceleration),
                     new CollectAlgaeCmd(grabber_))) ;

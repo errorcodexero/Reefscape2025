@@ -32,7 +32,7 @@ public class DepositCoralCmd extends Command {
 
     @Override
     public void initialize() {
-        Time delay = RobotState.isAutonomous() ? Milliseconds.of(150) : Milliseconds.of(300) ;
+        Time delay = RobotState.isAutonomous() ? Milliseconds.of(300) : Milliseconds.of(300) ;
         if (level_ == ReefLevel.L1) {
             grabber_.setGrabberMotorVoltage(Volts.of(6.0)) ;
             timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.l1delay);

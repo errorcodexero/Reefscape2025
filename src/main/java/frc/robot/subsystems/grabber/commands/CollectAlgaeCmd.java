@@ -38,5 +38,4 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
             Logger.recordOutput("Commands/AlgaeCollect/State", state);
         });
     }
-
 }

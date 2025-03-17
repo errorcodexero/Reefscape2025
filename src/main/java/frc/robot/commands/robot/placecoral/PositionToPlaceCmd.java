@@ -213,6 +213,8 @@ public class PositionToPlaceCmd extends Command {
         if (interrupted) {
             cmd_.cancel() ;
         }
-        cmd_.end(interrupted);
+		if (cmd_ != null) {
+	        cmd_.end(interrupted);
+		}
     }
 }

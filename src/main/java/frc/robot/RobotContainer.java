@@ -433,14 +433,12 @@ public class RobotContainer {
     }
 
     private void configureTestModeBindings() {
-        Distance h = Centimeters.of(141) ;
+        Distance h = Centimeters.of(130) ;
         gamepad_.start().and(testModeTrigger).onTrue(
             new ConditionalCommand(
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
-
-        gamepad_.back().and(testModeTrigger).onTrue(new RotateRobotCmd(drivebase_, Degrees.of(180.0))) ;
         
     }
 
