@@ -95,7 +95,6 @@ public class FunnelIOHardware implements FunnelIO {
 
     @Override
     public void updateInputs(FunnelInputs inputs) {
-
         if (RobotState.isEnabled() && !is_inited_) {
             funnelMotor_.setPosition(0.0) ;
             funnelMotor_.setControl(new MotionMagicVoltage(Degrees.of(0.0))) ;

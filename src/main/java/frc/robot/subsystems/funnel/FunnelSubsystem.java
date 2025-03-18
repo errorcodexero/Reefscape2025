@@ -41,6 +41,7 @@ public class FunnelSubsystem extends SubsystemBase {
         }
 
         Logger.recordOutput("funnel/seencoral", hasSeenCoral());
+        Logger.recordOutput("funnel/target", target_) ;
     }
     
     public void setTargetPosition(Angle v) {
