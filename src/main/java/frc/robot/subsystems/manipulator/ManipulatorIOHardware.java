@@ -251,8 +251,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (RobotState.isDisabled()) {
+        if (RobotState.isDisabled() && encoder_motor_syncing_) {
             syncArmPosition() ;
+            encoder_motor_syncing_ = false ;
         }
 
         inputs.encoderSynced = encoder_motor_syncing_ ;
