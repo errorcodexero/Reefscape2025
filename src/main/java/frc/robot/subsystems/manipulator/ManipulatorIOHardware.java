@@ -79,6 +79,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
+
     public ManipulatorIOHardware() throws Exception {
         createArm() ;
         createElevator() ;   
@@ -249,7 +250,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (RobotState.isDisabled()) {
+        if (RobotState.isDisabled() && encoder_motor_syncing_) {
+            encoder_motor_syncing_ = false ;
             syncArmPosition() ;
         }
 
