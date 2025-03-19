@@ -114,7 +114,7 @@ public class AutoCommands {
                     Commands.sequence(
                         DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
-                            new NullCmd(), 
+                            Commands.none(), 
                             driveSub.stopCmd(),
                             () -> AutoCommands.hasCoral(brainSub))))) ;
 
@@ -194,7 +194,7 @@ public class AutoCommands {
                         logState(modename, "Drive to Place 2nd"),
                         DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
-                                new NullCmd(),
+                                Commands.none(),
                                 driveSub.stopCmd(),
                                 () -> AutoCommands.hasCoral(brainSub)))));
 
@@ -234,7 +234,7 @@ public class AutoCommands {
                         logState(modename, "Drive to Place 3rd"),
                         DriveCommands.followPathCommand("ThreeCoral5", mirroredX),
                         new ConditionalCommand(
-                                new NullCmd(),
+                                Commands.none(),
                                 driveSub.stopCmd(),
                                 () -> AutoCommands.hasCoral(brainSub)))));
         //
@@ -264,7 +264,7 @@ public class AutoCommands {
                 false));
 
         addToSequence(seq,
-                new ConditionalCommand(new NullCmd(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));
+                new ConditionalCommand(Commands.none(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));
 
         addToSequence(seq, logState(modename, "Backup From Reef"));
         addToSequence(seq,
@@ -301,7 +301,7 @@ public class AutoCommands {
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left, false));
 
         addToSequence(seq,
-                new ConditionalCommand(new NullCmd(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));
+                new ConditionalCommand(Commands.none(), new WaitCommand(Seconds.of(15.0)), () -> brainSub.placedOk()));
 
         addToSequence(seq, logState(modename, "Backup From Reef"));
         addToSequence(seq,
