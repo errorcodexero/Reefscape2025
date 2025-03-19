@@ -82,7 +82,7 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(16);
+        public static final Distance distanceFromTagCoral = Inches.of(15);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
@@ -111,7 +111,8 @@ public final class Constants {
          * The distance from the center of the ROBOT to the ARM.
          * (LEFT of the robot is POSITIVE)
          */
-        public static final Distance robotToArm = Inches.of(0.125);
+        //public static final Distance robotToArm = Inches.of(0.125);
+        public static final Distance robotToArm = Inches.of(2.125);
     }
 
     /**
