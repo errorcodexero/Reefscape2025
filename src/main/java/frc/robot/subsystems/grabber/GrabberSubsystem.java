@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class GrabberSubsystem extends SubsystemBase {
 
+    private static Angle kHoldOffset = Rotations.of(0.0) ;
+
     private enum CollectState {
         COLLECTING,
         DELAY,
@@ -77,8 +79,7 @@ public class GrabberSubsystem extends SubsystemBase {
 
             case BACKING_UP:
                 if (!inputs_.coralSensor) {
-                    setGrabberMotorVoltage(Volts.zero()) ;
-                    // setGrabberTargetPosition(inputs_.grabberPosition.plus(grabber_hold_offset_)) ;
+                    setGrabberTargetPosition(inputs_.grabberPosition.plus(kHoldOffset)) ;
                     collect_state_ = CollectState.IDLE ;
                 }
                 break ;

@@ -43,7 +43,6 @@ import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.drive.RotateRobotCmd;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
 import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
@@ -537,6 +536,8 @@ public class RobotContainer {
         // Reset gyro to 0° when Y & B button is pressed
         gamepad_.y().and(gamepad_.b()).onTrue(
                 drivebase_.resetGyroCmd());
+
+        gamepad_.rightTrigger().onTrue(new ExecuteRobotActionCmd(brain_));
     }
 
     /**

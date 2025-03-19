@@ -79,7 +79,7 @@ public class GrabberIOHardware implements GrabberIO {
             GrabberConstants.Grabber.kMotorCANID,
             "grabber-set-freq",
             () -> BaseStatusSignal.setUpdateFrequencyForAll(
-                1.0,
+                50.0,
                 grabber_curr_sig_,
                 grabber_pos_sig_,
                 grabber_vel_sig_,
