@@ -15,6 +15,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -55,6 +56,14 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
     
 
     private boolean lower_manip_ ;
+
+    private Distance raiseDistance() {
+        if (RobotState.isAutonomous()) {
+            return Centimeters.of(75.0) ;
+        }
+
+        return kRaiseElevatorDistance ;
+    }
 
     public PlaceCoralCmd(BrainSubsystem brain, Drive drive, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel h, CoralSide s) {
         this(brain, drive, manipulator, grabber, h, s, true) ;
@@ -152,7 +161,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
         }
 
-
         seq.addCommands(
             RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
@@ -160,7 +168,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             Commands.parallel(
                 DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
                 new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(0.01),
-                    immdangle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, kRaiseElevatorDistance)
+                    immdangle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, raiseDistance())
             )) ;
         seq.addCommands(
             new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
