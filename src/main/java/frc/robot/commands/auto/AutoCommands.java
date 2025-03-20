@@ -17,11 +17,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.misc.StateCmd;
-import frc.robot.commands.robot.NullCmd;
 import frc.robot.commands.robot.WaitForCoralInRobot;
 import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
-import frc.robot.commands.robot.collectalgaereefnew.CollectAlgaeReefNewCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
@@ -277,7 +275,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefNewCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true, true));
+        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true));
 
         addToSequence(seq, logState(modename, "Drive Processor"));
         addToSequence(seq, DriveCommands.followPathCommand("ProcessorAlgaeProcessor"));
@@ -314,7 +312,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefNewCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true, true));
+        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true));
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));

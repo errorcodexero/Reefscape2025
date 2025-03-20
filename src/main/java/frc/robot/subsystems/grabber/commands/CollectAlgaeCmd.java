@@ -14,11 +14,7 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class CollectAlgaeCmd extends SequentialCommandGroup {
 
-    private final GrabberSubsystem grabber_;
-
     public CollectAlgaeCmd(GrabberSubsystem grabber) {
-        grabber_ = grabber;
-
         addCommands(
             grabber.setVoltageCommand(Volts.of(-6.0)),
             logState("Waiting"),
