@@ -51,10 +51,6 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         skipfirst_ = skipfirst ;
     }
 
-    // COMMANDS NEEDED:
-    // GoToCmd
-    // WaitForCoral
-
     private boolean alreadyRotated() {
         return manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshhold) ;
     }
@@ -141,6 +137,6 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     }
 
     private boolean hasAlgae() {
-        return !grabber_.algaeSensor() ;
+        return grabber_.hasAlgae() ;
     }
 }

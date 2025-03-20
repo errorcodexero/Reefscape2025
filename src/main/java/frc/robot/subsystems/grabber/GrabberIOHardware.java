@@ -22,11 +22,13 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public class GrabberIOHardware implements GrabberIO {
     private DigitalInterrupt coral_;
-    private DigitalInterrupt algae_;
+    private DigitalInput algae1_;
+    private DigitalInput algae2_ ;
 
     private AnalogInput distance_sensor_;
 
@@ -92,8 +94,8 @@ public class GrabberIOHardware implements GrabberIO {
         coral_ =  new DigitalInterrupt(GrabberConstants.Grabber.CoralSensor.kChannel);
         coral_.enable() ;
 
-        algae_ = new DigitalInterrupt(GrabberConstants.Grabber.AlgaeSensor.kChannel);
-        algae_.enable();
+        algae1_ = new DigitalInput(GrabberConstants.Grabber.AlgaeSensor.kChannel1);
+        algae2_ = new DigitalInput(GrabberConstants.Grabber.AlgaeSensor.kChannel2) ;
 
         distance_sensor_ = new AnalogInput(GrabberConstants.kDistanceSensorInput) ;
     }
@@ -117,9 +119,8 @@ public class GrabberIOHardware implements GrabberIO {
 
         inputs.coralSensor = !coral_.value();
 
-        inputs.algaeSensor = algae_.value();
-        inputs.algaeRisingEdge = algae_.risingEdge();
-        inputs.algaeFallingEdge = algae_.fallingEdge();
+        inputs.algaeSensor1 = algae1_.get() ;
+        inputs.algaeSensor2 = algae2_.get() ;
 
         inputs.distanceFromReefRaw = distance_sensor_.getValue();
         inputs.distanceMedian = distanceFilter_.calculate(inputs.distanceFromReefRaw);
