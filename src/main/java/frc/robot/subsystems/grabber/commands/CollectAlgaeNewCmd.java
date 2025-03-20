@@ -37,11 +37,8 @@ public class CollectAlgaeNewCmd extends SequentialCommandGroup {
 
         addCommands(
             grabber.setVoltageCommand(Volts.of(-6.0)),
-            logState("Waiting"),
             new GoToCmdDirect(manip, height, angle),
-            Commands.waitUntil(this::hasAlgae),
-            logState("Grabbed"),
-            new WaitCommand(Milliseconds.of(500)),
+            new WaitCommand(Milliseconds.of(250)),
             grabber.setVoltageCommand(Volts.of(GrabberConstants.Grabber.kHoldingVoltage))
         );
     }

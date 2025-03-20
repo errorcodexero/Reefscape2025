@@ -30,7 +30,7 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
     }
 
     private boolean hasAlgae() {
-        return !grabber_.algaeSensor();
+        return false ;
     }
 
     private Command logState(String state) {

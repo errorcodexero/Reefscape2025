@@ -106,7 +106,7 @@ public class ManipulatorConstants {
             public static final Angle kPlaceL2L3TwoCoralAdder = Degrees.of(0) ;
             public static final Angle kFinishedAlgaeThreshhold = Degrees.of(150.0) ;
             public static final Angle kKickbackAngle = Degrees.of(19); 
-            public static final Angle kCollect = Degrees.of(18) ;
+            public static final Angle kCollect = Degrees.of(16) ;
 
             public static final Angle kAlgaeReefHold = Degrees.of(170) ;
             public static final Angle kScoreAlgaeReef = Degrees.of(190) ;
@@ -120,8 +120,8 @@ public class ManipulatorConstants {
             public static final Angle kAlgaeReefCollectNewL2 = Degrees.of(175.0) ;
             public static final Angle kAlgaeReefCollectNewL3 = Degrees.of(175.0) ;      
             
-            public static final Angle kAlgaeReefCollectNewPos2L2 = Degrees.of(180.0) ;
-            public static final Angle kAlgaeReefCollectNewPos2L3 = Degrees.of(180.0) ;  
+            public static final Angle kAlgaeReefCollectNewPos2L2 = Degrees.of(160.0) ;
+            public static final Angle kAlgaeReefCollectNewPos2L3 = Degrees.of(160.0) ;  
             
         }
     }
@@ -202,10 +202,11 @@ public class ManipulatorConstants {
 
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(78.0) ;
             public static final Distance kAlgaeReefCollectL2 = Centimeters.of(40.0) ;
-            public static final Distance kAlgaeReefCollectNewL3 = Centimeters.of(76.0) ;
-            public static final Distance kAlgaeReefCollectNewL2 = Centimeters.of(38.0) ;
-            public static final Distance kAlgaeReefCollectNewPos2L3 = Centimeters.of(76.0) ;
-            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(38.0) ;
+
+            public static final Distance kAlgaeReefCollectNewL3 = Centimeters.of(72.0) ;
+            public static final Distance kAlgaeReefCollectNewL2 = Centimeters.of(32.0) ;
+            public static final Distance kAlgaeReefCollectNewPos2L3 = Centimeters.of(75.0) ;
+            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(40.0) ;
         }
     }
 }

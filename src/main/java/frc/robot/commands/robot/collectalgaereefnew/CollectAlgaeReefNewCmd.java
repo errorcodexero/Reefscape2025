@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import java.util.Optional;
+import java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject;
+
 import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.units.measure.Angle;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.commands.robot.NullCmd;
 import frc.robot.subsystems.brain.BrainSubsystem;
@@ -119,6 +122,7 @@ public class CollectAlgaeReefNewCmd extends XeroSequenceCmd {
         
         if (driveto_) {
             seq.addCommands(
+                new StateCmd("algaecollect", "newversion"),
                 RobotContainer.getInstance().gamepad().setLockCommand(true),
                 Commands.deadline(
                     DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(),
@@ -131,23 +135,23 @@ public class CollectAlgaeReefNewCmd extends XeroSequenceCmd {
         }
 
         seq.addCommands(
-            new ConditionalCommand(
-                Commands.none(),
-                new CollectAlgaeNewCmd(grabber_, manipulator_, level),
-                this::hasAlgae)
+            new CollectAlgaeNewCmd(grabber_, manipulator_, level)
         );
 
         seq.addCommands(
-            new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
             DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeBackupPose(), 
                                             MetersPerSecond.of(2.0), 
                                             MetersPerSecondPerSecond.of(2.0)),
+            new ConditionalCommand(
+                new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
+                Commands.none(),
+                this::hasAlgae),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
                                       ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
     }
 
     private boolean hasAlgae() {
-        return !grabber_.algaeSensor();
+        return !grabber_.algaeSensor() ;
     }
 }

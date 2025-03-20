@@ -1,5 +1,7 @@
 package frc.robot.commands.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
+
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ReefLevel;
@@ -41,7 +43,7 @@ public class EjectCmd extends XeroSequenceCmd {
 
     @Override
     public void initSequence(SequentialCommandGroup seq) {
-        if (brain_.gp() == GamePiece.ALGAE_HIGH) {
+        if (brain_.gp() == GamePiece.ALGAE_HIGH || manipulator_.getElevatorPosition().gte(Centimeters.of(30))) {
             //
             // We are up with algae, just eject, but stay up until eject is hit twice
             //
