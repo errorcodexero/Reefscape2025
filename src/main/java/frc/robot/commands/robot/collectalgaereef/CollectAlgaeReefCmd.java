@@ -129,7 +129,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
                                             MetersPerSecondPerSecond.of(2.0)),
             new ConditionalCommand(
                 new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
-                Commands.none(),
+                grabber_.setVoltageCommand(Volts.zero()),
                 this::hasAlgae),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 

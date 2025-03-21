@@ -1,7 +1,5 @@
 package frc.robot.commands.robot;
 
-import static edu.wpi.first.units.Units.Centimeters;
-
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ReefLevel;

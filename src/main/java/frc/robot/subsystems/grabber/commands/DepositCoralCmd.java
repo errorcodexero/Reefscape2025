@@ -33,12 +33,14 @@ public class DepositCoralCmd extends Command {
     @Override
     public void initialize() {
         if (level_ == ReefLevel.L1) {
+            grabber_.idle() ;
             grabber_.setGrabberMotorVoltage(Volts.of(6.0)) ;
             timer_ = new XeroTimer(GrabberConstants.Grabber.DepositCoral.l1delay);
             timer_.start() ;
             state_ = State.WaitingForTimer ;
         }
         else {
+            grabber_.idle() ;
             grabber_.setGrabberMotorVoltage(Volts.of(12.0)) ;
             timer_ = new XeroTimer(depDelay()) ;
             timer_.start() ;
