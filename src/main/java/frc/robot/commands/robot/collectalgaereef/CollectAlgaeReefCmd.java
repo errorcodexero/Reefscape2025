@@ -2,6 +2,7 @@ package frc.robot.commands.robot.collectalgaereef;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
 import org.xerosw.util.XeroSequenceCmd;
@@ -14,13 +15,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.CommandConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.CollectAlgaeCmd;
+import frc.robot.subsystems.grabber.commands.CollectAlgaeNewCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
@@ -33,27 +35,21 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     private GrabberSubsystem grabber_;
     private ReefLevel height_ ;
     private Drive db_ ;
-    private boolean driveto_ ;
     private boolean skipfirst_ ;
 
     public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height) {
-        this(brain, db, manipulator, grabber, height, true, false) ;
+        this(brain, db, manipulator, grabber, height, false) ;
     }
 
-    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean driveto, boolean skipfirst) {
+    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean skipfirst) {
         super("CollectAlgaeReefCmd") ;
         brain_ = brain ;
         db_ = db ;
         manipulator_ = manipulator;
         grabber_ = grabber;
         height_ = height ;
-        driveto_ = driveto ;
         skipfirst_ = skipfirst ;
     }
-
-    // COMMANDS NEEDED:
-    // GoToCmd
-    // WaitForCoral
 
     private boolean alreadyRotated() {
         return manipulator_.getArmPosition().gt(ManipulatorConstants.Arm.Positions.kFinishedAlgaeThreshhold) ;
@@ -71,11 +67,11 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         }
 
         if (level == ReefLevel.L2 || level == ReefLevel.L1) {
-            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL2 ;
-            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL2 ;
+            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectNewL2 ;
+            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectNewL2 ;
         } else if (level == ReefLevel.L3 || level == ReefLevel.L4) {
-            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectL3 ;
-            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3 ;
+            angle = ManipulatorConstants.Arm.Positions.kAlgaeReefCollectNewL3 ;
+            height = ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectNewL3 ;
         }
         else {
             //
@@ -89,6 +85,9 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         if (reefFace.isEmpty())
             return ;
 
+        //
+        // This is all about getting the arm and elevator to the right place with the least amount of motion
+        //
         if (!skipfirst_) {
             seq.addCommands(
                 db_.stopCmd(),
@@ -107,27 +106,37 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         else {
             seq.addCommands(new GoToCmdDirect(manipulator_, height, angle)) ;
         }
+
+        //
+        // This is about the actual collect operation
+        //
         
-        if (driveto_) {
-            seq.addCommands(
-                RobotContainer.getInstance().gamepad().setLockCommand(true),
-                Commands.parallel(
-                    DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(),
-                                                    MetersPerSecond.of(1.0), 
-                                                    CommandConstants.ReefDrive.kMaxDriveAcceleration),
-                    new CollectAlgaeCmd(grabber_))) ;
-        }
-        else {
-            seq.addCommands(
-               new CollectAlgaeCmd(grabber_)) ;
-        }
         seq.addCommands(
-            new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
+            new StateCmd("algaecollect", "newversion"),
+            RobotContainer.getInstance().gamepad().setLockCommand(true),
+            grabber_.setVoltageCommand(Volts.of(-6.0)),
+            DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(),
+                                            MetersPerSecond.of(1.0), 
+                                            CommandConstants.ReefDrive.kMaxDriveAcceleration));
+
+        seq.addCommands(
+            new CollectAlgaeNewCmd(grabber_, manipulator_, level)
+        );
+
+        seq.addCommands(
             DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeBackupPose(), 
                                             MetersPerSecond.of(2.0), 
                                             MetersPerSecondPerSecond.of(2.0)),
+            new ConditionalCommand(
+                new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
+                grabber_.setVoltageCommand(Volts.zero()),
+                this::hasAlgae),
             RobotContainer.getInstance().gamepad().setLockCommand(false),
             new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
                                       ManipulatorConstants.Arm.Positions.kAlgaeReefHold)) ;
+    }
+
+    private boolean hasAlgae() {
+        return grabber_.hasAlgae() ;
     }
 }

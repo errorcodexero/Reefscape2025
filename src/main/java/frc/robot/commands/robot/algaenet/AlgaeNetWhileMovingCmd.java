@@ -61,7 +61,6 @@ public class AlgaeNetWhileMovingCmd extends Command {
 
     @Override
     public void initialize() {
-        RobotContainer.getInstance().gamepad().setLocked(true);
 
         target_ = ReefUtil.getBargeScorePose(db_.getPose(), Constants.BargeConstants.distanceFromBargeTagWhileMoving) ;
 
@@ -72,7 +71,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
         // so we are at a reasonable angle to the target when we shoot.
         //
         double dist = target_.getTranslation().getDistance(db_.getPose().getTranslation()) ;
-        if (dist < 1.0 || dist > 4.0) {
+        if (dist < 1.5 || dist > 4.0) {
             state_ = State.Done ;
             return ;
         }
@@ -83,6 +82,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
             return ;
         }
 
+        RobotContainer.getInstance().gamepad().setLocked(true);
         state_ = State.Rotating ;
         rotate_cmd_ = new RotateRobotCmd(db_, target_.getRotation()) ;
         rotate_cmd_.initialize() ;

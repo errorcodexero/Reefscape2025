@@ -27,9 +27,8 @@ public interface GrabberIO {
         // Sensor Inputs
         public boolean coralSensor = false;
 
-        public boolean algaeSensor = false;
-        public boolean algaeRisingEdge = false;
-        public boolean algaeFallingEdge = false;
+        public boolean algaeSensor1 = false;
+        public boolean algaeSensor2 = false ;
 
         public int numberOfCoral = 0 ;
         public double distanceMedian = 0.0;

@@ -19,12 +19,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class GrabberSubsystem extends SubsystemBase {
 
-    private static Angle kHoldOffset = Rotations.of(0.0) ;
+    private static Angle kHoldOffset = Rotations.of(-0.4) ;
 
     private enum CollectState {
         COLLECTING,
         DELAY,
         BACKING_UP,
+        HOLDING,
         IDLE
     }
 
@@ -48,6 +49,10 @@ public class GrabberSubsystem extends SubsystemBase {
         collect_state_ = CollectState.COLLECTING ;
     }
 
+    public void idle() {
+        collect_state_ = CollectState.IDLE ;
+    }
+
     public int coralOnFloor() {
         return inputs_.numberOfCoral;
     }
@@ -60,7 +65,7 @@ public class GrabberSubsystem extends SubsystemBase {
 
         disconnectedAlert.set(!inputs_.grabberReady);
 
-        Logger.recordOutput("grabber/state", collect_state_) ;
+        Logger.recordOutput("grabber/state", collect_state_.toString()) ;
         switch(collect_state_) {
             case COLLECTING:
                 if (inputs_.coralSensor) {
@@ -80,9 +85,17 @@ public class GrabberSubsystem extends SubsystemBase {
             case BACKING_UP:
                 if (!inputs_.coralSensor) {
                     setGrabberTargetPosition(inputs_.grabberPosition.plus(kHoldOffset)) ;
-                    collect_state_ = CollectState.IDLE ;
+                    collect_state_ = CollectState.HOLDING ;
                 }
                 break ;
+
+            case HOLDING:
+                if (inputs_.coralSensor) {
+                    collect_state_ = CollectState.BACKING_UP ;
+                    setGrabberMotorVoltage(Volts.of(-1.0)) ;                    
+                }
+                break ;
+
             case IDLE:
                 break ;
         }
@@ -131,16 +144,12 @@ public class GrabberSubsystem extends SubsystemBase {
     // Algae Sensor State
     ///////////////////////////
 
-    public boolean algaeRising() {
-        return inputs_.algaeRisingEdge;
-    }
-
-    public boolean algaeFalling() {
-        return inputs_.algaeFallingEdge;
-    }
-
     public boolean algaeSensor() {
-        return inputs_.algaeSensor;
+        return inputs_.algaeSensor1;
+    }
+
+    public boolean hasAlgae() {
+        return !inputs_.algaeSensor1 || !inputs_.algaeSensor2 ;
     }
 
     ///////////////////////////

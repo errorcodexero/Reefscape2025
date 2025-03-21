@@ -178,6 +178,8 @@ public class ManipulatorConstants {
         public class MotionMagic {
             public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(90) ;
             public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(325) ;
+            public static final AngularVelocity kMaxSlowVelocity = RotationsPerSecond.of(10) ;
+            public static final AngularAcceleration kMaxSlowAcceleration = RotationsPerSecondPerSecond.of(30) ;
             public static final double kJerk = 0.0 ;
         }
 
@@ -205,8 +207,9 @@ public class ManipulatorConstants {
 
             public static final Distance kAlgaeReefCollectNewL3 = Centimeters.of(72.0) ;
             public static final Distance kAlgaeReefCollectNewL2 = Centimeters.of(32.0) ;
+
             public static final Distance kAlgaeReefCollectNewPos2L3 = Centimeters.of(75.0) ;
-            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(40.0) ;
+            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(35.0) ;
         }
     }
 }

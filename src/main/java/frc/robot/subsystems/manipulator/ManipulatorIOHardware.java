@@ -22,6 +22,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -343,7 +344,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
     public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true)) ;
+        ControlRequest req ;
+
+        req = new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true);
+        elevator_motor_.setControl(req) ;
     }
 
     public void resetPosition() {
