@@ -252,8 +252,10 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     public void updateInputs(ManipulatorIOInputs inputs) {
 
         if (RobotState.isDisabled() && encoder_motor_syncing_) {
+            syncArmPosition();
+        }
+        else {
             encoder_motor_syncing_ = false ;
-            syncArmPosition() ;
         }
 
         inputs.encoderSynced = encoder_motor_syncing_ ;
@@ -368,10 +370,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         }
         Angle armAngle = Degrees.of(angle).times(ManipulatorConstants.Arm.kGearRatio) ;
         arm_motor_.setPosition(armAngle) ;
-    }
-
-    public void toggleSyncing() {
-        encoder_motor_syncing_ = !encoder_motor_syncing_ ;
     }
 
     private void simulateArm() {
