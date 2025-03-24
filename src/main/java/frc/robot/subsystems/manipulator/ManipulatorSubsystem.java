@@ -44,10 +44,6 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return elevator_calibrated_ ;
     }
 
-    public void enableSoftLimits(boolean b) {
-        io_.enableSoftLimits(b) ;
-    }
-
     public void toggleSyncing() {
         io_.toggleSyncing() ;
     }
@@ -96,7 +92,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     public void resetElevator() {
         elevator_calibrated_ = true ;
-        io_.resetPosition() ;
+        io_.setElevatorPosition(Centimeters.zero()) ;
     }
 
     public Distance getElevatorPosition() {
@@ -105,6 +101,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     public Distance getElevatorTarget() {
         return elev_target_;
+    }
+
+    public void setElevatorPosition(Distance d) {
+        io_.setElevatorPosition(d);
     }
 
     public void setElevatorTarget(Distance dist) {

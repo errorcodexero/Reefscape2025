@@ -49,6 +49,9 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Robot;
 
 public class ManipulatorIOHardware implements ManipulatorIO {
+
+    private static int kSyncWaitCount = 25 ;
+
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
     private TalonFX elevator_motor_2_;
@@ -58,7 +61,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
     private DutyCycleEncoderSim arm_encoder_sim_ ;
-    private boolean encoder_motor_syncing_ ;
+    private int sync_count_ ;
 
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
@@ -85,7 +88,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         createArm() ;
         createElevator() ;   
 
-        encoder_motor_syncing_ = true ;
+        sync_count_ = kSyncWaitCount ;
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
@@ -106,24 +109,29 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     }
 
     public void enableSoftLimits(boolean b) {
-        // try {
-        //     SoftwareLimitSwitchConfigs elevatorLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
-        //     if (b) {
-        //         elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = true;
-        //         elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        //         elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
-        //         elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        //     }
-        //     else {
-        //         elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = false;
-        //         elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        //         elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = false;
-        //         elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        //     }
-        //         TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
-        // }
-        // catch(Exception ex) {
-        // }
+        try {
+            SoftwareLimitSwitchConfigs elevatorLimitSwitchConfigs = new SoftwareLimitSwitchConfigs();
+            if (b) {
+                elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = true;
+                elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = true;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+            }
+            else {
+                elevatorLimitSwitchConfigs.ForwardSoftLimitEnable = false;
+                elevatorLimitSwitchConfigs.ForwardSoftLimitThreshold = ManipulatorConstants.Elevator.kMaxHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = false;
+                elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+            }
+                TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
+        }
+        catch(Exception ex) {
+            throw new RuntimeException("could not set soft limits") ;
+        }
+    }
+
+    public void setPosition(Distance d) {
+        
     }
 
     private void createElevator() throws Exception {
@@ -250,14 +258,15 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (RobotState.isDisabled() && encoder_motor_syncing_) {
-            syncArmPosition();
-        }
-        else {
-            encoder_motor_syncing_ = false ;
+        if (sync_count_ >= 0) {
+            sync_count_-- ;
+
+            if (sync_count_ == 0) {
+                syncArmPosition();
+            }
         }
 
-        inputs.encoderSynced = encoder_motor_syncing_ ;
+        inputs.encoderSynced = sync_count_ ;
         StatusCode armStatus = BaseStatusSignal.refreshAll(
             arm_pos_sig_,
             arm_vel_sig_,
@@ -342,6 +351,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             .angularPosition(elevator_pos_sig_.refresh().getValue())
             .angularVelocity(elevator_vel_sig_.refresh().getValue()) ;
     } 
+
+    public void setElevatorPosition(Distance dist) {
+        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+        elevator_motor_.setPosition(Revolutions.of(revs)) ;
+    }
 
     public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
