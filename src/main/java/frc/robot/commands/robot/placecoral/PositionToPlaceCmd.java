@@ -158,9 +158,16 @@ public class PositionToPlaceCmd extends Command {
 
 		if (!kSkipAngleChecks) {
 			double delta = target_pose_.getRotation().minus(db_.getPose().getRotation()).getDegrees() ;
-			if (Math.abs(delta) > 5.0) {
+			if (Math.abs(delta) > 5.0 && level_ == ReefLevel.L4) {
 				Logger.recordOutput("place/status", "abort-angle-" + delta) ;
 				ret = -1 ;
+			}
+			else if (Math.abs(delta) > 5.0 && (level_ == ReefLevel.L2 || level_ == ReefLevel.L3)) {
+				Logger.recordOutput("place/status", "abort-angle-" + delta) ;
+				ret = -1 ;
+			}
+			else {
+				Logger.recordOutput("place/status", "none") ;
 			}
 		}
 
