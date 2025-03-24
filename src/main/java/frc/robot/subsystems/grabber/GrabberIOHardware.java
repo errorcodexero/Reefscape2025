@@ -133,6 +133,8 @@ public class GrabberIOHardware implements GrabberIO {
         else {
             inputs.numberOfCoral = 2 ;
         }
+
+        inputs.numberOfCoral = 0 ;
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
