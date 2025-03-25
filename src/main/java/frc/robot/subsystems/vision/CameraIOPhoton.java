@@ -11,6 +11,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -48,7 +49,16 @@ public class CameraIOPhoton implements CameraIO {
                 inputs.simpleArea = 0.0;
                 inputs.simpleValid = false;
 
-                inputs.poseEstimates = new PoseEstimation[] {};
+                inputs.poseEstimate = new PoseEstimation(
+                    Pose2d.kZero,
+                    0,
+                    0,
+                    0,
+                    0,
+                    PoseEstimationType.PHOTON_MULTITAG,
+                    false
+                );
+
                 inputs.fiducials = new Fiducial[] {};
                 inputs.rawCorners = new Translation2d[] {};
 
@@ -63,8 +73,7 @@ public class CameraIOPhoton implements CameraIO {
 
             ArrayList<Translation2d> cornerCoords = new ArrayList<>();
             ArrayList<Fiducial> fiducials = new ArrayList<>();
-            ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
-            
+
             // Get target information
 
             for (PhotonTrackedTarget target : result.getTargets()) {
@@ -100,15 +109,15 @@ public class CameraIOPhoton implements CameraIO {
                 Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera_.inverse());
                 Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-                poseEstimates.add(new PoseEstimation(
+                inputs.poseEstimate = new PoseEstimation(
                     robotPose.toPose2d(),
                     result.getTimestampSeconds(),
                     averageTagDist,
                     multitagResult.get().estimatedPose.ambiguity,
                     multitagResult.get().fiducialIDsUsed.size(),
                     PoseEstimationType.PHOTON_MULTITAG,
-                    camera_.getName()
-                ));
+                    true
+                );
             }
 
             inputs.simpleID = bestTarget.getFiducialId();
@@ -117,7 +126,6 @@ public class CameraIOPhoton implements CameraIO {
             inputs.simpleArea = bestTarget.getArea();
             inputs.simpleValid = true;
 
-            inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
             inputs.rawCorners = cornerCoords.toArray(new Translation2d[0]);
             inputs.fiducials = fiducials.toArray(new Fiducial[0]);
         }
