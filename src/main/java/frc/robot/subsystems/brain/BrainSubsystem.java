@@ -27,6 +27,7 @@ import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefGotoCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
@@ -173,9 +174,19 @@ public class BrainSubsystem extends SubsystemBase {
         
         coral_level_ = height ;
         oi_.setLevelLED(height);
+
+        //
+        // This is a HACK but its the safest way to do this
+        //
+        if ((current_action_ == RobotAction.CollectAlgaeReefKeep || current_action_ == RobotAction.CollectAlgaeReefEject) && 
+                        current_cmd_ == null && current_robot_action_command_index_ == 1) {
+            current_cmd_ = new CollectAlgaeReefGotoCmd(this, m_, height) ;
+            current_cmd_.schedule() ;
+        }
     }
 
     public ReefLevel coralLevel() {
+
         return coral_level_ ;
     }
 
@@ -212,11 +223,12 @@ public class BrainSubsystem extends SubsystemBase {
                     ret = (act == RobotAction.PlaceCoral) ;
                     break ;
 
-                case CollectAlgaeReef:
+                case CollectAlgaeReefKeep:
                     ret = (act != RobotAction.PlaceCoral && act != RobotAction.CollectCoral) ;
                     break ;
 
-                case CollectAlgaeGround:
+                case CollectAlgaeReefEject:
+                    ret = (act != RobotAction.PlaceCoral && act != RobotAction.CollectCoral) ;
                     break ;
 
                 default:
@@ -245,19 +257,9 @@ public class BrainSubsystem extends SubsystemBase {
             }
             else {
                 next_action_ = action ;
-                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
-            }
-
-
-            //
-            // Assign (or reassign) the next action
-            //
-            next_action_ = action ;
-            if (next_action_ != null) {
-                //
-                // Light the button for the new next action
-                //
-                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+                if (action != null) {
+                    oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+                }
             }
 
             //
@@ -358,11 +360,11 @@ public class BrainSubsystem extends SubsystemBase {
                 ret = (gp_ == GamePiece.ALGAE_HIGH) ;
                 break ;
 
-            case CollectAlgaeReef:
+            case CollectAlgaeReefKeep:
                 ret = (gp_ == GamePiece.NONE) ;
                 break ;
 
-            case CollectAlgaeGround:
+            case CollectAlgaeReefEject:
                 ret = (gp_ == GamePiece.NONE) ;
                 break ;
 
@@ -548,15 +550,20 @@ public class BrainSubsystem extends SubsystemBase {
                 conds.add(null) ;
                 break ;
 
-            case CollectAlgaeReef:
-                list.add(new NullCmd()) ;
+            case CollectAlgaeReefEject:
+                list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
-            case CollectAlgaeGround:
+            case CollectAlgaeReefKeep:
+                list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
+                conds.add(null) ;
+                
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
         }
 

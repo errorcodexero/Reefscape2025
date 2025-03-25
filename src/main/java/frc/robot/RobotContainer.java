@@ -160,10 +160,9 @@ public class RobotContainer {
 
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                            new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
+                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation));
+                            // new CameraIOLimelight4(VisionConstants.backLimelightName, drivebase_::getRotation)
                             // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
-                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -455,8 +454,8 @@ public class RobotContainer {
         //
         oi_.coralPlace().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceCoral));
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral));
-        oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReef));
-        oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
+        oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefKeep));
+        oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefEject));
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
         oi_.l1().onTrue(new SetLevelCmd(brain_, ReefLevel.L1).ignoringDisable(true));
