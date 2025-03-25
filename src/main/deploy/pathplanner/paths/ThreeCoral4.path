@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.1266813858695652,
-        "y": 1.184451426630435
+        "x": 1.1505,
+        "y": 1.0073749999999995
       },
       "prevControl": {
-        "x": 1.3559017094177173,
-        "y": 1.3616534003296261
+        "x": 1.379720323548152,
+        "y": 1.1845769736991907
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndCollect1"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.4089117326008
+    "rotation": 53.72
   },
   "reversed": false,
   "folder": "Three Coral",

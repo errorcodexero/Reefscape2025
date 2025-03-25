@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.243125,
-        "y": 0.8367499999999995
+        "x": 1.1505,
+        "y": 1.0073749999999995
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.519973734160522,
-        "y": 1.004189551681572
+        "x": 1.427348734160522,
+        "y": 1.174814551681572
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndCollect1"
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Side Coral 5"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
