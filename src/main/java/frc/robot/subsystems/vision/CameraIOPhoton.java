@@ -118,6 +118,16 @@ public class CameraIOPhoton implements CameraIO {
                     PoseEstimationType.PHOTON_MULTITAG,
                     true
                 );
+            } else {
+                inputs.poseEstimate = new PoseEstimation(
+                    Pose2d.kZero,
+                    0,
+                    0,
+                    0,
+                    0,
+                    PoseEstimationType.PHOTON_MULTITAG,
+                    false
+                );
             }
 
             inputs.simpleID = bestTarget.getFiducialId();

@@ -137,7 +137,9 @@ public class AprilTagVision extends SubsystemBase {
 
                 if (est.isPresent()) {
                     integratePoseEstimate(est.orElseThrow());
+                    Logger.recordOutput("Vision/Summary/EstimateUsing", est.orElseThrow());
                 }
+                
             }
             default -> {
                 for (PoseEstimation est : acceptedEstimates) {
@@ -192,6 +194,8 @@ public class AprilTagVision extends SubsystemBase {
         // Decline for any of the following reasons:
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
+
+        if (!estimation.valid()) return false; // If its not a valid pose estimate
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
