@@ -25,6 +25,7 @@ public interface CameraIO {
         double ambiguity,
         int tagCount,
         PoseEstimationType type,
+        int cameraId,
         boolean valid
     ) {};
 
@@ -58,6 +59,7 @@ public interface CameraIO {
             0,
             0,
             PoseEstimationType.MEGATAG2,
+            -1,
             false
         );
 

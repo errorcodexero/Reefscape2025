@@ -22,10 +22,16 @@ public class CameraIOPhoton implements CameraIO {
     protected final Transform3d robotToCamera_;
     protected final PhotonCamera camera_;
 
+    private final int id_;
+    private static int nextId = 0;
+
     public CameraIOPhoton(String name, Transform3d robotToCamera) {
         // Setup camera
         camera_ = new PhotonCamera(name);
         robotToCamera_ = robotToCamera;
+
+        id_ = nextId;
+        nextId++;
     }
     
     @Override
@@ -56,6 +62,7 @@ public class CameraIOPhoton implements CameraIO {
                     0,
                     0,
                     PoseEstimationType.PHOTON_MULTITAG,
+                    id_,
                     false
                 );
 
@@ -116,6 +123,7 @@ public class CameraIOPhoton implements CameraIO {
                     multitagResult.get().estimatedPose.ambiguity,
                     multitagResult.get().fiducialIDsUsed.size(),
                     PoseEstimationType.PHOTON_MULTITAG,
+                    id_,
                     true
                 );
             } else {
@@ -126,6 +134,7 @@ public class CameraIOPhoton implements CameraIO {
                     0,
                     0,
                     PoseEstimationType.PHOTON_MULTITAG,
+                    id_,
                     false
                 );
             }

@@ -20,6 +20,9 @@ public class CameraIOLimelight implements CameraIO {
     private DoubleArrayEntry rawCornersNT_;
     private DoubleArrayEntry hardwareStatusNT_;
 
+    private final int id_;
+    private static int nextId = 0;
+
     public CameraIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
         name_ = name;
         rotationSupplier_ = rotationSupplier;
@@ -27,6 +30,9 @@ public class CameraIOLimelight implements CameraIO {
         lastUpdateSupplier_ = LimelightHelpers.getLimelightNTTableEntry(name_, "tl")::getLastChange;
         rawCornersNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "tcornxy");
         hardwareStatusNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "hw");
+
+        id_ = nextId;
+        nextId++;
     }
 
     @Override
@@ -85,6 +91,7 @@ public class CameraIOLimelight implements CameraIO {
                 0.0,
                 estimateMegatag2.tagCount,
                 PoseEstimationType.MEGATAG2,
+                id_,
                 true
             );
         } else {
@@ -95,6 +102,7 @@ public class CameraIOLimelight implements CameraIO {
                 0,
                 0,
                 PoseEstimationType.MEGATAG2,
+                id_,
                 false
             );
         }
