@@ -2,9 +2,6 @@ package frc.robot.commands.robot.collectalgaereef;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import java.util.Optional;
-import java.util.concurrent.locks.Condition;
-
 import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.units.measure.Angle;
