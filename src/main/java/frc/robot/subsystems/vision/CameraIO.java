@@ -69,7 +69,6 @@ public interface CameraIO {
 
         public double cpuTemp = -1.0;
         public double fps = -1.0;
-        
     }
 
     /**

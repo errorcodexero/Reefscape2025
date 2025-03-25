@@ -1,5 +1,9 @@
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +27,8 @@ import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
 public class AprilTagVision extends SubsystemBase {
+
+    private final static Distance kMaxTagDistance = Meters.of(2.0) ;
 
     public static enum IntegrationBehavior {
         ONLY_NEAREST,
@@ -115,7 +122,6 @@ public class AprilTagVision extends SubsystemBase {
             // Log camera-specific outputs.
             Logger.recordOutput(getCameraKey(cam, "TagPoses"), tagPoses.toArray(new Pose3d[0]));
             Logger.recordOutput(getCameraKey(cam, "BotPose"), est.pose());
-
         }
 
         // Integrate pose estimates
@@ -227,6 +233,14 @@ public class AprilTagVision extends SubsystemBase {
             if (est.averageDist() < minDistance.averageDist()) {
                 minDistance = est;
             }
+        }
+
+        if (Meters.of(minDistance.averageDist()).gt(kMaxTagDistance)) {
+            //
+            // If the tag is greater than a given distance away, ignore it.  This is useful
+            // for station collect during autonomous.
+            //
+            return Optional.empty() ;
         }
 
         return Optional.of(minDistance);
