@@ -453,8 +453,8 @@ public class RobotContainer {
         //
         oi_.coralPlace().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceCoral));
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral));
-        oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefKeep));
-        oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefEject));
+        oi_.algaeReefKeep().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefKeep));
+        oi_.algaeReefEject().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefEject)) ;
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
         oi_.l1().onTrue(new SetLevelCmd(brain_, ReefLevel.L1).ignoringDisable(true));

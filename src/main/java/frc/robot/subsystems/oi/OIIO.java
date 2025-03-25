@@ -17,9 +17,9 @@ public interface OIIO {
         public boolean coral_collect = false ;
         public boolean coral_place = false ;
         public boolean rotate_arm = false ;
-        public boolean algae_ground = false ;
         public boolean algae_score = false ;
-        public boolean algae_reef = false ;
+        public boolean algae_reef_keep = false ;
+        public boolean algae_reef_eject = false ;
         public boolean climb_deploy = false ;
         public boolean climb_execute = false ;
         public boolean climb_lock = false ;

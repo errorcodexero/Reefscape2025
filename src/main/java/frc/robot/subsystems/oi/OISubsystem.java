@@ -42,8 +42,8 @@ public class OISubsystem extends SubsystemBase {
     private Trigger climb_deploy_trigger_ ;
     private Trigger coral_place_trigger_ ;
     private Trigger coral_collect_trigger_ ;
-    private Trigger algae_ground_trigger_ ;
-    private Trigger algae_reef_trigger_ ;
+    private Trigger algae_reef_keep_trigger_ ;
+    private Trigger algae_reef_eject_trigger_ ;
     private Trigger algae_score_trigger_ ;
     private Trigger execute_trigger_ ;
     private Trigger rotate_arm_trigger_ ;
@@ -76,8 +76,8 @@ public class OISubsystem extends SubsystemBase {
         climb_deploy_trigger_ = new Trigger(()-> inputs_.climb_deploy) ;
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
         coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
-        algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
-        algae_reef_trigger_ = new Trigger(()-> inputs_.algae_reef) ;
+        algae_reef_keep_trigger_ = new Trigger(()-> inputs_.algae_reef_keep) ;
+        algae_reef_eject_trigger_ = new Trigger(()-> inputs_.algae_reef_eject) ;
         algae_score_trigger_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
         rotate_arm_trigger_ = new Trigger(()-> inputs_.rotate_arm) ;
@@ -140,12 +140,12 @@ public class OISubsystem extends SubsystemBase {
         return raise_arm_trigger_ ;
     }
 
-    public Trigger algaeGround() {
-        return algae_ground_trigger_ ;
+    public Trigger algaeReefKeep() {
+        return algae_reef_keep_trigger_ ;
     }
 
-    public Trigger algaeReef() {
-        return algae_reef_trigger_ ;
+    public Trigger algaeReefEject() {
+        return algae_reef_eject_trigger_ ;
     }
 
     public Trigger algaeScore() {
@@ -347,23 +347,23 @@ public class OISubsystem extends SubsystemBase {
             str += "coral_place" ;
         }
 
-        if (inputs_.algae_ground) {
-            if (str.length() > 0)
-                str += "," ;
-            str += "algae_ground" ;
-        }
-
         if (inputs_.algae_score) {
             if (str.length() > 0)
                 str += "," ;
             str += "algae_score" ;
         }
 
-        if (inputs_.algae_reef) {
+        if (inputs_.algae_reef_keep) {
             if (str.length() > 0)
                 str += "," ;
-            str += "algae_reef" ;
+            str += "algae_reef_keep" ;
         }
+
+        if (inputs_.algae_reef_eject) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "algae_reef_eject" ;
+        }        
 
         if (inputs_.climb_deploy) {
             if (str.length() > 0)
