@@ -1,6 +1,7 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -21,6 +22,11 @@ import frc.robot.subsystems.vision.CameraIO.PoseEstimation;
 import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
 public class AprilTagVision extends SubsystemBase {
+
+    public static enum IntegrationBehavior {
+        ONLY_NEAREST,
+        ALL
+    }
 
     private final PoseEstimateConsumer poseEstimateConsumer_;
 
@@ -51,7 +57,6 @@ public class AprilTagVision extends SubsystemBase {
             );
         }
 
-        Logger.recordOutput("Vision/OnlyUseFront", VisionConstants.onlyUseFront);
     }
 
     /**
@@ -80,9 +85,7 @@ public class AprilTagVision extends SubsystemBase {
         }
 
         ArrayList<Pose3d> summaryTagPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryAcceptedPoses = new ArrayList<>();
-        ArrayList<Pose2d> summaryDeclinedPoses = new ArrayList<>();
+        ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
         // Iterate cameras for logging and pose estimations.
         for (int cam = 0; cam < io_.length; cam++) {
@@ -94,9 +97,6 @@ public class AprilTagVision extends SubsystemBase {
             if (!inputs_[cam].connected) continue;
 
             ArrayList<Pose3d> tagPoses = new ArrayList<>();
-            ArrayList<Pose2d> estimatedPoses = new ArrayList<>();
-            ArrayList<Pose2d> acceptedPoses = new ArrayList<>();
-            ArrayList<Pose2d> declinedPoses = new ArrayList<>();
 
             // Loop through visible tags.
             for (Fiducial fid : inputs_[cam].fiducials) {
@@ -106,38 +106,52 @@ public class AprilTagVision extends SubsystemBase {
                 }
             }
 
-            // Loop through pose estimations.
-            for (PoseEstimation est : inputs_[cam].poseEstimates) {
-                
-                estimatedPoses.add(est.pose());
-
-                if (isEstimationAcceptable(est)) {
-                    acceptedPoses.add(est.pose());
-                    integratePoseEstimate(est);
-                } else {
-                    declinedPoses.add(est.pose());
-                }
-
-            }
+            PoseEstimation est = inputs_[cam].poseEstimate;
+            poseEstimates.add(est);
 
             // Add to summaries.
             summaryTagPoses.addAll(tagPoses);
-            summaryPoses.addAll(estimatedPoses);
-            summaryAcceptedPoses.addAll(acceptedPoses);
-            summaryDeclinedPoses.addAll(declinedPoses);
 
             // Log camera-specific outputs.
             Logger.recordOutput(getCameraKey(cam, "TagPoses"), tagPoses.toArray(new Pose3d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/All"), estimatedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/Accepted"), acceptedPoses.toArray(new Pose2d[0]));
-            Logger.recordOutput(getCameraKey(cam, "BotPoses/Declined"), declinedPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput(getCameraKey(cam, "BotPose"), est.pose());
 
         }
 
+        // Integrate pose estimates
+
+        ArrayList<PoseEstimation> acceptedEstimates = new ArrayList<>();
+        ArrayList<PoseEstimation> declinedEstimates = new ArrayList<>();
+
+        for (PoseEstimation est : poseEstimates) {
+            if (isEstimationAcceptable(est)) {
+                acceptedEstimates.add(est);
+            } else {
+                declinedEstimates.add(est);
+            }
+        }
+
+        switch (VisionConstants.integrationBehavior) {
+            case ONLY_NEAREST -> {
+                Optional<PoseEstimation> est = findMinDistanceEstimate(acceptedEstimates);
+
+                if (est.isPresent()) {
+                    integratePoseEstimate(est.orElseThrow());
+                    Logger.recordOutput("Vision/Summary/EstimateUsing", est.orElseThrow());
+                }
+                
+            }
+            default -> {
+                for (PoseEstimation est : acceptedEstimates) {
+                    integratePoseEstimate(est);
+                }
+            }
+        }
+
         Logger.recordOutput("Vision/Summary/TagPoses", summaryTagPoses.toArray(new Pose3d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/All", summaryPoses.toArray(new Pose2d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/Accepted", summaryAcceptedPoses.toArray(new Pose2d[0]));
-        Logger.recordOutput("Vision/Summary/BotPoses/Declined", summaryDeclinedPoses.toArray(new Pose2d[0]));
+        Logger.recordOutput("Vision/Summary/BotPoses/All", estimateListToPoseArray(poseEstimates));
+        Logger.recordOutput("Vision/Summary/BotPoses/Accepted", estimateListToPoseArray(acceptedEstimates));
+        Logger.recordOutput("Vision/Summary/BotPoses/Declined", estimateListToPoseArray(declinedEstimates));
 
         Logger.recordOutput("Vision/PoseEstimatesEnabled", enabled_);
 
@@ -176,13 +190,12 @@ public class AprilTagVision extends SubsystemBase {
      * @param estimation
      * @return Whether or not to integrate the pose.
      */
-    @SuppressWarnings("unused")
     private boolean isEstimationAcceptable(PoseEstimation estimation) {
         // Decline for any of the following reasons:
 
         if (!enabled_) return false; // If vision pose estimation is disabled.
 
-        if (VisionConstants.onlyUseFront && !estimation.cameraName().equals(VisionConstants.frontLimelightName)) return false;
+        if (!estimation.valid()) return false; // If its not a valid pose estimate
 
         if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
 
@@ -197,6 +210,30 @@ public class AprilTagVision extends SubsystemBase {
         if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) return false; // It is ambiguous (photonvision especially)
 
         return true;
+    }
+
+    /**
+     * Finds the minimum distance estimate from an arraylist of estimates.
+     * @param estimates
+     * @return The estimate with the least minimum distance
+     */
+    private Optional<PoseEstimation> findMinDistanceEstimate(ArrayList<PoseEstimation> estimates) {
+        if (estimates.size() <= 0) return Optional.empty();
+
+        PoseEstimation minDistance = estimates.get(0);
+
+        for (int i = 1; i < estimates.size(); i++) {
+            PoseEstimation est = estimates.get(i);
+            if (est.averageDist() < minDistance.averageDist()) {
+                minDistance = est;
+            }
+        }
+
+        return Optional.of(minDistance);
+    }
+
+    private Pose2d[] estimateListToPoseArray(List<PoseEstimation> estimates) {
+        return estimates.stream().map(PoseEstimation::pose).toList().toArray(new Pose2d[0]);
     }
 
     /**

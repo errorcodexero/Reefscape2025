@@ -82,9 +82,10 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
-import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
+import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
 import frc.simulator.engine.ISimulatedSubsystem;
@@ -161,7 +162,7 @@ public class RobotContainer {
                     vision_ = new AprilTagVision(
                             drivebase_::addVisionMeasurement,
                             new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                            new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
+                            new CameraIOLimelight4(VisionConstants.backLimelightName, drivebase_::getRotation)
                             // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
                     );
 
@@ -252,15 +253,13 @@ public class RobotContainer {
                             CompTunerConstants.BackRight,
                             CompTunerConstants.kSpeedAt12Volts);
 
-                    // vision_ = new AprilTagVision(
-                    // PoseEstimateConsumer.ignore(),
-                    // new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
-                    // drivebase_::getPose, true),
-                    // new CameraIOPhotonSim("Back", VisionConstants.backTransform,
-                    // drivebase_::getPose, false),
-                    // new CameraIOPhotonSim("Left", VisionConstants.leftTransform,
-                    // drivebase_::getPose, false)
-                    // );
+                    vision_ = new AprilTagVision(
+                        PoseEstimateConsumer.ignore(),
+                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
+                        drivebase_::getPose, true),
+                        new CameraIOPhotonSim("Back", VisionConstants.backTransform,
+                        drivebase_::getPose, true)
+                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());

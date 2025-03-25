@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.subsystems.vision.AprilTagVision.IntegrationBehavior;
 import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 public class VisionConstants {
@@ -14,8 +15,8 @@ public class VisionConstants {
     public static final String backLimelightName = "limelight-back";
     public static final String leftLimelightName = "limelight-left";
 
-    // Exclusively use the front apriltag.
-    public static final boolean onlyUseFront = false;
+    // Behavior to use when inegrating pose estimates.
+    public static final IntegrationBehavior integrationBehavior = IntegrationBehavior.ONLY_NEAREST;
 
     // Transforms
     public static final Transform3d frontTransform = new Transform3d(

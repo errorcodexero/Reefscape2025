@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayEntry;
@@ -19,6 +20,9 @@ public class CameraIOLimelight implements CameraIO {
     private DoubleArrayEntry rawCornersNT_;
     private DoubleArrayEntry hardwareStatusNT_;
 
+    private final int id_;
+    private static int nextId = 0;
+
     public CameraIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
         name_ = name;
         rotationSupplier_ = rotationSupplier;
@@ -26,6 +30,9 @@ public class CameraIOLimelight implements CameraIO {
         lastUpdateSupplier_ = LimelightHelpers.getLimelightNTTableEntry(name_, "tl")::getLastChange;
         rawCornersNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "tcornxy");
         hardwareStatusNT_ = LimelightHelpers.getLimelightDoubleArrayEntry(name_, "hw");
+
+        id_ = nextId;
+        nextId++;
     }
 
     @Override
@@ -56,7 +63,6 @@ public class CameraIOLimelight implements CameraIO {
 
         ArrayList<Translation2d> corners = new ArrayList<>();
         ArrayList<Fiducial> fiducials = new ArrayList<>();
-        ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
         // Fetch Raw Corners
         if (rawCorners.length % 2 == 0) {
@@ -75,34 +81,31 @@ public class CameraIOLimelight implements CameraIO {
         inputs.rawCorners = corners.toArray(new Translation2d[0]);
         inputs.fiducials = fiducials.toArray(new Fiducial[0]);
 
-        PoseEstimate estimateMegatag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name_);
         PoseEstimate estimateMegatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name_);
-
-        if (estimateMegatag1 != null && estimateMegatag1.tagCount > 0) {
-            poseEstimates.add(new PoseEstimation(
-                estimateMegatag1.pose,
-                estimateMegatag1.timestampSeconds,
-                estimateMegatag1.avgTagDist,
-                estimateMegatag1.rawFiducials[0].ambiguity, // Single tag ambiguity
-                estimateMegatag1.tagCount,
-                PoseEstimationType.MEGATAG1,
-                name_
-            ));
-        }
         
         if (estimateMegatag2 != null && estimateMegatag2.tagCount > 0) {
-            poseEstimates.add(new PoseEstimation(
+            inputs.poseEstimate = new PoseEstimation(
                 estimateMegatag2.pose,
                 estimateMegatag2.timestampSeconds,
                 estimateMegatag2.avgTagDist,
                 0.0,
                 estimateMegatag2.tagCount,
                 PoseEstimationType.MEGATAG2,
-                name_
-            ));
+                id_,
+                true
+            );
+        } else {
+            inputs.poseEstimate = new PoseEstimation(
+                Pose2d.kZero,
+                0,
+                0,
+                0,
+                0,
+                PoseEstimationType.MEGATAG2,
+                id_,
+                false
+            );
         }
-
-        inputs.poseEstimates = poseEstimates.toArray(new PoseEstimation[0]);
 
     }
 

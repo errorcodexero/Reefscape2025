@@ -25,7 +25,8 @@ public interface CameraIO {
         double ambiguity,
         int tagCount,
         PoseEstimationType type,
-        String cameraName
+        int cameraId,
+        boolean valid
     ) {};
 
     public static record Fiducial(
@@ -50,7 +51,17 @@ public interface CameraIO {
         public Translation2d[] rawCorners = new Translation2d[] {};
         
         public Fiducial[] fiducials = new Fiducial[] {};
-        public PoseEstimation[] poseEstimates = new PoseEstimation[] {};
+
+        public PoseEstimation poseEstimate = new PoseEstimation(
+            Pose2d.kZero,
+            0,
+            0,
+            0,
+            0,
+            PoseEstimationType.MEGATAG2,
+            -1,
+            false
+        );
 
         public IMUMode imuMode = IMUMode.NONE;
         public Rotation2d imuRobotYaw = Rotation2d.kZero;
