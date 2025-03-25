@@ -25,7 +25,7 @@ public interface ManipulatorIO {
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
         public Angle armRawMotorPosition = Degrees.of(0);
         public AngularVelocity armRawMotorVelocity = DegreesPerSecond.of(0.0) ;
-        public int encoderSynced = Integer.MAX_VALUE ;
+        public int syncCount = Integer.MAX_VALUE ;
       
         // elevator
         public Distance elevatorPosition = Meters.of(0); 

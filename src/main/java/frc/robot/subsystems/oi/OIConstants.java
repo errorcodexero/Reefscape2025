@@ -35,7 +35,7 @@ public class OIConstants {
         CoralL3(3),                         //
         CoralL4(4),                         //
         ScoreAlgae(5),                      //
-        CollectAlgaeGround(6),              //
+        CollectAlgaeReefEject(6),              //
         AlgaeOnReef(7) ,                    //
         ReadyToClimb(8),                    //
         HoldingAlgaeHigh(9),                // 
@@ -45,7 +45,7 @@ public class OIConstants {
         CoralRight(13),                     //
         CollectCoral(14),                   //
         PlaceCoral(15),                     //
-        CollectAlgaeReef(16);               //
+        CollectAlgaeReefKeep(16);               //
 
         public final Integer value ;
 

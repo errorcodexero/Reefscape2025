@@ -195,8 +195,8 @@ public class OISubsystem extends SubsystemBase {
     public void clearAllActionLEDs() {
         setLEDState(OILed.PlaceCoral, LEDState.Off) ;
         setLEDState(OILed.CollectCoral, LEDState.Off) ;
-        setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
-        setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReefEject, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReefKeep, LEDState.Off) ;
         setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
         setLEDState(OILed.Execute, LEDState.Off) ;
     }
@@ -211,12 +211,12 @@ public class OISubsystem extends SubsystemBase {
                 setLEDState(OILed.CollectCoral, st) ;
                 break ;
 
-            case CollectAlgaeGround:
-                setLEDState(OILed.CollectAlgaeGround, st) ;
+            case CollectAlgaeReefEject:
+                setLEDState(OILed.CollectAlgaeReefEject, st) ;
                 break ;
 
-            case CollectAlgaeReef:
-                setLEDState(OILed.CollectAlgaeReef, st) ;
+            case CollectAlgaeReefKeep:
+                setLEDState(OILed.CollectAlgaeReefKeep, st) ;
                 break ;
 
             case ScoreAlgae:

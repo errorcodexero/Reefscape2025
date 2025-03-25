@@ -436,6 +436,57 @@ public class DriveCommands {
     }, Set.of(drive));
   }
 
+  public static Command simplePathCommand(Drive drive, Pose2d targetPose, Pose2d immd, LinearVelocity v, LinearAcceleration a) {
+
+    // Create Constraints
+    PathConstraints constraints = new PathConstraints(
+        v.in(MetersPerSecond),
+        a.in(MetersPerSecondPerSecond),
+        DegreesPerSecond.of(540).in(RadiansPerSecond),
+        DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
+
+    // Create Command Only When It Is Starting
+    return Commands.defer(() -> {
+
+      Pose2d curPose = drive.getPose();
+      Transform2d curToTarget = targetPose.minus(curPose);
+
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d endWaypoint = targetPose;
+
+      if (Constants.getMode() != Mode.REAL) {
+        Logger.recordOutput("SimplePathing/StartWaypoint", startWaypoint);
+        Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);
+      }
+
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, immd, endWaypoint);
+      ChassisSpeeds speed = drive.getChassisSpeeds() ;
+      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+
+      //
+      // The robot is currently moving in a given direction.  The path needs to take into account
+      // this starting condition.
+      //
+      IdealStartingState start = new IdealStartingState(vel, drive.getPose().getRotation()) ;
+
+      PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          constraints,
+          start,
+          new GoalEndState(0.0, targetPose.getRotation()));
+
+      path.preventFlipping = true;
+
+      // If the pose is less than 1 centimeter away, dont do anything. (This is
+      // because of an error I am looking into)
+      if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
+        return Commands.none();
+      }
+
+      return AutoBuilder.followPath(path);
+    }, Set.of(drive));
+  }  
+
   /**
    * Creates a path based on Pathfinding.
    * This will allow to avoid field elements, but at a performance cost.

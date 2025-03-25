@@ -42,7 +42,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -266,7 +265,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             }
         }
 
-        inputs.encoderSynced = sync_count_ ;
+        inputs.syncCount = sync_count_ ;
         StatusCode armStatus = BaseStatusSignal.refreshAll(
             arm_pos_sig_,
             arm_vel_sig_,

@@ -275,7 +275,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true));
+        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false));
 
         addToSequence(seq, logState(modename, "Drive Processor"));
         addToSequence(seq, DriveCommands.followPathCommand("ProcessorAlgaeProcessor"));
@@ -312,7 +312,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, true));
+        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false));
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));

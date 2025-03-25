@@ -4,8 +4,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.RobotState;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
