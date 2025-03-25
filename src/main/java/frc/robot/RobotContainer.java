@@ -557,6 +557,10 @@ public class RobotContainer {
             ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
             // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
             // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
+
+            // Command autoChosen = autoChooser_.get();
+            // ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+
         } else {
             Command autoChosen = autoChooser_.get();
             ret = autoChosen != null ? autoChosen : tuningChooser_.get();
