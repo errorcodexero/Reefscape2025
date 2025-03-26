@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
@@ -26,9 +27,9 @@ import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.util.ReefUtil;
 
 public class AlgaeNetWhileMovingCmd extends Command {
-    static LinearVelocity kMaxVel = MetersPerSecond.of(2.0) ;
+    static LinearVelocity kMaxVel = MetersPerSecond.of(1.5) ;
     static LinearAcceleration kMaxAcc = MetersPerSecondPerSecond.of(2.0) ;
-    static Distance kShootDistance = Centimeters.of(130) ;
+    static Distance kShootDistance = Centimeters.of(150) ;
 
     private enum State {
         Idle,
@@ -40,6 +41,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
     }
 
     private Drive db_ ;
+    private ManipulatorSubsystem m_ ;
 
     private Pose2d target_ ;
     private State state_ = State.Idle ;
@@ -52,11 +54,11 @@ public class AlgaeNetWhileMovingCmd extends Command {
 
     public AlgaeNetWhileMovingCmd(BrainSubsystem b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
         db_ = db ;
+        m_ = m ;
 
         state_ = State.Idle ;
         shoot_cmd_ = new AlgaeNetCmd(b, m, g);
         stop_cmd_ = db.stopCmd() ;
-        down_cmd_ = new GoToCmd(m, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow) ;
     }
 
     @Override
@@ -71,13 +73,13 @@ public class AlgaeNetWhileMovingCmd extends Command {
         // so we are at a reasonable angle to the target when we shoot.
         //
         double dist = target_.getTranslation().getDistance(db_.getPose().getTranslation()) ;
-        if (dist < 1.5 || dist > 4.0) {
+        if (dist < 1.0 || dist > 4.0) {
             state_ = State.Done ;
             return ;
         }
 
         double angle = XeroMath.normalizeAngleDegrees(target_.getRotation().getDegrees() - db_.getPose().getRotation().getDegrees()) ;
-        if (Math.abs(angle) > 30.0) {
+        if (Math.abs(angle) > 60.0) {
             state_ = State.Done ;
             return ;
         }
@@ -118,6 +120,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
                 if (shoot_cmd_.isFinished()) {
                     RobotContainer.getInstance().gamepad().setLocked(false);
                     state_ = State.Stopping ;
+                    down_cmd_ = new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kShootAlgae) ;
                     stop_cmd_.initialize();
                     down_cmd_.initialize() ;
                 }
@@ -126,7 +129,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
             case Stopping:
                 stop_cmd_.execute() ;
                 down_cmd_.execute() ;
-                if (stop_cmd_.isFinished() && down_cmd_.isFinished()) {
+                if (stop_cmd_.isFinished()) {
                     state_ = State.Done ;
                 }
                 break ;

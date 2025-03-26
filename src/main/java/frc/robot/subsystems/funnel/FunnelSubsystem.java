@@ -64,9 +64,9 @@ public class FunnelSubsystem extends SubsystemBase {
     public boolean hasSeenCoral() {
         double now = Timer.getFPGATimestamp() ;
 
-        if (now - lastuppercoral < kCoralLastSeenTimeout) {
-            return true ;
-        }
+        // if (now - lastuppercoral < kCoralLastSeenTimeout) {
+        //     return true ;
+        // }
 
         if (now - lastlowercoral < kCoralLastSeenTimeout) {
             return true ;

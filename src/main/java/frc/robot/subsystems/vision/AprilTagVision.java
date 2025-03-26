@@ -26,7 +26,7 @@ import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
 public class AprilTagVision extends SubsystemBase {
 
-    private final static Distance kMaxTagDistance = Meters.of(2.0) ;
+    // private final static Distance kMaxTagDistance = Meters.of(2.0) ;
 
     public static enum IntegrationBehavior {
         ONLY_NEAREST,
@@ -143,7 +143,10 @@ public class AprilTagVision extends SubsystemBase {
                     integratePoseEstimate(est.orElseThrow());
                     Logger.recordOutput("Vision/Summary/EstimateUsing", est.orElseThrow());
                 }
-                
+                else {
+                    Logger.recordOutput("Vision/Summary/EstimateUsing", 
+                        new PoseEstimation(new Pose2d(), 0.0, 0.0, 0.0, 0, PoseEstimationType.MEGATAG2, -1, false)) ;
+                }
             }
             default -> {
                 for (PoseEstimation est : acceptedEstimates) {
@@ -197,21 +200,29 @@ public class AprilTagVision extends SubsystemBase {
     private boolean isEstimationAcceptable(PoseEstimation estimation) {
         // Decline for any of the following reasons:
 
-        if (!enabled_) return false; // If vision pose estimation is disabled.
+        if (!enabled_) 
+            return false; // If vision pose estimation is disabled.
 
-        if (!estimation.valid()) return false; // If its not a valid pose estimate
+        if (!estimation.valid()) 
+            return false; // If its not a valid pose estimate
 
-        if (estimation.tagCount() == 0) return false; // If there are no tags on the estimate.
+        if (estimation.tagCount() == 0) 
+            return false; // If there are no tags on the estimate.
 
-        if (estimation.type() == PoseEstimationType.MEGATAG1) return false; // If it is using Megatag1.
+        if (estimation.type() == PoseEstimationType.MEGATAG1) 
+            return false; // If it is using Megatag1.
 
-        if (estimation.tagCount() < VisionConstants.minimumTagCount) return false; // If there are less than the configured minimum.
+        if (estimation.tagCount() < VisionConstants.minimumTagCount) 
+            return false; // If there are less than the configured minimum.
 
-        if (estimation.pose().getTranslation().getNorm() == 0) return false; // If the estimate is at the origin exactly (unrealistic).
+        if (estimation.pose().getTranslation().getNorm() == 0) 
+            return false; // If the estimate is at the origin exactly (unrealistic).
 
-        if (!isPoseOnField(estimation.pose())) return false; // The pose is not on the field.
+        if (!isPoseOnField(estimation.pose())) 
+            return false; // The pose is not on the field.
 
-        if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) return false; // It is ambiguous (photonvision especially)
+        if (estimation.ambiguity() > VisionConstants.maximumAmbiguity) 
+            return false; // It is ambiguous (photonvision especially)
 
         return true;
     }
@@ -233,13 +244,13 @@ public class AprilTagVision extends SubsystemBase {
             }
         }
 
-        if (Meters.of(minDistance.averageDist()).gt(kMaxTagDistance)) {
-            //
-            // If the tag is greater than a given distance away, ignore it.  This is useful
-            // for station collect during autonomous.
-            //
-            return Optional.empty() ;
-        }
+        // if (Meters.of(minDistance.averageDist()).gt(kMaxTagDistance)) {
+        //     //
+        //     // If the tag is greater than a given distance away, ignore it.  This is useful
+        //     // for station collect during autonomous.
+        //     //
+        //     return Optional.empty() ;
+        // }
 
         return Optional.of(minDistance);
     }

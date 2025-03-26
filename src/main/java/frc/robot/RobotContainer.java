@@ -414,7 +414,7 @@ public class RobotContainer {
             AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
 
         autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
-            AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));     
+            AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
     }
 
     private void subsystemCreateException(Exception ex) {
@@ -437,6 +437,9 @@ public class RobotContainer {
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
         
+        gamepad_.back().and(testModeTrigger).toggleOnTrue(
+            DriveCommands.wheelRadiusCharacterization(drivebase_)
+        );
     }
 
     boolean isArmOkToRaise() {

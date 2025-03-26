@@ -117,7 +117,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
                     Commands.sequence(
                         new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
                         new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold, 
-                        ManipulatorConstants.Arm.Positions.kAlgaeReefHold)),
+                                                        ManipulatorConstants.Arm.Positions.kAlgaeReefHold)),
                     Commands.sequence(
                         grabber_.setVoltageCommand(Volts.zero()),
                         new GoToCmdDirect(manipulator_, height, angle)

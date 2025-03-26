@@ -93,6 +93,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
     public void resetElevator() {
         elevator_calibrated_ = true ;
         io_.setElevatorPosition(Centimeters.zero()) ;
+        io_.setArmTarget(ManipulatorConstants.Arm.Positions.kStow);
     }
 
     public Distance getElevatorPosition() {

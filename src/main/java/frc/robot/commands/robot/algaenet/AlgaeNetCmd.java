@@ -65,9 +65,8 @@ public class AlgaeNetCmd extends Command {
                 eject_.execute() ;
                 b_.setGp(GamePiece.NONE);
                 if (timer_.isExpired()) {
+                    m_.setElevatorTarget(m_.getElevatorPosition()) ;
                     g_.setGrabberMotorVoltage(Volts.zero()) ;
-                    goto_ = new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow) ;
-                    goto_.initialize() ;
                     state_ = State.Done;
                 }
                 break ;

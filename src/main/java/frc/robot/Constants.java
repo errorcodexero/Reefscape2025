@@ -41,7 +41,7 @@ public final class Constants {
      */
     
     // Sets the currently running robot.
-    private static final RobotType robotType = RobotType.XEROSIM;
+    private static final RobotType robotType = RobotType.COMPETITION;
 
     public static class DriveConstants {
         public static final double slowModeJoystickMultiplier = 0.4;
@@ -60,7 +60,7 @@ public final class Constants {
 
     public static class BargeConstants {
         public static final Distance distanceFromBargeTag = Centimeters.of(100);
-        public static final Distance distanceFromBargeTagWhileMoving = Centimeters.of(75);
+        public static final Distance distanceFromBargeTagWhileMoving = Centimeters.of(50);
     }
 
     public static class ReefConstants {
