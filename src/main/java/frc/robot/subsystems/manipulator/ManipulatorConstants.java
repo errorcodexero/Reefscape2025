@@ -110,7 +110,7 @@ public class ManipulatorConstants {
 
             public static final Angle kAlgaeReefHold = Degrees.of(170) ;
             public static final Angle kScoreAlgaeReef = Degrees.of(190) ;
-            public static final Angle kRaiseAngle = Degrees.of(18.0) ;
+            public static final Angle kRaiseAngle = Degrees.of(16.0) ;
             public static final Angle kClimb = Degrees.of(180.0) ;
             public static final Angle kShootAlgae = Degrees.of(153) ;
 
