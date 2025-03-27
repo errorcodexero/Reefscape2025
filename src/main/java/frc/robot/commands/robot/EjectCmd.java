@@ -70,7 +70,6 @@ public class EjectCmd extends XeroSequenceCmd {
         if (ret) {
             brain_.unlock() ;
         }
-        CommandScheduler.getInstance().cancelAll();
 
         return ret;
     }

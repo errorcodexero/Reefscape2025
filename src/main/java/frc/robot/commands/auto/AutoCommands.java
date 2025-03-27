@@ -74,6 +74,7 @@ public class AutoCommands {
         //
         addToSequence(seq,
             Commands.parallel(
+                Commands.runOnce(()->grabberSub.holding()),
                 DriveCommands.followPathCommand("TwoCoralSide1", mirroredX),
                 new SetHoldingCmd(brainSub, GamePiece.CORAL)
             )
@@ -154,6 +155,7 @@ public class AutoCommands {
         //
         addToSequence(seq,
                 Commands.parallel(
+                        Commands.runOnce(()->grabberSub.holding()),                        
                         DriveCommands.followPathCommand("ThreeCoral1", mirroredX),
                         new SetHoldingCmd(brainSub, GamePiece.CORAL)));
 
@@ -257,6 +259,7 @@ public class AutoCommands {
 
         addToSequence(seq, logState(modename, "Calibrating"));
         addToSequence(seq, new WaitForCalibrationCmd(manipSub));
+        addToSequence(seq, Commands.runOnce(()->grabberSub.holding())) ;
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left,
@@ -296,6 +299,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Calibrating"));
         addToSequence(seq, new WaitForCalibrationCmd(manipSub));
         addToSequence(seq, new SetHoldingCmd(brainSub, GamePiece.CORAL));
+        addToSequence(seq, Commands.runOnce(()->grabberSub.holding())) ;
         addToSequence(seq, logState(modename, "Place Coral"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4, CoralSide.Left, false));
 

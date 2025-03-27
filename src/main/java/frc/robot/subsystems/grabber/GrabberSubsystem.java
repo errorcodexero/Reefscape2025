@@ -49,6 +49,10 @@ public class GrabberSubsystem extends SubsystemBase {
         collect_state_ = CollectState.COLLECTING ;
     }
 
+    public void holding() {
+        collect_state_ = CollectState.HOLDING ;
+    }
+
     public void idle() {
         collect_state_ = CollectState.IDLE ;
     }
@@ -111,8 +115,6 @@ public class GrabberSubsystem extends SubsystemBase {
     //////////////////
 
     public void stopGrabber() {
-        Angle pos = inputs_.grabberPosition;
-        io_.setGrabberTargetPosition(pos);
         io_.setGrabberMotorVoltage(Volts.zero()) ;
     }
 

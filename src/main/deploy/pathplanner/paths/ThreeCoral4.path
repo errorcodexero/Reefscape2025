@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.1780920969829065,
-        "y": 3.405537395308976
+        "x": 4.1582893163098555,
+        "y": 3.361376062636558
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2480000000000002,
-        "y": 1.060999999999999
+        "x": 1.4247452445652176,
+        "y": 1.0890709918478252
       },
       "prevControl": {
-        "x": 1.4772203235481522,
-        "y": 1.2382019736991903
+        "x": 1.8649411486167649,
+        "y": 1.400142964320316
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.8,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 3.6,
+    "maxAcceleration": 3.8,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.72
+    "rotation": 51.12693300549405
   },
   "reversed": false,
   "folder": "Three Coral",

@@ -78,8 +78,8 @@ public class Drive extends SubsystemBase {
     private final RobotConfig PP_CONFIG;
     
     // PathPlanner config constants
-    private static final double ROBOT_MASS_KG = 59.874;
-    private static final double ROBOT_MOI = 6.883;
+    private static final double ROBOT_MASS_KG = 65.7709;
+    private static final double ROBOT_MOI = 6.33;
     private static final double WHEEL_COF = 1.2;
     
     static final Lock odometryLock = new ReentrantLock();
@@ -170,7 +170,7 @@ public class Drive extends SubsystemBase {
             this::getChassisSpeeds,
             this::runVelocity,
             new PPHolonomicDriveController(
-                new PIDConstants(10, 0.0, 0.0), 
+                new PIDConstants(8.0, 0.0, 0.0), 
                 new PIDConstants(8.0, 0.0, 0.0)),
             PP_CONFIG,
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
