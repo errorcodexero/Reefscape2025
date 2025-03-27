@@ -26,7 +26,7 @@ import frc.robot.subsystems.vision.CameraIO.PoseEstimationType;
 
 public class AprilTagVision extends SubsystemBase {
 
-    private final static Distance kMaxTagDistance = Meters.of(3.0) ;
+    static final Distance kDefaultDistanceFilter = Meters.of(100.0) ;
 
     public static enum IntegrationBehavior {
         ONLY_NEAREST,
@@ -41,6 +41,8 @@ public class AprilTagVision extends SubsystemBase {
     private final Alert[] alerts_;
 
     private boolean enabled_; // Whether or not vision pose estimation is enabled
+
+    private Distance maxTagDistance = kDefaultDistanceFilter ;
 
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
@@ -61,7 +63,10 @@ public class AprilTagVision extends SubsystemBase {
                 AlertType.kWarning
             );
         }
+    }
 
+    public void setTagFilterDistance(Distance d) {
+        maxTagDistance = (d == null) ? kDefaultDistanceFilter : d ;
     }
 
     /**
@@ -244,7 +249,7 @@ public class AprilTagVision extends SubsystemBase {
             }
         }
 
-        if (Meters.of(minDistance.averageDist()).gt(kMaxTagDistance)) {
+        if (Meters.of(minDistance.averageDist()).gt(maxTagDistance)) {
             //
             // If the tag is greater than a given distance away, ignore it.  This is useful
             // for station collect during autonomous.

@@ -6,6 +6,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Time;
@@ -34,6 +36,7 @@ import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.WaitForCalibrationCmd;
 import frc.robot.subsystems.oi.CoralSide;
+import frc.robot.subsystems.vision.AprilTagVision;
 
 public class AutoCommands {
 
@@ -57,7 +60,7 @@ public class AutoCommands {
         return kDebug ? new StateCmd("Autos/" + mode, state) : null;
     }
 
-    public static AutoModeBaseCmd twoCoralSideAuto(BrainSubsystem brainSub, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
+    public static AutoModeBaseCmd twoCoralSideAuto(BrainSubsystem brainSub, AprilTagVision vision, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
         final String modename = "twoCoralSideAuto" ;
 
         Optional<PathPlannerPath> path = DriveCommands.findPath("TwoCoralSide1", mirroredX) ;
@@ -92,6 +95,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
         addToSequence(seq,
                 Commands.parallel(
+                    Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
                     Commands.sequence(
                         new WaitCommand(AutoCommands.DelayBeforeDriving),
                         DriveCommands.followPathCommand("TwoCoralSide2", mirroredX)),
@@ -112,6 +116,7 @@ public class AutoCommands {
                 Commands.parallel(
                     new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
                     Commands.sequence(
+                        Commands.runOnce(()-> vision.setTagFilterDistance(null)),
                         DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
                             Commands.none(), 
@@ -137,7 +142,7 @@ public class AutoCommands {
     // - Drive to coral collect station on the side nearest the endline and collect
     // - Place a total of three corals on the reef
     //
-    public static AutoModeBaseCmd threeCoralSideAuto(BrainSubsystem brainSub, Drive driveSub,
+    public static AutoModeBaseCmd threeCoralSideAuto(BrainSubsystem brainSub, AprilTagVision vision, Drive driveSub,
             ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
         final String modename = "threeCoralSideAuto";
 
@@ -172,6 +177,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Collect 2nd"));
         addToSequence(seq,
                 Commands.parallel(
+                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
                         Commands.sequence(
                                 new WaitCommand(AutoCommands.DelayBeforeDriving),
                                 DriveCommands.followPathCommand("ThreeCoral2", mirroredX)),
@@ -182,6 +188,7 @@ public class AutoCommands {
         // Wait for coral to pass through the funnel
         //
         addToSequence(seq, logState(modename, "Wait For 2nd"));
+
         // Start funnel immidiately
         addToSequence(seq, Commands.parallel(
                 new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
@@ -193,6 +200,7 @@ public class AutoCommands {
                         // velocity.
                         //
                         logState(modename, "Drive to Place 2nd"),
+                        Commands.runOnce(()-> vision.setTagFilterDistance(null)),
                         DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
                         new ConditionalCommand(
                                 Commands.none(),
@@ -212,6 +220,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Collect 3rd"));
         addToSequence(seq,
                 Commands.parallel(
+                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
                         Commands.sequence(
                                 new WaitCommand(DelayBeforeDriving),
                                 DriveCommands.followPathCommand("ThreeCoral4", mirroredX)),
@@ -233,6 +242,7 @@ public class AutoCommands {
                         // velocity.
                         //
                         logState(modename, "Drive to Place 3rd"),
+                        Commands.runOnce(()-> vision.setTagFilterDistance(null)),
                         DriveCommands.followPathCommand("ThreeCoral5", mirroredX),
                         new ConditionalCommand(
                                 Commands.none(),

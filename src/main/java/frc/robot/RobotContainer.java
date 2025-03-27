@@ -399,16 +399,16 @@ public class RobotContainer {
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
 
         autoChooser_.addOption("Left Side Coral (2 Coral)",
-            AutoCommands.twoCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+            AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
 
         autoChooser_.addOption("Right Side Coral (2 Coral)",
-            AutoCommands.twoCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+            AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));
 
         autoChooser_.addOption("Left Side Coral (3 Coral)",
-            AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+            AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
 
         autoChooser_.addOption("Right Side Coral (3 Coral)",
-            AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+            AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));
 
         autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", 
             AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
@@ -557,7 +557,7 @@ public class RobotContainer {
             //
 
             // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            ret = AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true) ;
             // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
             // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
 
