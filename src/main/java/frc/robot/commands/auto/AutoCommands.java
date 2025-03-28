@@ -114,7 +114,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Drive to Place 2nd")) ;
         addToSequence(seq,
                 Commands.parallel(
-                    new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
+                    new CollectCoralCmd(brainSub, null, manipSub, funnelSub, grabberSub, false),
                     Commands.sequence(
                         Commands.runOnce(()-> vision.setTagFilterDistance(null)),
                         DriveCommands.followPathCommand("ThreeCoral3", mirroredX),
@@ -191,7 +191,7 @@ public class AutoCommands {
 
         // Start funnel immidiately
         addToSequence(seq, Commands.parallel(
-                new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
+                new CollectCoralCmd(brainSub, null, manipSub, funnelSub, grabberSub, false),
                 Commands.sequence(
                         new WaitForCoralInRobot(grabberSub, funnelSub),
                         //
@@ -233,7 +233,7 @@ public class AutoCommands {
         addToSequence(seq, logState(modename, "Wait For 3rd"));
         // Start funnel immidiately
         addToSequence(seq, Commands.parallel(
-                new CollectCoralCmd(brainSub, manipSub, funnelSub, grabberSub, false),
+                new CollectCoralCmd(brainSub, null, manipSub, funnelSub, grabberSub, false),
                 Commands.sequence(
                         new WaitForCoralInRobot(grabberSub, funnelSub),
                         //

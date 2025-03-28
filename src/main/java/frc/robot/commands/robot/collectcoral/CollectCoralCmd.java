@@ -12,20 +12,23 @@ import frc.robot.subsystems.grabber.commands.WaitForCoralCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmd;
+import frc.robot.subsystems.oi.OISubsystem;
 
 public class CollectCoralCmd extends XeroSequenceCmd {
+    private OISubsystem oi_ ;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
     private FunnelSubsystem funnel_;
     private BrainSubsystem brain_;
     private boolean moveman_ ;
 
-    public CollectCoralCmd(BrainSubsystem brain, ManipulatorSubsystem manipulator, FunnelSubsystem funnel, GrabberSubsystem grabber, boolean moveman) {
+    public CollectCoralCmd(BrainSubsystem brain, OISubsystem oi, ManipulatorSubsystem manipulator, FunnelSubsystem funnel, GrabberSubsystem grabber, boolean moveman) {
         super("CollectCoralCmd") ;
         manipulator_ = manipulator;
         grabber_ = grabber;
         brain_ = brain;
         funnel_ = funnel;
+        oi_ = oi ;
         moveman_ = moveman ;
     }
 
@@ -43,7 +46,7 @@ public class CollectCoralCmd extends XeroSequenceCmd {
         }
         seq.addCommands(
             new StateCmd("collectcoral", "wait"),
-            new WaitForCoralCmd(funnel_, grabber_),
+            new WaitForCoralCmd(oi_, funnel_, grabber_),
             new SetHoldingCmd(brain_, GamePiece.CORAL)) ;
     }
 }
