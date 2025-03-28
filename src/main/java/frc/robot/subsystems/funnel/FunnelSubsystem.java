@@ -15,6 +15,7 @@ public class FunnelSubsystem extends SubsystemBase {
     private final FunnelIO io_; 
     private final FunnelInputsAutoLogged inputs_;
     private Angle target_ ;
+    @SuppressWarnings("unused")
     private double lastuppercoral = 0.0 ;
     private double lastlowercoral = 0.0 ;
 

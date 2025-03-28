@@ -12,7 +12,6 @@ import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 
 public class AlgaeNetCmd extends Command {

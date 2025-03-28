@@ -530,7 +530,7 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(this, m_, f_, g_, true)) ;
+                list.add(new CollectCoralCmd(this, oi_, m_, f_, g_, true)) ;
                 conds.add(null) ;
                 break ;
 
