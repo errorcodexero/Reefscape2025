@@ -133,8 +133,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
         if (!inputs_.elevatorPosition.isNear(elev_target_, postol))
             return false ;
 
-        if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), veltol))
-            return false ;
+        // if (Robot.isReal() && !inputs_.elevatorVelocity.isNear(MetersPerSecond.of(0.0), veltol))
+        //     return false ;
 
         return true ;
     }

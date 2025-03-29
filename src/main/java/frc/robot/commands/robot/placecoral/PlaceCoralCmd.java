@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 
+import java.lang.annotation.ElementType;
 import java.util.Optional;
 
 import org.xerosw.util.XeroSequenceCmd;
@@ -137,10 +138,12 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
             case L2:
                 target_elev_pos_ = Elevator.Positions.kPlaceL2; 
+                immdangle = Arm.Positions.kPlaceL2 ;
                 break ;
             
             case L3:
                 target_elev_pos_ = Elevator.Positions.kPlaceL3; 
+                immdangle = Arm.Positions.kPlaceL3 ;
                 break ;
 
             case L4:
@@ -161,26 +164,37 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
         }
 
-        seq.addCommands(
-            RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
+        seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
-        seq.addCommands(
-            Commands.parallel(
-                DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
-                new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(0.01),
+        if (level == ReefLevel.L4) {
+            seq.addCommands(
+                Commands.parallel(
+                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
+                    new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(500.0),
+                        immdangle, Degrees.of(6.0), DegreesPerSecond.of(15.0), scoringPose, raiseDistance())
+                ),
+                new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
+                Commands.parallel(
+                    new DepositCoralCmd(grabber_, brain_.coralLevel()),
+                    Commands.sequence(
+                        new WaitCommand(Milliseconds.of(100)),
+                        new GoToCmdDirect(manipulator_, target_elev_pos_, Centimeters.of(18.0), MetersPerSecond.of(500.0), 
+                                                        ManipulatorConstants.Arm.Positions.kKickbackAngle, Degrees.of(5.0), DegreesPerSecond.of(10.0))
+                    )
+                )) ;
+        }
+        else {
+            seq.addCommands(
+                Commands.parallel(
+                    DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
+                    new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(0.01),
                     immdangle, Degrees.of(3.0), DegreesPerSecond.of(5.0), scoringPose, raiseDistance())
-            )) ;
-        seq.addCommands(
-            new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
-            Commands.parallel(
-                new DepositCoralCmd(grabber_, brain_.coralLevel()),
-                Commands.sequence(
-                    new WaitCommand(Milliseconds.of(100)),
-                    new GoToCmdDirect(manipulator_, target_elev_pos_, Centimeters.of(5.0), MetersPerSecond.of(0.01), 
-                                                    ManipulatorConstants.Arm.Positions.kKickbackAngle, Degrees.of(5.0), DegreesPerSecond.of(10.0))
-                )
-            ),
+                ),
+                new DepositCoralCmd(grabber_, brain_.coralLevel())
+            ) ;            
+        }
 
+        seq.addCommands(
             Commands.runOnce(()-> brain_.setGoingDown(true)),
             new SetHoldingCmd(brain_, GamePiece.NONE)
         ) ;
