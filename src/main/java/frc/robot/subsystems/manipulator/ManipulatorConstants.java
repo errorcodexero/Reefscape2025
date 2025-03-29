@@ -97,7 +97,7 @@ public class ManipulatorConstants {
         }
 
         public class Positions {
-            public static final Angle kStow = Degrees.of(18);
+            public static final Angle kStow = Degrees.of(14);
             public static final Angle kPlaceL1 = Degrees.of(0); 
             public static final Angle kPlaceL2 = Degrees.of(35); 
             public static final Angle kPlaceL3 = Degrees.of(35); 
@@ -201,6 +201,7 @@ public class ManipulatorConstants {
 
             public static final Distance kShootAlgae = Centimeters.of(141) ;
             public static final Distance kShootAlgaeEject = Centimeters.of(127) ;
+            public static final Distance kShootRotateArm = Centimeter.of(130) ;
 
             public static final Distance kAlgaeReefCollectL3 = Centimeters.of(78.0) ;
             public static final Distance kAlgaeReefCollectL2 = Centimeters.of(40.0) ;

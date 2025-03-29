@@ -18,6 +18,7 @@ public class AlgaeNetCmd extends Command {
     private enum State {
         GoingUp,
         Shooting,
+        Dropping,
         Done
     } ;
 
@@ -64,11 +65,22 @@ public class AlgaeNetCmd extends Command {
                 eject_.execute() ;
                 b_.setGp(GamePiece.NONE);
                 if (timer_.isExpired()) {
-                    m_.setElevatorTarget(m_.getElevatorPosition()) ;
+                    m_.setElevatorTarget(ManipulatorConstants.Elevator.Positions.kStow) ;
                     g_.setGrabberMotorVoltage(Volts.zero()) ;
-                    state_ = State.Done;
+                    state_ = State.Dropping ;
                 }
                 break ;
+
+            case Dropping:
+                if (m_.getElevatorPosition().lte(ManipulatorConstants.Elevator.Positions.kShootRotateArm)) {
+                    m_.setArmTarget(ManipulatorConstants.Arm.Positions.kStow);
+                }
+
+                if (m_.isElevAtTarget()) {
+                    state_ = State.Done ;
+                }
+                break ;
+
             case Done:
                 break ;
         }

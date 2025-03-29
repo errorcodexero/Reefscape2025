@@ -26,9 +26,9 @@ import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.util.ReefUtil;
 
 public class AlgaeNetWhileMovingCmd extends Command {
-    static LinearVelocity kMaxVel = MetersPerSecond.of(1.5) ;
+    static LinearVelocity kMaxVel = MetersPerSecond.of(1.0) ;
     static LinearAcceleration kMaxAcc = MetersPerSecondPerSecond.of(2.0) ;
-    static Distance kShootDistance = Centimeters.of(150) ;
+    static Distance kShootDistance = Centimeters.of(170) ;
 
     private enum State {
         Idle,
@@ -36,6 +36,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
         Driving,
         DrivingAndShooting,
         Stopping,
+        Backup,
         Done
     }
 
@@ -50,10 +51,17 @@ public class AlgaeNetWhileMovingCmd extends Command {
     private Command shoot_cmd_ ;
     private Command stop_cmd_ ;
     private Command down_cmd_ ;
+    private boolean dist_override_ ;
 
+    
     public AlgaeNetWhileMovingCmd(BrainSubsystem b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g) {
+        this(b, db, m, g, false) ;
+    }
+
+    public AlgaeNetWhileMovingCmd(BrainSubsystem b, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, boolean distov) {
         db_ = db ;
         m_ = m ;
+        dist_override_ = distov ;
 
         state_ = State.Idle ;
         shoot_cmd_ = new AlgaeNetCmd(b, m, g);
@@ -72,7 +80,7 @@ public class AlgaeNetWhileMovingCmd extends Command {
         // so we are at a reasonable angle to the target when we shoot.
         //
         double dist = target_.getTranslation().getDistance(db_.getPose().getTranslation()) ;
-        if (dist < 1.0 || dist > 4.0) {
+        if (!dist_override_ && (dist < 1.5 || dist > 4.0)) {
             state_ = State.Done ;
             return ;
         }
@@ -106,7 +114,6 @@ public class AlgaeNetWhileMovingCmd extends Command {
 
             case Driving:
                 drive_cmd_.execute() ;
-
                 if (dist.lte(kShootDistance)) {
                     state_ = State.DrivingAndShooting ;
                     shoot_cmd_.initialize() ;
@@ -119,7 +126,8 @@ public class AlgaeNetWhileMovingCmd extends Command {
                 if (shoot_cmd_.isFinished()) {
                     RobotContainer.getInstance().gamepad().setLocked(false);
                     state_ = State.Stopping ;
-                    down_cmd_ = new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kShootAlgae) ;
+                    down_cmd_ = new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow,
+                                                ManipulatorConstants.Arm.Positions.kStow) ;
                     stop_cmd_.initialize();
                     down_cmd_.initialize() ;
                 }
