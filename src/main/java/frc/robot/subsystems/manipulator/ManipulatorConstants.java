@@ -188,8 +188,8 @@ public class ManipulatorConstants {
             public static final Distance kReleaseGamePad = Centimeters.of(100.0) ;
 
             public static final Distance kPlaceL1 = Centimeters.of(0); 
-            public static final Distance kPlaceL2 = Centimeters.of(25); 
-            public static final Distance kPlaceL3 = Centimeters.of(63); 
+            public static final Distance kPlaceL2 = Centimeters.of(27); 
+            public static final Distance kPlaceL3 = Centimeters.of(65); 
             public static final Distance kPlaceL4 = Centimeters.of(131);
             public static final Distance kPlaceL2OneCoralAdder = Centimeters.of(8) ;
             public static final Distance kPlaceL3OneCoralAdder = Centimeters.of(7) ;

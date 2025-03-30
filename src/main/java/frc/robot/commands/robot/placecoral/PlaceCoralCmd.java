@@ -170,8 +170,10 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             seq.addCommands(
                 Commands.parallel(
                     DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
-                    new GoToWhenClose(drive_, manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(500.0),
-                        immdangle, Degrees.of(6.0), DegreesPerSecond.of(15.0), scoringPose, raiseDistance())
+                    new GoToWhenClose(drive_, manipulator_, 
+                                    target_elev_pos_, Centimeters.of(1.0), MetersPerSecond.of(500.0),
+                                    immdangle, Degrees.of(6.0), DegreesPerSecond.of(15.0), 
+                                    scoringPose, raiseDistance())
                 ),
                 new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),
                 Commands.parallel(
