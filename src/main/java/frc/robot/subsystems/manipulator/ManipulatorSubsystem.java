@@ -26,6 +26,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     private Distance elev_target_;
     private Distance elev_pos_tolerance_ ;
+    
+    @SuppressWarnings("unused")
     private LinearVelocity elev_vel_tolerance_ ;
 
     private boolean elevator_calibrated_ ;

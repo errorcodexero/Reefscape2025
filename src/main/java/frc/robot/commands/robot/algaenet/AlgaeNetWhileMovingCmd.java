@@ -36,7 +36,6 @@ public class AlgaeNetWhileMovingCmd extends Command {
         Driving,
         DrivingAndShooting,
         Stopping,
-        Backup,
         Done
     }
 
