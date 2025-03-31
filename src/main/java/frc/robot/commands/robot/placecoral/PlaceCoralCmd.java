@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 
-import java.lang.annotation.ElementType;
 import java.util.Optional;
 
 import org.xerosw.util.XeroSequenceCmd;
@@ -172,7 +171,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
                     new GoToWhenClose(drive_, manipulator_, 
                                     target_elev_pos_, Centimeters.of(1.0), MetersPerSecond.of(500.0),
-                                    immdangle, Degrees.of(6.0), DegreesPerSecond.of(15.0), 
+                                    immdangle, Degrees.of(3.0), DegreesPerSecond.of(5.0), 
                                     scoringPose, raiseDistance())
                 ),
                 new PositionToPlaceCmd(drive_, brain_, manipulator_, grabber_, level, scoringPose),

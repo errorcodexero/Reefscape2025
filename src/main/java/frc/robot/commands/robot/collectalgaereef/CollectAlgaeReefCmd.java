@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
+
+import org.xerosw.math.XeroMath;
 import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -91,7 +93,25 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         Pose2d buprot ; 
         
         if (eject_) {
-            buprot = new Pose2d(bup.getTranslation(), (a == Alliance.Red) ? Rotation2d.fromDegrees(180.0) : Rotation2d.fromDegrees(0.0)) ;
+            Rotation2d rot ;
+
+            if (a == Alliance.Red) {
+                if (XeroMath.normalizeAngleDegrees(bup.getRotation().getDegrees() - 180.0) < 5.0) {
+                    rot = Rotation2d.fromDegrees(90.0) ;
+                }
+                else {
+                    rot = Rotation2d.fromDegrees(180.0) ;
+                }
+            }
+            else {
+                if (XeroMath.normalizeAngleDegrees(bup.getRotation().getDegrees()) < 5.0) {
+                    rot = Rotation2d.fromDegrees(90.0) ;
+                }
+                else {
+                    rot = Rotation2d.fromDegrees(0.0) ;
+                }
+            }
+            buprot = new Pose2d(bup.getTranslation(), rot) ;
         }
         else {
             buprot = bup ;

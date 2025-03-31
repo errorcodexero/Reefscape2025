@@ -11,7 +11,7 @@ public class GentleLowerElevator extends Command {
     private ManipulatorSubsystem m_ ;
     private Distance target_ ;
     private boolean done_ ;
-    private static final Voltage volts_ = Volts.of(-6.0) ;
+    private static final Voltage volts_ = Volts.of(-4.0) ;
 
     public GentleLowerElevator(ManipulatorSubsystem m, Distance d) {
         m_ = m ;
