@@ -71,7 +71,7 @@ public class ClimberConstants {
 
         public class Position {
             public static final Angle kStowed = Degrees.of(-10.0);
-            public static final Angle kPrepped = Degrees.of(86.0);
+            public static final Angle kPrepped = Degrees.of(75.0);
             public static final Angle kClimbed = Degrees.of(-58.0);
             public static final Angle kReapplyOffset = Degrees.of(0.5);
         }

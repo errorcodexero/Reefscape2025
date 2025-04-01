@@ -52,7 +52,7 @@ public class GrabberConstants {
         public class DepositCoral {
             public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
             public static final AngularVelocity velocity = RotationsPerSecond.of(100.0) ;
-            public static final Time delay = Milliseconds.of(300.0) ;
+            public static final Time delay = Milliseconds.of(400.0) ;
             public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 

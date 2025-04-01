@@ -49,10 +49,6 @@ public class DepositCoralCmd extends Command {
     }
 
     private Time depDelay() {
-        if (RobotState.isAutonomous()) {
-            return Milliseconds.of(250) ;
-        }
-
         return GrabberConstants.Grabber.DepositCoral.delay ;
     }
 

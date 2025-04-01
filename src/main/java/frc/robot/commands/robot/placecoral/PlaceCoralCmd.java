@@ -179,8 +179,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                     new DepositCoralCmd(grabber_, brain_.coralLevel()),
                     Commands.sequence(
                         new WaitCommand(Milliseconds.of(100)),
-                        new GoToCmdDirect(manipulator_, target_elev_pos_, Centimeters.of(18.0), MetersPerSecond.of(500.0), 
-                                                        ManipulatorConstants.Arm.Positions.kKickbackAngle, Degrees.of(5.0), DegreesPerSecond.of(10.0))
+                        new GoToCmdDirect(manipulator_, target_elev_pos_, Centimeters.of(3.0), MetersPerSecond.of(500.0), 
+                                                        ManipulatorConstants.Arm.Positions.kKickbackAngle, Degrees.of(3.0), DegreesPerSecond.of(10.0))
                     )
                 )) ;
         }

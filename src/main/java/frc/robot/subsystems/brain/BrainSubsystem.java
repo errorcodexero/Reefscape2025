@@ -442,7 +442,9 @@ public class BrainSubsystem extends SubsystemBase {
                 oi_.setLEDState(OILed.CoralL2, LEDState.Off) ;
                 oi_.setLEDState(OILed.CoralL3, LEDState.Off) ;
                 oi_.setLEDState(OILed.CoralL4, LEDState.Off) ;
-                oi_.setLevelLED(coral_level_);
+                if (coral_level_ != null) {
+                    oi_.setLevelLED(coral_level_);
+                }
             }
         }
 
