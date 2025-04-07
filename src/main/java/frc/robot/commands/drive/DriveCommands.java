@@ -398,9 +398,9 @@ public class DriveCommands {
     return Commands.defer(() -> {
 
       Pose2d curPose = drive.getPose();
-      Transform2d curToTarget = targetPose.minus(curPose);
+      ChassisSpeeds fieldSpeeds = drive.getFieldChassisSpeeds();
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), new Rotation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond));
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
@@ -416,7 +416,7 @@ public class DriveCommands {
       // The robot is currently moving in a given direction.  The path needs to take into account
       // this starting condition.
       //
-      IdealStartingState start = new IdealStartingState(vel, drive.getPose().getRotation()) ;
+      IdealStartingState start = new IdealStartingState(vel, drive.getRotation()) ;
 
       PathPlannerPath path = new PathPlannerPath(
           waypoints,
@@ -449,9 +449,9 @@ public class DriveCommands {
     return Commands.defer(() -> {
 
       Pose2d curPose = drive.getPose();
-      Transform2d curToTarget = targetPose.minus(curPose);
+      ChassisSpeeds fieldSpeeds = drive.getFieldChassisSpeeds();
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), new Rotation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond));
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
@@ -467,7 +467,7 @@ public class DriveCommands {
       // The robot is currently moving in a given direction.  The path needs to take into account
       // this starting condition.
       //
-      IdealStartingState start = new IdealStartingState(vel, drive.getPose().getRotation()) ;
+      IdealStartingState start = new IdealStartingState(vel, drive.getRotation()) ;
 
       PathPlannerPath path = new PathPlannerPath(
           waypoints,
