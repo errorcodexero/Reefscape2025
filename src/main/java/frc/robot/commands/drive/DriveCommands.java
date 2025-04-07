@@ -398,7 +398,7 @@ public class DriveCommands {
     // Create Command Only When It Is Starting
     return Commands.defer(() -> {
 
-      ChassisSpeeds speed = drive.getChassisSpeeds() ;
+      ChassisSpeeds speed = drive.getFieldChassisSpeeds() ;
       double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
       Rotation2d heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
 
@@ -458,10 +458,21 @@ public class DriveCommands {
     // Create Command Only When It Is Starting
     return Commands.defer(() -> {
 
+      ChassisSpeeds speed = drive.getFieldChassisSpeeds() ;
+      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      Rotation2d heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+
       Pose2d curPose = drive.getPose();
       Transform2d curToTarget = targetPose.minus(curPose);
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      if (vel < kStoppedVelocity) {
+        heading = curPose.getRotation().plus(curToTarget.getTranslation().getAngle()) ;
+      }
+      else {
+        heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      }
+      
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), heading) ;
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
@@ -470,8 +481,6 @@ public class DriveCommands {
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, immd, endWaypoint);
-      ChassisSpeeds speed = drive.getChassisSpeeds() ;
-      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
 
       //
       // The robot is currently moving in a given direction.  The path needs to take into account
@@ -535,6 +544,8 @@ public class DriveCommands {
    */
   public static Command followPathCommand(String pathName, boolean mirroredX) {
     Optional<PathPlannerPath> path = findPath(pathName, mirroredX);
+
+    Logger.recordOutput("PATHNAME", pathName) ;
 
     if (path.isPresent()) {
       return AutoBuilder.followPath(path.get());

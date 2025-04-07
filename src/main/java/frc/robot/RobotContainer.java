@@ -407,8 +407,14 @@ public class RobotContainer {
         autoChooser_.addOption("Left Side Coral (3 Coral)",
             AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
 
+        autoChooser_.addOption("Left Side Coral Alt (3 Coral)",
+            AutoCommands.threeCoralSideAltAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
+
         autoChooser_.addOption("Right Side Coral (3 Coral)",
             AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));
+
+        autoChooser_.addOption("Right Side Coral Alt (3 Coral)",
+            AutoCommands.threeCoralSideAltAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));            
 
         autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", 
             AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
