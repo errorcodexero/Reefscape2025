@@ -409,8 +409,7 @@ public class DriveCommands {
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
-      ChassisSpeeds speed = drive.getChassisSpeeds() ;
-      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      double vel = Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) ;
 
       //
       // The robot is currently moving in a given direction.  The path needs to take into account
@@ -460,8 +459,7 @@ public class DriveCommands {
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, immd, endWaypoint);
-      ChassisSpeeds speed = drive.getChassisSpeeds() ;
-      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      double vel = Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) ;
 
       //
       // The robot is currently moving in a given direction.  The path needs to take into account
