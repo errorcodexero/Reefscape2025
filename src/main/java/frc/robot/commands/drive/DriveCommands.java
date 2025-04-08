@@ -545,8 +545,6 @@ public class DriveCommands {
   public static Command followPathCommand(String pathName, boolean mirroredX) {
     Optional<PathPlannerPath> path = findPath(pathName, mirroredX);
 
-    Logger.recordOutput("PATHNAME", pathName) ;
-
     if (path.isPresent()) {
       return AutoBuilder.followPath(path.get());
     }

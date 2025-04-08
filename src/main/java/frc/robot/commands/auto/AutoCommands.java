@@ -253,7 +253,16 @@ public class AutoCommands {
         //
         addToSequence(seq, logState(modename, "Place 3rd"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4,
-                mirroredX ? CoralSide.Left : CoralSide.Right, true));
+                mirroredX ? CoralSide.Left : CoralSide.Right, false));
+
+        addToSequence(seq,
+                Commands.parallel(
+                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
+                        Commands.sequence(
+                                new WaitCommand(DelayBeforeDriving),
+                                DriveCommands.followPathCommand("ThreeCoral4Alt", mirroredX)),
+                        new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
+                                ManipulatorConstants.Arm.Positions.kCollect)));                
 
         addToSequence(seq, logState(modename, "done"));
 
@@ -371,7 +380,16 @@ public class AutoCommands {
         //
         addToSequence(seq, logState(modename, "Place 3rd"));
         addToSequence(seq, new PlaceCoralCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L4,
-                mirroredX ? CoralSide.Right : CoralSide.Right, true));
+                mirroredX ? CoralSide.Right : CoralSide.Left, false));
+
+        addToSequence(seq,
+                Commands.parallel(
+                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
+                        Commands.sequence(
+                                new WaitCommand(DelayBeforeDriving),
+                                DriveCommands.followPathCommand("ThreeCoral4", mirroredX)),
+                        new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
+                                ManipulatorConstants.Arm.Positions.kCollect)));                
 
         addToSequence(seq, logState(modename, "done"));
 

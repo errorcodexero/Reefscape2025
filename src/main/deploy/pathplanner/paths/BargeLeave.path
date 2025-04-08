@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.30137713529344,
-        "y": 6.855176303720324
+        "x": 7.116689426075224,
+        "y": 6.936437013644365
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.742750000000001,
-        "y": 6.876875
+        "x": 5.46,
+        "y": 7.120625
       },
       "prevControl": {
-        "x": 7.174795270079393,
-        "y": 6.880206996020703
+        "x": 7.193323248430917,
+        "y": 6.830019561771976
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -1.5911402711946436
   },
   "reversed": false,
   "folder": "Barge Algae",
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
