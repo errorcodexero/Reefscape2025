@@ -432,7 +432,7 @@ public class AutoCommands {
                 Commands.parallel(
                         DriveCommands.followPathCommand("ProcessorAlgaeProcessor"),
                         Commands.sequence(
-                                new GoToCmdDirect(manipSub, manipSub.getElevatorPosition(), ManipulatorConstants.Arm.Positions.kAlgaeReefHold),
+                                new GoToCmdDirect(manipSub, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectNewL2, ManipulatorConstants.Arm.Positions.kAlgaeReefHold),
                                 new GentleLowerElevator(manipSub, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold))));
 
         addToSequence(seq, new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub, true));
