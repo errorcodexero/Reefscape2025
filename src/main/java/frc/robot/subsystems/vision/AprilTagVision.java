@@ -60,7 +60,7 @@ public class AprilTagVision extends SubsystemBase {
             // Setup alerts for every camera
             alerts_[i] = new Alert(
                 "Camera " + i + ", \"" + io_[i].getName() + "\" is not connected!",
-                AlertType.kWarning
+                AlertType.kError
             );
         }
     }
