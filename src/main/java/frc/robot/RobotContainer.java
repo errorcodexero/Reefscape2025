@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
@@ -132,6 +134,7 @@ public class RobotContainer {
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
 
     private Trigger testModeTrigger ;
+    private Trigger teleopTrigger ;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -140,6 +143,10 @@ public class RobotContainer {
         testModeTrigger = new Trigger(() -> {
             return RobotState.isTest() && RobotState.isEnabled() ;
         }) ;
+
+        teleopTrigger = new Trigger(() -> {
+            return RobotState.isTeleop() && RobotState.isEnabled() ;
+        });
         
         ReefUtil.initialize();
 
@@ -437,12 +444,21 @@ public class RobotContainer {
 
     private void configureTestModeBindings() {
         Distance h = Centimeters.of(140) ;
-        gamepad_.start().and(testModeTrigger).onTrue(
+        testModeTrigger.and(gamepad_.start()).onTrue(
             new ConditionalCommand(
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
-        
+                () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;
+
+        testModeTrigger.and(gamepad_.povUp()).whileTrue(manipulator_.elevatorMoveCmd(Centimeters.of(5.0))) ;
+        testModeTrigger.and(gamepad_.povDown()).whileTrue(manipulator_.elevatorMoveCmd(Centimeters.of(-5.0)));
+        testModeTrigger.and(gamepad_.povLeft()).whileTrue(manipulator_.armMoveCmd(Degrees.of(-5.0))) ;
+        testModeTrigger.and(gamepad_.povRight()).whileTrue(manipulator_.armMoveCmd(Degrees.of(5.0))) ;
+
+        testModeTrigger.and(gamepad_.a()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(-3.0)))) ;
+        testModeTrigger.and(gamepad_.x()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(3.0)))) ;
+        testModeTrigger.and(gamepad_.rightStick()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(0.0)))) ;
+
         gamepad_.back().and(testModeTrigger).toggleOnTrue(
             DriveCommands.wheelRadiusCharacterization(drivebase_)
         );
@@ -514,36 +530,35 @@ public class RobotContainer {
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
 
         // Robot Relative
-        gamepad_.povUp().whileTrue(
+        teleopTrigger.and(gamepad_.povUp()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero()));
 
-        gamepad_.povDown().whileTrue(
+        teleopTrigger.and(gamepad_.povDown()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0),
                         RadiansPerSecond.zero()));
 
-        gamepad_.povLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povLeft()).whileTrue(
                 drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero()));
 
-        gamepad_.povRight().whileTrue(
+        teleopTrigger.and(gamepad_.povRight()).whileTrue(
                 drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(),
                         RadiansPerSecond.zero()));
 
         // Robot relative diagonal
-        gamepad_.povUpLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povUpLeft()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povUpRight().whileTrue(
+        teleopTrigger.and(gamepad_.povUpRight()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povDownLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povDownLeft()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povDownRight().whileTrue(
+        teleopTrigger.and(gamepad_.povDownRight()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(
-                drivebase_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
 
         gamepad_.rightTrigger().onTrue(new ExecuteRobotActionCmd(brain_));
     }

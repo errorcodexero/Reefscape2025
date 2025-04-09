@@ -54,7 +54,7 @@ public final class Constants {
     }
 
     public static class ProcessorConstants {
-        public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
+        public static final Distance kXdistanceFromProcessorTag = Inches.of(24.0) ;
         public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
     }
 

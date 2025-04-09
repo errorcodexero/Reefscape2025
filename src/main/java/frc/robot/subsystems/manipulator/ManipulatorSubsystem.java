@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
@@ -48,6 +49,14 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     public void toggleSyncing() {
         io_.toggleSyncing() ;
+    }
+
+    public Command elevatorMoveCmd(Distance amount) {
+        return Commands.runOnce(()->io_.setElevatorTarget(inputs_.elevatorPosition.plus(amount)));
+    }
+
+    public Command armMoveCmd(Angle amount) {
+        return Commands.runOnce(()->io_.setArmTarget(inputs_.armPosition.plus(amount))) ;
     }
 
     @Override
