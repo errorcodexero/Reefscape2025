@@ -16,19 +16,24 @@
     },
     {
       "anchor": {
-        "x": 5.46,
-        "y": 7.120625
+        "x": 5.394467213114754,
+        "y": 6.876875
       },
       "prevControl": {
-        "x": 7.193323248430917,
-        "y": 6.830019561771976
+        "x": 6.677261428578543,
+        "y": 6.876875
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8315565031982913,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -1.5911402711946436
+    "rotation": -179.5123881170751
   },
   "reversed": false,
   "folder": "Barge Algae",

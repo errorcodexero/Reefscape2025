@@ -438,8 +438,6 @@ public class AutoCommands {
         addToSequence(seq, new ScoreAlgaeAfter(driveSub, brainSub, manipSub, grabberSub, true));
 
         addToSequence(seq, DriveCommands.followPathCommand("ProcessorAlgaeReef"));
-        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L3, false, false));
-
         addToSequence(seq, logState(modename, "done"));
 
         return seq;
