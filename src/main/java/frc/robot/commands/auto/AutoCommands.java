@@ -258,13 +258,8 @@ public class AutoCommands {
                 mirroredX ? CoralSide.Left : CoralSide.Right, false));
 
         addToSequence(seq,
-                Commands.parallel(
-                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
-                        Commands.sequence(
-                                new WaitCommand(DelayBeforeDriving),
-                                DriveCommands.followPathCommand("ThreeCoral4Alt", mirroredX)),
-                        new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
-                                ManipulatorConstants.Arm.Positions.kCollect)));                
+                new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
+                        ManipulatorConstants.Arm.Positions.kCollect));                
 
         addToSequence(seq, logState(modename, "done"));
 
@@ -385,13 +380,8 @@ public class AutoCommands {
                 mirroredX ? CoralSide.Right : CoralSide.Left, false));
 
         addToSequence(seq,
-                Commands.parallel(
-                        Commands.runOnce(()-> vision.setTagFilterDistance(Meters.of(3.0))),
-                        Commands.sequence(
-                                new WaitCommand(DelayBeforeDriving),
-                                DriveCommands.followPathCommand("ThreeCoral4", mirroredX)),
-                        new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
-                                ManipulatorConstants.Arm.Positions.kCollect)));                
+                new GoToCmd(manipSub, ManipulatorConstants.Elevator.Positions.kCollect,
+                        ManipulatorConstants.Arm.Positions.kCollect));                
 
         addToSequence(seq, logState(modename, "done"));
 
