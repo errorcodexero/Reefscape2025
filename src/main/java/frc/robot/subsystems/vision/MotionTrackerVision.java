@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class MotionTrackerVision extends SubsystemBase {
 
@@ -35,7 +36,6 @@ public class MotionTrackerVision extends SubsystemBase {
 
         if (disconnected) return;
 
-        //TODO: process data
         estimateConsumer_.integrate(inputs_.pose.toPose2d(), inputs_.timestamp, VecBuilder.fill(0.01, 0.01, 0.01));
     }
 
@@ -53,6 +53,13 @@ public class MotionTrackerVision extends SubsystemBase {
 
     public boolean isConnected() {
         return inputs_.connected;
+    }
+
+    public static TrackerIO getIO() {
+        return switch(Constants.getRobot()) {
+            case COMPETITION -> new TrackerIOQuest();
+            default -> new TrackerIO() {};
+        };
     }
 
 }

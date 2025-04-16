@@ -86,6 +86,8 @@ import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.subsystems.vision.MotionTrackerVision;
+import frc.robot.subsystems.vision.TrackerIOQuest;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
 import frc.simulator.engine.ISimulatedSubsystem;
@@ -117,6 +119,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private MotionTrackerVision questnav_;
     private OISubsystem oi_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
@@ -143,6 +146,7 @@ public class RobotContainer {
         
         ReefUtil.initialize();
 
+        questnav_ = new MotionTrackerVision(MotionTrackerVision.getIO(), drivebase_::addVisionMeasurement);
 
         /**
          * Subsystem setup
@@ -543,28 +547,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        Command ret = null;
-
         if (Robot.useXeroSimulator()) {
-            //
-            // In the Xero simulator, set the auto mode you want to run
-            // Note: the auto used here must match the simulation stimulus file set in the
-            // Robot.java file.
-            //
-
-            // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            ret = AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true) ;
-            // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
-
-            // Command autoChosen = autoChooser_.get();
-            // ret = autoChosen != null ? autoChosen : tuningChooser_.get();
-
-        } else {
-            Command autoChosen = autoChooser_.get();
-            ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+            return AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true);
         }
 
-        return ret;
+        Command autoChosen = autoChooser_.get();
+        return autoChosen != null ? autoChosen : tuningChooser_.get();
     }
 }
