@@ -7,6 +7,7 @@ import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.subsystems.climber.ClimberPositionCmd;
@@ -48,9 +49,11 @@ public class PrepClimbCmd extends XeroSequenceCmd {
 
     @Override
     public void initSequence(SequentialCommandGroup sequence) {
-        sequence.addCommands(new DeployFunnelCmd(funnel_, DeployFunnelCmd.Position.Climb)) ;
-        sequence.addCommands(new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kClimb)) ;
-        sequence.addCommands(new ClimberPositionCmd(climber_, ClimberState.PrepareToClimb)) ;
-        sequence.addCommands(DriveCommands.joystickDriveAtAngle(this::getDesiredAngle)) ;
+        sequence.addCommands(Commands.parallel(
+            DriveCommands.joystickDriveAtAngle(this::getDesiredAngle),
+            new DeployFunnelCmd(funnel_, DeployFunnelCmd.Position.Climb),
+            new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kClimb),
+            new ClimberPositionCmd(climber_, ClimberState.PrepareToClimb)
+        ));
     }
 }
