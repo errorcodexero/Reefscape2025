@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.027130681818182,
-        "y": 5.047088068181818
+        "x": 1.4917500000000001,
+        "y": 1.0804999999999996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.640129736161798,
-        "y": 5.167104085248559
+        "x": 1.768598734160522,
+        "y": 1.2479395516815721
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "EndCollect1"
     },
     {
       "anchor": {
-        "x": 5.138513513513513,
-        "y": 5.1811655405405395
+        "x": 3.427734375,
+        "y": 2.5197775135869565
       },
       "prevControl": {
-        "x": 6.183060270339914,
-        "y": 5.120342693191514
+        "x": 3.140954558461185,
+        "y": 2.3280793617159015
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Algae 5"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 3.8,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -119.40718906073371
+    "velocity": 1.5,
+    "rotation": 57.09475707701222
   },
   "reversed": false,
-  "folder": "Side Algae",
+  "folder": "Three Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 53.72
   },
   "useDefaultConstraints": false
 }

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -11,7 +10,6 @@ import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
@@ -28,24 +26,21 @@ public interface GrabberIO {
 
         // Sensor Inputs
         public boolean coralSensor = false;
-        public boolean coralRisingEdge = false;
-        public boolean coralFallingEdge = false;
 
-        public boolean algaeSensor = false;
-        public boolean algaeRisingEdge = false;
-        public boolean algaeFallingEdge = false;
+        public boolean algaeSensor1 = false;
+        public boolean algaeSensor2 = false ;
 
-        public Distance distanceFromReef = Centimeters.zero() ;
+        public int numberOfCoral = 0 ;
+        public double distanceMedian = 0.0;
         public double distanceFromReefRaw = 0.0 ;
     }
 
     public default void updateInputs(GrabberIOInputs inputs) {}
 
-    public default void setGrabberMotorVoltage(double vol) {}
+    public default void setGrabberMotorVoltage(Voltage vol) {}
 
     public default void logGrabberMotor(SysIdRoutineLog log) {}
 
-    public default void setGrabberTargetVelocity(AngularVelocity vel) {} 
     public default void setGrabberTargetPosition(Angle pos) {}
 
 }

@@ -1,6 +1,7 @@
 package frc.robot.commands.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.brain.BrainSubsystem;
 
@@ -17,6 +18,7 @@ public class AbortCmd extends Command {
         b_.clearRobotActions() ;
         b_.unlock() ;
         RobotContainer.getInstance().gamepad().setLocked(false) ;
+        CommandScheduler.getInstance().cancelAll() ;
     }
 
     @Override

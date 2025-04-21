@@ -25,7 +25,7 @@ public interface ManipulatorIO {
         public AngularVelocity armVelocity = RadiansPerSecond.of(0); 
         public Angle armRawMotorPosition = Degrees.of(0);
         public AngularVelocity armRawMotorVelocity = DegreesPerSecond.of(0.0) ;
-        public boolean encoderSynced = false ;
+        public int syncCount = Integer.MAX_VALUE ;
       
         // elevator
         public Distance elevatorPosition = Meters.of(0); 
@@ -64,8 +64,7 @@ public interface ManipulatorIO {
 
     // ELEVATOR METHODS
     public default void setElevatorTarget(Distance dist) {}
-    public default void resetPosition() {}
-    public default void enableSoftLimits(boolean b) {}
+    public default void setElevatorPosition(Distance d) {} ;
 
     // ARM METHODS
     public default void setArmTarget(Angle angle) {}

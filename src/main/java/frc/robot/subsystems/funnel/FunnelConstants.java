@@ -15,12 +15,13 @@ import edu.wpi.first.units.measure.Time;
 public class FunnelConstants {
     
     public static final int funnelCanId = 6;
-    public static final int funnelSensorId = 10 ;
+    public static final int funnelUpperSensorId = 10 ;
+    public static final int funnelLowerSensorId = 4 ;
     
     public static final Current currentLimit = Amps.of(40);
     public static final Time lowerTime = Seconds.of(1);
 
-    public static final Angle kClimbPosition = Rotations.of(0.81) ;
+    public static final Angle kClimbPosition = Rotations.of(0.90) ;
     public static final Angle kNormalPosition = Rotations.of(0.0) ;
     public static final Angle kMaxPosition = Rotations.of(0.85) ;
     public static final Angle kMinPosition = Rotations.of(-0.05) ;

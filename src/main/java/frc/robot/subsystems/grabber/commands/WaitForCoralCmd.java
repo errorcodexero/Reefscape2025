@@ -1,41 +1,45 @@
 package frc.robot.subsystems.grabber.commands;
 
-import static edu.wpi.first.units.Units.Milliseconds;
+
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
-import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberConstants;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
+import frc.robot.subsystems.oi.OISubsystem;
 
 public class WaitForCoralCmd extends Command {
 
     private static boolean showState = true ;
 
+    private OISubsystem oi_ ;
     private GrabberSubsystem grabber_;
+    private FunnelSubsystem funnel_ ;
     private State state_;
-    private XeroTimer timer_ ;
-    private boolean dobackup_ ;
+    private boolean rumbling_ ;
 
     private enum State {
         WaitingForCoral,
-        Delay,
-        BackupCoral,
+        WaitForTrailingEdge,
         Finish
     }
 
-    public WaitForCoralCmd(GrabberSubsystem grabber, boolean dobackup) {
+    public WaitForCoralCmd(OISubsystem oi, FunnelSubsystem funnel, GrabberSubsystem grabber) {
         addRequirements(grabber);
         grabber_ = grabber;
-        timer_ = new XeroTimer(Milliseconds.of(40)) ;
-        dobackup_ = dobackup ;
+        funnel_ = funnel ;
+        oi_ = oi ;
     }
 
     @Override
     public void initialize() {
-        grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectCoral.kVelocity);
+        grabber_.setGrabberMotorVoltage(GrabberConstants.kCollectVoltage) ;
         state_ = State.WaitingForCoral;
+        rumbling_ = false ;
     }
 
     @Override
@@ -47,31 +51,32 @@ public class WaitForCoralCmd extends Command {
     public void execute() {
         switch(state_) {
             case WaitingForCoral:
-                if (grabber_.coralFalling() || !grabber_.coralSensor()) {
-                    grabber_.setGrabberMotorVoltage(0.0) ;
-                    if (!dobackup_) {
-                        state_ = State.Finish;
-                    }
-                    else {
-                        timer_.start();
-                        state_ = State.Delay;
-                    }
+                if (oi_ != null && funnel_.lowerCoralSensor() && !rumbling_) {
+                    oi_.rumble(Seconds.of(1.0));
+                    rumbling_ = true ;
                 }
-                break;
 
-            case Delay:
-                if (timer_.isExpired()) {
-                    grabber_.setGrabberTargetVelocity(GrabberConstants.Grabber.CollectCoral.kBackupVelocity);
-                    state_ = State.BackupCoral;
-                }
-                break ;
-
-            case BackupCoral:
-                if (grabber_.coralRising() || grabber_.coralSensor()) {
-                    grabber_.setGrabberMotorVoltage(0.0) ;
+                if (grabber_.coralSensor()) {
+                    grabber_.setGrabberMotorVoltage(Volts.zero()) ;
                     state_ = State.Finish;
                 }
+                else if (funnel_.lowerCoralSensor()) {
+                    state_ = State.WaitForTrailingEdge;
+                }
                 break;
+
+            case WaitForTrailingEdge:
+                if (grabber_.coralSensor()) {
+                    grabber_.setGrabberMotorVoltage(Volts.zero()) ;
+                    grabber_.collecting();
+                    state_ = State.Finish;
+                }
+                else if (!funnel_.lowerCoralSensor()) {
+                    state_ = State.WaitForTrailingEdge;
+                    grabber_.collecting();
+                    state_ = State.Finish ;
+                }
+                break ;
 
             case Finish:
                 break;

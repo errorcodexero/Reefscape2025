@@ -16,14 +16,16 @@ public interface OIIO {
         public boolean coral_l4 = false ;                        
         public boolean coral_collect = false ;
         public boolean coral_place = false ;
-        public boolean algae_on_reef = false ;
-        public boolean algae_ground = false ;
+        public boolean rotate_arm = false ;
         public boolean algae_score = false ;
-        public boolean algae_reef = false ;
+        public boolean algae_reef_keep = false ;
+        public boolean algae_reef_eject = false ;
         public boolean climb_deploy = false ;
         public boolean climb_execute = false ;
         public boolean climb_lock = false ;
         public boolean coral_side = false ;
+        public boolean raise_arm = false ;
+        public boolean algae_net = false ;
     }
 
     public default void updateInputs(OIIosInputs inputs) {

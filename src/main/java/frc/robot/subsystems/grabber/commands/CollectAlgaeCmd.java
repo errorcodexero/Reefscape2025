@@ -14,13 +14,9 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 
 public class CollectAlgaeCmd extends SequentialCommandGroup {
 
-    private final GrabberSubsystem grabber_;
-
     public CollectAlgaeCmd(GrabberSubsystem grabber) {
-        grabber_ = grabber;
-
         addCommands(
-            grabber.setVelocityCommand(GrabberConstants.Grabber.CollectAlgae.velocity),
+            grabber.setVoltageCommand(Volts.of(-6.0)),
             logState("Waiting"),
             Commands.waitUntil(this::hasAlgae),
             logState("Grabbed"),
@@ -30,7 +26,7 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
     }
 
     private boolean hasAlgae() {
-        return !grabber_.algaeSensor();
+        return false ;
     }
 
     private Command logState(String state) {
@@ -38,5 +34,4 @@ public class CollectAlgaeCmd extends SequentialCommandGroup {
             Logger.recordOutput("Commands/AlgaeCollect/State", state);
         });
     }
-
 }

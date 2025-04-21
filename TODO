@@ -1,12 +1,8 @@
-Things to do
-----------------------------------------------------------------------------
-- Teleop: Test/tune auto algae scoring sequence (used in auto)          done
-- Automodes: Get Just Coral working with driveto in Place Coral
-- Automodes: Test Just Coral as red alliance
-- Automodes: Test Three Coral with driveto in Place Coral
-    o Update paths
-    o Update sequences
-- Automodes: Test Three Coral auto on blue/alliance side
-- Automodes: Test Three Coral auto on red/opposite side
-- Automodes: Test Three Coral auto on red/alliance side
-- Testing: 
+Three Coral
+-----------
+- Ready second camera
+- Ensure we drop tags at a distance
+- Center station/April Tag in right location.
+- Center robot on april tag
+- Test with tape on floor for guidance
+

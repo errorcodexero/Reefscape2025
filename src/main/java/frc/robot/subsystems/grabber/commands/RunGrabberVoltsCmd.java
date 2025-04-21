@@ -30,7 +30,7 @@ public class RunGrabberVoltsCmd extends Command {
     @Override
     public void initialize() {
         done_ = false ;
-        g_.setGrabberMotorVoltage(volts_.in(Volts)) ;
+        g_.setGrabberMotorVoltage(volts_) ;
         timer_.start() ;
     }
 
@@ -38,7 +38,7 @@ public class RunGrabberVoltsCmd extends Command {
     @Override
     public void execute() {
         if (timer_.isExpired()) {
-            g_.setGrabberMotorVoltage(0.0) ;
+            g_.setGrabberMotorVoltage(Volts.zero()) ;
             done_ = true ;
         }
     }
@@ -47,7 +47,7 @@ public class RunGrabberVoltsCmd extends Command {
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            g_.setGrabberMotorVoltage(0.0) ;
+            g_.setGrabberMotorVoltage(Volts.zero()) ;
             done_ = true ;
         }
     }

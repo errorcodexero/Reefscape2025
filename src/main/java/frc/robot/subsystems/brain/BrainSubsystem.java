@@ -9,13 +9,16 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroSequenceCmd;
+import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
+import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIConstants.LEDState;
 import frc.robot.subsystems.oi.OIConstants.OILed;
@@ -24,10 +27,12 @@ import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefGotoCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
 import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -72,6 +77,10 @@ public class BrainSubsystem extends SubsystemBase {
 
     private boolean climb_signaled_ ;
 
+    private boolean going_down_ ;
+
+    private XeroTimer flash_timer_ ;
+
     //
     // Subsystems used to implement the robot actions that are
     // managed by the brain subsystem.  Remove th suppress warnings when
@@ -82,15 +91,17 @@ public class BrainSubsystem extends SubsystemBase {
     private ManipulatorSubsystem m_ ;
     private GrabberSubsystem g_ ;   
     private ClimberSubsystem c_ ;
+    private FunnelSubsystem f_ ;
 
     private boolean placed_ok_ ;
 
-    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c) {
+    public BrainSubsystem(OISubsystem oi, Drive db, ManipulatorSubsystem m, GrabberSubsystem g, ClimberSubsystem c, FunnelSubsystem f) {
         oi_ = oi ;
         db_ = db ;
         m_ = m ;
         g_ = g ;
         c_ = c ;
+        f_ = f ;
         locked_ = false ;
 
         current_action_ = null ;
@@ -102,6 +113,12 @@ public class BrainSubsystem extends SubsystemBase {
         periodic_count_ = 0 ;
         climb_signaled_ = false ;
         placed_ok_ = false ;
+
+        flash_timer_ = null ;
+    }
+
+    public void setGoingDown(boolean b) {
+        going_down_ = b ;
     }
 
     public GamePiece gp() {
@@ -151,11 +168,25 @@ public class BrainSubsystem extends SubsystemBase {
     }
 
     public void setCoralLevel(ReefLevel height) {
+        if (flash_timer_ != null) {
+            flash_timer_ = null ;
+        }
+        
         coral_level_ = height ;
         oi_.setLevelLED(height);
+
+        //
+        // This is a HACK but its the safest way to do this
+        //
+        if ((current_action_ == RobotAction.CollectAlgaeReefKeep || current_action_ == RobotAction.CollectAlgaeReefEject) && 
+                        current_cmd_ == null && current_robot_action_command_index_ == 1) {
+            current_cmd_ = new CollectAlgaeReefGotoCmd(this, m_, height) ;
+            current_cmd_.schedule() ;
+        }
     }
 
     public ReefLevel coralLevel() {
+
         return coral_level_ ;
     }
 
@@ -192,11 +223,12 @@ public class BrainSubsystem extends SubsystemBase {
                     ret = (act == RobotAction.PlaceCoral) ;
                     break ;
 
-                case CollectAlgaeReef:
+                case CollectAlgaeReefKeep:
                     ret = (act != RobotAction.PlaceCoral && act != RobotAction.CollectCoral) ;
                     break ;
 
-                case CollectAlgaeGround:
+                case CollectAlgaeReefEject:
+                    ret = (act != RobotAction.PlaceCoral && act != RobotAction.CollectCoral) ;
                     break ;
 
                 default:
@@ -225,19 +257,9 @@ public class BrainSubsystem extends SubsystemBase {
             }
             else {
                 next_action_ = action ;
-                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
-            }
-
-
-            //
-            // Assign (or reassign) the next action
-            //
-            next_action_ = action ;
-            if (next_action_ != null) {
-                //
-                // Light the button for the new next action
-                //
-                oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+                if (action != null) {
+                    oi_.setRobotActionLEDState(next_action_, LEDState.On) ;
+                }
             }
 
             //
@@ -248,6 +270,15 @@ public class BrainSubsystem extends SubsystemBase {
             }
         }
     }    
+
+    public void coralOnFloor() {
+        flash_timer_ = new XeroTimer(Seconds.of(3.0)) ;
+        flash_timer_.start() ;
+        oi_.setLEDState(OILed.CoralL1, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL2, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL3, LEDState.Fast) ;
+        oi_.setLEDState(OILed.CoralL4, LEDState.Fast) ;
+    }
 
     //
     // This clears the state of the OI to a basic default, no actions 
@@ -329,11 +360,11 @@ public class BrainSubsystem extends SubsystemBase {
                 ret = (gp_ == GamePiece.ALGAE_HIGH) ;
                 break ;
 
-            case CollectAlgaeReef:
+            case CollectAlgaeReefKeep:
                 ret = (gp_ == GamePiece.NONE) ;
                 break ;
 
-            case CollectAlgaeGround:
+            case CollectAlgaeReefEject:
                 ret = (gp_ == GamePiece.NONE) ;
                 break ;
 
@@ -346,6 +377,8 @@ public class BrainSubsystem extends SubsystemBase {
 
     private String startNewAction() {
         String status ;
+
+        going_down_ = false ;
 
         //
         // We are executing nothing, see if there are things to run queued
@@ -401,6 +434,25 @@ public class BrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         String status = "" ;
+
+        if (flash_timer_ != null) {
+            if (flash_timer_.isExpired()) {
+                flash_timer_ = null ;
+                oi_.setLEDState(OILed.CoralL1, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL2, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL3, LEDState.Off) ;
+                oi_.setLEDState(OILed.CoralL4, LEDState.Off) ;
+                if (coral_level_ != null) {
+                    oi_.setLevelLED(coral_level_);
+                }
+            }
+        }
+
+        if (current_action_ == RobotAction.PlaceCoral && going_down_) {
+            if (m_.getElevatorPosition().lte(ManipulatorConstants.Elevator.Positions.kReleaseGamePad)) {
+                RobotContainer.getInstance().gamepad().setLocked(false) ;
+            }
+        }
 
         Logger.recordOutput("brain/holding", gp_.toString()) ;
         Logger.recordOutput("brain/placedok", placed_ok_) ;
@@ -480,7 +532,7 @@ public class BrainSubsystem extends SubsystemBase {
 
         switch(action) {
             case CollectCoral:
-                list.add(new CollectCoralCmd(this, m_, g_, false)) ;
+                list.add(new CollectCoralCmd(this, oi_, m_, f_, g_, true)) ;
                 conds.add(null) ;
                 break ;
 
@@ -488,7 +540,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain, true, true)) ;
+                list.add(new PlaceCoralCmd(this, db_, m_, g_, ReefLevel.AskBrain, CoralSide.AskBrain, true)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
@@ -496,19 +548,24 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new ScoreAlgaeAfter(db_, this, m_, g_)) ;
+                list.add(new ScoreAlgaeAfter(db_, this, m_, g_, false)) ;
                 conds.add(null) ;
                 break ;
 
-            case CollectAlgaeReef:
-                list.add(new NullCmd()) ;
+            case CollectAlgaeReefEject:
+                list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true, false)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
-            case CollectAlgaeGround:
+            case CollectAlgaeReefKeep:
+                list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
+                conds.add(null) ;
+                
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, false, false)) ;
+                conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
         }
 

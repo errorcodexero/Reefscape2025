@@ -23,6 +23,8 @@ public interface ClimberIO {
         
         public double absEncoderRawValue = 0.0 ;
         public Angle absEncoderValue = Rotations.zero() ;
+
+        public int syncCount = Integer.MAX_VALUE ;
     }
 
     //Update Inputs

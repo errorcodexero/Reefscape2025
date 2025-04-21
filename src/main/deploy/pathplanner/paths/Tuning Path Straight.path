@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.057459295281655,
+        "x": 7.057459295281652,
         "y": 7.5543082578634495
       },
       "isLocked": false,
-      "linkedName": "Tuning Start"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,7 +20,7 @@
         "y": 7.546254678853475
       },
       "prevControl": {
-        "x": 2.3034259447341388,
+        "x": 2.303425944734136,
         "y": 7.543284205435554
       },
       "nextControl": null,

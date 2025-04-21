@@ -22,6 +22,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -41,13 +42,15 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Robot;
 
 public class ManipulatorIOHardware implements ManipulatorIO {
+
+    private static int kSyncWaitCount = 25 ;
+
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
     private TalonFX elevator_motor_2_;
@@ -57,7 +60,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private DCMotorSim arm_sim_ ;
     private DCMotorSim elevator_sim_ ;
     private DutyCycleEncoderSim arm_encoder_sim_ ;
-    private boolean encoder_motor_syncing_ ;
+    private int sync_count_ ;
 
     private StatusSignal<Angle> arm_pos_sig_; 
     private StatusSignal<AngularVelocity> arm_vel_sig_; 
@@ -79,11 +82,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
 
+
     public ManipulatorIOHardware() throws Exception {
         createArm() ;
         createElevator() ;   
 
-        encoder_motor_syncing_ = true ;
+        sync_count_ = kSyncWaitCount ;
 
         // setting signal update frequency: 
         TalonFXFactory.checkError(-1, "set-manipulator-frequency", () ->
@@ -118,11 +122,15 @@ public class ManipulatorIOHardware implements ManipulatorIO {
                 elevatorLimitSwitchConfigs.ReverseSoftLimitEnable = false;
                 elevatorLimitSwitchConfigs.ReverseSoftLimitThreshold = ManipulatorConstants.Elevator.kMinHeight.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
             }
-            TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
+                TalonFXFactory.checkError(ManipulatorConstants.Elevator.kMotorFrontCANID, "set-elevator-limit-values", () -> elevator_motor_.getConfigurator().apply(elevatorLimitSwitchConfigs)) ;
         }
         catch(Exception ex) {
-            throw new RuntimeException("Could not set motor soft limits - " + ex.getMessage()) ;
+            throw new RuntimeException("could not set soft limits") ;
         }
+    }
+
+    public void setPosition(Distance d) {
+        
     }
 
     private void createElevator() throws Exception {
@@ -189,8 +197,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             ManipulatorConstants.Arm.kCurrentLimitTime
         );
 
-        setArmTarget(Degrees.of(19.0)) ;
-
         // ENCODER + MAPPER
         encoder_ = new DutyCycleEncoder(ManipulatorConstants.Arm.ThruBoreEncoder.kAbsEncoder); 
 
@@ -251,11 +257,15 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     @Override
     public void updateInputs(ManipulatorIOInputs inputs) {
 
-        if (RobotState.isDisabled()) {
-            syncArmPosition() ;
+        if (sync_count_ >= 0) {
+            sync_count_-- ;
+
+            if (sync_count_ == 0) {
+                syncArmPosition();
+            }
         }
 
-        inputs.encoderSynced = encoder_motor_syncing_ ;
+        inputs.syncCount = sync_count_ ;
         StatusCode armStatus = BaseStatusSignal.refreshAll(
             arm_pos_sig_,
             arm_vel_sig_,
@@ -341,13 +351,23 @@ public class ManipulatorIOHardware implements ManipulatorIO {
             .angularVelocity(elevator_vel_sig_.refresh().getValue()) ;
     } 
 
+    public void setElevatorPosition(Distance dist) {
+        double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
+        elevator_motor_.setPosition(Revolutions.of(revs)) ;
+    }
+
     public void setElevatorTarget(Distance dist) {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
-        elevator_motor_.setControl(new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true)) ;
+        ControlRequest req ;
+
+        req = new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true);
+        elevator_motor_.setControl(req) ;
     }
 
     public void resetPosition() {
         elevator_motor_.setPosition(Degrees.of(0.0));
+        setArmTarget(ManipulatorConstants.Arm.Positions.kStow);
+        setElevatorTarget(ManipulatorConstants.Elevator.Positions.kStow);
     }
 
     public void setArmTarget(Angle angle) {
@@ -362,10 +382,6 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         }
         Angle armAngle = Degrees.of(angle).times(ManipulatorConstants.Arm.kGearRatio) ;
         arm_motor_.setPosition(armAngle) ;
-    }
-
-    public void toggleSyncing() {
-        encoder_motor_syncing_ = !encoder_motor_syncing_ ;
     }
 
     private void simulateArm() {

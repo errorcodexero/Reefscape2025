@@ -64,6 +64,8 @@ import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.Drive;
 
 public class DriveCommands {
+  private static final double kStoppedVelocity = 0.15 ;
+
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 4.0;
   private static final double ANGLE_KD = 0.0;
@@ -157,8 +159,7 @@ public class DriveCommands {
     return drive.runEnd(
         () -> {
           // Get linear velocity
-          Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
-              ySupplier.getAsDouble());
+          Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
           // Apply rotation deadband
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
@@ -397,10 +398,21 @@ public class DriveCommands {
     // Create Command Only When It Is Starting
     return Commands.defer(() -> {
 
+      ChassisSpeeds speed = drive.getFieldChassisSpeeds() ;
+      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      Rotation2d heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+
       Pose2d curPose = drive.getPose();
       Transform2d curToTarget = targetPose.minus(curPose);
 
-      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), curPose.getRotation().plus(curToTarget.getTranslation().getAngle()));
+      if (vel < kStoppedVelocity) {
+        heading = curPose.getRotation().plus(curToTarget.getTranslation().getAngle()) ;
+      }
+      else {
+        heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      }
+      
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), heading) ;
       Pose2d endWaypoint = targetPose;
 
       if (Constants.getMode() != Mode.REAL) {
@@ -409,8 +421,6 @@ public class DriveCommands {
       }
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, endWaypoint);
-      ChassisSpeeds speed = drive.getChassisSpeeds() ;
-      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
 
       //
       // The robot is currently moving in a given direction.  The path needs to take into account
@@ -435,6 +445,66 @@ public class DriveCommands {
       return AutoBuilder.followPath(path);
     }, Set.of(drive));
   }
+
+  public static Command simplePathCommand(Drive drive, Pose2d targetPose, Pose2d immd, LinearVelocity v, LinearAcceleration a) {
+
+    // Create Constraints
+    PathConstraints constraints = new PathConstraints(
+        v.in(MetersPerSecond),
+        a.in(MetersPerSecondPerSecond),
+        DegreesPerSecond.of(540).in(RadiansPerSecond),
+        DegreesPerSecondPerSecond.of(720).in(RadiansPerSecondPerSecond));
+
+    // Create Command Only When It Is Starting
+    return Commands.defer(() -> {
+
+      ChassisSpeeds speed = drive.getFieldChassisSpeeds() ;
+      double vel = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      Rotation2d heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+
+      Pose2d curPose = drive.getPose();
+      Transform2d curToTarget = targetPose.minus(curPose);
+
+      if (vel < kStoppedVelocity) {
+        heading = curPose.getRotation().plus(curToTarget.getTranslation().getAngle()) ;
+      }
+      else {
+        heading = new Rotation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond) ;
+      }
+      
+      Pose2d startWaypoint = new Pose2d(curPose.getTranslation(), heading) ;
+      Pose2d endWaypoint = targetPose;
+
+      if (Constants.getMode() != Mode.REAL) {
+        Logger.recordOutput("SimplePathing/StartWaypoint", startWaypoint);
+        Logger.recordOutput("SimplePathing/EndWaypoint", endWaypoint);
+      }
+
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startWaypoint, immd, endWaypoint);
+
+      //
+      // The robot is currently moving in a given direction.  The path needs to take into account
+      // this starting condition.
+      //
+      IdealStartingState start = new IdealStartingState(vel, drive.getPose().getRotation()) ;
+
+      PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          constraints,
+          start,
+          new GoalEndState(0.0, targetPose.getRotation()));
+
+      path.preventFlipping = true;
+
+      // If the pose is less than 1 centimeter away, dont do anything. (This is
+      // because of an error I am looking into)
+      if (curPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.01) {
+        return Commands.none();
+      }
+
+      return AutoBuilder.followPath(path);
+    }, Set.of(drive));
+  }  
 
   /**
    * Creates a path based on Pathfinding.

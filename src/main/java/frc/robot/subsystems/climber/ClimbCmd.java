@@ -27,17 +27,9 @@ public class ClimbCmd extends Command {
     public void execute() {
         Logger.recordOutput("climber/holding", holding_) ;
 
-        if (holding_) {
-            if (climber_.getClimberPosition().lt(ClimberConstants.Climber.Position.kReapplyThreshold)) {
-                climber_.setMotorVoltage(Volts.of(ClimberConstants.Climber.kClimbVoltage)) ;
-            }
-            else if (climber_.getClimberPosition().gt(ClimberConstants.Climber.Position.kClimbed)) {
-                climber_.setMotorVoltage(Volts.of(0.0)) ;
-            }
-        }
-        else {
+        if (!holding_) {
             if (climber_.getClimberPosition().isNear(ClimberConstants.Climber.Position.kClimbed, ClimberConstants.Climber.kPosTolerance)) {
-                climber_.setMotorVoltage(Volts.of(0.0)) ;
+                climber_.setClimberTarget(ClimberState.Climb) ;
                 holding_ = true ;
             }
         }

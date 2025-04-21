@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.190625,
-        "y": 3.620375
+        "x": 6.34691875840436,
+        "y": 3.4472695817892807
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.508125,
-        "y": 2.5917499999999993
+        "x": 6.254625000000001,
+        "y": 2.5283749999999996
       },
       "prevControl": {
-        "x": 6.552,
-        "y": 3.0500000000000007
+        "x": 6.065369701187705,
+        "y": 3.2591216224965818
       },
       "nextControl": {
-        "x": 6.447417339238953,
-        "y": 1.9576922098290668
+        "x": 6.317304238456876,
+        "y": 2.286359890830208
       },
       "isLocked": false,
       "linkedName": null
@@ -36,12 +36,12 @@
         "y": 1.1779999999999995
       },
       "prevControl": {
-        "x": 6.0928679862133235,
-        "y": 1.430813142407872
+        "x": 6.261283461720068,
+        "y": 1.5866725482895563
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Collection station"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -61,7 +61,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Algae",
+  "folder": "Processor Algae",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

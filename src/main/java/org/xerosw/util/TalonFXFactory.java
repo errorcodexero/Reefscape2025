@@ -108,6 +108,7 @@ public class TalonFXFactory {
         int tries = (reps == -1 ? kApplyTries : reps);
         do {
             code = toApply.get();
+            Thread.sleep(100);
         } while (!code.isOK() && --tries > 0);
 
         if (!code.isOK()) {

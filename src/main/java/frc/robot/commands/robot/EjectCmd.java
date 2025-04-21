@@ -1,7 +1,9 @@
 package frc.robot.commands.robot;
 
 import org.xerosw.util.XeroSequenceCmd;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ReefLevel;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
@@ -40,17 +42,22 @@ public class EjectCmd extends XeroSequenceCmd {
 
     @Override
     public void initSequence(SequentialCommandGroup seq) {
-        if (brain_.gp() == GamePiece.ALGAE_HIGH) {
+        if (brain_.gp() == GamePiece.CORAL) {
             seq.addCommands(
-                new DepositAlgaeCmd(grabber_),
-                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3, manipulator_.getArmPosition()),
+                new DepositCoralCmd(grabber_, ReefLevel.L4),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;
         }
         else {
+            //
+            // We are up with algae, just eject, but stay up until eject is hit twice
+            //
             seq.addCommands(
-                new DepositCoralCmd(grabber_),
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)) ;            
+                new DepositAlgaeCmd(grabber_),
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, manipulator_.getArmPosition()),
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)
+            ) ;
         }
+        
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false));
         seq.addCommands(new SetHoldingCmd(brain_, GamePiece.NONE));
     }
