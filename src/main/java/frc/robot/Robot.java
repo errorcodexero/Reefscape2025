@@ -41,6 +41,7 @@ import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.MotionTrackerVision;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -219,11 +220,13 @@ public class Robot extends LoggedRobot {
                 AutoModeBaseCmd autoCmd = (AutoModeBaseCmd) cmd;
                 if (autoCmd != null) {
                     Drive d = RobotContainer.getInstance().drivebase() ;
+                    MotionTrackerVision quest = RobotContainer.getInstance().quest();
                     Pose2d autopose = autoCmd.getStartingPose() ;
                     if (auto_cmd_ == null || auto_cmd_ != autoCmd) {
                         Logger.recordOutput("automode/name", autoCmd.getName()) ;
                         Logger.recordOutput("automode/pose", autopose) ;
                         d.setPose(autopose) ;
+                        quest.setPose(autopose);
                         auto_cmd_ = autoCmd ;
                     }
                 }

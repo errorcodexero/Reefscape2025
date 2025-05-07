@@ -177,7 +177,7 @@ public class AprilTagVision extends SubsystemBase {
             Matrix<N3, N1> standardDeviations
         );
 
-        public static PoseEstimateConsumer ignore() {
+        public static frc.robot.subsystems.vision.PoseEstimateConsumer ignore() {
             return (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {};
         }
     }

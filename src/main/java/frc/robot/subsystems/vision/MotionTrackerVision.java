@@ -5,7 +5,6 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,18 +35,14 @@ public class MotionTrackerVision extends SubsystemBase {
 
         if (disconnected) return;
 
-        estimateConsumer_.integrate(inputs_.pose.toPose2d(), inputs_.timestamp, VecBuilder.fill(0.01, 0.01, 0.01));
+        estimateConsumer_.integrate(inputs_.pose, inputs_.timestamp, VecBuilder.fill(0.01, 0.01, 0.01));
     }
 
     public void setPose(Pose2d pose) {
-        io_.zeroPosition(); // todo: fix this
+        io_.setPose(pose);
     }
 
-    public void zeroHeading() {
-        io_.zeroHeading();
-    }
-
-    public Pose3d getPose() {
+    public Pose2d getPose() {
         return inputs_.pose;
     }
 

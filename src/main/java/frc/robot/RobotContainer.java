@@ -85,8 +85,8 @@ import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
-import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.MotionTrackerVision;
+import frc.robot.subsystems.vision.TrackerIO;
 import frc.robot.subsystems.vision.TrackerIOQuest;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
@@ -146,8 +146,6 @@ public class RobotContainer {
         
         ReefUtil.initialize();
 
-        questnav_ = new MotionTrackerVision(MotionTrackerVision.getIO(), drivebase_::addVisionMeasurement);
-
         /**
          * Subsystem setup
          */
@@ -167,6 +165,8 @@ public class RobotContainer {
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
+
+                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), PoseEstimateConsumer.ignore());
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -251,14 +251,6 @@ public class RobotContainer {
                             CompTunerConstants.BackRight,
                             CompTunerConstants.kSpeedAt12Volts);
 
-                    vision_ = new AprilTagVision(
-                        PoseEstimateConsumer.ignore(),
-                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
-                        drivebase_::getPose, true),
-                        new CameraIOPhotonSim("Back", VisionConstants.backTransform,
-                        drivebase_::getPose, true)
-                    );
-
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
                     } catch (Exception ex) {
@@ -333,6 +325,10 @@ public class RobotContainer {
                     cams);
         }
 
+        if (questnav_ == null) {
+            questnav_ = new MotionTrackerVision(new TrackerIO() {}, PoseEstimateConsumer.ignore());
+        }
+
         if (manipulator_ == null) {
             manipulator_ = new ManipulatorSubsystem(new ManipulatorIO() {
             });
@@ -387,6 +383,10 @@ public class RobotContainer {
 
     public Drive drivebase() {
         return drivebase_;
+    }
+
+    public MotionTrackerVision quest() {
+        return questnav_;
     }
 
     public XeroGamepad gamepad() {
