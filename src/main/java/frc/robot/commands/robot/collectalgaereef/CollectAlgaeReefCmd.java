@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -43,8 +44,9 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
     private ReefLevel height_ ;
     private Drive db_ ;
     private boolean eject_ ;
+    private boolean quick_ ;
 
-    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean eject) {
+    public CollectAlgaeReefCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean eject, boolean quick) {
         super("CollectAlgaeReefCmd") ;
         brain_ = brain ;
         db_ = db ;
@@ -52,6 +54,7 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
         grabber_ = grabber;
         height_ = height ;
         eject_ = eject ;
+        quick_ = quick ;
     }
 
     @Override
@@ -128,19 +131,30 @@ public class CollectAlgaeReefCmd extends XeroSequenceCmd {
             DriveCommands.simplePathCommand(db_, buprot, bup, 
                                             MetersPerSecond.of(3.0), 
                                             MetersPerSecondPerSecond.of(3.0))) ;
+
+        Command postseq ;
+
+        if (!quick_) {
+            postseq = Commands.sequence(                        
+                RobotContainer.getInstance().gamepad().setLockCommand(false),
+                new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
+                new GoToCmdDirect(manipulator_, manipulator_.getElevatorPosition(), 
+                                            ManipulatorConstants.Arm.Positions.kAlgaeReefHold),
+                new GentleLowerElevator(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold)) ;
+        }
+        else {
+            postseq = Commands.sequence(
+                RobotContainer.getInstance().gamepad().setLockCommand(false),
+                new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH)) ;
+        }
+        
         if (eject_) {
             seq.addCommands(new RunGrabberVoltsCmd(grabber_, Milliseconds.of(500))) ;
         }
         else {
             seq.addCommands(
                 new ConditionalCommand(
-                    Commands.sequence(
-                        RobotContainer.getInstance().gamepad().setLockCommand(false),
-                        new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH),
-                        new GoToCmdDirect(manipulator_, manipulator_.getElevatorPosition(), 
-                                                        ManipulatorConstants.Arm.Positions.kAlgaeReefHold),
-                        new GentleLowerElevator(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold)
-                    ),
+                    postseq,
                     Commands.sequence(
                         RobotContainer.getInstance().gamepad().setLockCommand(false),                        
                         grabber_.setVoltageCommand(Volts.zero()),

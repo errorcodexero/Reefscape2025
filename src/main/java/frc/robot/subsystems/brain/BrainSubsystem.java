@@ -548,7 +548,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new NullCmd()) ;
                 conds.add(null) ;
 
-                list.add(new ScoreAlgaeAfter(db_, this, m_, g_)) ;
+                list.add(new ScoreAlgaeAfter(db_, this, m_, g_, false)) ;
                 conds.add(null) ;
                 break ;
 
@@ -556,7 +556,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true, false)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
@@ -564,7 +564,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, false)) ;
+                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, false, false)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
         }

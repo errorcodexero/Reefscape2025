@@ -54,7 +54,7 @@ public final class Constants {
     }
 
     public static class ProcessorConstants {
-        public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
+        public static final Distance kXdistanceFromProcessorTag = Inches.of(22.0) ;
         public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
     }
 
@@ -100,7 +100,7 @@ public final class Constants {
          * The offset from the center of the TAG to where we want the ARM to be positioned.
          * (Half the distance between pipes on the REEF)
          */
-        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.25);
+        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.125);
 
         /**
          * How far to back up from the ALGAE scoring pose.
