@@ -136,7 +136,7 @@ public class ManipulatorConstants {
         public static final boolean kInverted = true;
 
         // meters that elevator moves per revolution of motor
-        public static final double kMetersPerRev = 1.0 / 42.375  ;
+        public static final double kMetersPerRev = (1.0 / 42.375) * (5.0 / 3.0);
 
         public static final String kCANBusName = "" ;
 
