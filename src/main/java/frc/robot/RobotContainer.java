@@ -457,6 +457,8 @@ public class RobotContainer {
         gamepad_.back().and(testModeTrigger).toggleOnTrue(
             DriveCommands.wheelRadiusCharacterization(drivebase_)
         );
+
+        gamepad_.rightBumper().and(testModeTrigger).toggleOnTrue(DriveCommands.feedforwardCharacterization(drivebase_));
     }
 
     boolean isArmOkToRaise() {
