@@ -136,16 +136,15 @@ public class ManipulatorConstants {
         public static final boolean kInverted = true;
 
         // meters that elevator moves per revolution of motor
-        public static final double kMetersPerRev = (1.0 / 42.375) * (5.0 / 3.0);
+        public static final double kMetersPerRev = 1.0 / 42.375  * 5.0 / 3.0 ;
 
         public static final String kCANBusName = "" ;
 
         public static final Current kCurrentLimit = Amps.of(60); 
-
-        public static final Distance kPosTolerance = Centimeter.of(0.5) ;
-        public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
-
         public static final Time kCurrentLimitTime = Seconds.of(1); 
+
+        public static final Distance kPosTolerance = Centimeter.of(1.5) ;
+        public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Voltage kCalibrateVoltage = Volts.of(-3) ;
         public static final int kCalibrateLoops = 8 ;
@@ -164,7 +163,7 @@ public class ManipulatorConstants {
         // The MOI of the elevator, used only for simulation
         public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.1) ;
 
-        public class PID {
+        public class VoltagePID {
             public static final double kP = 20.0; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
@@ -174,9 +173,19 @@ public class ManipulatorConstants {
             public static final double kS = 0.0 ;
         }
 
+        public class TorquePID {
+            public static final double kP = 95.0; 
+            public static final double kI = 0.0 ;
+            public static final double kD = 7.0 ;
+            public static final double kV = 0.3 ;
+            public static final double kA = 0.0 ;
+            public static final double kG = 0.288 ;
+            public static final double kS = 0.0 ;
+        }
+
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(90) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(325) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(130) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(400) ;
             public static final AngularVelocity kMaxSlowVelocity = RotationsPerSecond.of(10) ;
             public static final AngularAcceleration kMaxSlowAcceleration = RotationsPerSecondPerSecond.of(30) ;
             public static final double kJerk = 0.0 ;
@@ -189,7 +198,7 @@ public class ManipulatorConstants {
             public static final Distance kPlaceL1 = Centimeters.of(0); 
             public static final Distance kPlaceL2 = Centimeters.of(24); 
             public static final Distance kPlaceL3 = Centimeters.of(62); 
-            public static final Distance kPlaceL4 = Centimeters.of(131);
+            public static final Distance kPlaceL4 = Centimeters.of(134);
             public static final Distance kPlaceL2OneCoralAdder = Centimeters.of(8) ;
             public static final Distance kPlaceL3OneCoralAdder = Centimeters.of(7) ;
 
