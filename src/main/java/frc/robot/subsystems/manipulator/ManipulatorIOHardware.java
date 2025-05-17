@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Watts;
 
 import org.xerosw.util.EncoderMapper;
 import org.xerosw.util.TalonFXFactory;
@@ -24,12 +25,14 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -50,6 +53,7 @@ import frc.robot.Robot;
 public class ManipulatorIOHardware implements ManipulatorIO {
 
     private static int kSyncWaitCount = 25 ;
+    private static boolean kUseTorqueControl = true ;
 
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
@@ -78,10 +82,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
     private Voltage arm_voltage_; 
     private Voltage elevator_voltage_; 
 
+    private LinearFilter ev1avg = LinearFilter.movingAverage(10);
+    private LinearFilter ev2avg = LinearFilter.movingAverage(10) ;
+
     private final Debouncer armErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator1ErrorDebounce_ = new Debouncer(0.5);
     private final Debouncer elevator2ErrorDebounce_ = new Debouncer(0.5);
-
 
     public ManipulatorIOHardware() throws Exception {
         createArm() ;
@@ -154,13 +160,24 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
-        elevator_pids.kP = ManipulatorConstants.Elevator.PID.kP;
-        elevator_pids.kI = ManipulatorConstants.Elevator.PID.kI;
-        elevator_pids.kD = ManipulatorConstants.Elevator.PID.kD;
-        elevator_pids.kV = ManipulatorConstants.Elevator.PID.kV;
-        elevator_pids.kA = ManipulatorConstants.Elevator.PID.kA;
-        elevator_pids.kG = ManipulatorConstants.Elevator.PID.kG;
-        elevator_pids.kS = ManipulatorConstants.Elevator.PID.kS;
+        if (ManipulatorIOHardware.kUseTorqueControl) {
+            elevator_pids.kP = ManipulatorConstants.Elevator.TorquePID.kP;
+            elevator_pids.kI = ManipulatorConstants.Elevator.TorquePID.kI;
+            elevator_pids.kD = ManipulatorConstants.Elevator.TorquePID.kD;
+            elevator_pids.kV = ManipulatorConstants.Elevator.TorquePID.kV;
+            elevator_pids.kA = ManipulatorConstants.Elevator.TorquePID.kA;
+            elevator_pids.kG = ManipulatorConstants.Elevator.TorquePID.kG;
+            elevator_pids.kS = ManipulatorConstants.Elevator.TorquePID.kS;
+        }
+        else {
+            elevator_pids.kP = ManipulatorConstants.Elevator.VoltagePID.kP;
+            elevator_pids.kI = ManipulatorConstants.Elevator.VoltagePID.kI;
+            elevator_pids.kD = ManipulatorConstants.Elevator.VoltagePID.kD;
+            elevator_pids.kV = ManipulatorConstants.Elevator.VoltagePID.kV;
+            elevator_pids.kA = ManipulatorConstants.Elevator.VoltagePID.kA;
+            elevator_pids.kG = ManipulatorConstants.Elevator.VoltagePID.kG;
+            elevator_pids.kS = ManipulatorConstants.Elevator.VoltagePID.kS;
+        }
         
         MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
         elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Elevator.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
@@ -312,6 +329,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         inputs.elevator2Voltage = elevator_2_vol_sig_.getValue();
         inputs.elevator2Current = elevator_2_current_sig_.getValue();
 
+        inputs.elevator1Power = inputs.elevator1Voltage.times(inputs.elevator1Current) ;
+        inputs.elevator2Power = inputs.elevator2Voltage.times(inputs.elevator2Current) ;
+
+        inputs.elevator1PowerAvg = Watts.of(ev1avg.calculate(inputs.elevator1Power.in(Watts))) ;
+        inputs.elevator2PowerAvg = Watts.of(ev2avg.calculate(inputs.elevator2Power.in(Watts))) ;
+
         if (Robot.isSimulation()) {
             simulateArm() ;
             simulateElevator() ;
@@ -360,7 +383,12 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
         ControlRequest req ;
 
-        req = new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true);
+        if (ManipulatorIOHardware.kUseTorqueControl) {
+            req = new MotionMagicTorqueCurrentFOC(Revolutions.of(revs)).withSlot(0);
+        }
+        else {
+            req = new MotionMagicVoltage(Revolutions.of(revs)).withSlot(0).withEnableFOC(true);
+        }
         elevator_motor_.setControl(req) ;
     }
 

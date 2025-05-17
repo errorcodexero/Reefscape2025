@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
  
@@ -37,11 +38,16 @@ public interface ManipulatorIO {
         public boolean elevator1Ready = false;
         public Voltage elevator1Voltage = Volts.of(0);
         public Current elevator1Current = Amps.of(0);  
+        public Power elevator1Power = Watts.zero() ;
+        public Power elevator1PowerAvg = Watts.zero() ;
+        
 
         // elevator 2
         public boolean elevator2Ready = false;
         public Voltage elevator2Voltage = Volts.of(0);
         public Current elevator2Current = Amps.of(0); 
+        public Power elevator2Power = Watts.zero() ;
+        public Power elevator2PowerAvg = Watts.zero() ;
 
         // encoder
         public Angle absoluteEncoder = Degrees.of(0); 
