@@ -42,6 +42,7 @@ import frc.robot.util.ReefUtil;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
 
+    private static final boolean kUseFastL4Place = false ;
     private static final Distance kRaiseElevatorDistance = Centimeters.of(150.0) ;
 
     private final Drive drive_;
@@ -166,7 +167,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
-        if (level == ReefLevel.L4 && false) {
+        if (level == ReefLevel.L4 && !kUseFastL4Place) {
             seq.addCommands(
                 Commands.parallel(
                     DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
