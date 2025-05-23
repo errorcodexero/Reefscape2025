@@ -150,7 +150,6 @@ public class RobotContainer {
         
         ReefUtil.initialize();
 
-
         /**
          * Subsystem setup
          */
@@ -423,6 +422,8 @@ public class RobotContainer {
 
         autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
             AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
+            
+        autoChooser_.addOption("Odom Test (aka Kachow)", DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
     }
 
     private void subsystemCreateException(Exception ex) {
