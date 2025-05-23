@@ -422,8 +422,15 @@ public class RobotContainer {
 
         autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
             AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
+
+        AutoModeBaseCmd odometryTest = new AutoModeBaseCmd(
+            "Odom Test",
+            DriveCommands.findPath("Odom Test", false).orElseThrow()
+        );
+
+        odometryTest.addCommands(DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
             
-        autoChooser_.addOption("Odom Test (aka Kachow)", DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
+        autoChooser_.addOption("Odom Test (aka Kachow)", odometryTest);
     }
 
     private void subsystemCreateException(Exception ex) {
