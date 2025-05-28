@@ -173,12 +173,12 @@ public class AprilTagVision extends SubsystemBase {
     public static interface PoseEstimateConsumer {
         public void integrate(
             Pose2d robotPose,
-            double timestampSecnds,
+            double timestampSeconds,
             Matrix<N3, N1> standardDeviations
         );
 
         public static frc.robot.subsystems.vision.PoseEstimateConsumer ignore() {
-            return (Pose2d robotPose, double timestampSecnds, Matrix<N3, N1> standardDeviations) -> {};
+            return (Pose2d robotPose, double timestampSeconds, Matrix<N3, N1> standardDeviations) -> {};
         }
     }
 
