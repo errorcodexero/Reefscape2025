@@ -412,7 +412,7 @@ public class RobotContainer {
         configureButtonBindings();
         configureTestModeBindings() ;
 
-        if (Constants.getMode() != Mode.SIM) {
+        if (Constants.getRobot() != RobotType.SIMBOT) {
             manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
         }
     }
