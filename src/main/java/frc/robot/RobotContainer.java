@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.Constants.RobotType;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
@@ -392,7 +393,7 @@ public class RobotContainer {
             manipulator_::getElevatorPosition,
             manipulator_::getArmPosition,
             climber_::getClimberPosition,
-            () -> !grabber_.algaeSensor(),
+            () -> brain_.gp() == GamePiece.ALGAE_HIGH,
             () -> brain_.gp() == GamePiece.CORAL
         );
 
@@ -402,7 +403,7 @@ public class RobotContainer {
             manipulator_::getElevatorTarget,
             manipulator_::getArmTarget,
             climber_::getClimberPosition,
-            () -> !grabber_.algaeSensor(),
+            () -> brain_.gp() == GamePiece.ALGAE_HIGH,
             () -> brain_.gp() == GamePiece.CORAL
         );
 
@@ -411,9 +412,11 @@ public class RobotContainer {
         configureButtonBindings();
         configureTestModeBindings() ;
 
-        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        if (Constants.getMode() != Mode.SIM) {
+            manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        }
     }
-
+    
     public Drive drivebase() {
         return drivebase_;
     }
