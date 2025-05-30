@@ -4,8 +4,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.RobotState;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,10 +18,12 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 
 public class ClimberIOHardware implements ClimberIO {
+
+    private static int kSyncWaitCount = 20 ;
     
     private TalonFX climber_motor_;
     private DutyCycleEncoder encoder_; 
-    private boolean encoder_motor_synced_ = false ;
+    private int sync_count_ ;
 
     private StatusSignal<Angle> climber_pos_sig_; 
     private StatusSignal<AngularVelocity> climber_vel_sig_; 
@@ -34,6 +34,8 @@ public class ClimberIOHardware implements ClimberIO {
 
     public ClimberIOHardware() throws Exception {
         encoder_ = new DutyCycleEncoder(ClimberConstants.ThruBoreEncoder.kAbsEncoder) ;
+
+        sync_count_ = kSyncWaitCount ;
 
         attached_switch_one_ = new DigitalInput(ClimberConstants.kAttachedSensor);
 
@@ -79,11 +81,16 @@ public class ClimberIOHardware implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberIOInputsAutoLogged inputs) {
-        if (!encoder_motor_synced_ && RobotState.isEnabled()) {
-            syncClimberPosition() ;
-            encoder_motor_synced_ = true ;
+
+        if (sync_count_ >= 0) {
+            sync_count_-- ;
+
+            if (sync_count_ == 0) {
+                syncClimberPosition();
+            }
         }
 
+        inputs.syncCount = sync_count_ ;
         inputs.attachedSensor = !attached_switch_one_.get();
 
         inputs.absEncoderRawValue = encoder_.get();

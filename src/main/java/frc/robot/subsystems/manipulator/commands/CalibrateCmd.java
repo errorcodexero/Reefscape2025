@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import org.littletonrobotics.junction.Logger;
 import org.xerosw.SampleAverager;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
@@ -26,12 +27,16 @@ public class CalibrateCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!m_.isElevatorCalibrated() || m_.getElevatorPosition().lte(Centimeters.of(4.0))) {
-            m_.enableSoftLimits(false);
-            m_.setElevatorVoltage(ManipulatorConstants.Elevator.kCalibrateVoltage);
-            elev_calibrated_ = false ;
-            wait_reset_ = false ;
-            avg_.reset() ;
+        Distance d = m_.getElevatorPosition() ;
+
+        if (!m_.isElevatorCalibrated() || d.lte(Centimeters.of(4.0))) {
+            if (d.lte(Centimeters.of(100))) {
+                m_.setElevatorPosition(ManipulatorConstants.Elevator.kMaxHeight) ;
+                m_.setElevatorVoltage(ManipulatorConstants.Elevator.kCalibrateVoltage);
+                elev_calibrated_ = false ;
+                wait_reset_ = false ;
+                avg_.reset() ;
+            }
         }
     }
 

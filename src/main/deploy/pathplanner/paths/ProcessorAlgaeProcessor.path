@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.254625000000001,
+        "y": 3.9957499999999997
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.34691875840436,
+        "y": 3.4472695817892807
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.254625000000001,
+        "y": 2.5283749999999996
+      },
+      "prevControl": {
+        "x": 6.065369701187705,
+        "y": 3.2591216224965818
+      },
+      "nextControl": {
+        "x": 6.317304238456876,
+        "y": 2.286359890830208
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.1034999999999995,
+        "y": 1.1779999999999995
+      },
+      "prevControl": {
+        "x": 6.261283461720068,
+        "y": 1.5866725482895563
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.5,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Processor Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

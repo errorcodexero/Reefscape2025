@@ -42,13 +42,13 @@ public class ClimberConstants {
 
         // if motor is inverted 
         public static final boolean kInverted = false; 
-        public static final Current kcurrentLimit = Amps.of(40);
+        public static final Current kcurrentLimit = Amps.of(80);
         public static final Time kCurrentLimitTime = Seconds.of(1); 
         public static final Angle kPosTolerance = Degrees.of(2.0) ;
         public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(0.5) ;
         
         public static final Angle kMaxClimberAngle = Degrees.of(100);
-        public static final Angle kMinClimberAngle = Degrees.of(-48) ;
+        public static final Angle kMinClimberAngle = Degrees.of(-63) ;
 
         public class PID {
             public static final double kP = 2.0; 
@@ -67,14 +67,13 @@ public class ClimberConstants {
         }
         
         // Climb voltage
-        public static final double kClimbVoltage = -5.0 ;
+        public static final double kClimbVoltage = -12.0 ;
 
         public class Position {
-            public static final Angle kStowed = Degrees.of(0.0);
-            public static final Angle kPrepped = Degrees.of(88.5
-            );
-            public static final Angle kClimbed = Degrees.of(-33.0);
-            public static final Angle kReapplyThreshold = Degrees.of(-26.0);
+            public static final Angle kStowed = Degrees.of(-10.0);
+            public static final Angle kPrepped = Degrees.of(75.0);
+            public static final Angle kClimbed = Degrees.of(-58.0);
+            public static final Angle kReapplyOffset = Degrees.of(0.5);
         }
     }   
 }

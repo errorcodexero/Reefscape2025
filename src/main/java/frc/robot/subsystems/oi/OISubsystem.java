@@ -42,11 +42,13 @@ public class OISubsystem extends SubsystemBase {
     private Trigger climb_deploy_trigger_ ;
     private Trigger coral_place_trigger_ ;
     private Trigger coral_collect_trigger_ ;
-    private Trigger algae_ground_trigger_ ;
-    private Trigger algae_reef_trigger_ ;
+    private Trigger algae_reef_keep_trigger_ ;
+    private Trigger algae_reef_eject_trigger_ ;
     private Trigger algae_score_trigger_ ;
     private Trigger execute_trigger_ ;
     private Trigger rotate_arm_trigger_ ;
+    private Trigger raise_arm_trigger_ ;
+    private Trigger algae_net_trigger_ ;    
     
     private Trigger l1_ ;
     private Trigger l2_ ;
@@ -74,11 +76,13 @@ public class OISubsystem extends SubsystemBase {
         climb_deploy_trigger_ = new Trigger(()-> inputs_.climb_deploy) ;
         coral_place_trigger_  = new Trigger(()-> inputs_.coral_place) ;
         coral_collect_trigger_ = new Trigger(()-> inputs_.coral_collect) ;
-        algae_ground_trigger_ = new Trigger(()-> inputs_.algae_ground) ;
-        algae_reef_trigger_ = new Trigger(()-> inputs_.algae_reef) ;
+        algae_reef_keep_trigger_ = new Trigger(()-> inputs_.algae_reef_keep) ;
+        algae_reef_eject_trigger_ = new Trigger(()-> inputs_.algae_reef_eject) ;
         algae_score_trigger_ = new Trigger(()-> inputs_.algae_score) ;
         execute_trigger_ = new Trigger(()-> inputs_.execute) ;
         rotate_arm_trigger_ = new Trigger(()-> inputs_.rotate_arm) ;
+        raise_arm_trigger_ = new Trigger(()-> inputs_.raise_arm) ;
+        algae_net_trigger_ = new Trigger(()-> inputs_.algae_net) ;
 
         l1_ = new Trigger(()-> inputs_.coral_l1) ;
         l2_ = new Trigger(()-> inputs_.coral_l2) ;
@@ -128,12 +132,20 @@ public class OISubsystem extends SubsystemBase {
         return rotate_arm_trigger_ ;
     }
 
-    public Trigger algaeGround() {
-        return algae_ground_trigger_ ;
+    public Trigger algaeNet() {
+        return algae_net_trigger_ ;
     }
 
-    public Trigger algaeReef() {
-        return algae_reef_trigger_ ;
+    public Trigger raiseArm() {
+        return raise_arm_trigger_ ;
+    }
+
+    public Trigger algaeReefKeep() {
+        return algae_reef_keep_trigger_ ;
+    }
+
+    public Trigger algaeReefEject() {
+        return algae_reef_eject_trigger_ ;
     }
 
     public Trigger algaeScore() {
@@ -183,8 +195,8 @@ public class OISubsystem extends SubsystemBase {
     public void clearAllActionLEDs() {
         setLEDState(OILed.PlaceCoral, LEDState.Off) ;
         setLEDState(OILed.CollectCoral, LEDState.Off) ;
-        setLEDState(OILed.CollectAlgaeGround, LEDState.Off) ;
-        setLEDState(OILed.CollectAlgaeReef, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReefEject, LEDState.Off) ;
+        setLEDState(OILed.CollectAlgaeReefKeep, LEDState.Off) ;
         setLEDState(OILed.ScoreAlgae, LEDState.Off) ;
         setLEDState(OILed.Execute, LEDState.Off) ;
     }
@@ -199,12 +211,12 @@ public class OISubsystem extends SubsystemBase {
                 setLEDState(OILed.CollectCoral, st) ;
                 break ;
 
-            case CollectAlgaeGround:
-                setLEDState(OILed.CollectAlgaeGround, st) ;
+            case CollectAlgaeReefEject:
+                setLEDState(OILed.CollectAlgaeReefEject, st) ;
                 break ;
 
-            case CollectAlgaeReef:
-                setLEDState(OILed.CollectAlgaeReef, st) ;
+            case CollectAlgaeReefKeep:
+                setLEDState(OILed.CollectAlgaeReefKeep, st) ;
                 break ;
 
             case ScoreAlgae:
@@ -335,23 +347,23 @@ public class OISubsystem extends SubsystemBase {
             str += "coral_place" ;
         }
 
-        if (inputs_.algae_ground) {
-            if (str.length() > 0)
-                str += "," ;
-            str += "algae_ground" ;
-        }
-
         if (inputs_.algae_score) {
             if (str.length() > 0)
                 str += "," ;
             str += "algae_score" ;
         }
 
-        if (inputs_.algae_reef) {
+        if (inputs_.algae_reef_keep) {
             if (str.length() > 0)
                 str += "," ;
-            str += "algae_reef" ;
+            str += "algae_reef_keep" ;
         }
+
+        if (inputs_.algae_reef_eject) {
+            if (str.length() > 0)
+                str += "," ;
+            str += "algae_reef_eject" ;
+        }        
 
         if (inputs_.climb_deploy) {
             if (str.length() > 0)

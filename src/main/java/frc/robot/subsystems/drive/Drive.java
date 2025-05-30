@@ -13,6 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,8 +52,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
@@ -77,8 +78,8 @@ public class Drive extends SubsystemBase {
     private final RobotConfig PP_CONFIG;
     
     // PathPlanner config constants
-    private static final double ROBOT_MASS_KG = 63.5;
-    private static final double ROBOT_MOI = 6.883;
+    private static final double ROBOT_MASS_KG = 65.7709;
+    private static final double ROBOT_MOI = 6.33;
     private static final double WHEEL_COF = 1.2;
     
     static final Lock odometryLock = new ReentrantLock();
@@ -169,8 +170,8 @@ public class Drive extends SubsystemBase {
             this::getChassisSpeeds,
             this::runVelocity,
             new PPHolonomicDriveController(
-                new PIDConstants(10.0, 0.0, 0.0), 
-                new PIDConstants(5.0, 0.0, 0.0)),
+                new PIDConstants(8.0, 0.0, 0.0), 
+                new PIDConstants(8.0, 0.0, 0.0)),
             PP_CONFIG,
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
             this
@@ -261,15 +262,17 @@ public class Drive extends SubsystemBase {
         // Update gyro alert
         gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.getMode() != Mode.SIM);
 
-        // If in a simulation or replay, log reef face selection information.
+        // If in a simulation or replay, field util selection information.
         if (Constants.getMode() != Mode.REAL) {
             Optional<ReefFaceInfo> face = ReefUtil.getTargetedReefFace(getPose());
 
             if (face.isPresent()) {
-                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});
+                Logger.recordOutput("FieldMath/NearestFace", new Pose2d[] {face.get().getAlgaeCollectPose()});
             } else {
-                Logger.recordOutput("ReefMath/NearestFace", new Pose2d[] {});
+                Logger.recordOutput("FieldMath/NearestFace", new Pose2d[] {});
             }
+
+            Logger.recordOutput("FieldMath/BargeScorePose", ReefUtil.getBargeScorePose(getPose(), Constants.BargeConstants.distanceFromBargeTag));
         }
 
         ChassisSpeeds spd = getChassisSpeeds() ;
@@ -410,6 +413,11 @@ public class Drive extends SubsystemBase {
     @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
     public ChassisSpeeds getChassisSpeeds() {
         return kinematics.toChassisSpeeds(getModuleStates());
+    }
+
+    @AutoLogOutput(key = "SwerveChassisSpeeds/FieldRelativeMeasured")
+    public ChassisSpeeds getFieldChassisSpeeds() {
+        return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
     }
     
     /** Returns the position of each module in radians. */

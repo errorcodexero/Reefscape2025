@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.subsystems.vision.AprilTagVision.IntegrationBehavior;
 import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 public class VisionConstants {
@@ -14,8 +15,8 @@ public class VisionConstants {
     public static final String backLimelightName = "limelight-back";
     public static final String leftLimelightName = "limelight-left";
 
-    // Exclusively use the front apriltag.
-    public static final boolean onlyUseFront = false;
+    // Behavior to use when inegrating pose estimates.
+    public static final IntegrationBehavior integrationBehavior = IntegrationBehavior.ONLY_NEAREST;
 
     // Transforms
     public static final Transform3d frontTransform = new Transform3d(
@@ -46,7 +47,7 @@ public class VisionConstants {
     public static final boolean useIMU = false; // Whether or not to use the internal IMU
     public static final IMUMode enabledIMUMode = IMUMode.ASSIST_EXTERNAL; // What mode to use on the internal IMU
     
-    public static final boolean regulateThrottle = true; // Whether or not we use LL4 throttle to regulate temperature
+    public static final boolean regulateThrottle = false; // Whether or not we use LL4 throttle to regulate temperature
     public static final int numSkippedFramesEnabled = 0; // How many frames to skip in enabled, (probably 0 but you might want to?)
     public static final int numSkippedFramesDisabled = 100; // Regulate temperature by skipping frames in disabled
 

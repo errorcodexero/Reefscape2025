@@ -13,10 +13,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -25,10 +30,13 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
@@ -39,6 +47,7 @@ import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.AbortCmd;
 import frc.robot.commands.robot.EjectCmd;
+import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
 import frc.robot.commands.robot.climb.ExecuteClimbCmd;
 import frc.robot.commands.robot.climb.PrepClimbCmd;
 import frc.robot.commands.robot.climb.StowClimberCmd;
@@ -51,7 +60,6 @@ import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
-import frc.robot.subsystems.climber.ClimbCmd;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -77,9 +85,10 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
-import frc.robot.subsystems.vision.CameraIOLimelight;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
+import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.ReefUtil;
 import frc.robot.util.Mechanism3d;
@@ -131,6 +140,7 @@ public class RobotContainer {
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
 
     private Trigger testModeTrigger ;
+    private Trigger teleopTrigger ;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -139,6 +149,10 @@ public class RobotContainer {
         testModeTrigger = new Trigger(() -> {
             return RobotState.isTest() && RobotState.isEnabled() ;
         }) ;
+
+        teleopTrigger = new Trigger(() -> {
+            return RobotState.isTeleop() && RobotState.isEnabled() ;
+        });
         
         ReefUtil.initialize();
 
@@ -158,10 +172,8 @@ public class RobotContainer {
                                 CompTunerConstants.kSpeedAt12Volts);
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation),
-                            new CameraIOLimelight(VisionConstants.backLimelightName, drivebase_::getRotation)
-                            // new CameraIOLimelight(VisionConstants.leftLimelightName, drivebase_::getRotation)
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -203,12 +215,8 @@ public class RobotContainer {
                             PracticeTunerConstants.kSpeedAt12Volts);
 
                     vision_ = new AprilTagVision(
-                            drivebase_::addVisionMeasurement,
-                            new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
-                    // new CameraIOLimelight(VisionConstants.backLimelightName,
-                    // drivebase_::getRotation),
-                    // new CameraIOLimelight(VisionConstants.leftLimelightName,
-                    // drivebase_::getRotation)
+                        drivebase_::addVisionMeasurement,
+                        new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
 
                     try {
@@ -251,15 +259,13 @@ public class RobotContainer {
                             CompTunerConstants.BackRight,
                             CompTunerConstants.kSpeedAt12Volts);
 
-                    // vision_ = new AprilTagVision(
-                    // PoseEstimateConsumer.ignore(),
-                    // new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
-                    // drivebase_::getPose, true),
-                    // new CameraIOPhotonSim("Back", VisionConstants.backTransform,
-                    // drivebase_::getPose, false),
-                    // new CameraIOPhotonSim("Left", VisionConstants.leftTransform,
-                    // drivebase_::getPose, false)
-                    // );
+                    vision_ = new AprilTagVision(
+                        PoseEstimateConsumer.ignore(),
+                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
+                        drivebase_::getPose, true),
+                        new CameraIOPhotonSim("Back", VisionConstants.backTransform,
+                        drivebase_::getPose, true)
+                    );
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -358,7 +364,7 @@ public class RobotContainer {
         // OI Setup
         oi_ = new OISubsystem(new OIIOHID(2), gamepad_);
 
-        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_);
+        brain_ = new BrainSubsystem(oi_, drivebase_, manipulator_, grabber_, climber_, funnel_);
 
         DriveCommands.configure(
             drivebase_,
@@ -419,38 +425,39 @@ public class RobotContainer {
     public void setupAutos() {
 
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
+
+        autoChooser_.addOption("Left Side Coral (2 Coral)",
+            AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
+
+        autoChooser_.addOption("Right Side Coral (2 Coral)",
+            AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));
+
         autoChooser_.addOption("Left Side Coral (3 Coral)",
-                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
+            AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
+
+        autoChooser_.addOption("Left Side Coral Alt (3 Coral)",
+            AutoCommands.threeCoralSideAltAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
+
         autoChooser_.addOption("Right Side Coral (3 Coral)",
-                AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
-        autoChooser_.addOption("Center Algae (1 Coral, 1 Algae)", AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_));
-        
-        // autoChooser_.addOption("Center Coral (left side station) (2 Coral) (untested)",
-        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true));
-        // autoChooser_.addOption("Center Coral (right side station) (2 Coral) (untested)",
-        //         AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, false));
+            AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));
 
-        // autoChooser_.addOption("Fallback To Tuning Chooser (SW ONLY)", null);
+        autoChooser_.addOption("Right Side Coral Alt (3 Coral)",
+            AutoCommands.threeCoralSideAltAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, false));            
 
-        // tuningChooser_.addOption("Straight Tuning Path",
-        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Straight"));
-        // tuningChooser_.addOption("Curved Tuning Path",
-        //         DriveCommands.initialFollowPathCommand(drivebase_, "Tuning Path Curved"));
+        autoChooser_.addOption("Center Algae Processor (1 Coral, 1 Algae)", 
+            AutoCommands.oneCoralOneAlgaeProcessorAuto(brain_, drivebase_, manipulator_, grabber_));
 
-        // // Add SysId routines to the chooser
-        // tuningChooser_.addOption("Drive Wheel Radius Characterization",
-        //         DriveCommands.wheelRadiusCharacterization(drivebase_));
-        // tuningChooser_.addOption("Drive Simple FF Characterization",
-        //         DriveCommands.feedforwardCharacterization(drivebase_));
-        // tuningChooser_.addOption("Drive SysId (Quasistatic Forward)",
-        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // tuningChooser_.addOption("Drive SysId (Quasistatic Reverse)",
-        //         drivebase_.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // tuningChooser_.addOption("Drive SysId (Dynamic Forward)",
-        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // tuningChooser_.addOption("Drive SysId (Dynamic Reverse)",
-        //         drivebase_.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
+            AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
 
+        AutoModeBaseCmd odometryTest = new AutoModeBaseCmd(
+            "Odom Test",
+            DriveCommands.findPath("Odom Test", false).orElseThrow()
+        );
+
+        odometryTest.addCommands(DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
+            
+        autoChooser_.addOption("Odom Test (aka Kachow)", odometryTest);
     }
 
     private void subsystemCreateException(Exception ex) {
@@ -466,11 +473,32 @@ public class RobotContainer {
     }
 
     private void configureTestModeBindings() {
-        gamepad_.start().and(testModeTrigger).onTrue(
+        Distance h = Centimeters.of(135) ;
+        testModeTrigger.and(gamepad_.start()).onTrue(
             new ConditionalCommand(
-                new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL4, ManipulatorConstants.Arm.Positions.kRaiseAngle),
+                new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
                 new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;    
+                () -> manipulator_.getElevatorPosition().lt(ManipulatorConstants.Elevator.Positions.kPlaceL2))) ;
+
+        testModeTrigger.and(gamepad_.povUp()).whileTrue(manipulator_.elevatorMoveCmd(Centimeters.of(5.0))) ;
+        testModeTrigger.and(gamepad_.povDown()).whileTrue(manipulator_.elevatorMoveCmd(Centimeters.of(-5.0)));
+        testModeTrigger.and(gamepad_.povLeft()).whileTrue(manipulator_.armMoveCmd(Degrees.of(-5.0))) ;
+        testModeTrigger.and(gamepad_.povRight()).whileTrue(manipulator_.armMoveCmd(Degrees.of(5.0))) ;
+
+        testModeTrigger.and(gamepad_.a()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(-3.0)))) ;
+        testModeTrigger.and(gamepad_.x()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(3.0)))) ;
+        testModeTrigger.and(gamepad_.rightStick()).onTrue(Commands.runOnce(()-> grabber_.setGrabberMotorVoltage(Volts.of(0.0)))) ;
+
+        gamepad_.back().and(testModeTrigger).toggleOnTrue(
+            DriveCommands.wheelRadiusCharacterization(drivebase_)
+        );
+
+        gamepad_.rightBumper().and(testModeTrigger).toggleOnTrue(DriveCommands.feedforwardCharacterization(drivebase_));
+    }
+
+    boolean isArmOkToRaise() {
+        Angle pos = manipulator_.getArmPosition() ;
+        return pos.gte(Degrees.of(18.0)) && pos.lte(Degrees.of(178.0)) ;
     }
 
     /**
@@ -482,8 +510,8 @@ public class RobotContainer {
         //
         oi_.coralPlace().onTrue(new QueueRobotActionCmd(brain_, RobotAction.PlaceCoral));
         oi_.coralCollect().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectCoral));
-        oi_.algaeReef().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReef));
-        oi_.algaeGround().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeGround));
+        oi_.algaeReefKeep().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefKeep));
+        oi_.algaeReefEject().onTrue(new QueueRobotActionCmd(brain_, RobotAction.CollectAlgaeReefEject)) ;
         oi_.algaeScore().onTrue(new QueueRobotActionCmd(brain_, RobotAction.ScoreAlgae));
 
         oi_.l1().onTrue(new SetLevelCmd(brain_, ReefLevel.L1).ignoringDisable(true));
@@ -491,27 +519,27 @@ public class RobotContainer {
         oi_.l3().onTrue(new SetLevelCmd(brain_, ReefLevel.L3).ignoringDisable(true));
         oi_.l4().onTrue(new SetLevelCmd(brain_, ReefLevel.L4).ignoringDisable(true));
 
-        //
-        // Disable this for now until we have better data on whether this is an issue
-        //
-        // oi_.algaeOnReefTrigger().onTrue(Commands.runOnce(()->
-        // brain_.toggleAlgaeOnReef()).ignoringDisable(true)) ;
-
         oi_.coralLeftRight().onTrue(new SetCoralSideCmd(brain_, CoralSide.Right).ignoringDisable(true));
         oi_.coralLeftRight().onFalse(new SetCoralSideCmd(brain_, CoralSide.Left).ignoringDisable(true));
 
         oi_.execute().onTrue(new ExecuteRobotActionCmd(brain_));
-        gamepad_.a().onTrue(new ExecuteRobotActionCmd(brain_));
 
         oi_.abort().onTrue(new AbortCmd(brain_));
         oi_.eject().onTrue(new EjectCmd(brain_, manipulator_, grabber_));
 
         oi_.climbLock().negate().and(oi_.climbDeploy()).onTrue(new PrepClimbCmd(drivebase_, climber_, funnel_, manipulator_));
         oi_.climbLock().onTrue(new StowClimberCmd(manipulator_, climber_, funnel_)) ;
-        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(climber_, drivebase_)) ;
-
+        oi_.climbLock().negate().and(oi_.climbExecute()).onTrue(new ExecuteClimbCmd(oi_, climber_, drivebase_, MetersPerSecond.of(0.25), Seconds.of(0.6
+        ))) ;
+        
         climber_.readyToClimbTrigger().onTrue(gamepad_.setLockCommand(true)) ;
         oi_.rotateArm().onTrue(new GoToCmd(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, Degrees.of(90.0))) ;
+
+        oi_.raiseArm().and(this::isArmOkToRaise).onTrue(
+            new GoToCmd(manipulator_, Feet.of(2.0), manipulator_.getArmPosition())
+        ) ;
+
+        oi_.algaeNet().onTrue(new AlgaeNetWhileMovingCmd(brain_, drivebase_, manipulator_, grabber_)) ;
     }
 
     /**
@@ -534,36 +562,37 @@ public class RobotContainer {
         gamepad_.x().whileTrue(drivebase_.stopWithXCmd());
 
         // Robot Relative
-        gamepad_.povUp().whileTrue(
+        teleopTrigger.and(gamepad_.povUp()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.one(), MetersPerSecond.of(0), RadiansPerSecond.zero()));
 
-        gamepad_.povDown().whileTrue(
+        teleopTrigger.and(gamepad_.povDown()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.one().unaryMinus(), MetersPerSecond.of(0),
                         RadiansPerSecond.zero()));
 
-        gamepad_.povLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povLeft()).whileTrue(
                 drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one(), RadiansPerSecond.zero()));
 
-        gamepad_.povRight().whileTrue(
+        teleopTrigger.and(gamepad_.povRight()).whileTrue(
                 drivebase_.runVelocityCmd(MetersPerSecond.zero(), FeetPerSecond.one().unaryMinus(),
                         RadiansPerSecond.zero()));
 
         // Robot relative diagonal
-        gamepad_.povUpLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povUpLeft()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povUpRight().whileTrue(
+        teleopTrigger.and(gamepad_.povUpRight()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povDownLeft().whileTrue(
+        teleopTrigger.and(gamepad_.povDownLeft()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(0.707), RadiansPerSecond.zero()));
 
-        gamepad_.povDownRight().whileTrue(
+        teleopTrigger.and(gamepad_.povDownRight()).whileTrue(
                 drivebase_.runVelocityCmd(FeetPerSecond.of(-0.707), FeetPerSecond.of(-0.707), RadiansPerSecond.zero()));
 
         // Reset gyro to 0° when Y & B button is pressed
-        gamepad_.y().and(gamepad_.b()).onTrue(
-                drivebase_.resetGyroCmd());
+        gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
+
+        gamepad_.rightTrigger().onTrue(new ExecuteRobotActionCmd(brain_));
     }
 
     /**
@@ -582,9 +611,13 @@ public class RobotContainer {
             //
 
             // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            ret = AutoCommands.threeCoralSideAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true) ;
+            ret = AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true) ;
             // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
             // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
+
+            // Command autoChosen = autoChooser_.get();
+            // ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+
         } else {
             Command autoChosen = autoChooser_.get();
             ret = autoChosen != null ? autoChosen : tuningChooser_.get();

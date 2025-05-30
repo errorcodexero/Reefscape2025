@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ProcessorConstants;
 import frc.robot.RobotContainer;
@@ -41,16 +40,18 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
     private GrabberSubsystem g_;
     private BrainSubsystem brain_;
     private Drive db_;
+    private boolean quick_ ;
 
     public final static Pose2d kProcessorRedPose = new Pose2d();
     public final static Pose2d kProcessorBluePose = new Pose2d();
 
-    public ScoreAlgaeAfter(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g) {
+    public ScoreAlgaeAfter(Drive db, BrainSubsystem b, ManipulatorSubsystem m, GrabberSubsystem g, boolean quick) {
         super("ScoreAlgaeAfter");
         m_ = m;
         g_ = g;
         brain_ = b;
         db_ = db;
+        quick_ = quick ;
     }
 
     @Override
@@ -69,21 +70,18 @@ public class ScoreAlgaeAfter extends XeroSequenceCmd {
                                 CommandConstants.AlgaeScore.kMaxDriveVelocity,
                                 CommandConstants.AlgaeScore.kMaxDriveAcceleration)),
                 new DepositAlgaeCmd(g_),
-                new WaitCommand(Seconds.of(1.0)),
-                Commands.deadline(
-                        new WaitCommand(1.0),
-                        db_.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
-                Commands.deadline(
-                        new WaitCommand(0.02),
-                        db_.runVelocityCmd(MetersPerSecond.of(0.0), MetersPerSecond.of(0), RadiansPerSecond.zero())),
-                RobotContainer.getInstance().gamepad().setLockCommand(false),                        
-                new SetHoldingCmd(brain_, GamePiece.NONE),
-                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        m_.getArmPosition()),
-                new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kAlgaeReefCollectL3,
-                        ManipulatorConstants.Arm.Positions.kRaiseAngle),
-                new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow,
-                        ManipulatorConstants.Arm.Positions.kStow));
+
+                new SetHoldingCmd(brain_, GamePiece.NONE)) ;
+
+                if (!quick_) {
+                    seq.addCommands(
+                        db_.runVelocityCmd(MetersPerSecond.of(-1.0), MetersPerSecond.of(0), RadiansPerSecond.zero()).withTimeout(Seconds.of(0.5)),
+                        db_.stopCmd(),
+                        new GoToCmdDirect(m_, ManipulatorConstants.Elevator.Positions.kStow,m_.getArmPosition()),
+                        new GoToCmd(m_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow));
+                }
+
+                seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false));
     }
 
     private Optional<Pose2d> getProcessorScorePose() {

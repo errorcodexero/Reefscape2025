@@ -2,13 +2,19 @@ package frc.robot.subsystems.grabber;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 
 public class GrabberConstants {
 
     public static final int kDistanceSensorInput = 0 ;
+    public static final double kDistanceSensorSlope = 1.0 ;
+    public static final double kDistanceSensorIntercept = 0.0 ;
+
+    public static final Voltage kCollectVoltage = Volts.of(3.0) ;
 
     public class Grabber {
 
@@ -19,7 +25,7 @@ public class GrabberConstants {
         public static final double kDepositVoltage = 3.0 ;
 
         public class PID {
-            public static final double kP = 0.6; 
+            public static final double kP = 5.0; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;
             public static final double kV = 0.14 ;
@@ -39,13 +45,14 @@ public class GrabberConstants {
         }
 
         public class AlgaeSensor {
-            public static final int kChannel = 1;
+            public static final int kChannel1 = 1;
+            public static final int kChannel2 = 5;
         }
 
         public class DepositCoral {
             public static final AngularVelocity l1velocity = RotationsPerSecond.of(40.0) ;
-            public static final AngularVelocity velocity = RotationsPerSecond.of(60.0) ;
-            public static final Time delay = Milliseconds.of(300.0) ;
+            public static final AngularVelocity velocity = RotationsPerSecond.of(100.0) ;
+            public static final Time delay = Milliseconds.of(400.0) ;
             public static final Time l1delay = Milliseconds.of(1000.0) ;
         }
 

@@ -13,12 +13,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
@@ -52,8 +54,13 @@ public final class Constants {
     }
 
     public static class ProcessorConstants {
-        public static final Distance kXdistanceFromProcessorTag = Inches.of(20.0) ;
+        public static final Distance kXdistanceFromProcessorTag = Inches.of(22.0) ;
         public static final Distance kYdistanceFromProcessorTag = Inches.of(0.0) ;
+    }
+
+    public static class BargeConstants {
+        public static final Distance distanceFromBargeTag = Centimeters.of(100);
+        public static final Distance distanceFromBargeTagWhileMoving = Centimeters.of(50);
     }
 
     public static class ReefConstants {
@@ -75,13 +82,12 @@ public final class Constants {
         /**
          * The distance from the center of the ROBOT to the TAG while placing CORAL.
          */
-        public static final Distance distanceFromTagCoral = Inches.of(16);
+        public static final Distance distanceFromTagCoral = Inches.of(14);
 
         /**
          * The distance from the center of the ROBOT to the TAG while collecting ALGAE.
          */
         public static final Distance distanceFromTagAlgae = Inches.of(14);
-
 
         /**
          * The offset from the center of the TAG to where we want the ARM to be positioned.
@@ -93,23 +99,19 @@ public final class Constants {
          * The offset from the center of the TAG to where we want the ARM to be positioned.
          * (Half the distance between pipes on the REEF)
          */
-        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.25);
-
-        /**
-         * How far to back up from the CORAL scoring pose.
-         */
-        public static final Distance backupDistanceCoral = Inches.of(28);
+        public static final Distance leftRightOffsetWithAlgae = Inches.of(13.0 / 2.0 + 1.125);
 
         /**
          * How far to back up from the ALGAE scoring pose.
          */
-        public static final Distance backupDistanceAlgae = Inches.of(28);
+        public static final Distance backupDistanceAlgae = Inches.of(20);
 
         /**
          * The distance from the center of the ROBOT to the ARM.
          * (LEFT of the robot is POSITIVE)
          */
-        public static final Distance robotToArm = Inches.of(0.125);
+        //public static final Distance robotToArm = Inches.of(0.125);
+        public static final Distance robotToArm = Inches.of(1.125);
     }
 
     /**

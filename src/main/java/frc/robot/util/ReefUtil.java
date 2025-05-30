@@ -9,11 +9,16 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ReefConstants;
 
 public class ReefUtil {
     private static Map<ReefFace, ReefFaceInfo> faceInfoMap_ = new HashMap<>();
+
+    private static Pose2d blueBargeTagPose = FieldConstants.layout.getTagPose(14).orElseThrow().toPose2d();
+    private static Pose2d redBargeTagPose = FieldConstants.layout.getTagPose(5).orElseThrow().toPose2d();
     
     public static void initialize() {
         for (ReefFace face : ReefFace.values()) {
@@ -43,8 +48,7 @@ public class ReefUtil {
         }
 
         return ret ;
-    } 
-
+    }
 
     /**
      * Gets the nearest reef face to the robot or any pose provided.
@@ -72,7 +76,16 @@ public class ReefUtil {
         }
 
         return nearest;
-    }    
+    }
+
+    public static Pose2d getBargeScorePose(Pose2d robotPose, Distance d) {
+        boolean isOnBlue = robotPose.getX() < FieldConstants.layout.getFieldLength() / 2;
+        Pose2d tagPose = isOnBlue ? blueBargeTagPose : redBargeTagPose;
+
+        Pose2d baseScorePose = tagPose.transformBy(new Transform2d(d, Meters.zero(), Rotation2d.k180deg)) ;
+        
+        return new Pose2d(baseScorePose.getX(), robotPose.getY(), baseScorePose.getRotation());
+    }
 
     /**
      * Gets the distance from a reef face from a given pose.
