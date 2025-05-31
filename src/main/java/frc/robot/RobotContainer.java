@@ -137,8 +137,11 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> tuningChooser_;
 
     // Visualizer
-    private final Mechanism3d measuredVisualizer_;
-    private final Mechanism3d setpointVisualizer_;
+    // @SuppressWarnings("unused")
+    // private final Mechanism3d measuredVisualizer_;
+
+    // @SuppressWarnings("unused")
+    // private final Mechanism3d setpointVisualizer_;
 
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
@@ -390,7 +393,7 @@ public class RobotContainer {
         tuningTab.add("Tuning Modes", tuningChooser_.getSendableChooser()).withSize(2, 1);
 
         // Visualizers
-        measuredVisualizer_ = new Mechanism3d(
+        new Mechanism3d(
             "Measured",
             drivebase_::getPose,
             manipulator_::getElevatorPosition,
@@ -400,7 +403,7 @@ public class RobotContainer {
             () -> brain_.gp() == GamePiece.CORAL
         );
 
-        setpointVisualizer_ = new Mechanism3d(
+        new Mechanism3d(
             "Setpoints",
             drivebase_::getPose,
             manipulator_::getElevatorTarget,
