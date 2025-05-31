@@ -70,7 +70,7 @@ public class ManipulatorConstants {
         public static final Angle kStartAbsEncoderAngle = Degrees.zero(); 
 
         public class PID {
-            public static final double kSimP = 8.0;
+            public static final double kSimP = 20.0;
 
             public static final double kP = 48.0 ; 
             public static final double kI = 0.0 ;
