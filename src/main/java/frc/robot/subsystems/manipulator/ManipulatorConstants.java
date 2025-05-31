@@ -48,26 +48,30 @@ public class ManipulatorConstants {
 
         public static final double kGearRatio = 36.0 * 0.97;
 
+        // Moment of intertia for the arm, used only for simulation
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.002);
+
         public static final String kCANBusName = null; 
 
         public static final Current kCurrentLimit = Amps.of(40); 
 
         public static final Angle kPosTolerance = Degrees.of(1);
         public static final AngularVelocity kVelTolerance = DegreesPerSecond.of(2);
+        
 
+        
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
         // The minimum and maximum arm angle, used to set the limits of travel
         public static final Angle kMaxArmAngle = Degrees.of(260.0);
         public static final Angle kMinArmAngle = Degrees.of(-5) ;
 
-        // Moment of intertia for the arm, used only for simulation
-        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.001) ;
-
         // The starting angle of the ARM as seen by the absolute encoder
-        public static final Angle kStartAbsEncoderAngle = Degrees.of(-45.0) ;        
+        public static final Angle kStartAbsEncoderAngle = Degrees.zero(); 
 
         public class PID {
+            public static final double kSimP = 8.0;
+
             public static final double kP = 48.0 ; 
             public static final double kI = 0.0 ;
             public static final double kD = 0.0 ;

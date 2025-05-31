@@ -102,6 +102,9 @@ public class Robot extends LoggedRobot {
             case SIM:
                 // Running a physics simulator, log to NT
                 Logger.addDataReceiver(new NT4Publisher());
+
+                // Silence Joystick Warnings
+                DriverStation.silenceJoystickConnectionWarning(RobotBase.isSimulation());
                 break;
             
             case REPLAY:
@@ -115,7 +118,7 @@ public class Robot extends LoggedRobot {
         
         // Start AdvantageKit logger
         Logger.start();
-        
+
         // Check for valid swerve config
         var modules =
         new SwerveModuleConstants[] {

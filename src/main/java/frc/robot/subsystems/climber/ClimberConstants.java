@@ -3,11 +3,13 @@ package frc.robot.subsystems.climber;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 
 public class ClimberConstants {
@@ -40,6 +42,9 @@ public class ClimberConstants {
         // gear ratio
         public static final double kGearRatio = 480.0 ;
 
+        // MOI used for simulation
+        public static final MomentOfInertia kMOI = KilogramSquareMeters.of(0.1);
+
         // if motor is inverted 
         public static final boolean kInverted = false; 
         public static final Current kcurrentLimit = Amps.of(80);
@@ -49,6 +54,8 @@ public class ClimberConstants {
         
         public static final Angle kMaxClimberAngle = Degrees.of(100);
         public static final Angle kMinClimberAngle = Degrees.of(-63) ;
+
+        public static final Angle kStartAbsEncoderAngle = Degrees.zero();
 
         public class PID {
             public static final double kP = 2.0; 
@@ -75,5 +82,6 @@ public class ClimberConstants {
             public static final Angle kClimbed = Degrees.of(-58.0);
             public static final Angle kReapplyOffset = Degrees.of(0.5);
         }
+
     }   
 }

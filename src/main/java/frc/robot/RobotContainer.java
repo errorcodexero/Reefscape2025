@@ -38,7 +38,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
@@ -63,6 +65,7 @@ import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -91,8 +94,8 @@ import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.ReefUtil;
 import frc.robot.util.Mechanism3d;
+import frc.robot.util.ReefUtil;
 import frc.simulator.engine.ISimulatedSubsystem;
 
 /**
@@ -281,7 +284,7 @@ public class RobotContainer {
                     }
 
                     try {
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                        climber_ = new ClimberSubsystem(new ClimberIOSim());
                     } catch (Exception ex) {
                         subsystemCreateException(ex);
                     }
@@ -497,6 +500,16 @@ public class RobotContainer {
         );
 
         gamepad_.rightBumper().and(testModeTrigger).toggleOnTrue(DriveCommands.feedforwardCharacterization(drivebase_));
+
+        RobotModeTriggers.test().and(gamepad_.leftStick()).onTrue(Commands.sequence(
+            manipulator_.armSysIdDynamic(Direction.kForward),
+            Commands.waitSeconds(1),
+            manipulator_.armSysIdDynamic(Direction.kReverse),
+            Commands.waitSeconds(1),
+            manipulator_.armSysIdQuasistatic(Direction.kForward),
+            Commands.waitSeconds(1),
+            manipulator_.armSysIdQuasistatic(Direction.kReverse)
+        ));
     }
 
     boolean isArmOkToRaise() {

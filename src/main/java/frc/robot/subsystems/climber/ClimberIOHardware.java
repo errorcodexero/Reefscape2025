@@ -21,8 +21,8 @@ public class ClimberIOHardware implements ClimberIO {
 
     private static int kSyncWaitCount = 20 ;
     
-    private TalonFX climber_motor_;
-    private DutyCycleEncoder encoder_; 
+    protected TalonFX climber_motor_;
+    protected DutyCycleEncoder encoder_; 
     private int sync_count_ ;
 
     private StatusSignal<Angle> climber_pos_sig_; 
@@ -118,11 +118,21 @@ public class ClimberIOHardware implements ClimberIO {
         climber_motor_.setControl(new VoltageOut(voltage)) ;
     }
 
-    private double encoderToRobot(double encoderValue) {
+    protected double encoderToRobot(double encoderValue) {
         if (encoderValue < ClimberConstants.kMinAbsEncoderRollover) {
             encoderValue += 1.0 ;
         }
         
         return encoderValue * ClimberConstants.kMConvertAbsToRobot + ClimberConstants.kBConvertAbsToRobot;
+    }
+
+    protected double robotToEncoder(double robotValue) {
+        double encoderValue = (robotValue - ClimberConstants.kBConvertAbsToRobot) / ClimberConstants.kMConvertAbsToRobot;
+    
+        if (encoderValue >= ClimberConstants.kMinAbsEncoderRollover + 1.0) {
+            encoderValue -= 1.0;
+        }
+    
+        return encoderValue;
     }
 }
