@@ -136,13 +136,6 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser_;
     private final LoggedDashboardChooser<Command> tuningChooser_;
 
-    // Visualizer
-    // @SuppressWarnings("unused")
-    // private final Mechanism3d measuredVisualizer_;
-
-    // @SuppressWarnings("unused")
-    // private final Mechanism3d setpointVisualizer_;
-
     // Controller
     private final XeroGamepad gamepad_ = new XeroGamepad(0);
 
