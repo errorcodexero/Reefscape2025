@@ -73,6 +73,9 @@ public class Drive extends SubsystemBase {
     static final double ODOMETRY_FREQUENCY = new CANBus(CompTunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
     public final double DRIVE_BASE_RADIUS;
 
+    // Gyro degrees-per-rotation correction/trim
+    static final double GYRO_YAW_DEG_PER_ROT_CORRECTION = -0.97;
+
     // These constants should change for every drivebase
     private final LinearVelocity SPEED_12_VOLTS;
     private final RobotConfig PP_CONFIG;
