@@ -74,7 +74,7 @@ public class Drive extends SubsystemBase {
     public final double DRIVE_BASE_RADIUS;
 
     // Gyro degrees-per-rotation correction/trim
-    static final double GYRO_YAW_DEG_PER_ROT_CORRECTION = -1.50;
+    static final double GYRO_YAW_DEG_PER_ROT_CORRECTION = -0.97;
 
     // These constants should change for every drivebase
     private final LinearVelocity SPEED_12_VOLTS;
