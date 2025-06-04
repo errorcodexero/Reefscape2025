@@ -48,12 +48,14 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.Robot;
 
 public class ManipulatorIOHardware implements ManipulatorIO {
 
     private static int kSyncWaitCount = 25 ;
-    private static boolean kUseTorqueControl = true ;
+    private static boolean kUseTorqueControl = true;
 
     private TalonFX arm_motor_; 
     private TalonFX elevator_motor_; 
@@ -160,7 +162,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         // ELEVATOR CONFIGS:
         Slot0Configs elevator_pids = new Slot0Configs();
-        if (ManipulatorIOHardware.kUseTorqueControl) {
+        if (ManipulatorIOHardware.kUseTorqueControl || Constants.getMode() == Mode.SIM) { // Use torque in sim
             elevator_pids.kP = ManipulatorConstants.Elevator.TorquePID.kP;
             elevator_pids.kI = ManipulatorConstants.Elevator.TorquePID.kI;
             elevator_pids.kD = ManipulatorConstants.Elevator.TorquePID.kD;
@@ -230,6 +232,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
 
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();
+
         arm_pids.kP = ManipulatorConstants.Arm.PID.kP; 
         arm_pids.kI = ManipulatorConstants.Arm.PID.kI; 
         arm_pids.kD = ManipulatorConstants.Arm.PID.kD; 
@@ -237,6 +240,11 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         arm_pids.kA = ManipulatorConstants.Arm.PID.kA; 
         arm_pids.kG = ManipulatorConstants.Arm.PID.kG; 
         arm_pids.kS = ManipulatorConstants.Arm.PID.kS; 
+
+        // Apply simulated kP
+        if (Constants.getMode() != Mode.REAL) {
+            arm_pids.kP = ManipulatorConstants.Arm.PID.kSimP;
+        }
         
         MotionMagicConfigs armMotionMagicConfigs = new MotionMagicConfigs(); 
         armMotionMagicConfigs.MotionMagicCruiseVelocity = ManipulatorConstants.Arm.MotionMagic.kMaxVelocity.in(RotationsPerSecond) ;
@@ -350,9 +358,8 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         }
     }
 
-    public void setArmMotorVoltage(Voltage vol) {
-        arm_voltage_ = vol;
-        arm_motor_.setControl(new VoltageOut(arm_voltage_));
+    public void setArmMotorVoltage(double vol) {
+        arm_motor_.setControl(new VoltageOut(vol));
     }
 
     public void logArmMotor(SysIdRoutineLog log) {
@@ -383,7 +390,7 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         double revs = dist.in(Meters) / ManipulatorConstants.Elevator.kMetersPerRev;
         ControlRequest req ;
 
-        if (ManipulatorIOHardware.kUseTorqueControl) {
+        if (ManipulatorIOHardware.kUseTorqueControl || Constants.getMode() == Mode.SIM) {
             req = new MotionMagicTorqueCurrentFOC(Revolutions.of(revs)).withSlot(0);
         }
         else {
