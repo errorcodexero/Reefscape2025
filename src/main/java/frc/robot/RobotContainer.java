@@ -56,7 +56,6 @@ import frc.robot.generated.CompTunerConstants;
 import frc.robot.generated.PracticeTunerConstants;
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.ExecuteRobotActionCmd;
-import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.QueueRobotActionCmd;
 import frc.robot.subsystems.brain.RobotAction;
 import frc.robot.subsystems.brain.SetCoralSideCmd;
@@ -76,6 +75,7 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberIOSim;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
@@ -272,7 +272,7 @@ public class RobotContainer {
                     }
 
                     try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                        grabber_ = new GrabberSubsystem(new GrabberIOSim(drivebase_::getPose));
                     } catch (Exception ex) {
                         subsystemCreateException(ex);
                     }
@@ -390,8 +390,7 @@ public class RobotContainer {
             manipulator_::getElevatorPosition,
             manipulator_::getArmPosition,
             climber_::getClimberPosition,
-            () -> brain_.gp() == GamePiece.ALGAE_HIGH,
-            () -> brain_.gp() == GamePiece.CORAL
+            brain_::gp
         );
 
         new Mechanism3d(
@@ -400,8 +399,7 @@ public class RobotContainer {
             manipulator_::getElevatorTarget,
             manipulator_::getArmTarget,
             climber_::getClimberPosition,
-            () -> brain_.gp() == GamePiece.ALGAE_HIGH,
-            () -> brain_.gp() == GamePiece.CORAL
+            brain_::gp
         );
 
         // Configure the button bindings

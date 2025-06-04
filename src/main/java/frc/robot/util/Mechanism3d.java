@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.brain.GamePiece;
 
 public class Mechanism3d extends SubsystemBase {
 
@@ -40,8 +41,7 @@ public class Mechanism3d extends SubsystemBase {
     private final Supplier<Distance> elevatorHeightSupplier_;
     private final Supplier<Angle> armAngleSupplier_;
     private final Supplier<Angle> climberAngleSupplier_;
-    private final Supplier<Boolean> hasAlgaeSupplier_;
-    private final Supplier<Boolean> hasCoralSupplier_;
+    private final Supplier<GamePiece> gpSupplier_;
 
     private Pose2d robotPose_ = new Pose2d();
     private Distance elevatorHeight_ = Meters.zero();
@@ -54,16 +54,14 @@ public class Mechanism3d extends SubsystemBase {
         Supplier<Distance> elevatorHeight,
         Supplier<Angle> armAngle,
         Supplier<Angle> climberAngle,
-        Supplier<Boolean> hasAlgae,
-        Supplier<Boolean> hasCoral
+        Supplier<GamePiece> gamePiece
     ) {
         key_ = key;
         robotPoseSupplier_ = robotPose;
         elevatorHeightSupplier_ = elevatorHeight;
         armAngleSupplier_ = armAngle;
         climberAngleSupplier_ = climberAngle;
-        hasAlgaeSupplier_ = hasAlgae;
-        hasCoralSupplier_ = hasCoral;
+        gpSupplier_ = gamePiece;
     }
 
     @Override
@@ -90,11 +88,11 @@ public class Mechanism3d extends SubsystemBase {
             new Rotation3d(climberAngle_.unaryMinus(), Degrees.zero(), Degrees.zero())
         );
 
-        Logger.recordOutput("Gamepiece3d/Algae/" + key_, hasAlgaeSupplier_.get() ?
+        Logger.recordOutput("Gamepiece3d/Algae/" + key_, gpSupplier_.get() == GamePiece.ALGAE_HIGH ?
             new Pose3d[] { robotToField(arm.plus(armToAlgae)) } : new Pose3d[0]
         );
 
-        Logger.recordOutput("Gamepiece3d/Coral/" + key_, hasCoralSupplier_.get() ?
+        Logger.recordOutput("Gamepiece3d/Coral/" + key_, gpSupplier_.get() == GamePiece.CORAL ?
             new Pose3d[] { robotToField(arm.transformBy(armToCoral)) } : new Pose3d[0]
         );
         
