@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.Constants.RobotType;
 import frc.robot.commands.auto.AutoCommands;
 import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.drive.DriveCommands;
@@ -61,6 +62,7 @@ import frc.robot.subsystems.brain.SetCoralSideCmd;
 import frc.robot.subsystems.brain.SetLevelCmd;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -73,6 +75,7 @@ import frc.robot.subsystems.funnel.FunnelIOHardware;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberIO;
 import frc.robot.subsystems.grabber.GrabberIOHardware;
+import frc.robot.subsystems.grabber.GrabberIOSim;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
@@ -89,6 +92,7 @@ import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.CameraIOPhotonSim;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.Mechanism3d;
 import frc.robot.util.ReefUtil;
 import frc.simulator.engine.ISimulatedSubsystem;
 
@@ -268,13 +272,13 @@ public class RobotContainer {
                     }
 
                     try {
-                        grabber_ = new GrabberSubsystem(new GrabberIOHardware());
+                        grabber_ = new GrabberSubsystem(new GrabberIOSim(drivebase_::getPose));
                     } catch (Exception ex) {
                         subsystemCreateException(ex);
                     }
 
                     try {
-                        climber_ = new ClimberSubsystem(new ClimberIOHardware());
+                        climber_ = new ClimberSubsystem(new ClimberIOSim());
                     } catch (Exception ex) {
                         subsystemCreateException(ex);
                     }
@@ -379,14 +383,35 @@ public class RobotContainer {
         autonomousTab.add("Auto Mode", autoChooser_.getSendableChooser()).withSize(2, 1);
         tuningTab.add("Tuning Modes", tuningChooser_.getSendableChooser()).withSize(2, 1);
 
+        // Visualizers
+        new Mechanism3d(
+            "Measured",
+            drivebase_::getPose,
+            manipulator_::getElevatorPosition,
+            manipulator_::getArmPosition,
+            climber_::getClimberPosition,
+            brain_::gp
+        );
+
+        new Mechanism3d(
+            "Setpoints",
+            drivebase_::getPose,
+            manipulator_::getElevatorTarget,
+            manipulator_::getArmTarget,
+            climber_::getClimberPosition,
+            brain_::gp
+        );
+
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
         configureTestModeBindings() ;
 
-        manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        if (Constants.getRobot() != RobotType.SIMBOT) {
+            manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
+        }
     }
-
+    
     public Drive drivebase() {
         return drivebase_;
     }

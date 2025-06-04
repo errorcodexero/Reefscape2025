@@ -42,7 +42,7 @@ import frc.robot.util.ReefUtil;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
 
-    private static final boolean kUseFastL4Place = false ;
+    private static final boolean kUseFastL4Place = true;
     private static final Distance kRaiseElevatorDistance = Centimeters.of(150.0) ;
 
     private final Drive drive_;

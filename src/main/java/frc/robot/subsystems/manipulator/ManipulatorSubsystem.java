@@ -4,11 +4,13 @@ import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -184,16 +186,24 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     private SysIdRoutine armIdRoutine() {
+        Velocity<VoltageUnit> rampRate = Volts.of(1).per(Second);
         Voltage step = Volts.of(7) ;
         Time to = Seconds.of(10.0) ;
-        SysIdRoutine.Config cfg = new SysIdRoutine.Config(null, step, to, null) ;
+
+        SysIdRoutine.Config cfg = new SysIdRoutine.Config(
+            rampRate,
+            step,
+            to, 
+            (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+        );
 
         SysIdRoutine.Mechanism mfg = new SysIdRoutine.Mechanism(
-                                        (volts) -> io_.setArmMotorVoltage(volts.magnitude()),
-                                        (log) -> io_.logArmMotor(log),
-                                        this) ;
+            (volts) -> io_.setArmMotorVoltage(volts.in(Volts)),
+            null,
+            this
+        );
 
-        return  new SysIdRoutine(cfg, mfg) ;
+        return new SysIdRoutine(cfg, mfg) ;
     }
 
     private SysIdRoutine elevatorIdRoutine() {
