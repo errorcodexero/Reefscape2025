@@ -31,6 +31,9 @@ public class GyroIOQuest implements GyroIO {
             .stream()
             .mapToDouble((Double d) -> d)
             .toArray();
+
+        yawPositionQueue_.clear();
+        yawTimestampQueue_.clear();
     }
 
     private Rotation2d getYaw() {
