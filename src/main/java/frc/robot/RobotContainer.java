@@ -427,6 +427,15 @@ public class RobotContainer {
 
         autoChooser_.addOption("Center Algae Barge (1 Coral, 1 Algae)", 
             AutoCommands.oneCoralOneAlgaeBargeAuto(brain_, drivebase_, manipulator_, grabber_));
+
+        AutoModeBaseCmd odometryTest = new AutoModeBaseCmd(
+            "Odom Test",
+            DriveCommands.findPath("Odom Test", false).orElseThrow()
+        );
+
+        odometryTest.addCommands(DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
+            
+        autoChooser_.addOption("Odom Test (aka Kachow)", odometryTest);
     }
 
     private void subsystemCreateException(Exception ex) {
@@ -442,7 +451,7 @@ public class RobotContainer {
     }
 
     private void configureTestModeBindings() {
-        Distance h = Centimeters.of(140) ;
+        Distance h = Centimeters.of(135) ;
         testModeTrigger.and(gamepad_.start()).onTrue(
             new ConditionalCommand(
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
@@ -461,6 +470,8 @@ public class RobotContainer {
         gamepad_.back().and(testModeTrigger).toggleOnTrue(
             DriveCommands.wheelRadiusCharacterization(drivebase_)
         );
+
+        gamepad_.rightBumper().and(testModeTrigger).toggleOnTrue(DriveCommands.feedforwardCharacterization(drivebase_));
     }
 
     boolean isArmOkToRaise() {

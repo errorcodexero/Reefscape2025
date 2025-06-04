@@ -141,6 +141,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
         Distance postol = (elev_pos_tolerance_ != null) ? elev_pos_tolerance_ : ManipulatorConstants.Elevator.kPosTolerance ;
         // LinearVelocity veltol = (elev_vel_tolerance_ != null) ? elev_vel_tolerance_ : ManipulatorConstants.Elevator.kVelTolerance ;
 
+        Logger.recordOutput("mdist", postol) ;
         if (!inputs_.elevatorPosition.isNear(elev_target_, postol))
             return false ;
 
