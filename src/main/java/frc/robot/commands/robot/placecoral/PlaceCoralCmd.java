@@ -147,8 +147,8 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                 break ;
 
             case L4:
-                target_elev_pos_ = Elevator.Positions.kPlaceL4;
-                immdangle = Arm.Positions.kPlaceL4;
+                target_elev_pos_ = kUseFastL4Place ? Elevator.Positions.kPlaceL4Fast : Elevator.Positions.kPlaceL4;
+                immdangle = kUseFastL4Place ? Arm.Positions.kPlaceFastL4 : Arm.Positions.kStow;
                 break ;
 
             default:

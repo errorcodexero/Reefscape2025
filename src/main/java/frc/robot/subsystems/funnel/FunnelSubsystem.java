@@ -2,6 +2,8 @@ package frc.robot.subsystems.funnel;
 
 import org.littletonrobotics.junction.Logger;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;

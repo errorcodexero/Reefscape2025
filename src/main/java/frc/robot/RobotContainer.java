@@ -471,7 +471,7 @@ public class RobotContainer {
     }
 
     private void configureTestModeBindings() {
-        Distance h = Centimeters.of(135) ;
+        Distance h = Centimeters.of(140) ;
         testModeTrigger.and(gamepad_.start()).onTrue(
             new ConditionalCommand(
                 new GoToCmd(manipulator_, h, ManipulatorConstants.Arm.Positions.kRaiseAngle),
