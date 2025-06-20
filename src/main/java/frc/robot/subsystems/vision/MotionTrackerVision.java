@@ -32,7 +32,7 @@ public class MotionTrackerVision extends SubsystemBase {
         boolean disconnected = !inputs_.connected;
         disconnectedAlert_.set(disconnected);
 
-        if (disconnected) return;
+        if (disconnected || !inputs_.isTracking) return;
 
         estimateConsumer_.integrate(inputs_.pose, inputs_.timestamp, VecBuilder.fill(0.01, 0.01, 0.01));
     }

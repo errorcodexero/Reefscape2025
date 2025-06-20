@@ -67,6 +67,7 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOQuest;
 import frc.robot.subsystems.drive.ModuleIOReplay;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
@@ -87,10 +88,10 @@ import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIIOHID;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
-import frc.robot.subsystems.vision.AprilTagVision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
 import frc.robot.subsystems.vision.MotionTrackerVision;
+import frc.robot.subsystems.vision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.TrackerIO;
 import frc.robot.subsystems.vision.TrackerIOQuest;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -163,21 +164,24 @@ public class RobotContainer {
         if (Constants.getMode() != Mode.REPLAY) {
             switch (Constants.getRobot()) {
                 case COMPETITION:
+                
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
-                                ModuleIOTalonFX::new,
-                                CompTunerConstants.FrontLeft,
-                                CompTunerConstants.FrontRight,
-                                CompTunerConstants.BackLeft,
-                                CompTunerConstants.BackRight,
-                                CompTunerConstants.kSpeedAt12Volts);
-
+                        new GyroIOQuest(),
+                        ModuleIOTalonFX::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
+                    
+                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), drivebase_::addVisionMeasurement);
+                    
                     vision_ = new AprilTagVision(
-                        drivebase_::addVisionMeasurement,
+                        PoseEstimateConsumer.ignore(),
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
 
-                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), PoseEstimateConsumer.ignore());
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -332,7 +336,7 @@ public class RobotContainer {
             });
 
             vision_ = new AprilTagVision(
-                    drivebase_::addVisionMeasurement,
+                    PoseEstimateConsumer.ignore(),
                     cams);
         }
 
