@@ -1,32 +1,41 @@
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import gg.questnav.questnav.QuestNav;
 
 public class TrackerIOQuest implements TrackerIO {
+    
+    private static final Transform2d robotToQuest = new Transform2d(
+        Inches.of(12),
+        Inches.of(9.25),
+        Rotation2d.kZero
+    );
 
     private final QuestNav quest = new QuestNav();
 
     @Override
     public void updateInputs(TrackerInputs inputs) {
 
-        quest.cleanupResponses();
-        quest.processHeartbeat();
+        quest.commandPeriodic();
 
-        inputs.connected = quest.getConnected();
-        inputs.timestamp = quest.getTimestamp();
         inputs.batteryPercent = quest.getBatteryPercent();
-        inputs.frameCount = quest.getFrameCount();
-        inputs.isTracking = quest.getTrackingStatus();
-        inputs.trackingLostCount = quest.getTrackingLostCounter();
+        inputs.connected = quest.isConnected();
+        inputs.isTracking = quest.isTracking();
 
-        inputs.pose = quest.getPose();
-        inputs.pose3d = quest.getPose3d();
-        inputs.quaternion = quest.getQuaternion();
+        inputs.frameCount = quest.getFrameCount();
+        inputs.trackingLostCount = quest.getTrackingLostCounter();
+        
+        inputs.timestamp = quest.getDataTimestamp();
+        inputs.pose = quest.getPose().transformBy(robotToQuest.inverse());
     }
     
     @Override
     public void setPose(Pose2d pose) {
-        quest.setPose(pose);
+        quest.setPose(pose.transformBy(robotToQuest));
     }
     
 }

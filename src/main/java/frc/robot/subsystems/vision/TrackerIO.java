@@ -3,8 +3,6 @@ package frc.robot.subsystems.vision;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Quaternion;
 
 public interface TrackerIO {
     @AutoLog
@@ -17,8 +15,6 @@ public interface TrackerIO {
         public long trackingLostCount = 0;
         
         public Pose2d pose = new Pose2d();
-        public Pose3d pose3d = new Pose3d();
-        public Quaternion quaternion = new Quaternion();
     }
 
     public default void updateInputs(TrackerInputs inputs) {}

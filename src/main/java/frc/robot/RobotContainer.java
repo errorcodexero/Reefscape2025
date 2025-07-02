@@ -166,7 +166,7 @@ public class RobotContainer {
                 case COMPETITION:
                 
                     drivebase_ = new Drive(
-                        new GyroIOQuest(),
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
                         ModuleIOTalonFX::new,
                         CompTunerConstants.FrontLeft,
                         CompTunerConstants.FrontRight,
@@ -181,7 +181,6 @@ public class RobotContainer {
                         PoseEstimateConsumer.ignore(),
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
-
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());

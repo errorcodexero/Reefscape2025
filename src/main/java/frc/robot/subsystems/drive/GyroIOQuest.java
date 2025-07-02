@@ -3,7 +3,7 @@ package frc.robot.subsystems.drive;
 import java.util.Queue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.subsystems.vision.QuestNav;
+import gg.questnav.questnav.QuestNav; 
 
 public class GyroIOQuest implements GyroIO {
 
@@ -19,7 +19,7 @@ public class GyroIOQuest implements GyroIO {
 
     @Override
     public void updateInputs(GyroIOInputs inputs) {
-        inputs.connected = quest_.getConnected();
+        inputs.connected = quest_.isConnected();
         inputs.yawPosition = getYaw();
 
         inputs.odometryYawPositions = yawPositionQueue_
