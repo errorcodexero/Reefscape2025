@@ -10,8 +10,10 @@ import gg.questnav.questnav.QuestNav;
 public class TrackerIOQuest implements TrackerIO {
     
     private static final Transform2d robotToQuest = new Transform2d(
-        Inches.of(12),
-        Inches.of(9.25),
+        // Inches.of(12),
+        // Inches.of(9.25),
+        Inches.zero(),
+        Inches.zero(),
         Rotation2d.kZero
     );
 

@@ -3,13 +3,22 @@ package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MotionTrackerVision extends SubsystemBase {
+
+    private static final Matrix<N3, N1> stdDevs = VecBuilder.fill(
+        0.01,
+        0.01,
+        0.01
+    );
 
     private final TrackerIO io_;
     private final TrackerInputsAutoLogged inputs_;
@@ -34,7 +43,7 @@ public class MotionTrackerVision extends SubsystemBase {
 
         if (disconnected || !inputs_.isTracking) return;
 
-        estimateConsumer_.integrate(inputs_.pose, inputs_.timestamp, VecBuilder.fill(0.01, 0.01, 0.01));
+        estimateConsumer_.integrate(inputs_.pose, inputs_.timestamp, stdDevs);
     }
 
     public void setPose(Pose2d pose) {
