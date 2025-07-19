@@ -188,8 +188,8 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(130) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(400) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(60) ;
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(100) ;
             public static final AngularVelocity kMaxSlowVelocity = RotationsPerSecond.of(10) ;
             public static final AngularAcceleration kMaxSlowAcceleration = RotationsPerSecondPerSecond.of(30) ;
             public static final double kJerk = 0.0 ;

@@ -88,7 +88,8 @@ public class GrabberSubsystem extends SubsystemBase {
 
             case BACKING_UP:
                 if (!inputs_.coralSensor) {
-                    setGrabberTargetPosition(inputs_.grabberPosition.plus(kHoldOffset)) ;
+                    //setGrabberTargetPosition(inputs_.grabberPosition.plus(kHoldOffset)) ;
+                    setGrabberMotorVoltage(Volts.of(0.0));
                     collect_state_ = CollectState.HOLDING ;
                 }
                 break ;

@@ -38,7 +38,7 @@ public class WaitForCoralCmd extends Command {
     @Override
     public void initialize() {
         grabber_.setGrabberMotorVoltage(GrabberConstants.kCollectVoltage) ;
-        state_ = State.WaitingForCoral;
+        state_ = State.WaitForTrailingEdge ;
         rumbling_ = false ;
     }
 
