@@ -181,7 +181,7 @@ public class RobotContainer {
                         PoseEstimateConsumer.ignore(),
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
-                    vision_.setTagFilterDistance(Meters.of(1.2));
+                    // vision_.setTagFilterDistance(Meters.of(1.2));
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
