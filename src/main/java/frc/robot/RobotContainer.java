@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -173,6 +174,7 @@ public class RobotContainer {
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
+                    vision_.setTagFilterDistance(Meters.of(1.2));
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -424,7 +426,7 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
 
-        autoChooser_.addOption("RunOnePath", AutoCommands.runOnePath(drivebase_, true)) ;
+        autoChooser_.addOption("RunOnePath", AutoCommands.runOnePath(drivebase_, false)) ;
 
         autoChooser_.addOption("Left Side Coral (2 Coral)",
             AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
