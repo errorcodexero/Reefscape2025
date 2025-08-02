@@ -433,7 +433,7 @@ public class RobotContainer {
 
         autoChooser_.addDefaultOption("Do Nothing", new AutoModeBaseCmd("Do Nothing")) ;
 
-        autoChooser_.addOption("RunOnePath", AutoCommands.runOnePath(drivebase_, false)) ;
+        autoChooser_.addOption("RunOnePath", AutoCommands.runOnePath(drivebase_, true)) ;
 
         autoChooser_.addOption("Left Side Coral (2 Coral)",
             AutoCommands.twoCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true));
