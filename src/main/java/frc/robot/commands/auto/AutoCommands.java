@@ -63,7 +63,7 @@ public class AutoCommands {
     }
 
     public static AutoModeBaseCmd runOnePath(Drive driveSub, boolean mirroredX) {
-        final String onepath = "onepath" ;
+        final String onepath = "onepath_curved" ;
 
         Optional<PathPlannerPath> path = DriveCommands.findPath(onepath, mirroredX) ;
         if (!path.isPresent()) {
