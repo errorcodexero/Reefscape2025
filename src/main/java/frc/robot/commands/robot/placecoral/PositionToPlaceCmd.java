@@ -184,6 +184,7 @@ public class PositionToPlaceCmd extends Command {
 
 	@Override
 	public void execute() {
+		
 		switch(state_) {
 			case Moving:
 				cmd_.execute();

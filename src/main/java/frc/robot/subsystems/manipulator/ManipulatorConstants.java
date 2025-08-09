@@ -133,8 +133,8 @@ public class ManipulatorConstants {
     public class Elevator {
 
         // motor CAN ID
-        public static final int kMotorFrontCANID = 3;
-        public static final int kMotorBackCANID = 4;
+        public static final int kMotorFrontCANID = 4;
+        public static final int kMotorBackCANID = 3;
 
         // if motor is inverted 
         public static final boolean kInverted = true;
@@ -147,7 +147,7 @@ public class ManipulatorConstants {
         public static final Current kCurrentLimit = Amps.of(60); 
         public static final Time kCurrentLimitTime = Seconds.of(1); 
 
-        public static final Distance kPosTolerance = Centimeter.of(1.5) ;
+        public static final Distance kPosTolerance = Centimeter.of(5.0) ;
         public static final LinearVelocity kVelTolerance = MetersPerSecond.of(0.01) ;
 
         public static final Voltage kCalibrateVoltage = Volts.of(-3) ;
@@ -188,8 +188,8 @@ public class ManipulatorConstants {
         }
 
         public class MotionMagic {
-            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(60) ;
-            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(100) ;
+            public static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(60) ;                         // 60
+            public static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(100) ;        // 100
             public static final AngularVelocity kMaxSlowVelocity = RotationsPerSecond.of(10) ;
             public static final AngularAcceleration kMaxSlowAcceleration = RotationsPerSecondPerSecond.of(30) ;
             public static final double kJerk = 0.0 ;
