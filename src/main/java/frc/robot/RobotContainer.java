@@ -185,7 +185,7 @@ public class RobotContainer {
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
                     } catch (Exception ex) {
-                        subsystemCreateException(ex);
+                        // subsystemCreateException(ex);
                     }
 
                     try {
