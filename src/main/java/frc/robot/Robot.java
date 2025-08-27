@@ -57,7 +57,7 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     
     private boolean hasSetupAutos = false;
-    private AutoModeBaseCmd auto_cmd_ = null ;
+    private AutoModeBaseCmd appliedAuto = null ;
 
     public Robot() throws RuntimeException {
         //
@@ -217,23 +217,28 @@ public class Robot extends LoggedRobot {
             hasSetupAutos = true;
         }
 
+        
+
         if (hasSetupAutos) {
             Command cmd = robotContainer.getAutonomousCommand();
             if (cmd != null) {
-                AutoModeBaseCmd autoCmd = (AutoModeBaseCmd) cmd;
-                if (autoCmd != null) {
-                    Drive d = RobotContainer.getInstance().drivebase() ;
+                AutoModeBaseCmd currentAuto = (AutoModeBaseCmd) cmd;
+                if (currentAuto != null) {
+                    Drive drivebase = RobotContainer.getInstance().drivebase() ;
                     MotionTrackerVision quest = RobotContainer.getInstance().quest();
-                    Pose2d autopose = autoCmd.getStartingPose() ;
-                    if (auto_cmd_ == null || auto_cmd_ != autoCmd) {
-                        Logger.recordOutput("automode/name", autoCmd.getName()) ;
+                    Pose2d autopose = currentAuto.getStartingPose() ;
+                    if (appliedAuto == null || appliedAuto != currentAuto) { // Changing the Auto Mode
+                        Logger.recordOutput("automode/name", currentAuto.getName()) ;
                         Logger.recordOutput("automode/pose", autopose) ;
-                        d.setPose(autopose) ;
-                        quest.setPose(autopose);
-                        auto_cmd_ = autoCmd ;
+                        Logger.recordOutput("poseinit/setting", "Robot Pose");
+                        drivebase.setPose(autopose);
+                        appliedAuto = currentAuto;
+                    } else { // Initializing the Quest Repeatedly
+                        quest.setPose(drivebase.getPose());
+                        Logger.recordOutput("poseinit/setting", "Quest Pose");
                     }
                 }
-            }
+            } 
         }
     }
 

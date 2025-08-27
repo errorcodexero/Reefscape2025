@@ -17,7 +17,6 @@ import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -31,6 +30,7 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotState;
@@ -175,10 +175,10 @@ public class RobotContainer {
                         CompTunerConstants.kSpeedAt12Volts
                     );
                     
-                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), drivebase_::addVisionMeasurement);
+                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), PoseEstimateConsumer.ignore());
                     
                     vision_ = new AprilTagVision(
-                        PoseEstimateConsumer.ignore(),
+                        drivebase_::addVisionMeasurement,
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
                     // vision_.setTagFilterDistance(Meters.of(1.2));
@@ -374,7 +374,7 @@ public class RobotContainer {
             () -> -gamepad_.getLeftY(),
             () -> -gamepad_.getLeftX(),
             () -> -gamepad_.getRightX()
-        );        
+        );
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
@@ -467,6 +467,8 @@ public class RobotContainer {
         odometryTest.addCommands(DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
             
         autoChooser_.addOption("Odom Test (aka Kachow)", odometryTest);
+
+        autoChooser_.addOption("Zero Pose Reset", new AutoModeBaseCmd("Zero Pose", Pose2d.kZero));
     }
 
     private void subsystemCreateException(Exception ex) {
