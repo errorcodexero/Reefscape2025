@@ -41,6 +41,10 @@ public class GyroIOPigeon2 implements GyroIO {
     // Init Pigeon and Statuses
     pigeon = new Pigeon2(Pigeon2Id, bus);
     yaw = pigeon.getYaw();
+<<<<<<< HEAD
+=======
+    yawVelocity = pigeon.getAngularVelocityZWorld();
+>>>>>>> a6544cb (Apply gyro trim value to improve accuracy.)
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     pigeon.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
