@@ -53,6 +53,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -173,8 +174,8 @@ public class Drive extends SubsystemBase {
             this::getChassisSpeeds,
             this::runVelocity,
             new PPHolonomicDriveController(
-                new PIDConstants(8.0, 0.0, 0.0), 
-                new PIDConstants(8.0, 0.0, 0.0)),
+                new PIDConstants(16.0, 0.0, 0.8),           // 8 - original     13, 0.5
+                new PIDConstants(16.0, 0.0, 0.5)),          // 8 - original
             PP_CONFIG,
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
             this
@@ -421,6 +422,15 @@ public class Drive extends SubsystemBase {
     @AutoLogOutput(key = "SwerveChassisSpeeds/FieldRelativeMeasured")
     public ChassisSpeeds getFieldChassisSpeeds() {
         return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
+    }
+
+    @AutoLogOutput(key = "SwerveChassisSpeeds/TotalVelocity")
+    public LinearVelocity getVelocity() {
+        ChassisSpeeds speeds = getChassisSpeeds();
+        double x = speeds.vxMetersPerSecond;
+        double y = speeds.vyMetersPerSecond;
+
+        return MetersPerSecond.of(Math.sqrt( x * x + y * y ));
     }
     
     /** Returns the position of each module in radians. */
