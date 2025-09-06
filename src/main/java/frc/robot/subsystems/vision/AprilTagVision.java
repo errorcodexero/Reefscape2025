@@ -166,6 +166,7 @@ public class AprilTagVision extends SubsystemBase {
 
     }
 
+
     /**
      * Integrates a pose estimation with the PoseEstimator.
      * @param est
