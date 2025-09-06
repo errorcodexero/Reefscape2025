@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import gg.questnav.questnav.PoseFrame;
 
 public interface TrackerIO {
     @AutoLog
@@ -14,7 +15,7 @@ public interface TrackerIO {
         public boolean isTracking = false;
         public long trackingLostCount = 0;
         
-        public Pose2d pose = new Pose2d();
+        public PoseFrame[] unreadFrames = {};
     }
 
     public default void updateInputs(TrackerInputs inputs) {}

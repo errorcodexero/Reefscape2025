@@ -183,11 +183,11 @@ public class RobotContainer {
                     );
                     // vision_.setTagFilterDistance(Meters.of(1.2));
 
-                    try {
-                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    } catch (Exception ex) {
-                        subsystemCreateException(ex);
-                    }
+                    // try {
+                    //     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    // } catch (Exception ex) {
+                    //     subsystemCreateException(ex);
+                    // }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());
@@ -328,7 +328,7 @@ public class RobotContainer {
 
         if (vision_ == null) {
             int numCams = switch (Constants.getRobot()) {
-                default -> 3;
+                default -> 1;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -336,12 +336,12 @@ public class RobotContainer {
             });
 
             vision_ = new AprilTagVision(
-                    PoseEstimateConsumer.ignore(),
+                    drivebase_::addVisionMeasurement,
                     cams);
         }
 
         if (questnav_ == null) {
-            questnav_ = new MotionTrackerVision(new TrackerIO() {}, PoseEstimateConsumer.ignore());
+            questnav_ = new MotionTrackerVision(new TrackerIO() {}, drivebase_::addVisionMeasurement);
         }
 
         if (manipulator_ == null) {
