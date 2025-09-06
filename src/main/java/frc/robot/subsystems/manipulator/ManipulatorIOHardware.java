@@ -227,8 +227,9 @@ public class ManipulatorIOHardware implements ManipulatorIO {
         );
 
         // ENCODER CONFIGS: 
-        mapper_.calibrate(ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
-        ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);        
+        mapper_.calibrate(
+            ManipulatorConstants.Arm.ThruBoreEncoder.kRobotCalibrationValue,
+            ManipulatorConstants.Arm.ThruBoreEncoder.kEncoderCalibrationValue);        
 
         // ARM CONFIGS: 
         Slot0Configs arm_pids = new Slot0Configs();

@@ -95,7 +95,7 @@ public class ManipulatorConstants {
             public static final double kEncoderMax = 0; 
             public static final double kEncoderMin = 1; 
             public static final double kRobotCalibrationValue = 0;
-            public static final double kEncoderCalibrationValue = 0.512;
+            public static final double kEncoderCalibrationValue = 0.0;
 
             public static final int kAbsEncoder = 11; 
         }
