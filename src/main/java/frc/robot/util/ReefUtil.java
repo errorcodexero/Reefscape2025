@@ -34,18 +34,18 @@ public class ReefUtil {
     public static Optional<ReefFaceInfo> getTargetedReefFace(Pose2d robotPose) {
         Optional<ReefFaceInfo> ret = Optional.empty();
 
-        // ReefFaceInfo nearestFace = getNearestReefFace(robotPose);
-        // Pose2d nearestWall = nearestFace.getTagPose();
+        ReefFaceInfo nearestFace = getNearestReefFace(robotPose);
+        Pose2d nearestWall = nearestFace.getTagPose();
 
-        // Rotation2d rotationToFace = new Rotation2d(
-        //     nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
-        // );
+        Rotation2d rotationToFace = new Rotation2d(
+           nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
+        );
 
-        // if (rotationToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
-        //             getDistanceFromFace(robotPose, nearestFace).lte(ReefConstants.maximumDistanceToFace)) 
-        // {
-        //     ret = Optional.of(nearestFace); 
-        // }
+        if (rotationToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit
+                    getDistanceFromFace(robotPose, nearestFace).lte(ReefConstants.maximumDistanceToFace)) 
+        {
+            ret = Optional.of(nearestFace); 
+        }
 
         return ret ;
     }
