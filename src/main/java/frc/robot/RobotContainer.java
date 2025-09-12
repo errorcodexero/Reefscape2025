@@ -90,10 +90,15 @@ import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
+<<<<<<< HEAD
 import frc.robot.subsystems.vision.MotionTrackerVision;
 import frc.robot.subsystems.vision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.TrackerIO;
 import frc.robot.subsystems.vision.TrackerIOQuest;
+=======
+import frc.robot.subsystems.vision.CameraIOPhotonSim;
+import frc.robot.subsystems.vision.PoseEstimateConsumer;
+>>>>>>> main
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.Mechanism3d;
 import frc.robot.util.ReefUtil;

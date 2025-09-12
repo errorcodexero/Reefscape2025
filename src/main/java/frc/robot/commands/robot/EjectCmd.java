@@ -53,7 +53,7 @@ public class EjectCmd extends XeroSequenceCmd {
             //
             seq.addCommands(
                 new DepositAlgaeCmd(grabber_),
-                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, manipulator_.getArmPosition()),
+                new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kPlaceL3, manipulator_.getArmPosition()),
                 new GoToCmdDirect(manipulator_, ManipulatorConstants.Elevator.Positions.kStow, ManipulatorConstants.Arm.Positions.kStow)
             ) ;
         }

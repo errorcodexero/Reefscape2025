@@ -222,7 +222,7 @@ public class ManipulatorConstants {
             public static final Distance kAlgaeReefCollectNewL2 = Centimeters.of(32.0) ;
 
             public static final Distance kAlgaeReefCollectNewPos2L3 = Centimeters.of(75.0) ;
-            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(35.0) ;
+            public static final Distance kAlgaeReefCollectNewPos2L2 = Centimeters.of(37.0) ;
         }
     }
 }
