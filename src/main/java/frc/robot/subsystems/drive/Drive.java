@@ -280,6 +280,10 @@ public class Drive extends SubsystemBase {
 
         ChassisSpeeds spd = getChassisSpeeds() ;
         Logger.recordOutput("drive/velocity", Math.hypot(spd.vxMetersPerSecond, spd.vyMetersPerSecond)) ;
+
+        Pose2d pose = getPose();
+        Logger.recordOutput("Odometry/Individual/X", pose.getX());
+        Logger.recordOutput("Odometry/Individual/Y", pose.getY());
     }
     
     /**

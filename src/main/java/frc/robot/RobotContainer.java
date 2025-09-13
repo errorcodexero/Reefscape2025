@@ -90,15 +90,9 @@ import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
-<<<<<<< HEAD
 import frc.robot.subsystems.vision.MotionTrackerVision;
-import frc.robot.subsystems.vision.PoseEstimateConsumer;
 import frc.robot.subsystems.vision.TrackerIO;
 import frc.robot.subsystems.vision.TrackerIOQuest;
-=======
-import frc.robot.subsystems.vision.CameraIOPhotonSim;
-import frc.robot.subsystems.vision.PoseEstimateConsumer;
->>>>>>> main
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.Mechanism3d;
 import frc.robot.util.ReefUtil;
@@ -180,7 +174,7 @@ public class RobotContainer {
                         CompTunerConstants.kSpeedAt12Volts
                     );
                     
-                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), PoseEstimateConsumer.ignore());
+                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), drivebase_::addVisionMeasurement);
                     
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
@@ -188,11 +182,11 @@ public class RobotContainer {
                     );
                     // vision_.setTagFilterDistance(Meters.of(1.2));
 
-                    // try {
-                    //     manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
-                    // } catch (Exception ex) {
-                    //     subsystemCreateException(ex);
-                    // }
+                    try {
+                        manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
+                    } catch (Exception ex) {
+                        subsystemCreateException(ex);
+                    }
 
                     try {
                         grabber_ = new GrabberSubsystem(new GrabberIOHardware());

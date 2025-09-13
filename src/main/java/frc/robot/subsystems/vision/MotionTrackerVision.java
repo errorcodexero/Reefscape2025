@@ -1,7 +1,8 @@
 
 package frc.robot.subsystems.vision;
 
-import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -13,8 +14,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 
@@ -26,14 +27,20 @@ public class MotionTrackerVision extends SubsystemBase {
         0.01
     );
 
-    private static final Transform2d robotToQuest = new Transform2d(
-        Inches.of(12),
-        Inches.of(9.25),
-        Rotation2d.kZero
-    );
-
+    private boolean useQuestNav = false;
+    private static final boolean calibration = false;
     private static final boolean useQueuedFrames = true;
 
+    private static final Transform2d robotToQuest = new Transform2d(
+        !calibration ? Meters.of(0.199) : Meters.zero(),
+        !calibration ? Meters.of(0.282) : Meters.zero(),
+        new Rotation2d(Degrees.of(45))
+    );
+
+    // x: -0.216 y: -0.261
+
+    // time: 565-593
+    // time: 794-831
     private final TrackerIO io_;
     private final TrackerInputsAutoLogged inputs_;
 
@@ -59,7 +66,12 @@ public class MotionTrackerVision extends SubsystemBase {
         
         lowBatteryAlert_.set(inputs_.batteryPercent < 20);
 
-        if (disconnected || !inputs_.isTracking || RobotState.isDisabled()) return;
+        if (
+            disconnected ||
+            !inputs_.isTracking ||
+            RobotState.isDisabled() ||
+            !useQuestNav
+        ) return;
 
         if (useQueuedFrames) {
             for (PoseFrame frame : inputs_.unreadFrames) {
