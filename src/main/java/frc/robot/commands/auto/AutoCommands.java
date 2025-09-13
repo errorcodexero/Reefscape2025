@@ -62,20 +62,6 @@ public class AutoCommands {
         return kDebug ? new StateCmd("Autos/" + mode, state) : null;
     }
 
-    public static AutoModeBaseCmd runOnePath(Drive driveSub, boolean mirroredX) {
-        final String onepath = "onepath_curved" ;
-
-        Optional<PathPlannerPath> path = DriveCommands.findPath(onepath, mirroredX) ;
-        if (!path.isPresent()) {
-            return new AutoModeBaseCmd("empty") ;
-        }        
-
-        AutoModeBaseCmd seq = new AutoModeBaseCmd("runOnePath", path.get()) ;
-        seq.addCommands(DriveCommands.followPathCommand(onepath, mirroredX)) ;
-
-        return seq ;
-    }
-
     public static AutoModeBaseCmd twoCoralSideAuto(BrainSubsystem brainSub, AprilTagVision vision, Drive driveSub, ManipulatorSubsystem manipSub, GrabberSubsystem grabberSub, FunnelSubsystem funnelSub, boolean mirroredX) {
         final String modename = "twoCoralSideAuto" ;
 
