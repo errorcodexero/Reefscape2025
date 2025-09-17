@@ -1,8 +1,13 @@
 
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -14,17 +19,20 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 
 public class MotionTrackerVision extends SubsystemBase {
 
     private static final Matrix<N3, N1> stdDevs = VecBuilder.fill(
-        0.01,
-        0.01,
-        0.01
+        0.0001,
+        0.0001,
+        0.0001
     );
 
     private boolean useQuestNav = false;
@@ -32,8 +40,8 @@ public class MotionTrackerVision extends SubsystemBase {
     private static final boolean useQueuedFrames = true;
 
     private static final Transform2d robotToQuest = new Transform2d(
-        !calibration ? Meters.of(0.199) : Meters.zero(),
-        !calibration ? Meters.of(0.282) : Meters.zero(),
+        !calibration ? Centimeters.of(24.275) : Meters.zero(),
+        !calibration ? Centimeters.of(26.2) : Meters.zero(),
         new Rotation2d(Degrees.of(45))
     );
 
@@ -49,11 +57,18 @@ public class MotionTrackerVision extends SubsystemBase {
     private final Alert lowBatteryAlert_ = new Alert("Quest battery is low!", AlertType.kWarning);
 
     private final PoseEstimateConsumer estimateConsumer_;
+    private final Consumer<Pose2d> poseSetter_;
 
-    public MotionTrackerVision(TrackerIO io, PoseEstimateConsumer estimateConsumer) {
+    // Whether or not the quest has been zeroed to the field.
+    private boolean zeroing = false;
+    private Double zeroStartTime = 0.0;
+    private boolean zeroed = false;
+
+    public MotionTrackerVision(TrackerIO io, PoseEstimateConsumer estimateConsumer, Consumer<Pose2d> poseSetter) {
         io_ = io;
         inputs_ = new TrackerInputsAutoLogged();
         estimateConsumer_ = estimateConsumer;
+        poseSetter_ = poseSetter;
     }
 
     @Override
@@ -65,6 +80,25 @@ public class MotionTrackerVision extends SubsystemBase {
         disconnectedAlert_.set(disconnected);
         
         lowBatteryAlert_.set(inputs_.batteryPercent < 20);
+
+        if (!zeroing) {
+            Optional<Alliance> alliance = DriverStation.getAlliance();
+
+            if (alliance.isPresent()) {
+                poseSetter_.accept(
+                    alliance.orElseThrow() == Alliance.Red
+                        ? Pose2d.kZero
+                        : new Pose2d(0, 0, Rotation2d.k180deg)
+                );
+
+                zeroing = true;
+                zeroStartTime = Timer.getTimestamp();
+            }
+        } else {
+            // The pose has been set and we are zeroing
+
+
+        }
 
         if (
             disconnected ||
