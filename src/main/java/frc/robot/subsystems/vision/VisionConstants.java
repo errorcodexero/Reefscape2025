@@ -10,7 +10,11 @@ import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 public class VisionConstants {
 
+    // QuestNav config
     public static final boolean useQuest = true;
+
+    public static final boolean useQuestFrameQueue = true; // The queuing and bulk consuming of quest frames
+    public static final boolean useQuestOffset = true; // Applying the offset to the quest, turn off if measuring offset.
 
     // Limelight Names
     public static final String frontLimelightName = "limelight-front";

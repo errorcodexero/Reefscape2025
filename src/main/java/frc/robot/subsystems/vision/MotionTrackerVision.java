@@ -33,21 +33,13 @@ public class MotionTrackerVision extends SubsystemBase {
         0.0001,
         0.0001
     );
-    
-    private boolean useQuestNav = false;
-    private static final boolean calibration = false;
-    private static final boolean useQueuedFrames = true;
 
     private static final Transform2d robotToQuest = new Transform2d(
-        !calibration ? Centimeters.of(24.275) : Meters.zero(),
-        !calibration ? Centimeters.of(26.2) : Meters.zero(),
+        !VisionConstants.useQuestOffset ? Centimeters.of(24.275) : Meters.zero(),
+        !VisionConstants.useQuestOffset ? Centimeters.of(26.2) : Meters.zero(),
         new Rotation2d(Degrees.of(45))
     );
 
-    // x: -0.216 y: -0.261
-
-    // time: 565-593
-    // time: 794-831
     private final TrackerIO io_;
     private final TrackerInputsAutoLogged inputs_;
 
@@ -108,10 +100,10 @@ public class MotionTrackerVision extends SubsystemBase {
             !inputs_.isTracking ||
             RobotState.isDisabled() ||
             !zeroed ||
-            !useQuestNav
+            !VisionConstants.useQuest
         ) return;
 
-        if (useQueuedFrames) {
+        if (VisionConstants.useQuestFrameQueue) {
             for (PoseFrame frame : inputs_.unreadFrames) {
                 Pose2d robotPose = frame.questPose().transformBy(robotToQuest.inverse());
                 double timestamp = frame.dataTimestamp();
