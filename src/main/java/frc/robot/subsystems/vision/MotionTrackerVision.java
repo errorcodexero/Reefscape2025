@@ -87,7 +87,7 @@ public class MotionTrackerVision extends SubsystemBase {
                 setPose(drive.getPose());
                 zeroed = true;
             })
-        );
+        ).ignoringDisable(true);
     }
 
     @Override
