@@ -10,6 +10,8 @@ import frc.robot.subsystems.vision.CameraIOLimelight4.IMUMode;
 
 public class VisionConstants {
 
+    public static final boolean useQuest = true;
+
     // Limelight Names
     public static final String frontLimelightName = "limelight-front";
     public static final String backLimelightName = "limelight-back";

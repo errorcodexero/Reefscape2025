@@ -4,10 +4,7 @@ package frc.robot.subsystems.vision;
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -19,12 +16,14 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.Drive;
 import gg.questnav.questnav.PoseFrame;
 
 public class MotionTrackerVision extends SubsystemBase {
@@ -34,7 +33,7 @@ public class MotionTrackerVision extends SubsystemBase {
         0.0001,
         0.0001
     );
-
+    
     private boolean useQuestNav = false;
     private static final boolean calibration = false;
     private static final boolean useQueuedFrames = true;
@@ -53,22 +52,42 @@ public class MotionTrackerVision extends SubsystemBase {
     private final TrackerInputsAutoLogged inputs_;
 
     private final Alert disconnectedAlert_ = new Alert("Motion Tracker Disconnected!", AlertType.kError);
-
     private final Alert lowBatteryAlert_ = new Alert("Quest battery is low!", AlertType.kWarning);
+    private final Alert notInitedAlert_ = new Alert("The Quest is not initialized or initializing!!", AlertType.kWarning);
+    private final Alert initAlert_ = new Alert("Quest has been initialized!", AlertType.kInfo);
 
     private final PoseEstimateConsumer estimateConsumer_;
-    private final Consumer<Pose2d> poseSetter_;
 
     // Whether or not the quest has been zeroed to the field.
-    private boolean zeroing = false;
-    private Double zeroStartTime = 0.0;
     private boolean zeroed = false;
 
-    public MotionTrackerVision(TrackerIO io, PoseEstimateConsumer estimateConsumer, Consumer<Pose2d> poseSetter) {
+    public MotionTrackerVision(
+        TrackerIO io,
+        PoseEstimateConsumer estimateConsumer
+    ) {
         io_ = io;
         inputs_ = new TrackerInputsAutoLogged();
         estimateConsumer_ = estimateConsumer;
-        poseSetter_ = poseSetter;
+    }
+
+    public Command zero(Drive drive, AprilTagVision vision) {
+        return Commands.sequence(
+            runOnce(() -> zeroed = false),
+            Commands.waitUntil(() -> DriverStation.getAlliance().isPresent()),
+            drive.runOnce(() ->
+                drive.setPose(
+                    DriverStation.getAlliance().orElseThrow() == Alliance.Blue
+                        ? new Pose2d(0, 0, Rotation2d.k180deg)
+                        : Pose2d.kZero
+                )
+            ),
+            Commands.waitTime(Seconds.of(0.5)),
+            Commands.waitUntil(() -> vision.getTagCount() > 0),
+            runOnce(() -> {
+                setPose(drive.getPose());
+                zeroed = true;
+            })
+        );
     }
 
     @Override
@@ -78,32 +97,15 @@ public class MotionTrackerVision extends SubsystemBase {
 
         boolean disconnected = !inputs_.connected;
         disconnectedAlert_.set(disconnected);
-        
         lowBatteryAlert_.set(inputs_.batteryPercent < 20);
-
-        if (!zeroing) {
-            Optional<Alliance> alliance = DriverStation.getAlliance();
-
-            if (alliance.isPresent()) {
-                poseSetter_.accept(
-                    alliance.orElseThrow() == Alliance.Red
-                        ? Pose2d.kZero
-                        : new Pose2d(0, 0, Rotation2d.k180deg)
-                );
-
-                zeroing = true;
-                zeroStartTime = Timer.getTimestamp();
-            }
-        } else {
-            // The pose has been set and we are zeroing
-
-
-        }
+        notInitedAlert_.set(!zeroed);
+        initAlert_.set(zeroed);
 
         if (
             disconnected ||
             !inputs_.isTracking ||
             RobotState.isDisabled() ||
+            !zeroed ||
             !useQuestNav
         ) return;
 
@@ -123,7 +125,7 @@ public class MotionTrackerVision extends SubsystemBase {
         }
     }
 
-    public void setPose(Pose2d pose) {
+    private void setPose(Pose2d pose) {
         io_.setPose(pose.transformBy(robotToQuest));
     }
 

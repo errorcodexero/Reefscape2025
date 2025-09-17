@@ -41,7 +41,7 @@ import frc.robot.commands.auto.AutoModeBaseCmd;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.generated.CompTunerConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.MotionTrackerVision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.simulator.engine.SimulationEngine;
 
 /**
@@ -215,27 +215,18 @@ public class Robot extends LoggedRobot {
         if(!hasSetupAutos && DriverStation.getAlliance().isPresent()) {
             robotContainer.setupAutos();
             hasSetupAutos = true;
-        }
+        }        
 
-        
-
-        if (hasSetupAutos) {
+        if (hasSetupAutos && !VisionConstants.useQuest) {
             Command cmd = robotContainer.getAutonomousCommand();
             if (cmd != null) {
                 AutoModeBaseCmd currentAuto = (AutoModeBaseCmd) cmd;
                 if (currentAuto != null) {
-                    Drive drivebase = RobotContainer.getInstance().drivebase() ;
-                    MotionTrackerVision quest = RobotContainer.getInstance().quest();
+                    Drive drivebase = RobotContainer.getInstance().drivebase();
                     Pose2d autopose = currentAuto.getStartingPose() ;
                     if (appliedAuto == null || appliedAuto != currentAuto) { // Changing the Auto Mode
-                        Logger.recordOutput("automode/name", currentAuto.getName()) ;
-                        Logger.recordOutput("automode/pose", autopose) ;
-                        Logger.recordOutput("poseinit/setting", "Robot Pose");
                         drivebase.setPose(autopose);
                         appliedAuto = currentAuto;
-                    } else { // Initializing the Quest Repeatedly
-                        quest.setPose(drivebase.getPose());
-                        Logger.recordOutput("poseinit/setting", "Quest Pose");
                     }
                 }
             } 

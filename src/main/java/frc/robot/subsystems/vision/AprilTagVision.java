@@ -41,6 +41,8 @@ public class AprilTagVision extends SubsystemBase {
 
     private Distance maxTagDistance = kDefaultDistanceFilter ;
 
+    private int tagCount = 0; // The amount of tags seen in this robot loop
+
     public AprilTagVision(PoseEstimateConsumer poseEstimateConsumer, CameraIO... io) {
         poseEstimateConsumer_ = poseEstimateConsumer;
 
@@ -60,6 +62,10 @@ public class AprilTagVision extends SubsystemBase {
                 AlertType.kError
             );
         }
+    }
+
+    public int getTagCount() {
+        return tagCount;
     }
 
     public void setTagFilterDistance(Distance d) {
@@ -94,6 +100,8 @@ public class AprilTagVision extends SubsystemBase {
         ArrayList<Pose3d> summaryTagPoses = new ArrayList<>();
         ArrayList<PoseEstimation> poseEstimates = new ArrayList<>();
 
+        tagCount = 0;
+
         // Iterate cameras for logging and pose estimations.
         for (int cam = 0; cam < io_.length; cam++) {
 
@@ -107,6 +115,7 @@ public class AprilTagVision extends SubsystemBase {
 
             // Loop through visible tags.
             for (Fiducial fid : inputs_[cam].fiducials) {
+                tagCount++;
                 Optional<Pose3d> pose = FieldConstants.layout.getTagPose(fid.id());
                 if (pose.isPresent()) {
                     tagPoses.add(pose.get());

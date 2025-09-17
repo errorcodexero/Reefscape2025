@@ -409,7 +409,12 @@ public class RobotContainer {
         // Configure the button bindings
         configureDriveBindings();
         configureButtonBindings();
-        configureTestModeBindings() ;
+        configureTestModeBindings();
+
+        // Zero Questnav
+        if (VisionConstants.useQuest) {
+            questnav_.zero(drivebase_, vision_).schedule();
+        }
 
         if (Constants.getRobot() != RobotType.SIMBOT) {
             manipulator_.setDefaultCommand(new CalibrateCmd(manipulator_));
@@ -418,10 +423,6 @@ public class RobotContainer {
     
     public Drive drivebase() {
         return drivebase_;
-    }
-
-    public MotionTrackerVision quest() {
-        return questnav_;
     }
 
     public XeroGamepad gamepad() {
@@ -599,6 +600,9 @@ public class RobotContainer {
 
         // Reset gyro to 0° when Y & B button is pressed
         gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
+
+        // ReInitialize Questnav when A & X buttons are pressed
+        gamepad_.a().and(gamepad_.x()).onTrue(questnav_.zero(drivebase_, vision_));
 
         gamepad_.rightTrigger().onTrue(new ExecuteRobotActionCmd(brain_));
     }
