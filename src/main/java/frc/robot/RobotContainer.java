@@ -30,6 +30,7 @@ import org.xerosw.hid.XeroGamepad;
 import org.xerosw.util.MessageLogger;
 import org.xerosw.util.MessageType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotState;
@@ -89,8 +90,9 @@ import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.subsystems.vision.AprilTagVision;
 import frc.robot.subsystems.vision.CameraIO;
 import frc.robot.subsystems.vision.CameraIOLimelight4;
-import frc.robot.subsystems.vision.CameraIOPhotonSim;
-import frc.robot.subsystems.vision.PoseEstimateConsumer;
+import frc.robot.subsystems.vision.MotionTrackerVision;
+import frc.robot.subsystems.vision.TrackerIO;
+import frc.robot.subsystems.vision.TrackerIOQuest;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.Mechanism3d;
 import frc.robot.util.ReefUtil;
@@ -123,6 +125,7 @@ public class RobotContainer {
     // Subsystems
     private Drive drivebase_;
     private AprilTagVision vision_;
+    private MotionTrackerVision questnav_;
     private OISubsystem oi_;
     private ManipulatorSubsystem manipulator_;
     private GrabberSubsystem grabber_;
@@ -160,19 +163,24 @@ public class RobotContainer {
         if (Constants.getMode() != Mode.REPLAY) {
             switch (Constants.getRobot()) {
                 case COMPETITION:
+                
                     drivebase_ = new Drive(
-                            new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
-                                ModuleIOTalonFX::new,
-                                CompTunerConstants.FrontLeft,
-                                CompTunerConstants.FrontRight,
-                                CompTunerConstants.BackLeft,
-                                CompTunerConstants.BackRight,
-                                CompTunerConstants.kSpeedAt12Volts);
-
+                        new GyroIOPigeon2(CompTunerConstants.DrivetrainConstants.Pigeon2Id, CompTunerConstants.kCANBus),
+                        ModuleIOTalonFX::new,
+                        CompTunerConstants.FrontLeft,
+                        CompTunerConstants.FrontRight,
+                        CompTunerConstants.BackLeft,
+                        CompTunerConstants.BackRight,
+                        CompTunerConstants.kSpeedAt12Volts
+                    );
+                    
+                    questnav_ = new MotionTrackerVision(new TrackerIOQuest(), drivebase_::addVisionMeasurement);
+                    
                     vision_ = new AprilTagVision(
                         drivebase_::addVisionMeasurement,
                         new CameraIOLimelight4(VisionConstants.frontLimelightName, drivebase_::getRotation)
                     );
+                    // vision_.setTagFilterDistance(Meters.of(1.2));
 
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
@@ -257,14 +265,6 @@ public class RobotContainer {
                             CompTunerConstants.BackRight,
                             CompTunerConstants.kSpeedAt12Volts);
 
-                    vision_ = new AprilTagVision(
-                        PoseEstimateConsumer.ignore(),
-                        new CameraIOPhotonSim("Front", VisionConstants.frontTransform,
-                        drivebase_::getPose, true),
-                        new CameraIOPhotonSim("Back", VisionConstants.backTransform,
-                        drivebase_::getPose, true)
-                    );
-
                     try {
                         manipulator_ = new ManipulatorSubsystem(new ManipulatorIOHardware());
                     } catch (Exception ex) {
@@ -327,7 +327,7 @@ public class RobotContainer {
 
         if (vision_ == null) {
             int numCams = switch (Constants.getRobot()) {
-                default -> 3;
+                default -> 1;
             };
 
             CameraIO[] cams = new CameraIO[numCams];
@@ -337,6 +337,10 @@ public class RobotContainer {
             vision_ = new AprilTagVision(
                     drivebase_::addVisionMeasurement,
                     cams);
+        }
+
+        if (questnav_ == null) {
+            questnav_ = new MotionTrackerVision(new TrackerIO() {}, drivebase_::addVisionMeasurement);
         }
 
         if (manipulator_ == null) {
@@ -369,7 +373,7 @@ public class RobotContainer {
             () -> -gamepad_.getLeftY(),
             () -> -gamepad_.getLeftX(),
             () -> -gamepad_.getRightX()
-        );        
+        );
 
         // Shuffleboard Tabs
         ShuffleboardTab autonomousTab = Shuffleboard.getTab("Autonomous");
@@ -416,6 +420,10 @@ public class RobotContainer {
         return drivebase_;
     }
 
+    public MotionTrackerVision quest() {
+        return questnav_;
+    }
+
     public XeroGamepad gamepad() {
         return gamepad_;
     }
@@ -456,6 +464,8 @@ public class RobotContainer {
         odometryTest.addCommands(DriveCommands.initialFollowPathCommand(drivebase_, "Odom Test"));
             
         autoChooser_.addOption("Odom Test (aka Kachow)", odometryTest);
+
+        autoChooser_.addOption("Zero Pose Reset", new AutoModeBaseCmd("Zero Pose", Pose2d.kZero));
     }
 
     private void subsystemCreateException(Exception ex) {
@@ -599,28 +609,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        Command ret = null;
-
         if (Robot.useXeroSimulator()) {
-            //
-            // In the Xero simulator, set the auto mode you want to run
-            // Note: the auto used here must match the simulation stimulus file set in the
-            // Robot.java file.
-            //
-
-            // ret = AutoCommands.oneCoralAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            ret = AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true) ;
-            // ret = AutoCommands.oneCoralOneAlgaeAuto(brain_, drivebase_, manipulator_, grabber_) ;
-            // ret = AutoCommands.twoCoralCenterAuto(brain_, drivebase_, manipulator_, grabber_, funnel_, true);
-
-            // Command autoChosen = autoChooser_.get();
-            // ret = autoChosen != null ? autoChosen : tuningChooser_.get();
-
-        } else {
-            Command autoChosen = autoChooser_.get();
-            ret = autoChosen != null ? autoChosen : tuningChooser_.get();
+            return AutoCommands.threeCoralSideAuto(brain_, vision_, drivebase_, manipulator_, grabber_, funnel_, true);
         }
 
-        return ret;
+        Command autoChosen = autoChooser_.get();
+        return autoChosen != null ? autoChosen : tuningChooser_.get();
     }
 }

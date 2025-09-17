@@ -38,7 +38,7 @@ public class ReefUtil {
         Pose2d nearestWall = nearestFace.getTagPose();
 
         Rotation2d rotationToFace = new Rotation2d(
-            nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
+           nearestWall.relativeTo(robotPose).getTranslation().getAngle().getMeasure().abs(Radians)
         );
 
         if (rotationToFace.getMeasure().lte(ReefConstants.maximumAngleToFace) && // Angle is within limit

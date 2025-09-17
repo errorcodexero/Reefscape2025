@@ -280,6 +280,10 @@ public class Drive extends SubsystemBase {
 
         ChassisSpeeds spd = getChassisSpeeds() ;
         Logger.recordOutput("drive/velocity", Math.hypot(spd.vxMetersPerSecond, spd.vyMetersPerSecond)) ;
+
+        Pose2d pose = getPose();
+        Logger.recordOutput("Odometry/Individual/X", pose.getX());
+        Logger.recordOutput("Odometry/Individual/Y", pose.getY());
     }
     
     /**
@@ -472,8 +476,7 @@ public class Drive extends SubsystemBase {
     double timestampSeconds,
     Matrix<N3, N1> visionMeasurementStdDevs) {
         Logger.recordOutput("Odometry/VisionMeasurement", visionRobotPoseMeters);
-        poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+        poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
     
     /** Returns the maximum linear speed in meters per sec. */
