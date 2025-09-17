@@ -602,7 +602,7 @@ public class RobotContainer {
         gamepad_.y().and(gamepad_.b()).onTrue(drivebase_.resetGyroCmd());
 
         // ReInitialize Questnav when A & X buttons are pressed
-        gamepad_.a().and(gamepad_.x()).onTrue(questnav_.zero(drivebase_, vision_));
+        gamepad_.a().and(gamepad_.x()).and(() -> VisionConstants.useQuest).onTrue(questnav_.zero(drivebase_, vision_));
 
         gamepad_.rightTrigger().onTrue(new ExecuteRobotActionCmd(brain_));
     }
