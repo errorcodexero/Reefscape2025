@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,7 @@ public class AprilTagVision extends SubsystemBase {
     private final CameraIOInputsAutoLogged[] inputs_;
 
     private final Alert[] alerts_;
+    private final Alert noTags_ = new Alert("There are 0 visible apriltags.", AlertType.kWarning);
 
     private boolean enabled_; // Whether or not vision pose estimation is enabled
 
@@ -165,6 +167,8 @@ public class AprilTagVision extends SubsystemBase {
                 }
             }
         }
+
+        noTags_.set(tagCount == 0 && VisionConstants.useQuest);
 
         Logger.recordOutput("Vision/Summary/TagPoses", summaryTagPoses.toArray(new Pose3d[0]));
         Logger.recordOutput("Vision/Summary/BotPoses/All", estimateListToPoseArray(poseEstimates));
