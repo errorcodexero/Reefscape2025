@@ -81,12 +81,14 @@ public class MotionTrackerVision extends SubsystemBase {
                         : Pose2d.kZero
                 )
             ),
+            vision.setEnabledCommand(true),
             Commands.waitTime(Seconds.of(0.5)),
             Commands.waitUntil(() -> vision.getTagCount() > 0),
             runOnce(() -> {
                 setPose(drive.getPose());
                 zeroed = true;
-            })
+            }),
+            vision.setEnabledCommand(false)
         ).ignoringDisable(true);
     }
 
