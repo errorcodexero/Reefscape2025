@@ -45,7 +45,7 @@ public class MotionTrackerVision extends SubsystemBase {
 
     private final Alert disconnectedAlert_ = new Alert("Motion Tracker Disconnected!", AlertType.kError);
     private final Alert lowBatteryAlert_ = new Alert("Quest battery is low!", AlertType.kWarning);
-    private final Alert notInitedAlert_ = new Alert("The Quest is not initialized or initializing!!", AlertType.kWarning);
+    private final Alert notInitedAlert_ = new Alert("The Quest is not yet initialized!", AlertType.kWarning);
     private final Alert initAlert_ = new Alert("Quest has been initialized!", AlertType.kInfo);
 
     private final PoseEstimateConsumer estimateConsumer_;
