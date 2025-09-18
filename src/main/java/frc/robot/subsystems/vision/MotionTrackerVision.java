@@ -35,8 +35,8 @@ public class MotionTrackerVision extends SubsystemBase {
     );
 
     private static final Transform2d robotToQuest = new Transform2d(
-        !VisionConstants.useQuestOffset ? Centimeters.of(24.275) : Meters.zero(),
-        !VisionConstants.useQuestOffset ? Centimeters.of(26.2) : Meters.zero(),
+        VisionConstants.useQuestOffset ? Centimeters.of(24.275) : Meters.zero(),
+        VisionConstants.useQuestOffset ? Centimeters.of(26.2) : Meters.zero(),
         new Rotation2d(Degrees.of(45))
     );
 
@@ -74,7 +74,7 @@ public class MotionTrackerVision extends SubsystemBase {
                 )
             ),
             vision.setEnabledCommand(true),
-            Commands.waitTime(Seconds.of(0.5)),
+            Commands.waitTime(Seconds.of(2.0)),
             Commands.waitUntil(() -> vision.getTagCount() > 0),
             runOnce(() -> {
                 setPose(drive.getPose());
@@ -98,7 +98,6 @@ public class MotionTrackerVision extends SubsystemBase {
         if (
             disconnected ||
             !inputs_.isTracking ||
-            RobotState.isDisabled() ||
             !zeroed ||
             !VisionConstants.useQuest
         ) return;
