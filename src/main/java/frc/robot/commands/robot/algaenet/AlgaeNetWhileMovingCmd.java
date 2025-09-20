@@ -28,7 +28,7 @@ import frc.robot.util.ReefUtil;
 public class AlgaeNetWhileMovingCmd extends Command {
     static LinearVelocity kMaxVel = MetersPerSecond.of(1.0) ;
     static LinearAcceleration kMaxAcc = MetersPerSecondPerSecond.of(2.0) ;
-    static Distance kShootDistance = Centimeters.of(160) ;
+    static Distance kShootDistance = Centimeters.of(120) ;
 
     private enum State {
         Idle,
