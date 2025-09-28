@@ -3,11 +3,14 @@ package frc.robot.commands.robot.placecoral;
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.util.XeroSequenceCmd;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
@@ -42,8 +45,10 @@ import frc.robot.util.ReefUtil;
 
 public class PlaceCoralCmd extends XeroSequenceCmd {
 
-    private static final boolean kUseFastL4Place = false;
-    private static final Distance kRaiseElevatorDistance = Centimeters.of(150.0) ;
+    private boolean useFastL4Place = true;
+
+    private static final Distance kRaiseElevatorDistance = Centimeters.of(300.0) ;
+    private static final Distance kUseSlowPlaceThreshold = Inches.of(42.0) ;
 
     private final Drive drive_;
     private final ManipulatorSubsystem manipulator_; 
@@ -55,7 +60,6 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
     private Distance target_elev_pos_; 
     
-
     private boolean lower_manip_ ;
 
     private Distance raiseDistance() {
@@ -127,6 +131,18 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
             return ;
         }
 
+        ReefFaceInfo face = reefFace.get();
+        Pose2d scoringPose ;
+        if (brain_.doesReefHaveAlgae()) {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringWithAlgaePose() : face.getRightScoringWithAlgaePose();
+        }
+        else {
+            scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
+        }
+
+        Distance d = Meters.of(scoringPose.getTranslation().getDistance(drive_.getPose().getTranslation())) ;
+        useFastL4Place = d.gt(kUseSlowPlaceThreshold) ;        
+
         LinearVelocity maxvel = CommandConstants.ReefDrive.kMaxDriveVelocity ;
         LinearAcceleration maxaccel = CommandConstants.ReefDrive.kMaxDriveAcceleration ;
 
@@ -148,7 +164,7 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
 
             case L4:
                 target_elev_pos_ = Elevator.Positions.kPlaceL4;
-                if (kUseFastL4Place) {
+                if (useFastL4Place) {
                     immdangle = Arm.Positions.kPlaceL4;
                 }
                 break ;
@@ -158,18 +174,11 @@ public class PlaceCoralCmd extends XeroSequenceCmd {
                 break ;
         }
 
-        ReefFaceInfo face = reefFace.get();
-        Pose2d scoringPose ;
-        if (brain_.doesReefHaveAlgae()) {
-            scoringPose = side == CoralSide.Left ? face.getLeftScoringWithAlgaePose() : face.getRightScoringWithAlgaePose();
-        }
-        else {
-            scoringPose = side == CoralSide.Left ? face.getLeftScoringPose() : face.getRightScoringPose();            
-        }
+        Logger.recordOutput("place/fast", useFastL4Place) ;
 
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(true)) ;
 
-        if (level == ReefLevel.L4 && !kUseFastL4Place) {
+        if (level == ReefLevel.L4 && !useFastL4Place) {
             seq.addCommands(
                 Commands.parallel(
                     DriveCommands.simplePathCommand(drive_, scoringPose, maxvel, maxaccel),
