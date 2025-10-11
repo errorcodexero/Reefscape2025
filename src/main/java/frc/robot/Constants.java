@@ -104,7 +104,7 @@ public final class Constants {
         /**
          * How far to back up from the ALGAE scoring pose.
          */
-        public static final Distance backupDistanceAlgae = Inches.of(20);
+        public static final Distance backupDistanceAlgae = Inches.of(40);
 
         /**
          * The distance from the center of the ROBOT to the ARM.

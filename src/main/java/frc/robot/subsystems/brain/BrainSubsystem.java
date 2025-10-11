@@ -27,6 +27,7 @@ import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
 import frc.robot.commands.robot.NullCmd ;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefScoopCmd;
 import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefGotoCmd;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -556,7 +557,8 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true, false)) ;
+                //list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, true, false)) ;
+                list.add(new CollectAlgaeReefScoopCmd(this, db_, m_, g_, ReefLevel.AskBrain, false, false)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
 
