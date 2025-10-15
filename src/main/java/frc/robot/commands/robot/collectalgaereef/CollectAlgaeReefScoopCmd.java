@@ -27,7 +27,6 @@ import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.grabber.commands.RunGrabberVoltsCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
@@ -120,8 +119,8 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
                 new GentleLowerElevator(manipulator_, ManipulatorConstants.Elevator.Positions.kAlgaeReefHold)) ;
         }
         else {
-            postseq = Commands.sequence(
-                RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
+            postseq = RobotContainer.getInstance().gamepad().setLockCommand(false)
+                .alongWith(collect_ ? new SetHoldingCmd(brain_, GamePiece.ALGAE_HIGH) : Commands.none());
         }
         
         
@@ -133,11 +132,7 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
                     grabber_.setVoltageCommand(Volts.zero()),
                     new GoToCmdDirect(manipulator_, height, angle)
                 ),
-                this::hasAlgae)) ;
+                grabber_::hasAlgae));
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
-    }
-
-    private boolean hasAlgae() {
-        return grabber_.hasAlgae() ;
     }
 }
