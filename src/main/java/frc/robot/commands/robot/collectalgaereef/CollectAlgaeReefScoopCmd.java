@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.xerosw.math.XeroMath;
 import org.xerosw.util.XeroSequenceCmd;
 
@@ -131,11 +132,17 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
             DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), bup,
                                             MetersPerSecond.of(2.0), 
                                             CommandConstants.ReefDrive.kMaxDriveAcceleration),
-            new GoToCmdDirect(manipulator_, height.plus(Meters.of(0.05)), angle.minus(Degrees.of(40))),
+            new GoToCmdDirect(
+                manipulator_,
+                height.plus(Meters.of(0.05)),
+                angle.minus(Degrees.of(40))
+            ).raceWith(
+                Commands.waitTime(Milliseconds.of(300))
+                    .finallyDo(() -> System.out.println("Removal Deadline Hit"))
+            ),
             DriveCommands.simplePathCommand(db_, buprot, bup, 
                                             MetersPerSecond.of(3.0), 
                                             MetersPerSecondPerSecond.of(3.0)));
-
 
         Command postseq ;
 
