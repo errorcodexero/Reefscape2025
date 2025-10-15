@@ -1,15 +1,15 @@
 package frc.robot.commands.auto;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Optional;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,7 +21,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.misc.StateCmd;
 import frc.robot.commands.robot.WaitForCoralInRobot;
 import frc.robot.commands.robot.algaenet.AlgaeNetWhileMovingCmd;
-import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefScoopCmd;
 import frc.robot.commands.robot.collectalgaereef.GentleLowerElevator;
 import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
 import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
@@ -415,7 +415,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false, true));
+        addToSequence(seq, new CollectAlgaeReefScoopCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false, true));
 
         addToSequence(seq, logState(modename, "Drive Processor"));
         addToSequence(seq, 
@@ -460,7 +460,7 @@ public class AutoCommands {
         addToSequence(seq, driveSub.stopCmd());
 
         addToSequence(seq, logState(modename, "Collect Algae"));
-        addToSequence(seq, new CollectAlgaeReefCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false, false));
+        addToSequence(seq, new CollectAlgaeReefScoopCmd(brainSub, driveSub, manipSub, grabberSub, ReefLevel.L2, false, false));
 
         addToSequence(seq, logState(modename, "Drive Barge"));
         addToSequence(seq, DriveCommands.followPathCommand("BargeBarge"));
