@@ -10,7 +10,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class GrabberConstants {
 
-    public static final int kDistanceSensorInput = 0 ;
+    public static final int kDistanceSensorInput = 1 ;
     public static final double kDistanceSensorSlope = 1.0 ;
     public static final double kDistanceSensorIntercept = 0.0 ;
 
