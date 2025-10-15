@@ -13,27 +13,26 @@ import org.xerosw.util.XeroTimer;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
+import frc.robot.commands.robot.NullCmd ;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefGotoCmd;
+import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefScoopCmd;
+import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
+import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
+import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.funnel.FunnelSubsystem;
 import frc.robot.subsystems.grabber.GrabberSubsystem;
-import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
+import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
 import frc.robot.subsystems.oi.CoralSide;
 import frc.robot.subsystems.oi.OIConstants.LEDState;
 import frc.robot.subsystems.oi.OIConstants.OILed;
 import frc.robot.subsystems.oi.OISubsystem;
 import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
-import frc.robot.commands.robot.NullCmd ;
-import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefCmd;
-import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefScoopCmd;
-import frc.robot.commands.robot.collectalgaereef.CollectAlgaeReefGotoCmd;
-import frc.robot.commands.robot.collectcoral.CollectCoralCmd;
-import frc.robot.commands.robot.placecoral.PlaceCoralCmd;
-import frc.robot.commands.robot.scorealgae.ScoreAlgaeAfter;
-import frc.robot.Constants.ReefLevel;
-import frc.robot.RobotContainer;
 
 public class BrainSubsystem extends SubsystemBase {
     // The currently executing action, can be null if nothing is being executed
@@ -566,7 +565,7 @@ public class BrainSubsystem extends SubsystemBase {
                 list.add(new CollectAlgaeReefGotoCmd(this, m_, ReefLevel.AskBrain)) ;
                 conds.add(null) ;
                 
-                list.add(new CollectAlgaeReefCmd(this, db_, m_, g_, ReefLevel.AskBrain, false, false)) ;
+                list.add(new CollectAlgaeReefScoopCmd(this, db_, m_, g_, ReefLevel.AskBrain, true, false)) ;
                 conds.add(() -> { return ReefUtil.getTargetedReefFace(db_.getPose()).isPresent() ; }) ;
                 break ;
         }

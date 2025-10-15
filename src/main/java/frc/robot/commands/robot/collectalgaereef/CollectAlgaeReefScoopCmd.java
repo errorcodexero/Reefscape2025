@@ -1,33 +1,27 @@
 package frc.robot.commands.robot.collectalgaereef;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-import org.xerosw.math.XeroMath;
 import org.xerosw.util.XeroSequenceCmd;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ReefLevel;
+import frc.robot.RobotContainer;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.robot.CommandConstants;
-
 import frc.robot.subsystems.brain.BrainSubsystem;
 import frc.robot.subsystems.brain.GamePiece;
 import frc.robot.subsystems.brain.SetHoldingCmd;
@@ -36,7 +30,6 @@ import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.grabber.commands.RunGrabberVoltsCmd;
 import frc.robot.subsystems.manipulator.ManipulatorConstants;
 import frc.robot.subsystems.manipulator.ManipulatorSubsystem;
-import frc.robot.subsystems.manipulator.commands.GoToCmd;
 import frc.robot.subsystems.manipulator.commands.GoToCmdDirect;
 import frc.robot.util.ReefFaceInfo;
 import frc.robot.util.ReefUtil;
@@ -48,17 +41,17 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
     private GrabberSubsystem grabber_;
     private ReefLevel height_ ;
     private Drive db_ ;
-    private boolean eject_ ;
+    private boolean collect_ ;
     private boolean quick_ ;
 
-    public CollectAlgaeReefScoopCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean eject, boolean quick) {
+    public CollectAlgaeReefScoopCmd(BrainSubsystem brain, Drive db, ManipulatorSubsystem manipulator, GrabberSubsystem grabber, ReefLevel height, boolean collect, boolean quick) {
         super("CollectAlgaeReefScoopCmd") ;
         brain_ = brain ;
         db_ = db ;
         manipulator_ = manipulator;
         grabber_ = grabber;
         height_ = height ;
-        eject_ = eject ;
+        collect_ = collect ;
         quick_ = quick ;
     }
 
@@ -92,44 +85,16 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
         if (reefFace.isEmpty())
             return ;
 
-        Alliance a = DriverStation.getAlliance().get() ;
-
         //
         // This is about the actual collect operation
         //
-        Pose2d bup = reefFace.get().getAlgaeBackupPose() ;
-        Pose2d buprot ; 
-        
-        if (eject_) {
-            Rotation2d rot ;
-
-            if (a == Alliance.Red) {
-                if (XeroMath.normalizeAngleDegrees(bup.getRotation().getDegrees() - 180.0) < 5.0) {
-                    rot = Rotation2d.fromDegrees(90.0) ;
-                }
-                else {
-                    rot = Rotation2d.fromDegrees(180.0) ;
-                }
-            }
-            else {
-                if (XeroMath.normalizeAngleDegrees(bup.getRotation().getDegrees()) < 5.0) {
-                    rot = Rotation2d.fromDegrees(90.0) ;
-                }
-                else {
-                    rot = Rotation2d.fromDegrees(0.0) ;
-                }
-            }
-            buprot = new Pose2d(bup.getTranslation(), rot) ;
-        }
-        else {
-            buprot = bup ;
-        }
+        Pose2d backupPose = reefFace.get().getAlgaeBackupPose() ;
         
         seq.addCommands(
             new GoToCmdDirect(manipulator_, height, angle),
             RobotContainer.getInstance().gamepad().setLockCommand(true),
-            //grabber_.setVoltageCommand(Volts.of(-6.0)),
-            DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), bup,
+            collect_ ? grabber_.setVoltageCommand(Volts.of(-6.0)) : Commands.none(),
+            DriveCommands.simplePathCommand(db_, reefFace.get().getAlgaeCollectPose(), backupPose,
                                             MetersPerSecond.of(2.0), 
                                             CommandConstants.ReefDrive.kMaxDriveAcceleration),
             new GoToCmdDirect(
@@ -140,7 +105,7 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
                 Commands.waitTime(Milliseconds.of(300))
                     .finallyDo(() -> System.out.println("Removal Deadline Hit"))
             ),
-            DriveCommands.simplePathCommand(db_, buprot, bup, 
+            DriveCommands.simplePathCommand(db_, backupPose, backupPose, 
                                             MetersPerSecond.of(3.0), 
                                             MetersPerSecondPerSecond.of(3.0)));
 
@@ -159,20 +124,16 @@ public class CollectAlgaeReefScoopCmd extends XeroSequenceCmd {
                 RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
         }
         
-        if (eject_) {
-            seq.addCommands(new RunGrabberVoltsCmd(grabber_, Milliseconds.of(500))) ;
-        }
-        else {
-            seq.addCommands(
-                new ConditionalCommand(
-                    postseq,
-                    Commands.sequence(
-                        RobotContainer.getInstance().gamepad().setLockCommand(false),                        
-                        grabber_.setVoltageCommand(Volts.zero()),
-                        new GoToCmdDirect(manipulator_, height, angle)
-                    ),
-                    this::hasAlgae)) ;
-        }
+        
+        seq.addCommands(
+            new ConditionalCommand(
+                postseq,
+                Commands.sequence(
+                    RobotContainer.getInstance().gamepad().setLockCommand(false),                        
+                    grabber_.setVoltageCommand(Volts.zero()),
+                    new GoToCmdDirect(manipulator_, height, angle)
+                ),
+                this::hasAlgae)) ;
         seq.addCommands(RobotContainer.getInstance().gamepad().setLockCommand(false)) ;
     }
 
